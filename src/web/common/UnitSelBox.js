@@ -8,9 +8,9 @@ const UnitSelBox = ({value, childId}) => {
     );
 
     return (
-        <>
+        <div>
             <select id={childId} onChange={unitTypeChange}>{subjectItem}</select>
-        </>
+        </div>
     );
 
 }

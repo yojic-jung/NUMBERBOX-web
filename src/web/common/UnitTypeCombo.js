@@ -43,12 +43,12 @@ function UnitTypeCombo() {
 
   return (
     <div>
-      <div className="unit-title">단원정보</div>
+      <div className="mini-title">단원정보</div>
         <UnitSelBox value={subjectBox} childId="subject"></UnitSelBox>
         <UnitSelBox value={firUnitSelBox} childId="firUnit"></UnitSelBox>
         <UnitSelBox value={secUnitSelBox} childId="secUnit"></UnitSelBox>
         <UnitSelBox value={thrUnitSelBox} childId="thrUnit"></UnitSelBox>
-      <div className="type-title">유형정보 <span>유형을 선택해주세요.</span></div>
+      <div className="mini-title">유형정보</div>
       <div className="type-box" >
           <TypeSelBox value={quesTypeBox}></TypeSelBox> 
       </div>

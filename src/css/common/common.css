@@ -1,0 +1,17 @@
+.hide{display:none;}
+
+.marginFive{
+    margin:5px;
+}
+
+.marginTen{
+    margin:10px;
+}
+
+.marginTenAuto{
+    margin:10px auto;
+}
+
+.MJXc-display{
+    display: inline-block !important;
+}

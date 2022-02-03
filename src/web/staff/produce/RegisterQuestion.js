@@ -1,7 +1,7 @@
 import React from 'react';
-import UnitTypeCombo from 'web/common/UnitTypeCombo'
 import LatexConverter from './LatexConverter'
 import FormularShortCutKey from './FormularShortCutKey'
+import "css/common/common.css";
 import "css/staff/staff.css";
 
 const RegisterQuestion = ()=>{
@@ -9,7 +9,6 @@ const RegisterQuestion = ()=>{
     <>
       <div className="staff-title">문제 등록</div>
       <div className="register-div">
-        <UnitTypeCombo />
         <FormularShortCutKey />
         <LatexConverter />
       </div>

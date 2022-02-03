@@ -1,4 +1,4 @@
-import {React} from "react";
+import {React, useEffect, useState} from "react";
 import "css/staff/staff.css";
 import {MathJaxContext, MathJax} from "better-react-mathjax";
 
@@ -9,21 +9,47 @@ const config = {
 	},
 };
 
-const keyBoardArr = [{keyUi:'1',latexVal:'$\\times$'}, {keyUi:'2',latexVal:'${□}^{□}$'}];
 
 const FormularShortCutKey  = () => {
+    const [shortCutKey, setShortCutKey] = useState(new Array());
 
-    const shortCutKey = keyBoardArr.map( (keyLabel, idx) => 
-            
-        <span className="shortCutKey" key={idx} id={keyLabel.keyUi} >
-            <sup className="supShortCut">{keyLabel.keyUi}</sup>
-            <MathJaxContext config={config} version={2} >
-				<MathJax dynamic inline >{keyLabel.latexVal}</MathJax> 
-			</MathJaxContext>
-            {}
-            </span>
-        
+    useEffect(() => {
+        fetch('/takeShortCutKey')
+        .then(response => response.text() )
+        .then(data => { 
+            var jsonObj = JSON.parse(data);
+            const shortCutKeyList = jsonObj["shortCutKey"].map( (keyLabel, idx) => {
+                if(keyLabel.shortcutKey == "=" || keyLabel.shortcutKey == "]" || keyLabel.shortcutKey == "\"\"" ){
+                    return <>
+                    <sup className="supShortCut">{keyLabel.shortcutKey}</sup>
+                            <span className="shortCutKey" key={idx} id={keyLabel.shortcutKey} >
+                                
+                                <MathJaxContext config={config} version={2} >
+                                    <MathJax dynamic inline >${keyLabel.formulUi}$</MathJax> 
+                                </MathJaxContext>
+                            </span>
+                            <br/>
+                            </>;
+                }else{
+                   return <>
+                   <sup className="supShortCut">{keyLabel.shortcutKey}</sup>
+                   <span className="shortCutKey" key={idx} id={keyLabel.shortcutKey} >
+                            
+                            <MathJaxContext config={config} version={2} >
+                                <MathJax dynamic inline >${keyLabel.formulUi}$</MathJax> 
+                            </MathJaxContext>
+                        </span>
+                        </>;
+                }
+                
+                }
     );
+    setShortCutKey(shortCutKeyList);
+        });
+      },[]);
+
+      
+    
     return <div className="shortKeyBoard">{shortCutKey}</div>
 }
 

@@ -14,10 +14,11 @@ const TypeSelBox = ({value}) => {
     );
     return (
         <div>
-            
             <MathJaxContext config={config} version={2} >
                 <MathJax>
-                    <select id="quesType">{quesTypeItem}</select>
+                    <select id="quesType">
+                        {quesTypeItem}
+                    </select>
                 </MathJax> 
             </MathJaxContext>
         </div>
