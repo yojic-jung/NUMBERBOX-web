@@ -1,4 +1,4 @@
-.hide{display:none;}
+.hide{display:none !important;}
 
 .marginFive{
     margin:5px;
@@ -14,4 +14,19 @@
 
 .MJXc-display{
     display: inline-block !important;
+}
+
+.threeDivGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.oneDivGrid{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.boxHighLight:focus{
+    border:1px solid #B2CCFF;
+    box-shadow:0 0 2px 2px #B2CCFF;
 }

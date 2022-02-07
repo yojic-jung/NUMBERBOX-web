@@ -1,7 +1,7 @@
 import React from 'react';
-import {unitTypeChange} from 'js/common/common.js';
+import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 
-const UnitSelBox = ({value, childId}) => {
+const UnitSelBox = ({value, myId, childId, isUnitBubbleEv, parentMethod}) => {
     const unitList = value;
     const subjectItem = unitList.map( (unit, idx) => 
         <option key={idx} data-uniq-no={unit.unitUniqNo} data-parent-value={unit.parentVal} >{unit.mainVal}</option>
@@ -9,7 +9,7 @@ const UnitSelBox = ({value, childId}) => {
 
     return (
         <div>
-            <select id={childId} onChange={unitTypeChange}>{subjectItem}</select>
+            <select id={myId} onChange={(event) => {reg_unitTypeChange(event, childId, isUnitBubbleEv);parentMethod()}}>{subjectItem}</select>
         </div>
     );
 
