@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import UnitSelBox from './UnitSelBox';
 import TypeSelBox from './TypeSelBox';
+import CustomUnitSelBox from './CustomUnitSelBox';
+import CustomTypeSelBox from './CustomTypeSelBox';
 import {msb_dataFetch} from 'js/common/common_msb.js';
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 
@@ -12,7 +14,7 @@ export const UnitTypeCombo = () => {
   const [secUnitSelBox, setSecUnitSelBox] = useState(new Array());
   const [thrUnitSelBox, setThrUnitSelBox] = useState(new Array());
   const [quesTypeBox, setQuesTypeBox] = useState(new Array());
-  const [quesTypeKey, setQuesTypKey] = useState();
+  const [quesTypeKey, setQuesTypeKey] = useState();
   
 
   async function fetchUnitInfo () {
@@ -28,19 +30,17 @@ export const UnitTypeCombo = () => {
     let sub    = new Object();
     trigEv.target= sub;
     trigEv.target.id= "subject";
-    await reg_unitTypeChange(trigEv, "firUnit", true);
+    await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
   }
   
   
   async function fetchTypeInfo () {
     let target = document.getElementById("thrUnit");
     let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
-    console.log(target.options[target.selectedIndex].value);
     const jsonObj = await msb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, false);
     setQuesTypeBox(jsonObj["mathTypeInfo"]);
-    setQuesTypKey(i);
+    setQuesTypeKey(i);
       i++;
-      console.log(i);
   }
 
   useEffect(() => {
@@ -51,16 +51,20 @@ export const UnitTypeCombo = () => {
  
   return (
     <div>
-      <div className="mini-title">단원정보</div>
-        <UnitSelBox value={subjectBox} myId="subject" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-        <UnitSelBox value={firUnitSelBox} myId="firUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-        <UnitSelBox value={secUnitSelBox} myId="secUnit" childId="thrUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-        <UnitSelBox value={thrUnitSelBox} myId="thrUnit" childId="quesType" isUnitBubbleEv={false} parentMethod={fetchTypeInfo}></UnitSelBox>
-      <div className="mini-title">유형정보</div>
-      <div className="type-box" >
-          <TypeSelBox  value={quesTypeBox} key={quesTypeKey}></TypeSelBox> 
-      </div>
+        <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
+        <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelFirUnit" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+        
+        <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
+        <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+        
+        <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="중단원"></CustomUnitSelBox>
+        <UnitSelBox value={secUnitSelBox} myId="secUnit" cusChildId="cusSelThrUnit" childId="thrUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+        
+        <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={fetchTypeInfo} title="소단원"></CustomUnitSelBox>
+        <UnitSelBox value={thrUnitSelBox} myId="thrUnit" cusChildId="cusSelQuesType" childId="quesType" isUnitBubbleEv={false}  parentMethod={fetchTypeInfo}></UnitSelBox>
+            
+        <CustomTypeSelBox value={quesTypeBox} key={quesTypeKey+"00"} cusSelId="cusSelQuesType" originSel="quesType" ></CustomTypeSelBox>
+        <TypeSelBox  value={quesTypeBox} key={quesTypeKey} myId="quesType"></TypeSelBox> 
     </div>
   );
 }
-

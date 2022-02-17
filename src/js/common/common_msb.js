@@ -1,3 +1,6 @@
+import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
+import { withRouter } from 'react-router-dom';
+
 /*
  * 정의 : web에서 was의 data를 fetch하는 공통 함수
  * 설명 : transitEffect는 spinner 효과 사용여부 판단
@@ -63,7 +66,7 @@ export const msb_extensionCheck = async (event, outputTarget) => {
       // 용량 초과시 경고후 해당 파일의 용량도 보여줌
         alert("첨부파일 사이즈는 1MB 이내로 등록 가능합니다. ");
         document.getElementById(targetId).value = ""; 
-      document.getElementById(outputTarget).src = ""; 
+        document.getElementById(outputTarget).src = ""; 
         return false;
     }
     
@@ -77,4 +80,114 @@ export const msb_extensionCheck = async (event, outputTarget) => {
          document.getElementById(targetId).value = ""; 
      document.getElementById(outputTarget).src = ""; 
        }
+}
+
+/*
+* 체크박스 선택된 값 가져오는 함수
+*/
+export const msb_getCheckedVal = async function(event){
+      let obj_length = document.getElementsByName(event.target.name).length;
+      let checkedValue = ""
+      for (var i=0; i<obj_length; i++) {
+          if (document.getElementsByName(event.target.name)[i].checked == true) {
+              if(checkedValue.length==0){
+                checkedValue = document.getElementsByName(event.target.name)[i].value;
+              }else{
+                checkedValue += ","+document.getElementsByName(event.target.name)[i].value;
+              }
+          }
+      }
+  return checkedValue;
+}
+
+
+/*
+* 닫기 버튼 함수
+*/
+export const msb_closeBtn = async function(event){
+  document.getElementsByClassName(event.target.classList[0])[0].parentElement.classList.add("hide");
+  document.getElementsByClassName("blindBox")[0].classList.add("hide");
+  
+}
+
+
+/*
+* msbCustomSel 박스 option 클릭 함수
+*/
+export const msb_fCustomOptClk = function(event, parentId, customTitle, originSel){
+    let targetDom = document.getElementById(event.target.id);
+    let parentDom = document.getElementById(parentId);
+    let selVal = document.getElementById(customTitle);
+    selVal.innerHTML = targetDom.innerText;
+    let orginSelOpt = document.getElementById(originSel);
+    if(targetDom.dataset.value != "0"){
+      parentDom.classList.add('msbCustomSelected');
+    }else{
+      parentDom.classList.remove('msbCustomSelected');
+    }
+    parentDom.classList.remove('active');
+     
+    orginSelOpt.value = targetDom.dataset.value
+}
+
+/*
+* msbCustomSel 박스 div 클릭 함수
+*/
+export const msb_fCustomSelDivClk = async function(event){
+  let targetDom = document.getElementById(event.target.id);
+  let customSelList = document.getElementsByClassName('msbCustomSel');
+  if(targetDom.classList.contains('msbCustomSelVal')) return;
+  for(let i=0; i<customSelList.length; i++){
+    if(customSelList[i].id!=event.target.id) customSelList[i].classList.remove('active');
+  }
+  
+  if(targetDom.classList.contains('active')) {
+    targetDom.classList.remove('active');
+  } else {
+    targetDom.classList.add('active');
+  }
+}
+
+/*
+* msbCustomSel 박스 span태크 클릭 함수
+*/
+export const msb_fCustomSelSpanClk = async function(event){
+  let targetDom = document.getElementById(event.target.id);
+  let parentDom = document.getElementById(targetDom.parentElement.id);
+  if(parentDom.classList.contains('active')){
+    parentDom.classList.remove('active');
+  } else {
+    parentDom.classList.add("active");
+  }
+}
+
+/*
+* msbCustomSel 박스가 아닌 다른 요소를 클릭한 경우 sel 박스 닫기 이벤트
+* 이벤트 등록된 요소 밑에 dom 많을 수록 많이 실행됨
+*/
+export const msb_fCustomSelClose = async function(event){
+  let customSelList = document.getElementsByClassName('msbCustomSel');
+  let targetDom = document.getElementById(event.target.id);
+  //클릭한 요소가 id가 없거나 클래스이름에 msbCustomSel 또는 msbCustomSelVal 포함되지 않는경우
+  if(targetDom==null || (!targetDom.classList.contains("msbCustomSel") && !targetDom.classList.contains("msbCustomSelVal")) ){ 
+    for(let i=0; i<customSelList.length; i++){
+      if(customSelList[i].classList.contains("msbCustomSel")){  //msbCustomSel클래스의 active 제거
+        customSelList[i].classList.remove('active');
+      } 
+    }
+  }
+
+}
+
+/*
+* msb_completeBlueBox 입력완료 블루박스
+*/
+export const msb_completeBlueBox = async function(event, charLength){
+  let targetDom = document.getElementById(event.target.id);
+  if(targetDom.value.length < charLength){
+    document.getElementById(event.target.id).classList.remove("customBlueBoxComplete");
+  }else{
+    document.getElementById(event.target.id).classList.add("customBlueBoxComplete");
+
+  }
 }

@@ -12,6 +12,17 @@
     margin:10px auto;
 }
 
+.marginUpTen{
+    margin-top:20px;
+}
+
+.marginLeftFive{
+    margin-left:5px;
+}
+.descBox{
+    font-size:12px;
+    margin:5px;
+}
 .MJXc-display{
     display: inline-block !important;
 }
@@ -20,7 +31,11 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
-
+.twoFlexLayout{
+    display:flex;
+    flex:2;
+    height:100%;
+}
 .oneDivGrid{
     display: grid;
     grid-template-columns: 1fr;
@@ -29,4 +44,125 @@
 .boxHighLight:focus{
     border:1px solid #B2CCFF;
     box-shadow:0 0 2px 2px #B2CCFF;
+}
+
+
+
+.mini-title{
+    font-size:15px;
+    font-weight:bold;
+    margin:20px 0 2px 5px;
+}
+
+.mini-title2{
+    font-size:13px;
+    color:rgb(59, 59, 59);
+    font-weight:bold;
+    margin:15px 0 10px 5px;
+}
+.mini-title3{
+    font-family: 'jejuGothic';
+    text-align: center;
+    color:rgb(148, 148, 148);
+    margin:10px 0 20px 0;
+}
+.mini-title4{
+    display: inline-block;
+    font-family: 'malgunGothic';
+    font-size:14px;
+    font-weight:500;
+    margin-bottom:5px;
+}
+.selBox{
+    padding:3px;
+    background-color: none;
+    border-radius: 3px;
+}
+
+.selWrapper{
+    width:200px;
+    padding:20px;
+    height: 100px;
+}
+
+.circleBox{
+    cursor:pointer;
+    display: inline-block;
+    padding:8px 15px;
+    background:rgba(8, 32, 80, 0.4);
+    border-radius: 10px;
+    font-family: 'jejuGothic';
+    color:white;
+    margin:2px;
+}
+
+.multiAnsInput[type="checkbox"]:checked+label {
+    background:rgba(8, 32, 80, 1);
+}
+
+.mini-desc{
+    font-size:10px;
+}
+
+.blindBox{
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+    width: 100%; 
+    height: 100%;
+    text-align: center; 
+    background: lightgray;
+    opacity:.5;
+    z-index: 10;
+}
+
+.closeBtn{
+    display: inline-block;
+    float: right;
+    clear:right;
+    font-size:30px;
+    cursor:pointer;
+    padding:5px 15px;
+    margin:5px;
+    border-radius:5px;
+    color:rgb(179, 179, 179);
+}
+
+.rightAbsolBox{
+    position: absolute; 
+    top: 50px; 
+    right: 30px; 
+    width: 100px;
+    text-align: center; 
+}
+
+.nabyBox{
+    font-family: 'jejuGothic';
+    cursor:pointer;
+    padding:10px;
+    border-radius:10px;
+    color:white;
+    background-color: #082050;
+}
+
+
+.customBlueBox{
+    padding-left:15px;
+    font-family: 'jejuGothic';
+    outline: none;
+    width: 133px;
+    height: 35px;
+    border-radius: 4px;
+    color:rgb(23, 104, 196);
+    border: 2px solid rgb(173, 209, 250);
+    background-color: unset;
+}
+
+.customBlueBox::placeholder{
+    color:rgb(148, 192, 243);
+}
+
+.customBlueBoxComplete{
+    background: rgb(82, 141, 207);
+    color:white;
 }

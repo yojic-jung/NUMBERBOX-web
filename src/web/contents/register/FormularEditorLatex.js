@@ -1,10 +1,10 @@
 import {React, useState} from "react";
 import {MathJaxContext, MathJax} from "better-react-mathjax";
-import FormularShortCutKey from './FormularShortCutKey';
+import FormulaShortCutKey from './FormulaShortCutKey';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import {msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck} from 'js/common/common_msb.js';
 import TabTable from 'web/common/TabTable'
-import {reg_threeDivGridChk , reg_mulChoiceTabClkEv, reg_quesAnsTabClkEv, reg_getMappingLatexKey} from 'js/contents/register/contents_reg';
+import {reg_threeDivGridChk , reg_mulChoiceTabClkEv, reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
 
 const config = {
 	tex2jax: {
@@ -16,7 +16,7 @@ const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checke
 const mulChoiceTabList = [{id:'essayTab',tabName:'주관식', className:"checkedTap2"}, {id:'mulTab',tabName:'객관식', className:""}];
 let shortCutKeyList;
 let isPressedSpaceBar =false;
-const FormularEditor = () => {
+const FormulaEditorLatex = () => {
 	const [latexText, setLatexText] = useState("");
 	const [latexSolText, setLatexSolText] = useState("");
 	
@@ -35,14 +35,14 @@ const FormularEditor = () => {
 	const preventAltEvent = async (event) => {
 		if(event.altKey) event.preventDefault();
 	}
-
+	
 	const latexConvert = async (event, shortCutKeyList) => {
 		let evIdName = event.target.id
 		let latexValue =""
 		event.stopPropagation();
-		const mappingKey = await reg_getMappingLatexKey(event, shortCutKeyList, isPressedSpaceBar);
+		const mappingKey = await reg_getMappingShortCutKey(event, shortCutKeyList, isPressedSpaceBar);
 		isPressedSpaceBar = false;
-		if(mappingKey!= null){
+		if(mappingKey != null){
 			let contentsDom = document.getElementById(evIdName);
 			let contentsVal = contentsDom.value;
 			let strtPoint = contentsDom.selectionStart;
@@ -50,7 +50,7 @@ const FormularEditor = () => {
 			let contentsLength = contentsVal.length;
 			let firBlock = contentsVal.substring(0, strtPoint);
 			let secBlock = contentsVal.substring(endPoint, contentsLength);
-			let addText = mappingKey[0]["grammer"];
+			let addText = mappingKey[0]["latexGrammer"];
 			
 			contentsDom.value = firBlock+addText+secBlock;
 			contentsDom.selectionStart = strtPoint+addText.length;
@@ -59,7 +59,7 @@ const FormularEditor = () => {
 		}
 
 		if(evIdName == "contents"){
-			latexValue = document.getElementById(evIdName).value.replaceAll("\n", "<br/>").replaceAll(" ", "&nbsp;").trim();
+			latexValue = document.getElementById(evIdName).value.replaceAll("\n", "<br/>").trim();
 			setLatexText(latexValue)
 		}else if(evIdName == "solution"){
 			latexValue = document.getElementById(evIdName).value.replaceAll("\n", "<br/>").replaceAll(" ", "&nbsp;").trim();
@@ -107,7 +107,7 @@ const FormularEditor = () => {
 
   return (
 	  <>
-		<FormularShortCutKey getShortCutKeyList={getShortCutKeyList} />
+		<FormulaShortCutKey getShortCutKeyList={getShortCutKeyList} />
 		<form method="post">
 		<div className="thrFlexLayout">
 			<div className="left">
@@ -215,4 +215,4 @@ const FormularEditor = () => {
   );
 };
 
-export default FormularEditor;
+export default FormulaEditorLatex;

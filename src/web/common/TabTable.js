@@ -5,7 +5,7 @@ import React from 'react';
 const TabTable = ({className, tabList, clickEv}) => {
     const tabListMap = tabList;
     const tabTd = tabListMap.map( (tab, idx) => 
-        <td key={idx}  id={tab.id} checked={tab.checked} className={tab.className} onClick={clickEv}>{tab.tabName}</td>
+        <td key={idx} id={tab.id} checked={tab.checked} className={tab.className} onClick={clickEv}>{tab.tabName}</td>
     );
 
     return (
