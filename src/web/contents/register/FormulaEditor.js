@@ -1,10 +1,10 @@
 import {React, useState, useEffect} from "react";
 import FormulaShortCutKey from './FormulaShortCutKey';
 import FormulaShortCutKeyEtc from './FormulaShortCutKeyEtc';
-import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
-import {msb_dataFetch,msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck, msb_getCheckedVal,msb_closeBtn,   msb_completeBlueBox, msb_fCustomSelClose} from 'js/common/common_msb.js';
 import TabTable from 'web/common/TabTable'
-import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
+import MsbWebEditor from 'web/contents/register/MsbWebEditor'
+import InputQustionInfo from 'web/contents/register/InputQustionInfo';
+import {msb_dataFetch,msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck, msb_getCheckedVal} from 'js/common/common_msb.js';
 import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
 
 
@@ -23,18 +23,18 @@ const FormulaEditor = () => {
 	const [fifNo, setFifNo] = useState("");
 
 	const[shortCutKey, setShortCutKey] = useState("");
-	const[shortCutKeyHigh1, setShortCutKeyHigh1] = useState("");
 	const[shortCutKeyEtc, setShortCutKeyEtc] = useState("");
 	const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
 
 	useEffect(async () => {
 		let jsonObj = await msb_dataFetch('/takeShortCutKey', false);
 		setShortCutKey(jsonObj);
-		setShortCutKeyHigh1(jsonObj);
 		setShortCutKeyEtc(jsonObj);
 		setIsFetchShotCutKey(true);
 		shortCutKeyList = jsonObj["shortCutKey"]
       },[]);
+
+
 
 	const preventAltEvent = async (event) => {
 		if(event.altKey) event.preventDefault();
@@ -44,7 +44,8 @@ const FormulaEditor = () => {
 		setMultiAnswerText(await msb_getCheckedVal(event));
 	}
 
-	const saveContents = async function(event){
+
+	const saveContents = async function(){
 		document.getElementsByClassName("blindBox")[0].classList.remove("hide");
 		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
 	}
@@ -53,7 +54,6 @@ const FormulaEditor = () => {
 
 	const formulaConvert = async (event, shortCutKeyList) => {
 		let evIdName = event.target.id
-		let userInputText =""
 		event.stopPropagation();
 
 		if(evIdName == "multi-answer"){		//객관식 정답 선택 이벤트의 경우 단축키 이벤트 없이 진행
@@ -70,7 +70,6 @@ const FormulaEditor = () => {
 		const mappingKey = await reg_getMappingShortCutKey(event, shortCutKeyList);
 		if(mappingKey!= null){      //alt 단축키 사용한 경우
 			let msbGrammer = mappingKey[0]["msbGrammer"];
-			userInputText = msbGrammer;
 
 			//현재 포커스에 단축키 수식 추가
             const selection = document.getSelection();
@@ -82,10 +81,13 @@ const FormulaEditor = () => {
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-			userInputText = msbGrammer;
 		}
 
-		userInputText = document.getElementById(evIdName).innerHTML.trim();
+		await showFormulaEditor(evIdName);
+	}
+
+	const showFormulaEditor = async function(evIdName){
+		let userInputText = document.getElementById(evIdName).innerHTML.trim();
 		if(evIdName == "contentsFormulaEditor"){
 			setContentsText(userInputText);
 		}
@@ -96,26 +98,46 @@ const FormulaEditor = () => {
 			setAnswerText(userInputText);
 		}
 		else if(evIdName=="firNoFormulaEditor"){
-			setFirNo("&#9312; "+ userInputText)
+			if(userInputText.length!=0){
+				userInputText = "&#9312; "+userInputText;
+			}
+			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
+			setFirNo(userInputText);
 		}
 		else if(evIdName=="secNoFormulaEditor"){
-			setSecNo("&#9313; "+ userInputText)
+			if(userInputText.length!=0){
+				userInputText = "&#9313; "+userInputText;
+			}
+			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
+			setSecNo(userInputText);
 		}
 		else if(evIdName=="thrNoFormulaEditor"){
-			setThrNo("&#9314; "+ userInputText)
+			if(userInputText.length!=0){
+				userInputText = "&#9314; "+userInputText;
+			}
+			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
+			setThrNo( userInputText);
 		}
 		else if(evIdName=="fourNoFormulaEditor"){
-			setFourNo("&#9315; "+ userInputText)
+			if(userInputText.length!=0){
+				userInputText = "&#9315; "+userInputText;
+			}
+			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
+			setFourNo(userInputText);
 		}
 		else if(evIdName=="fifNoFormulaEditor"){
-			setFifNo("&#9316; "+ userInputText)
+			if(userInputText.length!=0){
+				userInputText = "&#9316; "+userInputText;
+			}
+			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
+			setFifNo(userInputText);
 		}
 	}
 
   return (
 	  <>
 		<div className="rightAbsolBox marginTen">
-			<div id="saveBtn" className="nabyBox" onClick={(event)=>{saveContents()}}>저장하기</div>
+			<div id="saveBtn" className="nabyBox" onClick={()=>{saveContents()}}>저장하기</div>
 		</div>
 
 		<form method="post">
@@ -155,14 +177,14 @@ const FormulaEditor = () => {
 				</div>
 			</div>
 			<div className="right">
-				{ isFetchShotCutKey && <FormulaShortCutKey parentShortCutKey={shortCutKey} />}
+				{ isFetchShotCutKey && <FormulaShortCutKey parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
 				<div className="hide">
-					{ isFetchShotCutKey && <FormulaShortCutKeyEtc parentShortCutKey={shortCutKeyEtc} />}
+					{ isFetchShotCutKey && <FormulaShortCutKeyEtc parentShortCutKey={shortCutKeyEtc} parentMethod={showFormulaEditor}/>}
 				</div>
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
-                
+				<MsbWebEditor parentMethod={showFormulaEditor}></MsbWebEditor>
                 <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" role="textbox" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}}></div>
                 <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)}></div>
 				
@@ -226,37 +248,7 @@ const FormulaEditor = () => {
 
 			</div>
 		</div>
-		<div className="blindBox hide" onClick={event => msb_fCustomSelClose(event)}></div>
-		<div id="contentsInfo" className="contentsInfo hide" onClick={event => msb_fCustomSelClose(event)}>
-				<div className="closeBtn" onClick={event => msb_closeBtn(event)}>&#88;</div>
-				<div className="mini-title3">문제 단원 및 유형 정보를 입력해주세요.</div>
-				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => msb_completeBlueBox(event, 2)}/>
-				
-				<UnitTypeCombo />
-				
-				<div>
-					<CustomSelBoxUp value={[{"value":"하"},{"value":"중하"},{"value":"중"},{"value":"중상"},{"value":"상"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxUp>
-					<CustomSelBoxUp value={[{"value":"쎈수학"},{"value":"RPM"}]} cusSelId="cusOrgRefSel" originSel="originRef" title="원본교재"></CustomSelBoxUp>
-
-					<input id="originNo" name ="originNo" type="number" className="customBlueBox" placeholder="원본 문제 번호" onBlur={event => msb_completeBlueBox(event, 1)} />
-					
-					<select id="originRef" name="originRef" className="hide" >
-						<option value="0">원본교재</option>
-						<option value="쎈수학">쎈수학</option>
-						<option value="RPM">RPM</option>
-					</select>
-
-					<select id="quesLevel" name="quesLevel" className="hide">
-						<option value="0">--선택--</option>
-						<option value="1">하</option>
-						<option value="2">중하</option>
-						<option value="3">중</option>
-						<option value="4">중상</option>
-						<option value="5">상</option>
-					</select>
-					
-				</div>
-			</div>
+		<InputQustionInfo/>
 		</form>
 	</>
   );

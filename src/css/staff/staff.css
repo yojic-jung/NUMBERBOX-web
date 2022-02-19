@@ -156,19 +156,23 @@
     left: unset;
 }
 
-
+.shortCutKeyEtc{
+    vertical-align: 0em;
+    padding:3px 0px;
+}
 .supShortCut{
     font-size: 0.7em;
     position: relative;
     left:5px;
-    top:-2px;
+    top:-1px;
 }
 
 .keySpan{
     display: inline-block;
-    padding:3px 0 3px 0;
+    padding:3px 0 1px 0;
     margin:2px;
     border:2px solid white;
+    background:#3e6599;
     border-radius: 10px;
     color:white;
     font-family: "msbFormulaFont";
@@ -298,11 +302,141 @@
     font-family: "msbFormulaFont";
 }
 
-.shortKeyBoard .keySpan{
-    height:25px;
+
+
+/** 에디터 시작 **/
+.editorToolBar{
+    background: rgb(235, 235, 235);
+    border:1px solid rgb(206, 205, 205);
+    border-top-right-radius: 3px;
+    width:calc(100% - 5px);
+    min-height: 25px;;
+    margin-left: 5px;
+    padding:3px;
+    font-size: 0px;
 }
 
+.editorBtn{
+    display: inline-block;
+    width:30px;
+    height: 22px;
+    margin:0px 5px;
+    background: white;
+    border:1px solid rgb(177, 177, 177);
+    border-radius: 3px;
+    cursor: pointer;
+    vertical-align:text-bottom;
+    color:gray;
+}
 
+.editorBtn:hover{
+    background: rgb(224, 224, 224);
+}
+
+.editUnderLine{
+    font-family:'Times New Roman';
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: underline;
+}
+
+.burgerDiv{
+    display: inline-block;
+    vertical-align:text-bottom;
+}
+
+.burgerInline{
+    width:15px;
+    height:2px;
+    background: rgb(163, 163, 163);
+    border-radius: 1px;;
+    margin:1.5px 0;
+}
+
+.burgerInline:nth-child(2){
+    width:11px;
+    height: 3px;
+    background: rgb(82, 81, 81);;
+}
+
+.editBiDirAlign .burgerInline:nth-child(2){
+    margin:1.5px auto;
+}
+
+.editTable{
+    width: 40px;
+    padding:1px 2px 1px 6px;
+}
+.editTable table{
+    display: inline-block;
+    margin: 0px auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.editTable td{
+    padding: 2px;
+    border: 0.5px solid dimgray;
+}
+
+.editTableArrow{
+    display: inline-block;
+    margin-left: 2px;
+    position: relative;
+    top:0.2em;
+    font-size: 15px;
+}
+
+.editTableUi{
+    position: absolute;
+    display: inline-block;
+    background: white;
+    border:1px solid rgb(216, 216, 216);
+    padding:3px 2px;
+}
+
+.editTableUi button{
+    padding:5px;
+    background: rgb(235, 235, 235);;
+    border:1px solid #e2e2e2;
+    box-shadow:0 0 1px 1px #e2e2e2;
+    margin:2px;
+}
+.editTableUi .selectedTd{
+    background: #d1e0ff;
+    border:1px solid #B2CCFF;
+    box-shadow:0 0 1px 1px #B2CCFF;
+}
+
+.nByNtag{
+    font-size: 14px;
+}
+.editInnerTable{
+    width:70%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin:10px auto;
+}
+.editInnerTable tr{
+    border-collapse: collapse;
+}
+.editInnerTable td{
+    text-align: center;
+    border-collapse: collapse;
+    padding:5px;
+    height: 16px;
+    border:0.5px solid black;
+
+}
+
+.onlyEdit .editInnerTable td{
+    border:0.5px solid rgb(177, 177, 177);
+
+}
+.onlyEdit .editInnerTable td::selection{
+    background:gray;
+}
+/** 에디터 끝 **/
 /** msbCustomSel 박스 시작 **/
 .msbCustomSel * { 
     box-sizing: border-box; 

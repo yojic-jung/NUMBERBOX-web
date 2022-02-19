@@ -1,6 +1,7 @@
 import React from 'react';
 import FormulaEditor from './FormulaEditor'
 import "css/common/common.css";
+import "css/common/msbFormula.css";
 import "css/staff/staff.css";
 
 

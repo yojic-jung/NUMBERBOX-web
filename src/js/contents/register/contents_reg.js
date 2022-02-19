@@ -156,7 +156,7 @@ export const reg_threeDivGridChk = async () => {
 
 
 /*
-*  alt키 단축키 이벤트
+*  수식 alt키 단축키 이벤트
 */
 export const reg_getMappingShortCutKey = (event, keyMapList) => {
 	let userPressKey = event.keyCode;
@@ -169,14 +169,13 @@ export const reg_getMappingShortCutKey = (event, keyMapList) => {
 }
 
 /*
-*  alt키 단축키 이벤트
+*  수식 클릭 이벤트
 */
-export const reg_getMappingShortCutKeyClk = (event, keyMapList) => {
-	let userPressKey = event.keyCode;
+export const reg_getMappingShortCutKeyClk = (formulaId, keyMapList) => {
 	const mappingKeyArr = keyMapList.filter( (keyList) =>{
-		if(keyList.shortcutKeycode==userPressKey)return keyList;
+		if(keyList.id==formulaId)return keyList;
 	});
 	if(mappingKeyArr.length==0) return null;
-	if(event.altKey && userPressKey==mappingKeyArr[0]["shortcutKeycode"]) return mappingKeyArr;
+	if(formulaId==mappingKeyArr[0]["id"]) return mappingKeyArr;
 	else return null;
 }
