@@ -22,6 +22,8 @@
 .descBox{
     font-size:12px;
     margin:5px;
+    font-weight: bold;
+    color: #fab700;
 }
 .MJXc-display{
     display: inline-block !important;
@@ -111,7 +113,7 @@
     width: 100%; 
     height: 100%;
     text-align: center; 
-    background: lightgray;
+    background: rgb(236, 235, 235);
     opacity:.5;
     z-index: 10;
 }
@@ -155,7 +157,7 @@
     border-radius: 4px;
     color:rgb(23, 104, 196);
     border: 2px solid rgb(173, 209, 250);
-    background-color: unset;
+    background-color: white;
 }
 
 .customBlueBox::placeholder{
@@ -165,4 +167,9 @@
 .customBlueBoxComplete{
     background: rgb(82, 141, 207);
     color:white;
+}
+.fixedTopMenu{
+    position: fixed;
+    top:0px;
+    text-align: center;
 }

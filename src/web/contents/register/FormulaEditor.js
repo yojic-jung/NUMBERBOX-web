@@ -4,11 +4,12 @@ import FormulaShortCutKeyEtc from './FormulaShortCutKeyEtc';
 import TabTable from 'web/common/TabTable'
 import MsbWebEditor from 'web/contents/register/MsbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
-import {msb_dataFetch,msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck, msb_getCheckedVal} from 'js/common/common_msb.js';
+import {msb_topMenuFixed, msb_dataFetch,msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck, msb_getCheckedVal} from 'js/common/common_msb.js';
 import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
+const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
 let shortCutKeyList;
 const FormulaEditor = () => {
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
@@ -32,6 +33,14 @@ const FormulaEditor = () => {
 		setShortCutKeyEtc(jsonObj);
 		setIsFetchShotCutKey(true);
 		shortCutKeyList = jsonObj["shortCutKey"]
+
+		const targetDomWidth =  document.getElementById("shortKeyBoard").offsetWidth;
+		window.addEventListener('scroll', ()=>{
+			msb_topMenuFixed("shortKeyBoard", targetDomWidth)
+		})
+		window.addEventListener('scroll', ()=>{
+			msb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
+		})
       },[]);
 
 
@@ -50,6 +59,24 @@ const FormulaEditor = () => {
 		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
 	}
 
+	const formularTabSelect = async function(event){
+		let targetId = event.target.id;
+		let targetDom = document.getElementById(targetId);
+		let selectedDom = document.getElementsByClassName("selectedTab");
+		for(let i=0; i<selectedDom.length; i++){
+			selectedDom[i].classList.remove("selectedTab");
+		}
+		if(targetId=="mainFormulaTap"){
+			document.getElementById("shortKeyBoard").classList.remove("hide");
+			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			targetDom.classList.add("selectedTab");
+		}else if(targetId=="etcFormulaTap"){
+			document.getElementById("shortKeyBoard").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc").classList.remove("hide");
+			targetDom.classList.add("selectedTab");
+		}
+		
+	}
 
 
 	const formulaConvert = async (event, shortCutKeyList) => {
@@ -148,7 +175,7 @@ const FormulaEditor = () => {
 						<div className="mini-title4">[문제]</div>
 						<div dangerouslySetInnerHTML={{__html:contentsText}}></div> 
 						<div id="quesImg-show">
-							<img src="" id="contentsImgOutput" onDoubleClick={(event) => msb_imgFileDel(event, "contentsImgOutput", "contentsImg")} alt="" />
+							<img src="" id="contentsImgOutput" onDoubleClick={() => msb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
 						</div>
 						<div id="multi-show">
 							<div dangerouslySetInnerHTML={{__html:firNo}}></div>
@@ -163,7 +190,7 @@ const FormulaEditor = () => {
 						<div className="mini-title4">[해설]</div>
 						<div dangerouslySetInnerHTML={{__html:solutionText}}></div> 
 						<div id="quesImg-show">
-							<img src="" id="solutionImgOutput" onDoubleClick={(event) => msb_imgFileDel(event, "solutionImgOutput", "solutionImg")} alt="" />
+							<img src="" id="solutionImgOutput" onDoubleClick={() => msb_imgFileDel("solutionImgOutput", "solutionImg")} alt="" />
 						</div>
 					</div>
 					
@@ -177,10 +204,9 @@ const FormulaEditor = () => {
 				</div>
 			</div>
 			<div className="right">
+				<TabTable className="formulaTabTable" tabList={formulaTabList} clickEv={formularTabSelect}></TabTable>
 				{ isFetchShotCutKey && <FormulaShortCutKey parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
-				<div className="hide">
-					{ isFetchShotCutKey && <FormulaShortCutKeyEtc parentShortCutKey={shortCutKeyEtc} parentMethod={showFormulaEditor}/>}
-				</div>
+				{ isFetchShotCutKey && <FormulaShortCutKeyEtc parentShortCutKey={shortCutKeyEtc} parentMethod={showFormulaEditor}/>}
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
@@ -192,7 +218,7 @@ const FormulaEditor = () => {
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
 				
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
-					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" onChange={(event)=>{msb_extensionCheck(event, "contentsImgOutput");msb_loadFile(event, "contentsImgOutput");msb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{msb_extensionCheck(event, "contentsImgOutput");msb_loadFile(event, "contentsImgOutput");msb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="hide">
 						<label><input type="radio" id="essayRadio" name="mutliChoiceType" defaultChecked/>주관식</label>

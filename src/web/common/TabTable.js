@@ -10,11 +10,6 @@ const TabTable = ({className, tabList, clickEv}) => {
 
     return (
         <table className={className}>
-            <thead>
-                <tr>
-                    <th></th>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
                     {tabTd}

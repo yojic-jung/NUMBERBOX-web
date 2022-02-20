@@ -34,19 +34,20 @@ export const msb_addClass = async (targetId, className) => {
 */
 
 export const msb_loadFile = async (event, outputId) => {	//outputId는 출력 dom
-	let reader = new FileReader();
-	reader.onload = function(){
-	  let output = document.getElementById(outputId);
-	  output.src = reader.result;
-	};
-	reader.readAsDataURL(event.target.files[0]);
+    let reader = new FileReader();
+    reader.onload = async function(){
+      let output = document.getElementById(outputId);
+      output.src = reader.result;
+    };
+    if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
+    reader.readAsDataURL(event.target.files[0]);
   };
 
 /*
 * 정의 : 이미지 삭제
 * 설명 : input file에 등록된 파일 이미지를 삭제하는 함수
 */
-  export const msb_imgFileDel = async (event, outputId, fileTagId) => {//outputId는 출력 dom
+  export const msb_imgFileDel = async (outputId, fileTagId) => {//outputId는 출력 dom
     document.getElementById(fileTagId).value= "";
     
     let output = document.getElementById(outputId);
@@ -58,9 +59,13 @@ export const msb_loadFile = async (event, outputId) => {	//outputId는 출력 do
 * 정의 : 이미지 파일 확장자 체크 함수
 */
 export const msb_extensionCheck = async (event, outputTarget) => {
-  let targetId = event.target.id;
-  let obj = document.getElementById(targetId);
+    let targetId = event.target.id;
+    let obj = document.getElementById(targetId);
     let file =	document.getElementById(targetId).files[0];
+    if(file== undefined){     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
+      await msb_imgFileDel(outputTarget,targetId)
+      return false;
+    }
     // file[0].size 는 파일 용량 정보입니다.
     if(file.size > 1024*1024*1){
       // 용량 초과시 경고후 해당 파일의 용량도 보여줌
@@ -73,13 +78,13 @@ export const msb_extensionCheck = async (event, outputTarget) => {
     let pathpoint = obj.value.lastIndexOf('.');
     let filepoint = obj.value.substring(pathpoint+1,event.length);
     let filetype = filepoint.toLowerCase();
-       // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
-       if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
-       }else{
-         alert('이미지  파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
-         document.getElementById(targetId).value = ""; 
-     document.getElementById(outputTarget).src = ""; 
-       }
+    // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
+    if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
+    }else{
+      alert('이미지  파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
+      document.getElementById(targetId).value = ""; 
+      document.getElementById(outputTarget).src = ""; 
+    }
 }
 
 /*
@@ -189,5 +194,18 @@ export const msb_completeBlueBox = async function(event, charLength){
   }else{
     document.getElementById(event.target.id).classList.add("customBlueBoxComplete");
 
+  }
+}
+
+/*
+* 상단 메뉴 고정 fixed 함수
+*/
+export const msb_topMenuFixed = async function(targetId, targetDomWidth){
+  let targetDom = document.getElementById(targetId);
+  if(targetDom.offsetTop<window.pageYOffset){
+    targetDom.classList.add("fixedTopMenu");
+    targetDom.style.width =targetDomWidth+"px";
+  }else{
+    targetDom.classList.remove("fixedTopMenu");
   }
 }

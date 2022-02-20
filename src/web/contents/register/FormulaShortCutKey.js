@@ -74,7 +74,7 @@ const FormulaShortCutKey  = ({parentShortCutKey, parentMethod}) => {
     
     
 
-    return <div className="shortKeyBoard">{shortCutKey}</div>
+    return <div id="shortKeyBoard" className="shortKeyBoard">{shortCutKey}</div>
 }
 
 export default FormulaShortCutKey;
