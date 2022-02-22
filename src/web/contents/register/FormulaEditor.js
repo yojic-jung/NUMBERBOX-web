@@ -54,7 +54,41 @@ const FormulaEditor = () => {
 	}
 
 
-	const saveContents = async function(){
+	const contentsValidation = async function(){
+		let contentsDomLength = document.getElementById("contentsFormulaEditor").innerText.length;
+		let firNoDomLength = document.getElementById("firNoFormulaEditor").innerText.length;
+		let secNoDomLength = document.getElementById("secNoFormulaEditor").innerText.length;
+		let thrNoDomLength = document.getElementById("thrNoFormulaEditor").innerText.length;
+		let fourNoDomLength = document.getElementById("fourNoFormulaEditor").innerText.length;
+		let fifNoDomLength = document.getElementById("fifNoFormulaEditor").innerText.length;
+		
+		let solutionDomLength = document.getElementById("solutionFormulaEditor").innerText.length;
+		let answerDomLength = document.getElementById("answerFormulaEditor").innerText.length;
+
+		//문제 validation [start]
+		if(contentsDomLength<10){
+			alert("문제를 최소 10글자 이상 입력해주시기 바랍니다.");
+			return false;
+		} 
+
+		//객관식 하나라도 입력되어 있는지 체크
+		let multiChoiceOrCheck = (firNoDomLength>0 || secNoDomLength>0 || thrNoDomLength>0 || fourNoDomLength>0 || fifNoDomLength>0);
+		//객관식 전부 다 입력되어 있는지 체크
+		let multiChoiceAllCheck = (firNoDomLength>0 && secNoDomLength>0 && thrNoDomLength>0 && fourNoDomLength>0 && fifNoDomLength>0);
+		//객관식이 하나라도 입력되어있는데 전부 다 입력되지 않은 경우 
+		if(multiChoiceOrCheck && !multiChoiceAllCheck){
+			alert("객관식 문제인 경우 객관식 보기를 모두 입력해주세요.\n객관식 문제가 아닌 경우 객관식 보기를 모두 지워주세요.");
+			return false;
+		}
+		//문제 validation [end]
+		
+		//해설 validation [start]
+		if(solutionDomLength>0 && answerDomLength == 0){
+			alert("해설을 입력한 경우 주관식 정답을 반드시 적어주세요.\n객관식 문제인 경우에도 주관식 정답을 입력해주시기 바랍니다.");
+			return false;
+		}
+		//해설 validation [end]
+
 		document.getElementsByClassName("blindBox")[0].classList.remove("hide");
 		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
 	}
@@ -115,6 +149,13 @@ const FormulaEditor = () => {
 
 	const showFormulaEditor = async function(evIdName){
 		let userInputText = document.getElementById(evIdName).innerHTML.trim();
+		let userInnerText = document.getElementById(evIdName).innerText;
+		console.log(userInputText);
+		console.log(userInnerText);
+		console.log(JSON.stringify(userInnerText));
+		userInnerText = userInnerText.replace( "/\n$/" , '');
+		if(userInnerText == '\n' )userInnerText="";
+
 		if(evIdName == "contentsFormulaEditor"){
 			setContentsText(userInputText);
 		}
@@ -125,38 +166,43 @@ const FormulaEditor = () => {
 			setAnswerText(userInputText);
 		}
 		else if(evIdName=="firNoFormulaEditor"){
-			if(userInputText.length!=0){
-				userInputText = "&#9312; "+userInputText;
+			if(userInnerText.length!=0){
+				document.getElementById("firNoShow").classList.remove("hide");
+			}else{
+				document.getElementById("firNoShow").classList.add("hide");
 			}
-			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
 			setFirNo(userInputText);
 		}
 		else if(evIdName=="secNoFormulaEditor"){
-			if(userInputText.length!=0){
-				userInputText = "&#9313; "+userInputText;
+			if(userInnerText.length!=0){
+				document.getElementById("secNoShow").classList.remove("hide");
+			}else{
+				document.getElementById("secNoShow").classList.add("hide");
 			}
-			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
 			setSecNo(userInputText);
 		}
 		else if(evIdName=="thrNoFormulaEditor"){
-			if(userInputText.length!=0){
-				userInputText = "&#9314; "+userInputText;
+			if(userInnerText.length!=0){
+				document.getElementById("thrNoShow").classList.remove("hide");
+			}else{
+				document.getElementById("thrNoShow").classList.add("hide");
 			}
-			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
 			setThrNo( userInputText);
 		}
 		else if(evIdName=="fourNoFormulaEditor"){
-			if(userInputText.length!=0){
-				userInputText = "&#9315; "+userInputText;
+			if(userInnerText.length!=0){
+				document.getElementById("fourNoShow").classList.remove("hide");
+			}else{
+				document.getElementById("fourNoShow").classList.add("hide");
 			}
-			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
 			setFourNo(userInputText);
 		}
 		else if(evIdName=="fifNoFormulaEditor"){
-			if(userInputText.length!=0){
-				userInputText = "&#9316; "+userInputText;
+			if(userInnerText.length!=0){
+				document.getElementById("fifNoShow").classList.remove("hide");
+			}else{
+				document.getElementById("fifNoShow").classList.add("hide");
 			}
-			if(document.getElementById(evIdName).innerText === '\n' )userInputText="";
 			setFifNo(userInputText);
 		}
 	}
@@ -164,10 +210,10 @@ const FormulaEditor = () => {
   return (
 	  <>
 		<div className="rightAbsolBox marginTen">
-			<div id="saveBtn" className="nabyBox" onClick={()=>{saveContents()}}>저장하기</div>
+			<div id="saveBtn" className="nabyBox" onClick={()=>{contentsValidation()}}>저장하기</div>
 		</div>
 
-		<form method="post">
+		<form method="post" id="contentsForm" encType="multipart/form-data">
 		<div className="twoFlexLayout">
 			<div className="left">
 				<div className="latex-show" id="latex-show">
@@ -178,11 +224,11 @@ const FormulaEditor = () => {
 							<img src="" id="contentsImgOutput" onDoubleClick={() => msb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
 						</div>
 						<div id="multi-show">
-							<div dangerouslySetInnerHTML={{__html:firNo}}></div>
-							<div dangerouslySetInnerHTML={{__html:secNo}}></div>
-							<div dangerouslySetInnerHTML={{__html:thrNo}}></div>
-							<div dangerouslySetInnerHTML={{__html:fourNo}}></div>
-							<div dangerouslySetInnerHTML={{__html:fifNo}}></div>
+							<div><span id="firNoShow" className="hide">&#9312;</span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
+							<div><span id="secNoShow" className="hide">&#9313;</span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
+							<div><span id="thrNoShow" className="hide">&#9314;</span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
+							<div><span id="fourNoShow" className="hide">&#9315;</span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
+							<div><span id="fifNoShow" className="hide">&#9316;</span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
 					
@@ -220,10 +266,6 @@ const FormulaEditor = () => {
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
 					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{msb_extensionCheck(event, "contentsImgOutput");msb_loadFile(event, "contentsImgOutput");msb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
-					<div className="hide">
-						<label><input type="radio" id="essayRadio" name="mutliChoiceType" defaultChecked/>주관식</label>
-						<label><input type="radio" id="multiRadio" name="mutliChoiceType"/>객관식</label>
-					</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
@@ -232,17 +274,17 @@ const FormulaEditor = () => {
 						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
 						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
 						<div className="hide">
-							&#9312; <textarea className="marginFive" id="firNo" name="firNo" type="text" defaultValue={firNo}></textarea><br/>
-							&#9313; <textarea className="marginFive" id="secNo" name="secNo" type="text" defaultValue={secNo}></textarea><br/>
-							&#9314; <textarea className="marginFive" id="thrNo" name="thrNo" type="text" defaultValue={thrNo}></textarea><br/>
-							&#9315; <textarea className="marginFive" id="fourNo" name="fourNo" type="text" defaultValue={fourNo}></textarea><br/>
-							&#9316; <textarea className="marginFive" id="fifNo" name="fifNo" type="text" defaultValue={fifNo}></textarea><br/>
+							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
+							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
+							&#9314; <textarea className="marginFive" id="thrNo" name="thrNo" defaultValue={thrNo}></textarea><br/>
+							&#9315; <textarea className="marginFive" id="fourNo" name="fourNo" defaultValue={fourNo}></textarea><br/>
+							&#9316; <textarea className="marginFive" id="fifNo" name="fifNo" defaultValue={fifNo}></textarea><br/>
 						</div>
 					</div>
 				</div>
 
 				<div id="ansSolOptBox" className="ansSolOptBox marginTen hide">
-					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" type="file" onChange={(event)=>{msb_extensionCheck(event, "solutionImgOutput");msb_loadFile(event, "solutionImgOutput");msb_addClass("solutionImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{msb_extensionCheck(event, "solutionImgOutput");msb_loadFile(event, "solutionImgOutput");msb_addClass("solutionImgOutput","marginTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">정답</div>
 					<div>
@@ -253,19 +295,19 @@ const FormulaEditor = () => {
 						
 						<div className="mini-title2">객관식 정답(선택) </div>
 						<div>
-							<input type="checkbox" name="multiAns" id="multiAns1" className="multiAnsInput hide" value="&#9312;" onChange={(event)=>{getCheckedVal(event)}} />
+							<input type="checkbox" name="choiceAnswer" id="multiAns1" className="multiAnsInput hide" value="&#9312;" onChange={(event)=>{getCheckedVal(event)}} />
 							<label className="circleBox" htmlFor="multiAns1">&#9312;</label>
 							
-							<input type="checkbox" name="multiAns" id="multiAns2" className="multiAnsInput hide" value="&#9313;" onChange={(event)=>{getCheckedVal(event)}} />
+							<input type="checkbox" name="choiceAnswer" id="multiAns2" className="multiAnsInput hide" value="&#9313;" onChange={(event)=>{getCheckedVal(event)}} />
 							<label className="circleBox" htmlFor="multiAns2">&#9313;</label>
 							
-							<input type="checkbox" name="multiAns" id="multiAns3" className="multiAnsInput hide" value="&#9314;" onChange={(event)=>{getCheckedVal(event)}} />
+							<input type="checkbox" name="choiceAnswer" id="multiAns3" className="multiAnsInput hide" value="&#9314;" onChange={(event)=>{getCheckedVal(event)}} />
 							<label className="circleBox" htmlFor="multiAns3">&#9314;</label>
 							
-							<input type="checkbox" name="multiAns" id="multiAns4" className="multiAnsInput hide" value="&#9315;" onChange={(event)=>{getCheckedVal(event)}} />
+							<input type="checkbox" name="choiceAnswer" id="multiAns4" className="multiAnsInput hide" value="&#9315;" onChange={(event)=>{getCheckedVal(event)}} />
 							<label className="circleBox" htmlFor="multiAns4">&#9315;</label>
 							
-							<input type="checkbox" name="multiAns" id="multiAns5" className="multiAnsInput hide" value="&#9316;" onChange={(event)=>{getCheckedVal(event)}} />
+							<input type="checkbox" name="choiceAnswer" id="multiAns5" className="multiAnsInput hide" value="&#9316;" onChange={(event)=>{getCheckedVal(event)}} />
 							<label className="circleBox" htmlFor="multiAns5">&#9316;</label>
 						</div>
 						

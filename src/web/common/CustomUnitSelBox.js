@@ -16,7 +16,7 @@ const CustomUnitSelBox = ({value, cusSelId, originSel, cusChildId, childId, pare
                 trigEv.target= sub;
                 trigEv.target.id= originSel;
                 reg_unitTypeChange(trigEv, cusChildId, childId, true);
-                parentMethod();
+                parentMethod(event);
             }
             }>{opt.mainVal}</li>
 

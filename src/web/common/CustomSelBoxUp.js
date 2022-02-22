@@ -8,7 +8,7 @@ const CustomSelBoxUp = ({value, cusSelId, originSel, title}) => {
     const firLiId = cusSelId+"Li000"
     const subjectItem = optList.map( (opt, idx) => {
         let liIdTmp = cusSelId+"Li"+idx;
-               return <li id={liIdTmp} key={idx} className="msbOptItem" data-value={opt.value}
+               return <li id={liIdTmp} key={idx} className="msbOptItem" data-value={opt.originVal}
                         onClick={event=>{ msb_fCustomOptClk(event, cusSelDiv, cusSelUlTitle, originSel)}}>{opt.value}</li>
         }
         

@@ -16,7 +16,7 @@ const TypeSelBox = ({value, myId}) => {
         <div className='hide'>
             <MathJaxContext config={config} version={2} >
                 <MathJax>
-                    <select id={myId}>
+                    <select id={myId} >
                         <option>--선택--</option>
                         {quesTypeItem}
                     </select>

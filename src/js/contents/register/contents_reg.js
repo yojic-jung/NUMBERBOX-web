@@ -52,7 +52,6 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
 	childElement.childNodes[0].selected = true;
 	//cusChildElement.childNodes[0].selected = true;	li는 select 개념 없음
 	document.getElementById(cusChildDomId+"Title").innerText = titleText;
-	
 	childElement.dispatchEvent(new Event('change', { bubbles: true }));
 
 	//첫번째 과목 콤보박스 하드코딩으로 opt, li 태그 추가

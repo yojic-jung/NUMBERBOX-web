@@ -18,7 +18,7 @@ export const UnitTypeCombo = () => {
   
 
   async function fetchUnitInfo () {
-    let jsonObj = await msb_dataFetch('/unitInfo', false);
+    let jsonObj = await msb_dataFetch('/unitInfo', true);
     setSubjectBox(jsonObj["mathSubjectInfo"]);
     setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
     setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
@@ -34,17 +34,23 @@ export const UnitTypeCombo = () => {
   }
   
   
-  async function fetchTypeInfo () {
+  async function fetchTypeInfo (event) {
+    //customUnitSelBox의 cusSelId 파라미터 값 바뀌면 에러남
+    if(document.getElementById(event.target.id).parentElement.id!="cusSelThrUnit"){
+      setQuesTypeKey(i);
+      i++;
+      return;
+    } 
     let target = document.getElementById("thrUnit");
     let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
-    const jsonObj = await msb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, false);
+    const jsonObj = await msb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, true);
     setQuesTypeBox(jsonObj["mathTypeInfo"]);
     setQuesTypeKey(i);
       i++;
   }
 
-  useEffect(() => {
-    fetchUnitInfo();
+  useEffect((event) => {
+    fetchUnitInfo(event);
   },[]);
 
  

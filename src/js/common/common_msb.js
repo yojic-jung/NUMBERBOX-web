@@ -7,12 +7,19 @@ import { withRouter } from 'react-router-dom';
 */
 
 export const msb_dataFetch = async (url, transitEffect) => {
-  if(transitEffect) document.getElementById("page-transit").classList.remove("hide");
+  if(transitEffect){
+    document.getElementById("page-transit").classList.remove("hide");
+    document.getElementById("page-transit-img").classList.remove("hide");
+  } 
+  
   let returnVal = null;
   await fetch(url)
   .then(async (response) => response.text() )
   .then(async (data) => { 
-    if(transitEffect) document.getElementById("page-transit").classList.add("hide");
+    if(transitEffect){
+      document.getElementById("page-transit").classList.add("hide");
+      document.getElementById("page-transit-img").classList.add("hide");
+    }
     returnVal = JSON.parse(data)
   });
   return returnVal
@@ -35,23 +42,25 @@ export const msb_addClass = async (targetId, className) => {
 
 export const msb_loadFile = async (event, outputId) => {	//outputId는 출력 dom
     let reader = new FileReader();
+    let output = document.getElementById(outputId);
     reader.onload = async function(){
-      let output = document.getElementById(outputId);
       output.src = reader.result;
     };
     if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
     reader.readAsDataURL(event.target.files[0]);
+    output.classList.remove('hide');
   };
 
 /*
 * 정의 : 이미지 삭제
 * 설명 : input file에 등록된 파일 이미지를 삭제하는 함수
 */
-  export const msb_imgFileDel = async (outputId, fileTagId) => {//outputId는 출력 dom
+  export const msb_imgFileDel = async (outputId, fileTagId) => {  //outputId는 출력 dom
     document.getElementById(fileTagId).value= "";
     
     let output = document.getElementById(outputId);
 	  output.src = "";
+    output.classList.add('hide');
   }
 
 
@@ -70,8 +79,7 @@ export const msb_extensionCheck = async (event, outputTarget) => {
     if(file.size > 1024*1024*1){
       // 용량 초과시 경고후 해당 파일의 용량도 보여줌
         alert("첨부파일 사이즈는 1MB 이내로 등록 가능합니다. ");
-        document.getElementById(targetId).value = ""; 
-        document.getElementById(outputTarget).src = ""; 
+        await msb_imgFileDel(outputTarget,targetId)
         return false;
     }
     
@@ -82,8 +90,7 @@ export const msb_extensionCheck = async (event, outputTarget) => {
     if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
     }else{
       alert('이미지  파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
-      document.getElementById(targetId).value = ""; 
-      document.getElementById(outputTarget).src = ""; 
+      await msb_imgFileDel(outputTarget,targetId)
     }
 }
 
@@ -209,3 +216,4 @@ export const msb_topMenuFixed = async function(targetId, targetDomWidth){
     targetDom.classList.remove("fixedTopMenu");
   }
 }
+

@@ -9,7 +9,7 @@ const UnitSelBox = ({value, myId, childId, isUnitBubbleEv, parentMethod, cusChil
 
     return (
         <div className="hide">
-            <select id={myId} onChange={(event) => {reg_unitTypeChange(event, cusChildId, childId, isUnitBubbleEv);parentMethod()}}>{subjectItem}</select>
+            <select id={myId} onChange={(event) => {reg_unitTypeChange(event, cusChildId, childId, isUnitBubbleEv);parentMethod(event)}}>{subjectItem}</select>
         </div>
     );
 

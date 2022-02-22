@@ -252,6 +252,8 @@
     left:-26px;
     color:white;
 }
+
+
 #firNoFormulaEditor::before{
     content: '\2460';
 }
@@ -604,4 +606,18 @@
 
 .formulaTabTable td.selectedTab{
     background-color: #5580aa;
+}
+
+
+.saveContentsDiv{
+    text-align: center;
+}
+
+.saveContents{
+    cursor: pointer;
+    font-family: 'jejuGothic';
+    border-radius: 10px;
+    padding:10px;
+    color: white;
+    background-color: rgb(255, 166, 0);
 }
