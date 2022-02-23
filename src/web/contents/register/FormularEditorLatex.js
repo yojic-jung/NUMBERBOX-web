@@ -2,7 +2,7 @@ import {React, useState} from "react";
 import {MathJaxContext, MathJax} from "better-react-mathjax";
 import FormulaShortCutKey from './FormulaShortCutKey';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
-import {msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck} from 'js/common/common_msb.js';
+import {nb_loadFile, nb_imgFileDel, nb_addClass, nb_extensionCheck} from 'js/common/common_nb.js';
 import TabTable from 'web/common/TabTable'
 import {reg_threeDivGridChk , reg_mulChoiceTabClkEv, reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
 
@@ -119,7 +119,7 @@ const FormulaEditorLatex = () => {
 						</MathJaxContext>
 					</div>
 					<div id="quesImg-show">
-						<img src="" id="contentsImgOutput" onDoubleClick={(event) => msb_imgFileDel(event, "contentsImgOutput", "contentsImg")} alt="" />
+						<img src="" id="contentsImgOutput" onDoubleClick={(event) => nb_imgFileDel(event, "contentsImgOutput", "contentsImg")} alt="" />
 					</div>
 					<div id="multi-show">
 						<MathJaxContext config={config} version={2} >
@@ -159,7 +159,7 @@ const FormulaEditorLatex = () => {
 				<textarea id="contents" className="contents" name="contents" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => latexConvert(event, shortCutKeyList)}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" placeholder="해설을 입력해주세요..." onKeyUp={(event) => latexConvert(event, shortCutKeyList)}></textarea>
 				<div className="marginTen">
-					<div className="mini-title marginTen"> 문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" onChange={(event)=>{msb_extensionCheck(event, "contentsImgOutput");msb_loadFile(event, "contentsImgOutput");msb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title marginTen"> 문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput");nb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
 					<div>이미지를 삭제하기를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="hide">
 						<label><input type="radio" id="essayRadio" name="mutliChoiceType" defaultChecked/>주관식</label>

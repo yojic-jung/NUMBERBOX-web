@@ -38,14 +38,14 @@ const FormulaShortCutKeyEtc  = ({parentShortCutKey, parentMethod}) => {
         let formulaId = document.getElementById(event.currentTarget.id).dataset.formulaId;
         const mappingKey = await reg_getMappingShortCutKeyClk(formulaId, parentKeyList);
 		if(mappingKey!= null){      //alt 단축키 사용한 경우
-			let msbGrammer = mappingKey[0]["msbGrammer"];
+			let nbGrammer = mappingKey[0]["nbGrammer"];
 			//현재 포커스에 단축키 수식 추가
             const selection = document.getSelection();
             const newRange = selection.getRangeAt(0);
             selection.removeAllRanges();
             selection.addRange(newRange);
             let tmpNode= document.createElement('span');
-            tmpNode.innerHTML = msbGrammer;
+            tmpNode.innerHTML = nbGrammer;
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤

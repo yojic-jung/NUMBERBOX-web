@@ -35,7 +35,7 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
 	}
 	let customTitleDom = cusChildElement.parentElement;	//customSel박스의 제목 div 태그
 	let titleText = customTitleDom.dataset.title;		//option,li 태그의 첫번째 인덱스 제목
-	customTitleDom.classList.remove("msbCustomSelected");
+	customTitleDom.classList.remove("nbCustomSelected");
 	//option, li태그 한개씩만 추가 위한 설정
 	if(childElement.childNodes[0].dataset.uniqNo != 0){
 		let firOpt = document.createElement('option');
@@ -45,7 +45,7 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
 		let firLi = cusChildElement.childNodes[0].cloneNode(true);
 		firLi.innerText = titleText+"을 선택해주세요...";
 		firLi.dataset.value = 0;
-		firLi.className = "msbOptItem";
+		firLi.className = "nbOptItem";
 		firLi.id=cusChildElement.childNodes[0].id+"00";
 		cusChildElement.prepend(firLi);
 	}
@@ -67,7 +67,7 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
 		let firLi = document.createElement('li');
 		firLi.innerText = "과목을 선택해주세요...";
 		firLi.dataset.value = 0;
-		firLi.className = "msbOptItem";
+		firLi.className = "nbOptItem";
 		firLi.id = "cusSelSubLi000";
 		document.getElementById("cusSelSub").prepend(firLi);
 	}

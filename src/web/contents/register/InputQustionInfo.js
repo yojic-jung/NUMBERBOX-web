@@ -1,13 +1,13 @@
 import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
-import {msb_closeBtn, msb_completeBlueBox, msb_fCustomSelClose} from 'js/common/common_msb.js';
+import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose} from 'js/common/common_nb.js';
 
 
 const InputQustionInfo = ()=>{
 
     useEffect(async () => {
-		document.body.addEventListener('click',(event)=>msb_fCustomSelClose(event));
+		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
       },[]);
 
 	  const contentsFinalValidation = async function(){
@@ -76,11 +76,11 @@ const InputQustionInfo = ()=>{
 		//callback에서 구현
 		customQuesType.innerText="유형정보"
 		quesType.selectedIndex=0;
-		document.getElementById("cusSelQuesTypeDiv").classList.remove("msbCustomSelected");
+		document.getElementById("cusSelQuesTypeDiv").classList.remove("nbCustomSelected");
 
 		cusQuesLevel.innerText="문제 난이도"
 		quesLevel.selectedIndex=0;
-		document.getElementById("cusQuesSelDiv").classList.remove("msbCustomSelected");
+		document.getElementById("cusQuesSelDiv").classList.remove("nbCustomSelected");
 
 		originNo.value="";
 		originNo.classList.remove("customBlueBoxComplete");
@@ -101,9 +101,9 @@ const InputQustionInfo = ()=>{
     <>
 		<div className="blindBox hide"></div>
 		<div id="contentsInfo" className="contentsInfo hide">
-				<div className="closeBtn" onClick={event => msb_closeBtn(event)}>&#88;</div>
+				<div className="closeBtn" onClick={event => nb_closeBtn(event)}>&#88;</div>
 				<div className="mini-title3">문제 단원 및 유형 정보를 입력해주세요.</div>
-				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => msb_completeBlueBox(event, 2)}/>
+				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => nb_completeBlueBox(event, 2)}/>
 				
 				<UnitTypeCombo />
 				
@@ -111,7 +111,7 @@ const InputQustionInfo = ()=>{
 					<CustomSelBoxUp value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxUp>
 					<CustomSelBoxUp value={[{"value":"쎈수학", "originVal":"쎈수학"}, {"value":"RPM", "originVal":"RPM"}]} cusSelId="cusOrgRefSel" originSel="originRef" title="원본교재"></CustomSelBoxUp>
 
-					<input id="originNo" name ="originNo" type="number" className="customBlueBox" placeholder="원본 문제 번호" onBlur={event => msb_completeBlueBox(event, 1)} />
+					<input id="originNo" name ="originNo" type="number" className="customBlueBox" placeholder="원본 문제 번호" onBlur={event => nb_completeBlueBox(event, 1)} />
 					
 					<select id="originRef" name="originRef" className="hide" >
 						<option value="0">원본교재</option>

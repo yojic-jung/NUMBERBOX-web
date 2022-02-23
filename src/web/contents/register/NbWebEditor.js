@@ -2,7 +2,7 @@ import React from 'react';
 import EditTableInnerUi from 'web/contents/register/EditTableInnerUi'
 
 
-const MsbWebEditor = ({parentMethod})=>{
+const NbWebEditor = ({parentMethod})=>{
 
 	const tableUiShow = async function(event){
 		event.preventDefault();
@@ -52,11 +52,11 @@ const MsbWebEditor = ({parentMethod})=>{
         //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], 사용할지 안할지 판단 필요
         let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('table');
         let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('table')
-        if(startDom!=null && startDom.classList.contains('msbBox')){
+        if(startDom!=null && startDom.classList.contains('nbBox')){
             event.stopPropagation();
             return;
         }
-        if(endDom!=null && endDom.classList.contains('msbBox')){
+        if(endDom!=null && endDom.classList.contains('nbBox')){
             event.stopPropagation();
             return;
         }
@@ -136,4 +136,4 @@ const MsbWebEditor = ({parentMethod})=>{
   );
 }
 
-export default MsbWebEditor;
+export default NbWebEditor;

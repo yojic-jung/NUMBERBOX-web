@@ -1,5 +1,5 @@
 import React from 'react';
-import { msb_fCustomSelDivClk, msb_fCustomSelSpanClk, msb_fCustomOptClk} from 'js/common/common_msb.js';
+import { nb_fCustomSelDivClk, nb_fCustomSelSpanClk, nb_fCustomOptClk} from 'js/common/common_nb.js';
 
 const CustomSelBoxUp = ({value, cusSelId, originSel, title}) => {
     const optList = value;
@@ -8,18 +8,18 @@ const CustomSelBoxUp = ({value, cusSelId, originSel, title}) => {
     const firLiId = cusSelId+"Li000"
     const subjectItem = optList.map( (opt, idx) => {
         let liIdTmp = cusSelId+"Li"+idx;
-               return <li id={liIdTmp} key={idx} className="msbOptItem" data-value={opt.originVal}
-                        onClick={event=>{ msb_fCustomOptClk(event, cusSelDiv, cusSelUlTitle, originSel)}}>{opt.value}</li>
+               return <li id={liIdTmp} key={idx} className="nbOptItem" data-value={opt.originVal}
+                        onClick={event=>{ nb_fCustomOptClk(event, cusSelDiv, cusSelUlTitle, originSel)}}>{opt.value}</li>
         }
         
     );
 
     return (
-        <div className="msbWrapSelBox">
-            <div id={cusSelDiv} className="msbCustomSel msbCustom4" onClick={event=>msb_fCustomSelDivClk(event)}>
-                <span id={cusSelUlTitle} className="msbCustomSelVal" onClick={event=>msb_fCustomSelSpanClk(event)}>{title}</span>
-                <ul id={cusSelId} className="msbCustomOptList msbCustomOptList2">
-                    <li id={firLiId} key="00" className="msbOptItem" data-value="0" >{title}</li>
+        <div className="nbWrapSelBox">
+            <div id={cusSelDiv} className="nbCustomSel nbCustom4" onClick={event=>nb_fCustomSelDivClk(event)}>
+                <span id={cusSelUlTitle} className="nbCustomSelVal" onClick={event=>nb_fCustomSelSpanClk(event)}>{title}</span>
+                <ul id={cusSelId} className="nbCustomOptList nbCustomOptList2">
+                    <li id={firLiId} key="00" className="nbOptItem" data-value="0" >{title}</li>
                    {subjectItem}
                 </ul>
             </div>

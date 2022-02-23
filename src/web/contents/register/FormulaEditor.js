@@ -2,15 +2,15 @@ import {React, useState, useEffect} from "react";
 import FormulaShortCutKey from './FormulaShortCutKey';
 import FormulaShortCutKeyEtc from './FormulaShortCutKeyEtc';
 import TabTable from 'web/common/TabTable'
-import MsbWebEditor from 'web/contents/register/MsbWebEditor'
+import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
-import {msb_topMenuFixed, msb_dataFetch,msb_loadFile, msb_imgFileDel, msb_addClass, msb_extensionCheck, msb_getCheckedVal} from 'js/common/common_msb.js';
+import {nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_imgFileDel, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
 import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
 const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
-const writeDisabledDom = ["msbTrigon","",""];
+const writeDisabledDom = ["nbTrigon","",""];
 let shortCutKeyList;
 const FormulaEditor = () => {
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
@@ -29,7 +29,7 @@ const FormulaEditor = () => {
 	const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
 
 	useEffect(async () => {
-		let jsonObj = await msb_dataFetch('/takeShortCutKey', false);
+		let jsonObj = await nb_dataFetch('/takeShortCutKey', false);
 		setShortCutKey(jsonObj);
 		setShortCutKeyEtc(jsonObj);
 		setIsFetchShotCutKey(true);
@@ -37,10 +37,10 @@ const FormulaEditor = () => {
 
 		const targetDomWidth =  document.getElementById("shortKeyBoard").offsetWidth;
 		window.addEventListener('scroll', ()=>{
-			msb_topMenuFixed("shortKeyBoard", targetDomWidth)
+			nb_topMenuFixed("shortKeyBoard", targetDomWidth)
 		})
 		window.addEventListener('scroll', ()=>{
-			msb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
+			nb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
 		})
       },[]);
 
@@ -51,7 +51,7 @@ const FormulaEditor = () => {
 		if(event.keyCode=="8" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
 			//드래그 한 경우
 			if(!document.getSelection().isCollapsed){
-				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('msbBox')){
+				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
 					const selection = document.getSelection();
 					const newRange = selection.getRangeAt(0);
 					newRange.deleteContents();
@@ -63,7 +63,7 @@ const FormulaEditor = () => {
 		if(event.keyCode=="46" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
 			//드래그 한 경우
 			if(!document.getSelection().isCollapsed){
-				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('msbBox')){
+				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
 					const selection = document.getSelection();
 					const newRange = selection.getRangeAt(0);
 					newRange.deleteContents();
@@ -74,7 +74,7 @@ const FormulaEditor = () => {
 	}
 
 	const getCheckedVal = async function(event){
-		setMultiAnswerText(await msb_getCheckedVal(event));
+		setMultiAnswerText(await nb_getCheckedVal(event));
 	}
 
 
@@ -178,7 +178,7 @@ const FormulaEditor = () => {
 
 		const mappingKey = await reg_getMappingShortCutKey(event, shortCutKeyList);
 		if(mappingKey!= null){      //alt 단축키 사용한 경우
-			let msbGrammer = mappingKey[0]["msbGrammer"];
+			let nbGrammer = mappingKey[0]["nbGrammer"];
 
 			//현재 포커스에 단축키 수식 추가
             const selection = document.getSelection();
@@ -186,7 +186,7 @@ const FormulaEditor = () => {
             selection.removeAllRanges();
             selection.addRange(newRange);
             let tmpNode= document.createElement('span');
-            tmpNode.innerHTML = msbGrammer;
+            tmpNode.innerHTML = nbGrammer;
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
@@ -266,7 +266,7 @@ const FormulaEditor = () => {
 						<div className="mini-title4">[문제]</div>
 						<div dangerouslySetInnerHTML={{__html:contentsText}}></div> 
 						<div id="quesImg-show">
-							<img src="" id="contentsImgOutput" onDoubleClick={() => msb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
+							<img src="" id="contentsImgOutput" onDoubleClick={() => nb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
 						</div>
 						<div id="multi-show">
 							<div><span id="firNoShow" className="hide">&#9312;</span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
@@ -281,7 +281,7 @@ const FormulaEditor = () => {
 						<div className="mini-title4">[해설]</div>
 						<div dangerouslySetInnerHTML={{__html:solutionText}}></div> 
 						<div id="quesImg-show">
-							<img src="" id="solutionImgOutput" onDoubleClick={() => msb_imgFileDel("solutionImgOutput", "solutionImg")} alt="" />
+							<img src="" id="solutionImgOutput" onDoubleClick={() => nb_imgFileDel("solutionImgOutput", "solutionImg")} alt="" />
 						</div>
 					</div>
 					
@@ -301,7 +301,7 @@ const FormulaEditor = () => {
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
-				<MsbWebEditor parentMethod={showFormulaEditor}></MsbWebEditor>
+				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
                 <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}} onClick={()=>dressYellowBox()}></div>
                 <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 				
@@ -309,7 +309,7 @@ const FormulaEditor = () => {
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
 				
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
-					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{msb_extensionCheck(event, "contentsImgOutput");msb_loadFile(event, "contentsImgOutput");msb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput");nb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
@@ -329,7 +329,7 @@ const FormulaEditor = () => {
 				</div>
 
 				<div id="ansSolOptBox" className="ansSolOptBox marginTen hide">
-					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{msb_extensionCheck(event, "solutionImgOutput");msb_loadFile(event, "solutionImgOutput");msb_addClass("solutionImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput");nb_addClass("solutionImgOutput","marginTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">정답</div>
 					<div>

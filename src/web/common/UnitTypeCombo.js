@@ -3,7 +3,7 @@ import UnitSelBox from './UnitSelBox';
 import TypeSelBox from './TypeSelBox';
 import CustomUnitSelBox from './CustomUnitSelBox';
 import CustomTypeSelBox from './CustomTypeSelBox';
-import {msb_dataFetch} from 'js/common/common_msb.js';
+import {nb_dataFetch} from 'js/common/common_nb.js';
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 
 let i=0;    //useState 리렌더링 문제 해결
@@ -18,7 +18,7 @@ export const UnitTypeCombo = () => {
   
 
   async function fetchUnitInfo () {
-    let jsonObj = await msb_dataFetch('/unitInfo', true);
+    let jsonObj = await nb_dataFetch('/unitInfo', true);
     setSubjectBox(jsonObj["mathSubjectInfo"]);
     setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
     setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
@@ -43,7 +43,7 @@ export const UnitTypeCombo = () => {
     } 
     let target = document.getElementById("thrUnit");
     let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
-    const jsonObj = await msb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, true);
+    const jsonObj = await nb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, true);
     setQuesTypeBox(jsonObj["mathTypeInfo"]);
     setQuesTypeKey(i);
       i++;

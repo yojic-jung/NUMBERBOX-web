@@ -99,7 +99,7 @@
 .latex-show{
     font-size:16px;
     line-height: 160%;
-    font-family: 'msbFormulaFont';
+    font-family: 'nbFormulaFont';
     border:1px solid rgb(168, 168, 168);
     background:white;
     color:black;
@@ -183,7 +183,7 @@
     background:#3e6599;
     border-radius: 10px;
     color:white;
-    font-family: "msbFormulaFont";
+    font-family: "nbFormulaFont";
 }
 .keySpan:hover{
     background:white;
@@ -274,32 +274,32 @@
     content: '\2464';
 }
 
-.shortCutKey .msbNumer{
+.shortCutKey .nbNumer{
     border-bottom:0.5px solid white;
 }
-.shortCutKey .msbDenom{
+.shortCutKey .nbDenom{
     border-top:0.5px solid white;
 }
-.keySpan:hover .shortCutKey .msbNumer{
+.keySpan:hover .shortCutKey .nbNumer{
     border-bottom:0.5px solid rgb(20, 71, 101);
 }
-.keySpan:hover .shortCutKey .msbDenom{
+.keySpan:hover .shortCutKey .nbDenom{
     border-top:0.5px solid rgb(20, 71, 101);
 }
 
 
-.shortCutKey .msbRootBase{
+.shortCutKey .nbRootBase{
     border-top: 1px solid white;
 }
-.keySpan:hover .shortCutKey .msbRootBase{
+.keySpan:hover .shortCutKey .nbRootBase{
     border-top: 1px solid rgb(20, 71, 101);
 }
 
 
-.shortCutKey .msbOverlineBase, .shortCutKey .msbRightArrowBase, .shortCutKey .msbLeftArrowBase, .shortCutKey .msbBiDirArrowBase{
+.shortCutKey .nbOverlineBase, .shortCutKey .nbRightArrowBase, .shortCutKey .nbLeftArrowBase, .shortCutKey .nbBiDirArrowBase{
     border-top:1px solid white;
 }
-.keySpan:hover .shortCutKey .msbOverlineBase, .keySpan:hover .shortCutKey .msbRightArrowBase, .keySpan:hover .shortCutKey .msbLeftArrowBase, .keySpan:hover .shortCutKey .msbBiDirArrowBase{
+.keySpan:hover .shortCutKey .nbOverlineBase, .keySpan:hover .shortCutKey .nbRightArrowBase, .keySpan:hover .shortCutKey .nbLeftArrowBase, .keySpan:hover .shortCutKey .nbBiDirArrowBase{
     border-top:1px solid rgb(20, 71, 101);
 }
 
@@ -311,7 +311,7 @@
     border-radius:2px;
     padding:5px;
     margin-right:-1px;
-    font-family: "msbFormulaFont";
+    font-family: "nbFormulaFont";
 }
 
 
@@ -449,13 +449,13 @@
     background:gray;
 }
 /** 에디터 끝 **/
-/** msbCustomSel 박스 시작 **/
-.msbCustomSel * { 
+/** nbCustomSel 박스 시작 **/
+.nbCustomSel * { 
     box-sizing: border-box; 
     font-family: 'jejuGothic';
     
 }
-.msbCustomSel {
+.nbCustomSel {
   position: relative;
   width: 150px;
   padding:10px 0;
@@ -468,22 +468,22 @@
 
 }
 
-.msbCustomSel.msbCustom2{
+.nbCustomSel.nbCustom2{
     width: 350px;
     margin:20px 0;
 }
 
-.msbCustomSel.msbCustom3{
+.nbCustomSel.nbCustom3{
     width: 550px;
     margin:20px 0;
 }
 
-.msbCustomSel.msbCustom4{
+.nbCustomSel.nbCustom4{
     width: 150px;
     margin:20px 0;
 }
 
-.msbCustomSel:after {
+.nbCustomSel:after {
   content: '';
   display: block; 
   width: 2px;
@@ -494,7 +494,7 @@
   background: rgb(173, 209, 250);
 }
 
-.msbCustomSel .msbCustomSelVal {
+.nbCustomSel .nbCustomSelVal {
   align-items: center;
   width: inherit;
   height: inherit;
@@ -505,7 +505,7 @@
   cursor: pointer;
 }
 
-.msbCustomSel .msbCustomOptList {
+.nbCustomSel .nbCustomOptList {
   position: absolute; 
   top: 28px;
   left: -3px;
@@ -521,61 +521,61 @@
   z-index: 20;
 }
 
-.msbCustomSel .msbCustomOptList.msbCustomOptList2{
+.nbCustomSel .nbCustomOptList.nbCustomOptList2{
     top: unset;
     bottom:28px;
 }
 
-.msbCustomSel .msbCustomOptList.msbCustomOptList3{
+.nbCustomSel .nbCustomOptList.nbCustomOptList3{
     top: unset;
     bottom:28px;
 }
-.msbCustomSel.active .msbCustomOptList.msbCustomOptList3{
+.nbCustomSel.active .nbCustomOptList.nbCustomOptList3{
     max-height: 255px;
     overflow-y: scroll;
 }
-.msbCustomSel .msbCustomOptList.msbCustomOptList3::-webkit-scrollbar-thumb{
+.nbCustomSel .nbCustomOptList.nbCustomOptList3::-webkit-scrollbar-thumb{
     background: rgb(152, 175, 201);
 }
-.msbCustomSel .msbCustomOptList::-webkit-scrollbar {width: 6px;}
-.msbCustomSel .msbCustomOptList::-webkit-scrollbar-track {background: transparent; }
-.msbCustomSel .msbCustomOptList::-webkit-scrollbar-thumb {background: #303030; border-radius: 45px;}
-.msbCustomSel .msbCustomOptList::-webkit-scrollbar-thumb:hover {background: #303030;}
+.nbCustomSel .nbCustomOptList::-webkit-scrollbar {width: 6px;}
+.nbCustomSel .nbCustomOptList::-webkit-scrollbar-track {background: transparent; }
+.nbCustomSel .nbCustomOptList::-webkit-scrollbar-thumb {background: #303030; border-radius: 45px;}
+.nbCustomSel .nbCustomOptList::-webkit-scrollbar-thumb:hover {background: #303030;}
 
-.msbCustomSel.active .msbCustomOptList {
+.nbCustomSel.active .nbCustomOptList {
   max-height: 500px;
 }
 
-.msbCustomOptList li:first-child{
+.nbCustomOptList li:first-child{
     background: rgb(220, 226, 233);
     color:rgb(155, 155, 155);
     cursor:unset;
 }
 
-.msbCustomOptList li:first-child:hover{
+.nbCustomOptList li:first-child:hover{
     background: rgb(222, 225, 228);
 }
 
-.msbCustomSel .msbOptItem {
+.nbCustomSel .nbOptItem {
   border-bottom: 1px dashed rgb(84, 160, 247);
   padding: 5px 15px 5px;
   transition: .1s;
 }
 
-.msbCustomSel .msbOptItem:hover {
+.nbCustomSel .nbOptItem:hover {
   background: rgb(82, 141, 207);
 }
 
-.msbCustomSel .msbOptItem:last-child {
+.nbCustomSel .nbOptItem:last-child {
   border-bottom: 0 none;
 }
 
-.msbCustomSelected{
+.nbCustomSelected{
     background:url('img/down.png') calc(100% - 10px) center no-repeat rgb(84, 139, 202);
     background-size:15px;
     color:white;
 }
-/** msbCustomSel 박스 끝. **/
+/** nbCustomSel 박스 끝. **/
 
 
 .formulaTabTable{
