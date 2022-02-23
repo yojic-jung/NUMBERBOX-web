@@ -4,29 +4,30 @@
     format('truetype');
 }
 
-
+/* 한글, 특수문자 기호 */
 @font-face {
     font-family: 'msbFormulaFont';
     src:url('font/JejuGothic-Regular.ttf')
     format('truetype');
-    unicode-range: U+AC00-D7A3
+    unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E
 }
 
+/* 영어 소문자 대문자 */
 @font-face {
     font-family: 'msbFormulaFont';
     src:url('font/STIXTwoText-MediumItalic.ttf')
-     /** src:url(./STIXTwoText-MediumItalic.ttf) **/
     format('truetype');
-    unicode-range: U+0041-005A ,U+0061-007A,
+    unicode-range: U+0041-005A ,U+0061-007A
 }
 
+/* 숫자 알파베타감마 기호 */
 @font-face {
     font-family: 'msbFormulaFont';
     src:url("font/STIXTwoText-Medium.ttf")
-     /** src:url(./STIXTwoText-MediumItalic.ttf) **/
     format('truetype');
-    unicode-range: U+0030-0039, U+03??;
+    unicode-range: U+0030-0039, U+03B1-03C9;
 }
+
 
 
 .msbFomularEditor { 
@@ -91,7 +92,14 @@
     font-size:0.3em;
     
 }
-
+.msbExpTmp{
+    min-width: 1em;
+    line-height: 120%;
+    padding:0px;
+    position: relative;
+    bottom:2em;
+    font-size:0.3em;
+}
 
 /** 아래첨자 표현 **/
 .msbSubBox{
@@ -110,6 +118,16 @@
     position: relative;
     top:0.9em;
     right:0.3em;
+}
+
+.msbSubTmp{
+    min-width: 1em;
+    line-height: 120%;
+    padding:0px;
+    font-size:0.3em;
+    position: relative;
+    top:0.3em;
+    right:0.1em;
 }
 
 /** 양방향 아래첨자 표현 **/
@@ -142,7 +160,7 @@
 
 /** 분수 표현 **/
 .msbFracBox {
-    vertical-align: -0.65em;;
+    vertical-align: -1.2em;;
     border-spacing: 0px;
     text-align: center;
     margin:0px;
@@ -151,15 +169,17 @@
 
 .msbNumer{
     padding: 0 2px 0 2px;
-    font-size:.7em;
+    font-size:1em;
     border-bottom:0.5px solid black;
     min-width:1em;
+    line-height: 100%;
 }
 .msbDenom{
-    font-size:.7em;
+    font-size:1em;
     padding: 0 2px 0 2px;
     border-top:0.5px solid black;
     min-width:1em;
+    line-height: 140%;
 }
 
 
@@ -179,6 +199,16 @@
 }
 */
 
+/** 분수안 지수 **/
+.msbFracBox  .msbExpTmp{
+    min-width: 1em;
+    line-height: 120%;
+    padding:0px;
+    position: relative;
+    bottom:1.7em;
+    font-size:0.3em;
+    
+}
 
 /** 삼각함수 **/
 .msbTrigonBox{
@@ -309,40 +339,80 @@
     left: -0.3em;
 }
 
+
+/** 큰 괄호(분수용) **/
+.msbLRoundBracketBox, .msbRRoundBracketBox, .msbLCurlyBracketBox, .msbRCurlyBracketBox, .msbLSquareBracketBox, .msbRSquareBracketBox{
+    display: inline-block;
+    vertical-align: -0.5em;
+}
+.msbLRoundBracketBox, .msbLCurlyBracketBox, .msbLSquareBracketBox{
+   /* margin-left:-0.3em; */
+}
+
+.msbRRoundBracketBox, .msbRCurlyBracketBox, .msbRSquareBracketBox{
+   /* margin-right:-0.3em; */
+}
+
+.msbLRoundBracket, .msbRRoundBracket, .msbLCurlyBracket, .msbRCurlyBracket, .msbLSquareBracket, .msbRSquareBracket{
+    font-size: 30px;
+    font-family: 'malgunGothic';
+    font-weight: 100;
+}
+.msbLRoundBracket, .msbLCurlyBracket,.msbLSquareBracket{
+    position: relative;
+    /* left:0.15em;*/
+
+}
+.msbRRoundBracket, .msbRCurlyBracket,.msbRSquareBracket{
+    position: relative;
+   /* right:0.15em; */
+}
+.msbRRoundBracketBox .msbExpBox, .msbRCurlyBracketBox .msbExpBox, .msbRSquareBracketBox .msbExpBox {
+    font-family: 'msbFormulaFont';
+    vertical-align: unset;
+    position: relative;
+    bottom:-0.1em;
+    right:0.1em;
+}
+
 /** 편집화면에서만 사용되는 속성, 시작 **/
 .onlyEdit { 
     font-family: "msbFormulaFont";
     font-size:16px;
 }   
 .onlyEdit::selection {
-    background:rgb(192, 191, 191);
+    background:rgb(228, 226, 226);
     color:black;
 }
 
 
 .onlyEdit *::selection{
-    background:rgb(192, 191, 191);
+    background:rgb(228, 226, 226);
     color:black;
 }
 
 .onlyEdit .msbBox::selection, .onlyEdit .borderBox::selection {
-    background:rgb(228, 226, 226) !important;
+    background:rgb(192, 191, 191) !important;
     color:rgb(77, 76, 76) !important;
 }
 .onlyEdit .msbBox::-moz-selection, .onlyEdit .borderBox::-moz-selection  {
-    background:rgb(228, 226, 226) !important;
+    background:rgb(192, 191, 191) !important;
     color:rgb(77, 76, 76) !important;
 }
 .onlyEdit .msbBox::-webkit-selection, .onlyEdit .borderBox::-webkit-selection  {
-    background:rgb(228, 226, 226) !important;
+    background:rgb(192, 191, 191) !important;
     color:rgb(77, 76, 76) !important;
 }
 
 .onlyEdit:focus .borderBox{
     border:1px dashed gray;
 }
-
-
+.onlyEdit:focus .msbBox{
+    margin:0 2px;
+}
+.onlyEdit:focus .yellowBorderBox{
+    border :2px dashed rgb(255, 196, 1) !important;
+}
 
 .onlyEdit .msbTrigon.borderBox{
     min-width:1em;
@@ -368,4 +438,26 @@
 .onlyEdit .msbLeftSub.borderBox, .onlyEdit .msbRightSub.borderBox{
     min-width:0.3em;
 }
+
+
+/*
+.onlyEdit .msbLRoundBracketBox, .onlyEdit .msbLCurlyBracketBox, .onlyEdit .msbLSquareBracketBox{
+    margin:0 1px;
+}
+
+.onlyEdit .msbRRoundBracketBox, .onlyEdit .msbRCurlyBracketBox, .onlyEdit .msbRSquareBracketBox{
+    margin:0 1px;
+}
+
+.onlyEdit .msbLRoundBracket, .onlyEdit .msbLCurlyBracket, .onlyEdit .msbLSquareBracket{
+    position: relative;
+    left:unset;
+}
+.onlyEdit .msbRRoundBracket, .onlyEdit .msbRCurlyBracket, .onlyEdit .msbRSquareBracket{
+    position: relative;
+    right:unset;
+
+}
+*/
 /** 편집화면에서만 사용되는 속성, 끝**/
+

@@ -69,6 +69,7 @@
     border:1px solid rgb(153, 153, 153);
     overflow-y: scroll;
     padding:3px;
+    line-height: 160%;
 }
 
 .contents, .solution{
@@ -97,6 +98,7 @@
 
 .latex-show{
     font-size:16px;
+    line-height: 160%;
     font-family: 'msbFormulaFont';
     border:1px solid rgb(168, 168, 168);
     background:white;
@@ -138,6 +140,7 @@
 
 .shortKeyBoard{
     font-size:12px;
+    line-height:160%;
     background:#3e6599;
     margin:auto;
     text-align: center;
@@ -146,6 +149,7 @@
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     margin-left: 5px;
+    z-index: 1;
 }
 
 
