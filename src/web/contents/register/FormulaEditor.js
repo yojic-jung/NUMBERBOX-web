@@ -10,6 +10,7 @@ import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey} fr
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
 const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
+const writeDisabledDom = ["msbTrigon","",""];
 let shortCutKeyList;
 const FormulaEditor = () => {
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
@@ -45,7 +46,30 @@ const FormulaEditor = () => {
 
 
 
-	const preventAltEvent = async (event) => {
+	const preventKeyEvent = async (event) => {
+		//백스페이스 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정
+		if(event.keyCode=="8" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
+			//드래그 한 경우
+			if(!document.getSelection().isCollapsed){
+				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('msbBox')){
+					const selection = document.getSelection();
+					const newRange = selection.getRangeAt(0);
+					newRange.deleteContents();
+				}
+			}
+		}
+
+		//del 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정
+		if(event.keyCode=="46" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
+			//드래그 한 경우
+			if(!document.getSelection().isCollapsed){
+				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('msbBox')){
+					const selection = document.getSelection();
+					const newRange = selection.getRangeAt(0);
+					newRange.deleteContents();
+				}
+			}
+		}
 		if(event.altKey) event.preventDefault();
 	}
 
@@ -112,11 +136,35 @@ const FormulaEditor = () => {
 		
 	}
 
+	/*
+	* 정의 : 에디터 모드 포커스 yellowBox 클래스 추가 함수(onKeyUp, onClick)
+	* 대상 : 문제, 해설, 객관식보기(5개), 주관식 정답
+	*/
+	const dressYellowBox = async()=>{
+		//드래그 없이 포커스만 하나 있는 경우
+		if(document.getSelection().isCollapsed){
+			let yellowBorderBox = document.getElementsByClassName("yellowBorderBox");
+			while (yellowBorderBox.length > 0) {
+				yellowBorderBox[0].classList.remove('yellowBorderBox');
+			  }
+
+			let focusParDom = document.getSelection().getRangeAt(0).endContainer.parentElement
+			if(focusParDom.classList.contains("borderBox")) focusParDom.classList.add("yellowBorderBox");
+			
+			//parentElement가 아닌 포커스 컨테이너가 borderBox인 경우
+			let focusDom = document.getSelection().getRangeAt(0).endContainer;
+			if(focusDom.classList!=undefined){
+				if(focusDom.classList.contains("borderBox")) focusDom.classList.add("yellowBorderBox");
+			}
+		}
+	}
+
+
 
 	const formulaConvert = async (event, shortCutKeyList) => {
 		let evIdName = event.target.id
 		event.stopPropagation();
-
+		dressYellowBox();
 		if(evIdName == "multi-answer"){		//객관식 정답 선택 이벤트의 경우 단축키 이벤트 없이 진행
 			let selBox = document.getElementById(evIdName);
 			let selIdx = selBox.selectedIndex;
@@ -150,9 +198,6 @@ const FormulaEditor = () => {
 	const showFormulaEditor = async function(evIdName){
 		let userInputText = document.getElementById(evIdName).innerHTML.trim();
 		let userInnerText = document.getElementById(evIdName).innerText;
-		console.log(userInputText);
-		console.log(userInnerText);
-		console.log(JSON.stringify(userInnerText));
 		userInnerText = userInnerText.replace( "/\n$/" , '');
 		if(userInnerText == '\n' )userInnerText="";
 
@@ -257,8 +302,8 @@ const FormulaEditor = () => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<MsbWebEditor parentMethod={showFormulaEditor}></MsbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" role="textbox" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}} onClick={()=>dressYellowBox()}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -268,11 +313,11 @@ const FormulaEditor = () => {
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}}></div><br/>
+						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
@@ -290,7 +335,7 @@ const FormulaEditor = () => {
 					<div>
 						<div className="mini-title2">주관식 정답(필수)</div> 
 						<div className="mini-desc marginLeftFive">객관식 문제의 경우 번호를 제외한 주관식 정답까지 입력해주세요.(복수개의 경우 쉼표로 구분)</div>
-						<div id="answerFormulaEditor" className="answerFormulaEditor onlyEdit" contentEditable="true" onKeyDown={(event) => preventAltEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)}></div>
+						<div id="answerFormulaEditor" className="answerFormulaEditor onlyEdit" contentEditable="true" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
 						<div className="mini-title2">객관식 정답(선택) </div>
