@@ -1,16 +1,15 @@
 import {React, useState, useEffect} from "react";
 import FormulaShortCutKey from './FormulaShortCutKey';
-import FormulaShortCutKeyEtc from './FormulaShortCutKeyEtc';
 import TabTable from 'web/common/TabTable'
+import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
 import {nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_imgFileDel, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
-import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey} from 'js/contents/register/contents_reg';
+import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
-const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
-const writeDisabledDom = ["nbTrigon","",""];
+const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
 let shortCutKeyList;
 const FormulaEditor = () => {
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
@@ -25,58 +24,59 @@ const FormulaEditor = () => {
 	const [fifNo, setFifNo] = useState("");
 
 	const[shortCutKey, setShortCutKey] = useState("");
-	const[shortCutKeyEtc, setShortCutKeyEtc] = useState("");
 	const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
 
-	useEffect(async () => {
-		let jsonObj = await nb_dataFetch('/takeShortCutKey', false);
-		setShortCutKey(jsonObj);
-		setShortCutKeyEtc(jsonObj);
-		setIsFetchShotCutKey(true);
-		shortCutKeyList = jsonObj["shortCutKey"]
 
-		const targetDomWidth =  document.getElementById("shortKeyBoard").offsetWidth;
-		window.addEventListener('scroll', ()=>{
-			nb_topMenuFixed("shortKeyBoard", targetDomWidth)
-		})
-		window.addEventListener('scroll', ()=>{
-			nb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
-		})
+	useEffect(() => {
+		const asyncUseEffect = async function(){
+			let jsonObj = await nb_dataFetch('/takeShortCutKey', true);
+			setShortCutKey(jsonObj);
+			setIsFetchShotCutKey(true);
+			shortCutKeyList = jsonObj["shortCutKey"]
+	
+			const targetDomWidth =  document.getElementById("shortKeyBoard").offsetWidth;
+			window.addEventListener('scroll', ()=>{
+				nb_topMenuFixed("shortKeyBoard", targetDomWidth)
+			});
+			window.addEventListener('scroll', ()=>{
+				nb_topMenuFixed("shortKeyBoardHigh", targetDomWidth)
+			});
+			window.addEventListener('scroll', ()=>{
+				nb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
+			})
+			document.getElementById("contents-show").addEventListener("contextmenu",(e)=>{
+				e.preventDefault();
+				return false;
+			});
+			document.getElementById("contents-show").addEventListener("dragstart",(e)=>{
+				e.preventDefault();
+				return false;
+			});
+			document.getElementById("contents-show").addEventListener("selectstart",(e)=>{
+				e.preventDefault();
+				return false;
+			});
+		}
+
+		asyncUseEffect();
       },[]);
 
+	const initFormElement = async function(){
+		setContentsText("");
+		setSolutionText("");
+		setAnswerText("");
+		setMultiAnswerText("");
 
+		setFirNo("");
+		setSecNo("");
+		setThrNo("");
+		setFourNo("");
+		setFifNo("");
 
-	const preventKeyEvent = async (event) => {
-		//백스페이스 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정
-		if(event.keyCode=="8" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
-			//드래그 한 경우
-			if(!document.getSelection().isCollapsed){
-				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
-					const selection = document.getSelection();
-					const newRange = selection.getRangeAt(0);
-					newRange.deleteContents();
-				}
-			}
-		}
-
-		//del 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정
-		if(event.keyCode=="46" && document.getSelection().getRangeAt(0).endContainer.children!=undefined){
-			//드래그 한 경우
-			if(!document.getSelection().isCollapsed){
-				if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
-					const selection = document.getSelection();
-					const newRange = selection.getRangeAt(0);
-					newRange.deleteContents();
-				}
-			}
-		}
-		if(event.altKey) event.preventDefault();
 	}
-
 	const getCheckedVal = async function(event){
 		setMultiAnswerText(await nb_getCheckedVal(event));
 	}
-
 
 	const contentsValidation = async function(){
 		let contentsDomLength = document.getElementById("contentsFormulaEditor").innerText.length;
@@ -126,14 +126,31 @@ const FormulaEditor = () => {
 		}
 		if(targetId=="mainFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.remove("hide");
+			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.add("hide");
 			targetDom.classList.add("selectedTab");
-		}else if(targetId=="etcFormulaTap"){
+		}else if(targetId=="highFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.add("hide");
+			document.getElementById("shortKeyBoardHigh").classList.remove("hide");
+			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			targetDom.classList.add("selectedTab");
+		}
+		else if(targetId=="etcFormulaTap"){
+			document.getElementById("shortKeyBoard").classList.add("hide");
+			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.remove("hide");
 			targetDom.classList.add("selectedTab");
 		}
-		
+
+		//첫 페이지 로드시 아무것도 클릭 안한상태(rangeCount=0)
+		if(document.getSelection().rangeCount==0) return;
+		if(document.getSelection().isCollapsed){
+			const selection = document.getSelection();
+			const newRange = selection.getRangeAt(0);
+			selection.removeAllRanges();
+			selection.addRange(newRange);
+			window.getSelection().collapseToEnd();
+		}
 	}
 
 	/*
@@ -164,7 +181,7 @@ const FormulaEditor = () => {
 	const formulaConvert = async (event, shortCutKeyList) => {
 		let evIdName = event.target.id
 		event.stopPropagation();
-		dressYellowBox();
+		await dressYellowBox();
 		if(evIdName == "multi-answer"){		//객관식 정답 선택 이벤트의 경우 단축키 이벤트 없이 진행
 			let selBox = document.getElementById(evIdName);
 			let selIdx = selBox.selectedIndex;
@@ -177,7 +194,8 @@ const FormulaEditor = () => {
 		}
 
 		const mappingKey = await reg_getMappingShortCutKey(event, shortCutKeyList);
-		if(mappingKey!= null){      //alt 단축키 사용한 경우
+		const isWriteDisableDom = await reg_writeDisableDom(event)
+		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
 			let nbGrammer = mappingKey[0]["nbGrammer"];
 
 			//현재 포커스에 단축키 수식 추가
@@ -185,10 +203,12 @@ const FormulaEditor = () => {
             const newRange = selection.getRangeAt(0);
             selection.removeAllRanges();
             selection.addRange(newRange);
+			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
             let tmpNode= document.createElement('span');
             tmpNode.innerHTML = nbGrammer;
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
+			newRange.innerHTML=nbGrammer;
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
 		}
 
@@ -196,8 +216,8 @@ const FormulaEditor = () => {
 	}
 
 	const showFormulaEditor = async function(evIdName){
+		let userInnerText = document.getElementById(evIdName).innerText.replaceAll("<","&lt;").replaceAll(">","&gt;");
 		let userInputText = document.getElementById(evIdName).innerHTML.trim();
-		let userInnerText = document.getElementById(evIdName).innerText;
 		userInnerText = userInnerText.replace( "/\n$/" , '');
 		if(userInnerText == '\n' )userInnerText="";
 
@@ -259,12 +279,12 @@ const FormulaEditor = () => {
 		</div>
 
 		<form method="post" id="contentsForm" encType="multipart/form-data">
-		<div className="twoFlexLayout">
+		<div className="twoFlexLayout" >
 			<div className="left">
-				<div className="latex-show" id="latex-show">
+				<div id="contents-show" className="contents-show">
 					<div id="ques-show">
 						<div className="mini-title4">[문제]</div>
-						<div dangerouslySetInnerHTML={{__html:contentsText}}></div> 
+						<div dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
 						<div id="quesImg-show">
 							<img src="" id="contentsImgOutput" onDoubleClick={() => nb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
 						</div>
@@ -295,15 +315,16 @@ const FormulaEditor = () => {
 				</div>
 			</div>
 			<div className="right">
-				<TabTable className="formulaTabTable" tabList={formulaTabList} clickEv={formularTabSelect}></TabTable>
-				{ isFetchShotCutKey && <FormulaShortCutKey parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
-				{ isFetchShotCutKey && <FormulaShortCutKeyEtc parentShortCutKey={shortCutKeyEtc} parentMethod={showFormulaEditor}/>}
+				<TabButton className="formulaTabButton" tabList={formulaTabList} clickEv={formularTabSelect}></TabButton>
+				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoard" keyName="shortCutKey" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
+				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardHigh" keyName="shortCutKeyHigh1" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
+				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc" keyName="shortCutKeyEtc" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}} onClick={()=>dressYellowBox()}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);}} onClick={()=>dressYellowBox()}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -313,11 +334,11 @@ const FormulaEditor = () => {
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
@@ -335,7 +356,7 @@ const FormulaEditor = () => {
 					<div>
 						<div className="mini-title2">주관식 정답(필수)</div> 
 						<div className="mini-desc marginLeftFive">객관식 문제의 경우 번호를 제외한 주관식 정답까지 입력해주세요.(복수개의 경우 쉼표로 구분)</div>
-						<div id="answerFormulaEditor" className="answerFormulaEditor onlyEdit" contentEditable="true" onKeyDown={(event) => preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
+						<div id="answerFormulaEditor" className="answerFormulaEditor onlyEdit" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
 						<div className="mini-title2">객관식 정답(선택) </div>
@@ -361,7 +382,7 @@ const FormulaEditor = () => {
 
 			</div>
 		</div>
-		<InputQustionInfo/>
+		<InputQustionInfo parentMethod={initFormElement}/>
 		</form>
 	</>
   );

@@ -111,7 +111,7 @@ const FormulaEditorLatex = () => {
 		<form method="post">
 		<div className="thrFlexLayout">
 			<div className="left">
-				<div className="latex-show" id="latex-show">
+				<div className="contents-show" id="contents-show">
 					<div id="ques-show">
 						<div>[문제]</div>
 						<MathJaxContext config={config} version={2} >

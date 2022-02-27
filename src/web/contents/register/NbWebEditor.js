@@ -70,9 +70,20 @@ const NbWebEditor = ({parentMethod})=>{
 		//드래그한 부분이 없이 오로지 포커스가 하나인 경우(밑줄 및 정렬 기능의 경우 스타일 적용 이후 드래그 유지 위해 드래그 여부 구분 필요)
 		if(document.getSelection().isCollapsed) window.getSelection().collapseToEnd();	//셀렉션객체의 마지막 부분에 포커스 맞춤
 
+		console.log(focusId);
 		//문제입력과 해설입력 창에만 적용
 		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
-			document.execCommand(style);
+			if(style=="justifyLeft" || style=="justifyCenter"  || style=="justifyRight" ){
+
+			
+				document.execCommand(style);
+				
+
+
+			}else{
+				document.execCommand(style);
+			}
+			
 		}else{
 			event.stopPropagation();
 			return;

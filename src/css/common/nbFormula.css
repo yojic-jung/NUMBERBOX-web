@@ -9,7 +9,8 @@
     font-family: 'nbFormulaFont';
     src:url('font/JejuGothic-Regular.ttf')
     format('truetype');
-    unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E
+    unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
+    
 }
 
 /* 영어 소문자 대문자 */
@@ -17,7 +18,7 @@
     font-family: 'nbFormulaFont';
     src:url('font/STIXTwoText-MediumItalic.ttf')
     format('truetype');
-    unicode-range: U+0041-005A ,U+0061-007A
+    unicode-range: U+0041-005A ,U+0061-007A;
 }
 
 /* 숫자 알파베타감마 기호 */
@@ -25,10 +26,17 @@
     font-family: 'nbFormulaFont';
     src:url("font/STIXTwoText-Medium.ttf")
     format('truetype');
-    unicode-range: U+0030-0039, U+03B1-03C9;
+    unicode-range: U+0030-0039, U+03B1-03C9, U+003C-003E;
+    letter-spacing: 2px;
 }
 
 
+@font-face {
+    font-family: 'rootFracFont';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+   /** src:url("font/GmarketSansTTFLight.ttf") 추후 변경 필요**/
+    font-weight: 100;
+}
 
 .nbFomularEditor { 
     border: 1px solid gray; 
@@ -101,6 +109,16 @@
     font-size:0.3em;
 }
 
+.nbFracExpTmp{
+    min-width: 1em;
+    line-height: 120%;
+    padding:0px;
+    position: relative;
+    bottom:3.5em;
+    right: 0.5em;
+    font-size:0.3em;
+}
+
 /** 아래첨자 표현 **/
 .nbSubBox{
     vertical-align: -0.35em;;
@@ -160,7 +178,7 @@
 
 /** 분수 표현 **/
 .nbFracBox {
-    vertical-align: -1.2em;;
+    vertical-align: middle;
     border-spacing: 0px;
     text-align: center;
     margin:0px;
@@ -168,11 +186,11 @@
 }
 
 .nbNumer{
-    padding: 0 2px 0 2px;
+    padding: 3px 2px 0 2px;
     font-size:1em;
     border-bottom:0.5px solid black;
     min-width:1em;
-    line-height: 100%;
+    line-height: 140%;
 }
 .nbDenom{
     font-size:1em;
@@ -184,30 +202,8 @@
 
 
 /** 분수에 분수 **/
-/*
 .nbFracBox .nbFracBox{
-    border-spacing: 0px;
-}
-.nbFracBox .nbFracBox .nbNumer{
-    padding:0px;
-    font-size:0.25em;
-    border-bottom:1px solid black;
-}
-.nbFracBox .nbFracBox .nbDenom{
-    padding:0px;
-    font-size:0.25em;
-}
-*/
-
-/** 분수안 지수 **/
-.nbFracBox  .nbExpTmp{
-    min-width: 1em;
-    line-height: 120%;
-    padding:0px;
-    position: relative;
-    bottom:1.7em;
-    font-size:0.3em;
-    
+    vertical-align: -1.2em;;
 }
 
 /** 삼각함수 **/
@@ -224,20 +220,22 @@
 
 /** 윗점 **/
 .nbOverDotBox{
-    vertical-align: -0.35em;;
+    vertical-align: -0.59em;
+    margin: 0px;;
     border-spacing: 0px;
+    position: relative;
 }
-.nbOverDotBase{
-    min-width: 0.5em;
-    padding:0px;
-    text-emphasis-style: dot;
-    text-emphasis-position: over left; 
-    -webkit-text-emphasis-style: dot;
-    -webkit-text-emphasis-position: over left;
+
+.nbOverDotBase::before{
+    content: '\2219';
+    text-align: center;
+    position: absolute;
+    top:-0.6em;
+    left:0.15em;
 }
 /** 악센트 표현 **/
 .nbAccentBox{
-    vertical-align: -0.35em;;
+    vertical-align: -0.625em;
     border-spacing: 0px;
     position: relative;
 }
@@ -246,6 +244,7 @@
     text-align: center;
     position: absolute;
     top:-0.2em;
+    left:0.14em;
 }
 
 /** 지수에 지수 **/
@@ -272,16 +271,16 @@
 /** 루트 **/
 
 .nbRootBox{
-    margin-left: 0.6em;
+    margin-left: 0.8em;
     position: relative;
-    vertical-align: -0.5em;;
+    vertical-align:-0.54em;;
     border-spacing: 0px;
 }
 
 .nbRootBase{
     font-size:1em;
-    padding: 0px;
-    border-top: 1px solid black;
+    padding: 0px 1px 0px 2px;
+    border-top: 2px solid black;
     min-width: 1em;
     text-align: center;
 }
@@ -289,90 +288,139 @@
 .nbRootBase::before{
     content:'\221A';
     position: absolute;
-    font-size:1.3em;
-    top:-0.3em;
-    left:-0.5em;
+    font-size:1.6em;
+    left:-0.51em;
+}
+
+/** 루트 안 분수 **/
+.nbRootFracBox{
+    margin-left: 1.4em;
+    position: relative;
+    border-spacing: 0px;
+    vertical-align: middle;
+}
+.nbRootFracBase{
+    font-size:1em;
+    padding: 0px 1px 0px 2px;
+    border-top: 2px solid black;
+    min-width: 1em;
+    text-align: center;
+}
+.nbRootFracBase::before{
+    content:'\221A';
+    position: absolute;
+    font-family:'rootFracFont';
+    font-size:2.8em;
+    font-weight: 100;
+    top:0.3em;
+    left:-0.52em;
+}
+
+.nbRootFracBox .nbNumer .nbExpTmp {
+    bottom:1.8em;
+}
+.nbRootFracBox .nbDenom .nbExpTmp {
+    bottom:1.8em;
+}
+
+
+.nbRootFracBase .nbNumer {
+    padding:0 2px;
+}
+
+.nbDenom .nbRootBox{
+    margin-top:3px;
 }
 
 /** 선분, 직선**/
 .nbOverlineBox, .nbArrowBox{
-    vertical-align: -0.39em;
+    vertical-align: -0.46em;
     position:relative;
     border-spacing: 0px;
     padding: 0px;
+    margin:0 2px;
+    line-height: 140%;
 }
 .nbOverlineBase, .nbRightArrowBase, .nbLeftArrowBase, .nbBiDirArrowBase{
-    min-width: 0.5em;
+    min-width: 0.8em;
+    text-align: center;
     padding: 0px;
     border-top:1px solid black;
 }
 
 .nbRightArrowBase::after{
-    content:'\25B8';
-    font-size: 0.7em;;
+    content:'\276F';
+    font-size: 0.5em;;
     position:absolute;
-    top:-0.55em;
-    right: -0.3em;
+    top:-1.2em;
+    right: -0.2em;
 }
 
 .nbLeftArrowBase::before{
-    content:'\25C2';
-    font-size: 0.7em;;
+    content:'\276E';
+    font-size: 0.5em;;
     position:absolute;
-    top:-0.55em;
-    left: -0.3em;
+    top:-1.2em;
+    left: -0.2em;
 }
 
 .nbBiDirArrowBase::after{
-    content:'\25B8';
-    font-size: 0.7em;;
+    content:'\276F';
+    font-size: 0.5em;;
     position:absolute;
-    top:-0.55em;
-    right: -0.3em;
+    top:-1.2em;
+    right: -0.2em;
 }
 
 .nbBiDirArrowBase::before{
-    content:'\25C2';
-    font-size: 0.7em;;
+    content:'\276E';
+    font-size: 0.5em;;
     position:absolute;
-    top:-0.55em;
-    left: -0.3em;
+    top:-1.2em;
+    left: -0.2em;
 }
 
 
 /** 큰 괄호(분수용) **/
 .nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox{
     display: inline-block;
-    vertical-align: -0.5em;
+    vertical-align: -0.65em;
+}
+.nbAbsValBox{
+    display: inline-block;
+    vertical-align: -0.4em;
 }
 .nbL-R-BrckBox, .nbL-C-BrckBox, .nbL-S-BrckBox{
-   /* margin-left:-0.3em; */
+   margin-left:-0.3em;
 }
 
 .nbR-R-BrckBox, .nbR-C-BrckBox, .nbR-S-BrckBox{
-   /* margin-right:-0.3em; */
+   margin-right:-0.3em;
 }
 
-.nbL-R-Brck, .nbR-R-Brck, .nbL-C-Brck, .nbR-C-Brck, .nbL-S-Brck, .nbR-S-Brck{
+.nbL-R-Brck, .nbR-R-Brck, .nbL-C-Brck, .nbR-C-Brck, .nbL-S-Brck, .nbR-S-Brck, .nbAbsVal{
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+.nbAbsVal{
     font-size: 30px;
     font-family: 'malgunGothic';
     font-weight: 100;
 }
 .nbL-R-Brck, .nbL-C-Brck,.nbL-S-Brck{
     position: relative;
-    /* left:0.15em;*/
+    left:0.15em;
 
 }
 .nbR-R-Brck, .nbR-C-Brck,.nbR-S-Brck{
     position: relative;
-   /* right:0.15em; */
+    right:0.15em;
 }
-.nbR-R-BrckBox .nbExpBox, .nbR-C-BrckBox .nbExpBox, .nbR-S-BrckBox .nbExpBox {
-    font-family: 'nbFormulaFont';
-    vertical-align: unset;
-    position: relative;
-    bottom:-0.1em;
-    right:0.1em;
+
+/** 단축키 Ui에서만 사용 **/
+.nbUiSmallAbsVal{
+    font-size:10px;
 }
 
 /** 편집화면에서만 사용되는 속성, 시작 **/
@@ -407,9 +455,7 @@
 .onlyEdit:focus .borderBox{
     border:1px dashed gray;
 }
-.onlyEdit:focus .nbBox{
-    margin:0 2px;
-}
+
 .onlyEdit:focus .yellowBorderBox{
     border :2px dashed rgb(255, 196, 1) !important;
 }
@@ -439,7 +485,15 @@
     min-width:0.3em;
 }
 
-
+.onlyEdit .nbFracExpTmp{
+    right:-0.3em;
+}
+.onlyEdit .nbOverDotBase {
+    min-width: 0.5em;
+}
+.onlyEdit .nbAccentBase {
+    min-width: 0.3em;
+}
 /*
 .onlyEdit .nbL-R-BrckBox, .onlyEdit .nbL-C-BrckBox, .onlyEdit .nbL-S-BrckBox{
     margin:0 1px;
@@ -460,4 +514,10 @@
 }
 */
 /** 편집화면에서만 사용되는 속성, 끝**/
-
+.contents-show p, .contentsFormulaEditor p, .solutionFormulaEditor p{
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}

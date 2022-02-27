@@ -17,7 +17,7 @@ const CustomSelBoxUp = ({value, cusSelId, originSel, title}) => {
     return (
         <div className="nbWrapSelBox">
             <div id={cusSelDiv} className="nbCustomSel nbCustom4" onClick={event=>nb_fCustomSelDivClk(event)}>
-                <span id={cusSelUlTitle} className="nbCustomSelVal" onClick={event=>nb_fCustomSelSpanClk(event)}>{title}</span>
+                <span id={cusSelUlTitle} className="nbCustomSelVal">{title}</span>
                 <ul id={cusSelId} className="nbCustomOptList nbCustomOptList2">
                     <li id={firLiId} key="00" className="nbOptItem" data-value="0" >{title}</li>
                    {subjectItem}

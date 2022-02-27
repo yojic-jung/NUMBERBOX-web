@@ -65,7 +65,6 @@
     font-size:16px;
     color: black;
     height: 30vh;
-    background: #F2F2F5;
     border:1px solid rgb(153, 153, 153);
     overflow-y: scroll;
     padding:3px;
@@ -96,7 +95,7 @@
     border-radius:3px;
 }
 
-.latex-show{
+.contents-show{
     font-size:16px;
     line-height: 160%;
     font-family: 'nbFormulaFont';
@@ -139,12 +138,14 @@
 }
 
 .shortKeyBoard{
+    width:100%;
     font-size:12px;
     line-height:160%;
     background:#3e6599;
     margin:auto;
     text-align: center;
     padding-top:5px;
+    border:none;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
@@ -184,6 +185,7 @@
     border-radius: 10px;
     color:white;
     font-family: "nbFormulaFont";
+    height:40px;
 }
 .keySpan:hover{
     background:white;
@@ -191,11 +193,75 @@
     cursor:pointer;
 }
 
+.keySpan .nbFracBox {
+    vertical-align: -0.5em;
+}
+.keySpan .nbNumer, .keySpan .nbDenom{
+    line-height: 120%;
+    font-size: 0.8em;
+}
+
+.shortCutKey .nbFracExpTmp {
+    position: relative;
+    right:-1em;
+}
+
+.shortCutKey .nbRootBase::before{
+    font-size: 1.3em;
+    top:-0.25em;
+}
+
+.shortCutKey .nbRootFracBase{
+    border-top:2px solid white;
+}
+
+
+.shortCutKey .nbRootFracBase::before{
+    top:-0.052em;
+    font-size: 2em;
+}
+
+.shortCutKey .nbOverlineBox, .shortCutKey .nbArrowBox{
+    line-height: 140%;
+    margin-left: 5px;
+}
+.shortCutKey .nbRightArrowBase::after{
+    content:'\276F';
+    font-size: 0.5em;;
+    position:absolute;
+    top:-1.1em;
+    right: -0.2em;
+}
+
+.shortCutKey .nbLeftArrowBase::before{
+    content:'\276E';
+    font-size: 0.5em;;
+    position:absolute;
+    top:-1.1em;
+    left: -0.2em;
+}
+
+.shortCutKey .nbBiDirArrowBase::after{
+    content:'\276F';
+    font-size: 0.5em;;
+    position:absolute;
+    top:-1.1em;
+    right: -0.2em;
+}
+
+.shortCutKey .nbBiDirArrowBase::before{
+    content:'\276E';
+    font-size: 0.5em;;
+    position:absolute;
+    top:-1.1em;
+    left: -0.2em;
+}
+
 .tabTable{
     font-family: 'jejuGothic';
     font-size:14px;
     border-spacing: 0px;
-    margin:3px 0 0 5px;
+    margin:10px 0 0 5px;
 }
 
 .tabTable td{
@@ -301,6 +367,23 @@
 }
 .keySpan:hover .shortCutKey .nbOverlineBase, .keySpan:hover .shortCutKey .nbRightArrowBase, .keySpan:hover .shortCutKey .nbLeftArrowBase, .keySpan:hover .shortCutKey .nbBiDirArrowBase{
     border-top:1px solid rgb(20, 71, 101);
+}
+
+.shortCutKey .nbL-R-Brck, .shortCutKey .nbR-R-Brck, .shortCutKey .nbL-C-Brck, .shortCutKey .nbR-C-Brck, 
+.shortCutKey .nbL-S-Brck, .shortCutKey .nbR-S-Brck{
+    font-size: 10px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+
+.shortCutKey .nbAbsValBox{
+    display: inline-block;
+    vertical-align: -0.65em;
+}
+.shortCutKey .nbAbsVal{
+    font-size: 17px;
+    font-family: 'malgunGothic';
+    font-weight: 100;
 }
 
 .numberBox{
@@ -510,8 +593,8 @@
   top: 28px;
   left: -3px;
   width: calc(100% + 6px);
-  background: rgb(185, 215, 248);
-  color: #fff;
+  background: rgb(240, 246, 255);
+  color: rgb(113, 139, 180);
   list-style-type: none;
   padding: 0;
   border-radius: 6px;
@@ -563,6 +646,7 @@
 }
 
 .nbCustomSel .nbOptItem:hover {
+  color:white;
   background: rgb(82, 141, 207);
 }
 
@@ -577,8 +661,7 @@
 }
 /** nbCustomSel 박스 끝. **/
 
-
-.formulaTabTable{
+.formulaTabButton{
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     border-spacing: 0px;
@@ -587,28 +670,32 @@
     margin-left: 5px;
 }
 
-.formulaTabTable td{
+.formulaTabButton button{
     font-family: 'jejuGothic';
     font-size: 12px;
     cursor: pointer;
     padding:10px 15px;
     background-color: #c4c9cf;
     color:white;
+    border:none;
     border-collapse: collapse;
     border-bottom:2px solid white;
 
 }
-.formulaTabTable td:first-child{
-    border-top-left-radius: 10px;
+.formulaTabButton button{
     border-collapse: collapse;
     border-right: 2px solid white;
 }
-.formulaTabTable td:last-child{
+.formulaTabButton button:first-child{
+    border-top-left-radius: 10px;
+}
+
+.formulaTabButton button:last-child{
     border-top-right-radius: 10px;
     border-collapse: collapse;
 }
 
-.formulaTabTable td.selectedTab{
+.formulaTabButton button.selectedTab{
     background-color: #5580aa;
 }
 
@@ -624,4 +711,105 @@
     padding:10px;
     color: white;
     background-color: rgb(255, 166, 0);
+}
+
+/** workContentsList **/
+
+
+.workList .contents-show{
+    border: unset;
+    border-top:1px solid rgb(192, 192, 192);
+    background: white;
+    width: unset;
+    height: unset;
+    text-align: left;
+    position: unset;
+    overflow-y: unset;
+    word-break: break-all;
+    padding: 10px 0;
+
+}
+
+.workContentsDiv{
+    width:80%;
+    margin:auto;
+}
+.workListTable{
+    width:100%;
+    border-spacing: 0px;
+}
+
+.workListTable thead > tr > td {
+    color:#285186;
+    background-color: #e6e9eb;
+    padding: 10px;
+    border-right:1px solid lightgray;
+    border-bottom:1px solid lightgray;
+}
+.workListTable .td1,.workListTable .td2,.workListTable .td3{
+    padding: 20px 10px 30px 10px;
+    border-spacing: 0px;
+    border-right:1px solid lightgray;
+    border-bottom:1px solid lightgray;
+    vertical-align: top;
+}
+.workContentsDiv thead > tr >:first-child, .workContentsDiv thead > tr >:nth-child(2){
+    width:40%;
+}
+.workContentsDiv thead > tr >:last-child{
+    width:20%;
+}
+
+.workMultiShow{
+    margin-top: 10px;
+}
+
+.workListUnitType{
+    width: 80%;
+    margin:auto;
+}
+
+.workListUnitType > span{
+    float: left;
+}
+
+.workList{
+    clear: left;
+}
+
+#cusSelSubDiv{
+    width: 160px;
+    font-size: 14px;
+}
+#cusSelFirUnitDiv{
+    width: 200px;
+    font-size: 14px;
+}
+.workListUnitType .nbCustomSel.nbCustom2{
+    width: 250px;
+    font-size: 14px;
+    margin:10px 10px 10px 0;
+}
+
+.workListUnitType .customBlueBox{
+    margin:10px 0;
+}
+.workListUnitType .orangeBtn{
+    margin-left: 10px;
+    font-size: 14px;
+}
+.workListUnitType .customBlueBox{
+    font-size: 14px;
+}
+
+.freshImgPage{
+    text-align: center;
+}
+
+.freshImgPage img{
+    width:30%;
+}
+.workList .mini-title2{
+    width: 80%;
+    margin: 10px auto;
 }

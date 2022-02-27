@@ -23,6 +23,69 @@ export const nb_dataFetch = async (url, transitEffect) => {
 }
 
 
+export const nb_formDataFetch = async (url, formData, transitEffect) => {
+  if(transitEffect){
+    document.getElementById("page-transit").classList.remove("hide");
+    document.getElementById("page-transit-img").classList.remove("hide");
+  } 
+
+  let returnVal = null;
+    await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
+      method: 'post',	// 방식은 post
+      headers: {
+      },
+      body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
+    })
+    .then(async (response) => response.text() )
+    .then(async (data) => {	// obj에는 서버사이드에서 전송해준 DB등록 성공여부가 담겨있다.
+      if(transitEffect){
+        document.getElementById("page-transit").classList.add("hide");
+        document.getElementById("page-transit-img").classList.add("hide");
+      }
+      returnVal = JSON.parse(data)
+    });
+    return returnVal;
+  }
+
+
+export const fadeIn = async (targetId) => {
+  let dom = document.getElementById(targetId);
+  let op = 0.1;  // initial opacity
+  let timer = setInterval(function () {
+    if (op >= 1){
+      console.log("페이드인 종료");
+      clearInterval(timer);
+    }
+    dom.style.display= "inline-block"
+    dom.style.opacity = op;
+    op += 0.1;
+    console.log(op);
+  }, 30);
+}
+
+export const fadeOut = async (targetId) => {
+  let dom = document.getElementById(targetId);
+  let op = 1;  // initial opacity
+  let timer = setInterval(function () {
+    if (op <= 0.1 ){
+      console.log("페이드아웃 종료");
+      clearInterval(timer);
+      dom.style.display = 'none';
+    }
+    dom.style.opacity = op;
+    op -=  0.1;
+    console.log(op);
+  }, 30);
+}
+
+export const nb_fadeInOut = async (message) => {
+  document.getElementById("notifyBox").innerText = message;
+			fadeIn("notifyBox")
+			setTimeout(function(){
+				fadeOut("notifyBox");
+			}, 2000);
+}
+
 /*
  * 정의 : 클래스 추가 함수
  */
@@ -113,10 +176,9 @@ export const nb_getCheckedVal = async function(event){
 /*
 * 닫기 버튼 함수
 */
-export const nb_closeBtn = async function(event){
-  document.getElementsByClassName(event.target.classList[0])[0].parentElement.classList.add("hide");
+export const nb_closeBtn = async function(targetId){
+  document.getElementById(targetId).classList.add("hide");
   document.getElementsByClassName("blindBox")[0].classList.add("hide");
-  
 }
 
 
@@ -124,10 +186,10 @@ export const nb_closeBtn = async function(event){
 * nbCustomSel 박스 option 클릭 함수
 */
 export const nb_fCustomOptClk = function(event, parentId, customTitle, originSel){
-    let targetDom = document.getElementById(event.target.id);
+    let targetDom = document.getElementById(event.currentTarget.id);
     let parentDom = document.getElementById(parentId);
     let selVal = document.getElementById(customTitle);
-    selVal.innerHTML = targetDom.innerText;
+    selVal.innerHTML = targetDom.innerHTML;
     let orginSelOpt = document.getElementById(originSel);
     if(targetDom.dataset.value != "0"){
       parentDom.classList.add('nbCustomSelected');
@@ -135,40 +197,47 @@ export const nb_fCustomOptClk = function(event, parentId, customTitle, originSel
       parentDom.classList.remove('nbCustomSelected');
     }
     parentDom.classList.remove('active');
-     
-    orginSelOpt.value = targetDom.dataset.value
+    //소단원과 유형정보에는 latex수식이 포함되어 value값으로 선택이 안됨
+    if(parentId=="cusSelThrUnitDiv"){
+      let optionList = orginSelOpt.children;
+      let selectedIdx = 0;
+      for(let i=0; i<optionList.length;i++){
+        if(optionList[i].dataset.uniqNo == targetDom.dataset.uniqNo) selectedIdx=i;
+      }
+      orginSelOpt.children[selectedIdx].selected = true;
+    }else if(parentId=="cusSelQuesTypeDiv"){
+      let optionList = orginSelOpt.children;
+      let selectedIdx = 0;
+      for(let i=0; i<optionList.length;i++){
+        if(optionList[i].dataset.parentValue == targetDom.dataset.uniqNo && optionList[i].dataset.typeNo == targetDom.dataset.typeNo) selectedIdx=i;
+      }
+      orginSelOpt.children[selectedIdx].selected = true;
+    }else{
+      orginSelOpt.value = targetDom.dataset.value
+    }
+
+    event.stopPropagation();  //이벤트 버블링 제거(제거 안하면 nb_fCustomSelDivClk 실행되어 customSel 박스가 안닫힘)
 }
 
 /*
 * nbCustomSel 박스 div 클릭 함수
 */
 export const nb_fCustomSelDivClk = async function(event){
-  let targetDom = document.getElementById(event.target.id);
+  let curTargetDom = document.getElementById(event.currentTarget.id);
   let customSelList = document.getElementsByClassName('nbCustomSel');
-  if(targetDom.classList.contains('nbCustomSelVal')) return;
   for(let i=0; i<customSelList.length; i++){
-    if(customSelList[i].id!=event.target.id) customSelList[i].classList.remove('active');
+    if(customSelList[i].id!=event.currentTarget.id) customSelList[i].classList.remove('active');
   }
-  
-  if(targetDom.classList.contains('active')) {
-    targetDom.classList.remove('active');
+  if(curTargetDom.classList.contains('active')){
+    curTargetDom.classList.remove('active');
   } else {
-    targetDom.classList.add('active');
+    curTargetDom.classList.add("active");
   }
+  //nb_fCustomSelClose(박스 닫기 함수) 실행 안되게끔 이벤트 버블링 제거
+  //nb_fCustomSelClose 실행되면 latex 수식 클릭시 customSel 박스 안열림(targetDom이 null로 잡히기 때문)
+  event.stopPropagation();
 }
 
-/*
-* nbCustomSel 박스 span태크 클릭 함수
-*/
-export const nb_fCustomSelSpanClk = async function(event){
-  let targetDom = document.getElementById(event.target.id);
-  let parentDom = document.getElementById(targetDom.parentElement.id);
-  if(parentDom.classList.contains('active')){
-    parentDom.classList.remove('active');
-  } else {
-    parentDom.classList.add("active");
-  }
-}
 
 /*
 * nbCustomSel 박스가 아닌 다른 요소를 클릭한 경우 sel 박스 닫기 이벤트

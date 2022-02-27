@@ -178,3 +178,79 @@ export const reg_getMappingShortCutKeyClk = (formulaId, keyMapList) => {
 	if(formulaId==mappingKeyArr[0]["id"]) return mappingKeyArr;
 	else return null;
 }
+
+/*
+*	정의 : 입력불가 수식요소 
+*	설명 : 입력불가 수식요소 borderBox 내 입력 불가 기능
+*			i) keyDown이벤트인 경우 :
+*			true인 경우 callback에서 event.preventDefault()로 제어
+*			false인 경우 제어 필요 없음
+*			ii) keyUp이벤트인 경우 :
+*			true, false로 입력불가 수식요소인지만 판별
+*/
+const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal"];
+export const reg_writeDisableDom = async (event) =>{
+	let focusParDom = document.getSelection().getRangeAt(0).endContainer.parentElement;
+	let isDisableBox = false;
+	for(let i=0; i<writeDisabledDom.length; i++){
+		if(focusParDom.classList.contains(writeDisabledDom[i])) isDisableBox = true;
+	}
+
+	if(isDisableBox && (event.keyCode == "8" || event.keyCode == "46" )) {
+		//입력 불가 수식요소 삭제시 부모요소 전체 선택
+		document.getSelection().getRangeAt(0).selectNode(focusParDom.closest('table'));
+		return true;
+	}
+
+	if(isDisableBox && !(event.keyCode>=37 && event.keyCode<=40)) return true;
+	else return false;
+	
+}
+
+/*
+*	정의 : 키값 입력 제어 이벤트
+*	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
+*			alt키 제어(단축키 사용용도)
+*/
+export const reg_preventKeyEvent = async (event) => {
+	//1번 validation
+	//백스페이스 및 del 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
+	if((event.keyCode == "8" || event.keyCode == "46" ) && document.getSelection().getRangeAt(0).endContainer.children != undefined){
+		//드래그 한 경우
+		if(!document.getSelection().isCollapsed){
+			if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
+				const selection = document.getSelection();
+				const newRange = selection.getRangeAt(0);
+				newRange.deleteContents();
+				event.preventDefault();
+			}
+		}
+	}
+	//[end]
+
+	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
+	//입력 불가 수식 box요소 제어[start]
+	if(await reg_writeDisableDom(event))event.preventDefault();
+	//[end]
+
+	//3번 
+	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , 부분드래그시 결함 존재, yellow 요소 전체 입혀줘야함
+	if(event.keyCode == "8" || event.keyCode == "46" ){
+		let nbBoxDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('table');
+		if(nbBoxDom!=undefined){
+			let nbBoxInnerText = nbBoxDom.innerText.replace(/\r\n|\n|\r|\s*/g, "");
+			if(nbBoxInnerText.length==0){
+				document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
+				let childTd = nbBoxDom.querySelectorAll('td');
+				for(let i=0; i<childTd.length; i++){
+					childTd[0].classList.add('yellowBorderBox');
+				}
+				event.preventDefault();
+			}
+		}
+	}
+	
+	
+	//alt 단축키 제어
+	if(event.altKey) event.preventDefault();
+}

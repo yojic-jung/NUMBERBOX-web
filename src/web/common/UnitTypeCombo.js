@@ -36,7 +36,7 @@ export const UnitTypeCombo = () => {
   
   async function fetchTypeInfo (event) {
     //customUnitSelBox의 cusSelId 파라미터 값 바뀌면 에러남
-    if(document.getElementById(event.target.id).parentElement.id!="cusSelThrUnit"){
+    if(document.getElementById(event.currentTarget.id).parentElement.id!="cusSelThrUnit"){
       setQuesTypeKey(i);
       i++;
       return;

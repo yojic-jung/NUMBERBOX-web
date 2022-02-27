@@ -1,12 +1,12 @@
 import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
-import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose} from 'js/common/common_nb.js';
+import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 
 
-const InputQustionInfo = ()=>{
+const InputQustionInfo = ({parentMethod})=>{
 
-    useEffect(async () => {
+    useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
       },[]);
 
@@ -65,43 +65,90 @@ const InputQustionInfo = ()=>{
 			alert("원본 문제번호를 적어주세요.");
 			return false;
 		}
+
+		if(originNo.value.length>4){
+			alert("원본 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.");
+			return false;
+		}
 		
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
 
+		// FormData의 값 확인
+		/*
+		for (var pair of formData.entries()) {
+			console.log(pair[0]+ ': ' + pair[1]);
+		}
+		*/
+			
+		let returnObj = await nb_formDataFetch("/registerContents",formData, true);
+		if(returnObj.error!=undefined){
+			alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+		}
+
+		if(returnObj["saveSuccess"]){
+			
+			//유형, 난이도, 원본문제 초기화
+			customQuesType.innerText="유형정보"
+			quesType.selectedIndex=0;
+			document.getElementById("cusSelQuesTypeDiv").classList.remove("nbCustomSelected");
+	
+			cusQuesLevel.innerText="문제 난이도"
+			quesLevel.selectedIndex=0;
+			document.getElementById("cusQuesSelDiv").classList.remove("nbCustomSelected");
+	
+			originNo.value="";
+			originNo.classList.remove("customBlueBoxComplete");
+			await nb_closeBtn("contentsInfo")
+
+			//문제,해설, 이미지, 객관식 정보 초기화
+			document.getElementById("contentsFormulaEditor").innerHTML = "";
+			document.getElementById("solutionFormulaEditor").innerHTML = "";
+			document.getElementById("firNoFormulaEditor").innerHTML = "";
+			document.getElementById("secNoFormulaEditor").innerHTML = "";
+			document.getElementById("thrNoFormulaEditor").innerHTML = "";
+			document.getElementById("fourNoFormulaEditor").innerHTML = "";
+			document.getElementById("fifNoFormulaEditor").innerHTML = "";
+			document.getElementById("answerFormulaEditor").innerHTML = "";
+			//textarea,input 초기화
+			await parentMethod();
+			//객관식정답 초기화
+			let choiceAnswerChkBox = document.getElementsByName("choiceAnswer")
+			for(let i=0; i< choiceAnswerChkBox.length; i++){
+				choiceAnswerChkBox[i].checked = false;
+			}
+
+			//문제,정답 이미지 초기화
+			document.getElementById("contentsImg").value= "";
+			let contentsImg = document.getElementById("contentsImgOutput");
+			contentsImg.src = "";
+			contentsImg.classList.add('hide');
+
+			document.getElementById("solutionImg").value= "";
+			let solutionImg = document.getElementById("solutionImgOutput");
+			solutionImg.src = "";
+			solutionImg.classList.add('hide');
+
+			//contents-show 객관식 번호 초기화
+			document.getElementById("firNoShow").classList.add('hide');
+			document.getElementById("secNoShow").classList.add('hide');
+			document.getElementById("thrNoShow").classList.add('hide');
+			document.getElementById("fourNoShow").classList.add('hide');
+			document.getElementById("fifNoShow").classList.add('hide');
+			await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
+		}
+
 		
-		let a = await dataTransfer(formData);
-		console.log(a);
-		//callback에서 구현
-		customQuesType.innerText="유형정보"
-		quesType.selectedIndex=0;
-		document.getElementById("cusSelQuesTypeDiv").classList.remove("nbCustomSelected");
 
-		cusQuesLevel.innerText="문제 난이도"
-		quesLevel.selectedIndex=0;
-		document.getElementById("cusQuesSelDiv").classList.remove("nbCustomSelected");
-
-		originNo.value="";
-		originNo.classList.remove("customBlueBoxComplete");
 	  }
 
-	  const dataTransfer = (formData) => {
-		fetch('/registerContents', {	// fetch를 통해 Ajax통신을 한다.
-		  method: 'post',	// 방식은 post
-		  headers: {
-		  },
-		  body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
-		})
-		  .then(res => res.json())
-		  .then(obj => {	// obj에는 서버사이드에서 전송해준 DB등록 성공여부가 담겨있다.
-		  });
-		}
   return (
     <>
+		<div id="notifyBox" className='notifyBox'></div>
 		<div className="blindBox hide"></div>
 		<div id="contentsInfo" className="contentsInfo hide">
-				<div className="closeBtn" onClick={event => nb_closeBtn(event)}>&#88;</div>
+				<div className="closeBtn" onClick={ () => nb_closeBtn("contentsInfo")}>&#88;</div>
 				<div className="mini-title3">문제 단원 및 유형 정보를 입력해주세요.</div>
 				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => nb_completeBlueBox(event, 2)}/>
 				
