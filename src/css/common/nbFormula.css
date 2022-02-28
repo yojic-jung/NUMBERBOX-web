@@ -13,21 +13,38 @@
     
 }
 
-/* 영어 소문자 대문자 */
+/* 영어 대문자 */
 @font-face {
     font-family: 'nbFormulaFont';
     src:url('font/STIXTwoText-MediumItalic.ttf')
     format('truetype');
-    unicode-range: U+0041-005A ,U+0061-007A;
+    unicode-range: U+0061-007A;
 }
 
-/* 숫자 알파베타감마 기호 */
+/* 
+*  영어 대문자 : U+0041-005A
+*  숫자        : U+0030-0039
+*  그리스문자(알파, 베타, 감마, 오메가 등등 ) : U+03B1-03C9
+*  부등호     : U+003C-003E
+*  + 기호     : U+002B
+*/
 @font-face {
     font-family: 'nbFormulaFont';
     src:url("font/STIXTwoText-Medium.ttf")
     format('truetype');
-    unicode-range: U+0030-0039, U+03B1-03C9, U+003C-003E;
+    unicode-range: U+0041-005A, U+0030-0039, U+03B1-03C9, U+003C-003E, U+002B;
     letter-spacing: 2px;
+}
+
+/*
+* -(대쉬, 마이너스) 기호 : U+002D;
+*/
+@font-face {
+    font-family: 'nbFormulaFont';
+    src: url('font/SB-UgroL.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+002D;
 }
 
 
@@ -181,7 +198,7 @@
     vertical-align: middle;
     border-spacing: 0px;
     text-align: center;
-    margin:0px;
+    margin:0px 1px;
 
 }
 
@@ -294,7 +311,7 @@
 
 /** 루트 안 분수 **/
 .nbRootFracBox{
-    margin-left: 1.4em;
+    margin:0 1px 0 1.4em;
     position: relative;
     border-spacing: 0px;
     vertical-align: middle;

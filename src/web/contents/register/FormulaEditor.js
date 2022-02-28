@@ -106,13 +106,6 @@ const FormulaEditor = () => {
 		}
 		//문제 validation [end]
 		
-		//해설 validation [start]
-		if(solutionDomLength>0 && answerDomLength == 0){
-			alert("해설을 입력한 경우 주관식 정답을 반드시 적어주세요.\n객관식 문제인 경우에도 주관식 정답을 입력해주시기 바랍니다.");
-			return false;
-		}
-		//해설 validation [end]
-
 		document.getElementsByClassName("blindBox")[0].classList.remove("hide");
 		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
 	}
@@ -296,7 +289,7 @@ const FormulaEditor = () => {
 							<div><span id="fifNoShow" className="hide">&#9316;</span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
-					
+					<hr/>
 					<div id="sol-show">
 						<div className="mini-title4">[해설]</div>
 						<div dangerouslySetInnerHTML={{__html:solutionText}}></div> 
@@ -304,7 +297,7 @@ const FormulaEditor = () => {
 							<img src="" id="solutionImgOutput" onDoubleClick={() => nb_imgFileDel("solutionImgOutput", "solutionImg")} alt="" />
 						</div>
 					</div>
-					
+					<hr/>
 					<div id="ans-show">
 						<span className="mini-title4">[정답]</span>&nbsp;
 						<div>
@@ -330,7 +323,7 @@ const FormulaEditor = () => {
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
 				
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
-					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput");nb_addClass("contentsImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput");nb_addClass("contentsImgOutput","marginTopTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
@@ -350,7 +343,7 @@ const FormulaEditor = () => {
 				</div>
 
 				<div id="ansSolOptBox" className="ansSolOptBox marginTen hide">
-					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput");nb_addClass("solutionImgOutput","marginTenAuto")}} /></div>
+					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput");nb_addClass("solutionImgOutput","marginTopTenAuto")}} /></div>
 					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
 					<div className="mini-title">정답</div>
 					<div>
