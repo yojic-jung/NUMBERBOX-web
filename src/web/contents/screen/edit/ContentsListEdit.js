@@ -175,7 +175,10 @@ const ContentsListEdit = ()=>{
             <form method="post" id="workSearchForm">
                 <div className='staff-title'>문제 변형 작업내역</div>
                 <div className='workListUnitType'>
-                <div className='mini-title5'>나의 문제 검색</div>
+                    <div className='mini-title5'>
+                        <input id="workMem" name="workMem" className='customBlueBox' type="text" placeholder='이름을 적어주세요...' onKeyDown={(event)=>{searchMyWorkListByEnter(event);}} onClick={event => nb_completeBlueBox(event, 2)} onBlur={event => nb_completeBlueBox(event, 2)}/>
+                        &nbsp; 단원정보를 선택하여 나의 문제를 확인 해보세요. 
+                    </div>
                     <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
                     <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelFirUnit" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
                     
@@ -187,7 +190,7 @@ const ContentsListEdit = ()=>{
                     
                     <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={()=>{}} title="소단원"></CustomUnitSelBox>
                     <UnitSelBox value={thrUnitSelBox} myId="thrUnit" cusChildId="cusSelQuesType" childId="quesType" isUnitBubbleEv={false}  parentMethod={()=>{}}></UnitSelBox>
-                    <input id="workMem" name="workMem" className='customBlueBox' type="text" placeholder='이름을 적어주세요...' onKeyDown={(event)=>{searchMyWorkListByEnter(event);}} onClick={event => nb_completeBlueBox(event, 2)} onBlur={event => nb_completeBlueBox(event, 2)}/>
+                    
                     <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList()}>검색</button>
                 </div>
                 <div className='workList'>

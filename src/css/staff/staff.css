@@ -33,7 +33,7 @@
     background-color: #f9fbfd;
     border:2px solid rgb(204, 221, 245);
     border-radius:10px;
-    position:fixed;
+    position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%, -50%);
@@ -285,9 +285,9 @@
     width:80%;
 }
 
-/** 문제 출력 사이즈 대략 355px(테스트 필요) **/
+/** 문제 출력 사이즈 대략 356px(테스트 필요) **/
 #ques-show, #sol-show, #ans-show{
-    width: 355px;
+    width: 356px;
     margin: auto;
     word-break: keep-all;
 }
@@ -560,17 +560,17 @@
 
 .nbCustomSel.nbCustom2{
     width: 350px;
-    margin:18px 0;
+    margin:15px 0;
 }
 
 .nbCustomSel.nbCustom3{
     width: 550px;
-    margin:18px 0;
+    margin:15px 0;
 }
 
 .nbCustomSel.nbCustom4{
     width: 150px;
-    margin:18px 0;
+    margin:15px 0;
 }
 
 .nbCustomSel:after {
@@ -755,9 +755,9 @@
     border-bottom:1px solid lightgray;
 }
 
-/** 문제 출력 사이즈 대략 355px(테스트 필요) **/
+/** 문제 출력 사이즈 대략 356px(테스트 필요) **/
 .workQuesShow, .workSolShow{
-    width: 355px;
+    width: 356px;
     margin: auto;
     word-break: keep-all;
 }
@@ -785,7 +785,7 @@
 }
 
 .workListUnitType{
-    width: 80%;
+    width: 1100px;
     margin:auto;
 }
 
@@ -833,4 +833,16 @@
     width: 1100px;
     min-width: 900px;
     margin: 10px auto;
+}
+
+.orangeBtn{
+    font-family: 'jejuGothic';
+    background-color: orange;
+    color:white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 3px solid rgb(194, 138, 34);
+    cursor: pointer;
+    position: relative;
+    top:10px;
 }
