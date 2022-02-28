@@ -797,11 +797,11 @@
     clear: left;
 }
 
-#cusSelSubDiv{
+.workListUnitType #cusSelSubDiv{
     width: 160px;
     font-size: 14px;
 }
-#cusSelFirUnitDiv{
+.workListUnitType #cusSelFirUnitDiv{
     width: 200px;
     font-size: 14px;
 }
