@@ -34,16 +34,11 @@ const FormulaEditor = () => {
 			setIsFetchShotCutKey(true);
 			shortCutKeyList = jsonObj["shortCutKey"]
 	
-			const targetDomWidth =  document.getElementById("shortKeyBoard").offsetWidth;
+			const targetDomWidth =  document.getElementById("topShortkeyDiv").offsetWidth;
 			window.addEventListener('scroll', ()=>{
-				nb_topMenuFixed("shortKeyBoard", targetDomWidth)
+				nb_topMenuFixed("topShortkeyDiv", targetDomWidth)
 			});
-			window.addEventListener('scroll', ()=>{
-				nb_topMenuFixed("shortKeyBoardHigh", targetDomWidth)
-			});
-			window.addEventListener('scroll', ()=>{
-				nb_topMenuFixed("shortKeyBoardEtc", targetDomWidth)
-			})
+			
 			document.getElementById("contents-show").addEventListener("contextmenu",(e)=>{
 				e.preventDefault();
 				return false;
@@ -86,9 +81,6 @@ const FormulaEditor = () => {
 		let fourNoDomLength = document.getElementById("fourNoFormulaEditor").innerText.length;
 		let fifNoDomLength = document.getElementById("fifNoFormulaEditor").innerText.length;
 		
-		let solutionDomLength = document.getElementById("solutionFormulaEditor").innerText.length;
-		let answerDomLength = document.getElementById("answerFormulaEditor").innerText.length;
-
 		//문제 validation [start]
 		if(contentsDomLength<10){
 			alert("문제를 최소 10글자 이상 입력해주시기 바랍니다.");
@@ -308,10 +300,12 @@ const FormulaEditor = () => {
 				</div>
 			</div>
 			<div className="right">
+				<div id="topShortkeyDiv">
 				<TabButton className="formulaTabButton" tabList={formulaTabList} clickEv={formularTabSelect}></TabButton>
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoard" keyName="shortCutKey" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardHigh" keyName="shortCutKeyHigh1" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc" keyName="shortCutKeyEtc" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
+				</div>
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>

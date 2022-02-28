@@ -513,16 +513,17 @@
     font-size: 14px;
 }
 .editInnerTable{
-    width:70%;
+    width:90%;
     border-spacing: 0px;
     border-collapse: collapse;
     table-layout: fixed;
     margin:10px auto;
+    border:0.5px solid black;
 }
 .editInnerTable tr{
     border-collapse: collapse;
 }
-.editInnerTable td{
+.editInnerTable .innerTbTd{
     text-align: center;
     border-collapse: collapse;
     padding:5px;
@@ -530,12 +531,19 @@
     border:0.5px solid black;
 
 }
+.editInnerTable .innerTbTd.noneBorderTd{
+    border:unset;
+}
 
-.onlyEdit .editInnerTable td{
+.onlyEdit .editInnerTable .innerTbTd.noneBorderTd{
+    border:0.5px dashed rgb(177, 177, 177);
+}
+
+.onlyEdit .editInnerTable .innerTbTd{
     border:0.5px solid rgb(177, 177, 177);
 
 }
-.onlyEdit .editInnerTable td::selection{
+.onlyEdit .editInnerTable .innerTbTd::selection{
     background:gray;
 }
 /** 에디터 끝 **/

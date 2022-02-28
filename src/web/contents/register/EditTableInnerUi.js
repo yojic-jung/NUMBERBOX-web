@@ -43,7 +43,7 @@ const EditTableInnerUi = ({parentMethod})=>{
     const addEditTable = (event)=>{
         event.preventDefault();
 
-
+        let isNoneTdBorder = window.confirm("테이블 내 윤곽선을 표시하시겠습니까?");
 
         //table 노드 생성
         let rowIdx = Number(event.target.dataset.row)+1
@@ -54,6 +54,8 @@ const EditTableInnerUi = ({parentMethod})=>{
             let rowNode= document.createElement('tr');
             for(let j=0; j<cellIdx;j++){
                 let colNode= document.createElement('td');
+                colNode.className = "innerTbTd";
+                if(!isNoneTdBorder) colNode.className ="innerTbTd noneBorderTd"
                 let brNode = document.createElement('br');
                 colNode.appendChild(brNode);
                 rowNode.appendChild(colNode);

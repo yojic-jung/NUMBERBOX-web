@@ -180,7 +180,7 @@
 .fixedTopMenu{
     position: fixed;
     top:0px;
-    text-align: center;
+    z-index: 1;
 }
 
 .mjx-chtml{
