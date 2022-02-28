@@ -535,6 +535,9 @@
     border:unset;
 }
 
+.onlyEdit .editInnerTable{
+    border:0.5px solid rgb(177, 177, 177);
+}
 .onlyEdit .editInnerTable .innerTbTd.noneBorderTd{
     border:0.5px dashed rgb(177, 177, 177);
 }
