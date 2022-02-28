@@ -533,6 +533,7 @@
 }
 .editInnerTable .innerTbTd.noneBorderTd{
     border:unset;
+    text-align: left;
 }
 
 .onlyEdit .editInnerTable{
