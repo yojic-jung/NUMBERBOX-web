@@ -60,6 +60,23 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+            
+            // borderBox 수식 요소인 경우 borderBox안의 caret에 포커스 주기
+            /*
+            if(document.getElementsByClassName("caret").length !== 0){
+                let range = document.createRange();
+                range.setStart(document.getElementsByClassName("caret")[0], 0);
+                range.setEnd(document.getElementsByClassName("caret")[0], 0);
+                const selection1 = document.getSelection();
+                selection1.removeAllRanges();
+                selection1.addRange(range);
+    
+                let caretList = document.getElementsByClassName("caret");
+                while(caretList.length>0){
+                    caretList[0].classList.remove('caret');
+                }
+            }
+            */
 		}
         parentMethod(focusId);
     }

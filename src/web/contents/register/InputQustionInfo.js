@@ -2,7 +2,7 @@ import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
-
+import {reg_quesAnsTabClkEv} from 'js/contents/register/contents_reg';
 
 const InputQustionInfo = ({parentMethod})=>{
 
@@ -136,6 +136,13 @@ const InputQustionInfo = ({parentMethod})=>{
 			document.getElementById("thrNoShow").classList.add('hide');
 			document.getElementById("fourNoShow").classList.add('hide');
 			document.getElementById("fifNoShow").classList.add('hide');
+
+			//문제입력 탭 클릭상태
+			let trigEv = new Object();
+			let sub    = new Object();
+			trigEv.target= sub;
+			trigEv.target.id= "quesTab";
+			await reg_quesAnsTabClkEv(trigEv);
 			await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
 		}
 
