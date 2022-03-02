@@ -494,6 +494,7 @@
     background: white;
     border:1px solid rgb(216, 216, 216);
     padding:3px 2px;
+    z-index: 1;
 }
 
 .editTableUi button{
@@ -513,12 +514,12 @@
     font-size: 14px;
 }
 .editInnerTable{
-    width:90%;
+    width:320px;
     border-spacing: 0px;
     border-collapse: collapse;
     table-layout: fixed;
     margin:10px auto;
-    border:0.5px solid black;
+    border:0.5px solid gray;
 }
 .editInnerTable tr{
     border-collapse: collapse;
@@ -528,13 +529,28 @@
     border-collapse: collapse;
     padding:5px;
     height: 16px;
-    border:0.5px solid black;
+    border:0.5px solid gray;
 
 }
 .editInnerTable .innerTbTd.noneBorderTd{
     border:unset;
     text-align: left;
+  
 }
+
+.tbBorderDesc{
+    display: inline-block;
+    font-family: 'jejuGothic';
+    color: dimgray;
+    font-size:10px;
+    padding-bottom: 3px;
+}
+.tbBorderDesc input{
+    margin: 0;
+    margin: 3px 3px 0 3px;
+    vertical-align: bottom;
+}
+
 
 .onlyEdit .editInnerTable{
     border:0.5px solid rgb(177, 177, 177);
@@ -544,9 +560,26 @@
 }
 
 .onlyEdit .editInnerTable .innerTbTd{
+    position: relative;
     border:0.5px solid rgb(177, 177, 177);
 
 }
+.onlyEdit .editInnerTable .innerTbTd::after{
+    content:"";
+    position:absolute;
+    color:none;
+    top:0;
+    right: 2px;
+    width: 2px;;
+    height: 100%;
+}
+.onlyEdit .editInnerTable .innerTbTd:hover::after{
+    cursor:col-resize;
+}
+.onlyEdit .editInnerTable .innerTbTd:last-child:hover::after{
+    cursor:unset;
+}
+
 .onlyEdit .editInnerTable .innerTbTd::selection{
     background:gray;
 }

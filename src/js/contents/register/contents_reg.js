@@ -254,3 +254,127 @@ export const reg_preventKeyEvent = async (event) => {
 	//alt 단축키 제어
 	if(event.altKey) event.preventDefault();
 }
+
+
+//테이블 td 너비 변경 위한 변수 
+let mousedown = false; 
+let td = ""; 
+let td_width; 
+let x = 0; 
+
+const TCstartColResize = (obj) => {
+	mousedown = true;
+	td = obj;
+	td_width = td.style.width;
+	x = window.event.clientX;
+}
+
+const TCColResize = async () => {
+	if(!document.getSelection().isCollapsed){
+		return;
+	} 
+	if (mousedown){
+		let distX = window.event.x - x; 
+		let width = parseInt(td_width) + parseInt(distX);
+		if(width>=10 ){
+			let tdLen = td.parentElement.childNodes.length;
+			let tagetNextIdx = -1;
+			let elseWidth = 0;		//타겟 td와 그 옆 요소를 제외한 totalWidth;
+			for(let i=0; i<tdLen; i++){
+				if(td.parentElement.childNodes[i]===td) {
+					//타겟 td가 마지막 요소일 경우 너비변경 로직 종료
+					if(i===(tdLen-1)) return;
+
+					tagetNextIdx= i+1;
+				}else if(tagetNextIdx===i){
+				}else{
+					elseWidth += parseInt(td.parentElement.childNodes[i].style.width);
+				}
+			}
+
+			let nextDom = td.parentElement.childNodes[tagetNextIdx]
+			let nextDomWidth = 260-elseWidth-width;
+			if(nextDomWidth <= 10) return;
+			td.style.width =width+"px";
+			
+			nextDom.style.width = 260-elseWidth-width+"px";
+		}
+	}
+}
+
+
+const TCstopColResize = async () => {
+	mousedown = false;
+	td = '';
+}
+
+
+/*
+*   테이블 컬럼의 오른쪽 윤곽선을 클릭한 경우
+*/
+const cell_right = async (obj) => {
+	console.log(window.event.offsetX);
+	console.log(obj.style.width);
+	//+5 한 이유는 td에 padding 값 있으므로(하드코딩)
+	if(window.event.offsetX > parseInt(obj.style.width)+5) return true;
+	else return false;
+}
+
+/*
+*	정의 : 테이블 너비 변경 mouseDown 이벤트
+*/
+export const reg_mDownTdWidthChange = async () => {
+    try{
+        let now_mousedown = window.event.target;
+        if(now_mousedown.className.toUpperCase().indexOf("INNERTBTD")>-1){
+			console.log(parseInt(now_mousedown.style.width))
+			if(await cell_right(now_mousedown)){
+				await TCstartColResize(now_mousedown);
+			}
+			
+			
+
+        }
+    }catch(event){ return true; }
+}
+
+
+/*
+*	정의 : 테이블 너비 변경 mouseMove 이벤트
+*/
+export const reg_mMoveTdWidthChange = async () => {
+	try{
+		if(!mousedown) return;
+        let now_mousemove = window.event.target;
+        if(now_mousemove.className.toUpperCase().indexOf("INNERTBTD")>-1 || td !== ""){
+            if(await cell_right(now_mousemove) ){
+				await TCColResize();
+			}
+           
+        }else{
+    }
+    }catch(event){ return true; }
+
+}
+
+/*
+*	정의 : 테이블 너비 변경 mouseUp 이벤트
+*/
+export const reg_mUpTdWidthChange = async () => {
+    try{
+        let now_mouseup = window.event.target;
+        await TCstopColResize(now_mouseup);
+    //}
+    }catch(event){ return true; }
+}
+
+/*
+*	정의 : 테이블 너비 변경 onSelect 이벤트
+*/
+export const reg_selStartTdWidthChange = async () => {
+    try{
+        if(td !== ""){
+            return false;
+        }
+    }catch(event){ return true; }
+}

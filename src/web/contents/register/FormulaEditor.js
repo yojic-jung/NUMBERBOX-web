@@ -5,7 +5,8 @@ import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
 import {nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_imgFileDel, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
-import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom} from 'js/contents/register/contents_reg';
+import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom
+		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -50,6 +51,20 @@ const FormulaEditor = () => {
 			document.getElementById("contents-show").addEventListener("selectstart",(e)=>{
 				e.preventDefault();
 				return false;
+			});
+
+			//테이블 너비 변경 이벤트
+			window.addEventListener('mousedown', async () =>{
+				await reg_mDownTdWidthChange();
+			});
+			window.addEventListener('mousemove', async () =>{
+				await reg_mMoveTdWidthChange();
+			});
+			window.addEventListener('mouseup', async () =>{
+				await reg_mUpTdWidthChange();
+			});
+			window.addEventListener('selectstart', async () =>{
+				await reg_selStartTdWidthChange();
 			});
 		}
 
@@ -274,11 +289,11 @@ const FormulaEditor = () => {
 							<img src="" id="contentsImgOutput" onDoubleClick={() => nb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
 						</div>
 						<div id="multi-show">
-							<div><span id="firNoShow" className="hide">&#9312;</span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
-							<div><span id="secNoShow" className="hide">&#9313;</span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
-							<div><span id="thrNoShow" className="hide">&#9314;</span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
-							<div><span id="fourNoShow" className="hide">&#9315;</span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
-							<div><span id="fifNoShow" className="hide">&#9316;</span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
+							<div><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
+							<div><span id="secNoShow" className="hide">&#9313; </span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
+							<div><span id="thrNoShow" className="hide">&#9314; </span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
+							<div><span id="fourNoShow" className="hide">&#9315; </span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
+							<div><span id="fifNoShow" className="hide">&#9316; </span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
 					<hr/>

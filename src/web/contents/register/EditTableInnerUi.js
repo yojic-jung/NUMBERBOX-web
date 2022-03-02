@@ -16,13 +16,16 @@ const EditTableInnerUi = ({parentMethod})=>{
 		}
 
         document.body.addEventListener('click',function(event){
+            let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
+            if(idBorderDesc) return;
+
             let tagetDom = event.target.closest('button');
             if(tagetDom==null) {
                 document.getElementById("editTableUi").classList.add("hide");
                 return;
             }
             let targetId = tagetDom.id;
-            if(targetId != "editTableBtn" || targetId !="editTableBtn"){
+            if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
                 document.getElementById("editTableUi").classList.add("hide");
             } 
         });
@@ -43,7 +46,8 @@ const EditTableInnerUi = ({parentMethod})=>{
     const addEditTable = (event)=>{
         event.preventDefault();
 
-        let isNoneTdBorder = window.confirm("테이블 내 윤곽선을 표시하시겠습니까?");
+        console.log(document.getElementById("tbBorderCheck").checked);
+        let isNoneTdBorder = document.getElementById("tbBorderCheck").checked;
 
         //table 노드 생성
         let rowIdx = Number(event.target.dataset.row)+1
@@ -55,6 +59,8 @@ const EditTableInnerUi = ({parentMethod})=>{
             for(let j=0; j<cellIdx;j++){
                 let colNode= document.createElement('td');
                 colNode.className = "innerTbTd";
+                colNode.id = "innerTbTd"+i+j;
+                colNode.style.width= 260/cellIdx+"px";
                 if(!isNoneTdBorder) colNode.className ="innerTbTd noneBorderTd"
                 let brNode = document.createElement('br');
                 colNode.appendChild(brNode);
@@ -112,13 +118,21 @@ const EditTableInnerUi = ({parentMethod})=>{
 
 
   return (              <>
-                            <div>
+                            <div>   
+                                    <div>
+                                        <label id="tbBorderDesc" className='tbBorderDesc'>
+                                        <input id="tbBorderCheck" type="checkbox" defaultChecked/>
+                                        테이블 내 윤곽선 표시
+                                        </label>
+                                        </div>
 									<div className='editTbDivRow'>
                                         <button className="selectedTd" data-row="0" data-col="0"></button>
                                         <button data-row="0" data-col="1"></button>
                                         <button data-row="0" data-col="2"></button>
                                         <button data-row="0" data-col="3"></button>
                                         <button data-row="0" data-col="4"></button>
+                                        <button data-row="0" data-col="5"></button>
+                                        <button data-row="0" data-col="6"></button>
                                     </div>
 									<div className='editTbDivRow'>
                                         <button data-row="1" data-col="0"></button>
@@ -126,6 +140,8 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="1" data-col="2"></button>
                                         <button data-row="1" data-col="3"></button>
                                         <button data-row="1" data-col="4"></button>
+                                        <button data-row="1" data-col="5"></button>
+                                        <button data-row="1" data-col="6"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="2" data-col="0"></button>
@@ -133,6 +149,8 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="2" data-col="2"></button>
                                         <button data-row="2" data-col="3"></button>
                                         <button data-row="2" data-col="4"></button>
+                                        <button data-row="2" data-col="5"></button>
+                                        <button data-row="2" data-col="6"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="3" data-col="0"></button>
@@ -140,6 +158,8 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="3" data-col="2"></button>
                                         <button data-row="3" data-col="3"></button>
                                         <button data-row="3" data-col="4"></button>
+                                        <button data-row="3" data-col="5"></button>
+                                        <button data-row="3" data-col="6"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="4" data-col="0"></button>
@@ -147,6 +167,26 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="4" data-col="2"></button>
                                         <button data-row="4" data-col="3"></button>
                                         <button data-row="4" data-col="4"></button>
+                                        <button data-row="4" data-col="5"></button>
+                                        <button data-row="4" data-col="6"></button>
+                                    </div>
+                                    <div className='editTbDivRow'>
+                                        <button data-row="5" data-col="0"></button>
+                                        <button data-row="5" data-col="1"></button>
+                                        <button data-row="5" data-col="2"></button>
+                                        <button data-row="5" data-col="3"></button>
+                                        <button data-row="5" data-col="4"></button>
+                                        <button data-row="5" data-col="5"></button>
+                                        <button data-row="5" data-col="6"></button>
+                                    </div>
+                                    <div className='editTbDivRow'>
+                                        <button data-row="6" data-col="0"></button>
+                                        <button data-row="6" data-col="1"></button>
+                                        <button data-row="6" data-col="2"></button>
+                                        <button data-row="6" data-col="3"></button>
+                                        <button data-row="6" data-col="4"></button>
+                                        <button data-row="6" data-col="5"></button>
+                                        <button data-row="6" data-col="6"></button>
                                     </div>
 							</div>
                             <div id="nByNtag" className="nByNtag">1&#9747;1</div>

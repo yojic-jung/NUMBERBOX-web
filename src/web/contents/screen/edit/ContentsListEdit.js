@@ -139,7 +139,7 @@ const ContentsListEdit = ()=>{
                                                     <div id="quesImg-show" className={" "+isConImgHide}>
                                                         <img src={contentsMap.imgPath+contentsMap.contentsImg} id="contentsImgOutput" alt="" />
                                                     </div>
-                                                    <div id="workMultiShow" className={"workMultiShow "+isMultiHide}>
+                                                    <div id="workMultiShow" className={"workMultiShow "+isMultiHide+" threeDivGrid"}>
                                                         <div><span id="workFirNoShow">&#9312; </span><span dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
                                                         <div><span id="workSecNoShow">&#9313; </span><span dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
                                                         <div><span id="workThrNoShow">&#9314; </span><span dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>

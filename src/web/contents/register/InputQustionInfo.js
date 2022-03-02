@@ -145,9 +145,6 @@ const InputQustionInfo = ({parentMethod})=>{
 			await reg_quesAnsTabClkEv(trigEv);
 			await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
 		}
-
-		
-
 	  }
 
   return (
