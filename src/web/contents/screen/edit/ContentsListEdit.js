@@ -122,6 +122,17 @@ const ContentsListEdit = ()=>{
                 else if(contentsMap.quesLevel=="4")quesLevel="중상";
                 else if(contentsMap.quesLevel=="5")quesLevel="상";
 
+                let firNoLen = contentsMap.firNo.length;
+                let secNoLen = contentsMap.firNo.length;
+                let thrNoLen = contentsMap.firNo.length;
+                let fourNoLen = contentsMap.firNo.length;
+                let fifNoLen = contentsMap.firNo.length;
+            
+                let threeDivGrid = "";
+                if(firNoLen < 4 && secNoLen < 4 && thrNoLen < 4 && fourNoLen < 4 && fifNoLen < 4){
+                    threeDivGrid = " threeDivGrid";
+                }
+
                 return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                 <table className='workListTable'>
                                     <thead>
@@ -139,7 +150,7 @@ const ContentsListEdit = ()=>{
                                                     <div id="quesImg-show" className={" "+isConImgHide}>
                                                         <img src={contentsMap.imgPath+contentsMap.contentsImg} id="contentsImgOutput" alt="" />
                                                     </div>
-                                                    <div id="workMultiShow" className={"workMultiShow "+isMultiHide+" threeDivGrid"}>
+                                                    <div id="workMultiShow" className={"workMultiShow "+isMultiHide+threeDivGrid}>
                                                         <div><span id="workFirNoShow">&#9312; </span><span dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
                                                         <div><span id="workSecNoShow">&#9313; </span><span dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
                                                         <div><span id="workThrNoShow">&#9314; </span><span dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
