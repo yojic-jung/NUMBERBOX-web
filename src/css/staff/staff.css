@@ -787,7 +787,7 @@
     margin:auto;
 }
 .workListTable{
-
+    line-height: 160%;
     width:100%;
     border-spacing: 0px;
 }
