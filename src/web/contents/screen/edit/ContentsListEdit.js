@@ -31,7 +31,6 @@ const ContentsListEdit = ()=>{
         document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
         }, []);
         const searchMyWorkListByEnter = async function(event){
-            console.log(event.keyCode);
             if(event.keyCode === 13){
                 event.preventDefault();
                 await searchMyWorkList();
@@ -84,7 +83,6 @@ const ContentsListEdit = ()=>{
             }
 
             if(returnObj["isSearched"]){
-                console.log(returnObj["mathContents"].length);
                 if(returnObj["mathContents"].length===0){
                     setContentsLen(0);
                     setContentsList(returnObj["mathContents"]);

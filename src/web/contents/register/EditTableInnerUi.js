@@ -46,7 +46,6 @@ const EditTableInnerUi = ({parentMethod})=>{
     const addEditTable = (event)=>{
         event.preventDefault();
 
-        console.log(document.getElementById("tbBorderCheck").checked);
         let isNoneTdBorder = document.getElementById("tbBorderCheck").checked;
 
         //table 노드 생성
@@ -76,6 +75,12 @@ const EditTableInnerUi = ({parentMethod})=>{
         //포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
         if(document.getSelection().focusNode==null){
             document.getElementById(targetDomId).appendChild(tmpNode);
+            let range = document.createRange();
+            range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
+            range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
+            const selection1 = document.getSelection();
+            selection1.removeAllRanges();
+            selection1.addRange(range);
             //show화면에 적용
             parentMethod(targetDomId);
             document.getElementById("editTableUi").classList.add("hide");
@@ -83,18 +88,33 @@ const EditTableInnerUi = ({parentMethod})=>{
             return;
         }
 
-        //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], 사용할지 안할지 판단 필요
+        //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], (걸쳐있는 수식 요소 모두 제거 후 추가할지 결정 후 개발 필요)
         let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('table');
         let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('table')
         if(startDom!=null && startDom.classList.contains('nbBox')){
+            document.getElementById("editTableUi").classList.add("hide");
             event.stopPropagation();
             return;
         }
         if(endDom!=null && endDom.classList.contains('nbBox')){
+            document.getElementById("editTableUi").classList.add("hide");
             event.stopPropagation();
             return;
         }
         //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [end]
+
+        //테이블 안에 테이블 생성 금지[start]
+        let targetCell= document.getSelection().getRangeAt(0).endContainer; 
+		if(targetCell.tagName !== undefined){ //수식 요소인 경우
+			targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
+		}else{
+			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
+		}
+        if(targetCell!==null){
+            document.getElementById("editTableUi").classList.add("hide");
+            return;
+        } 
+        //테이블 안에 테이블 생성 금지[end]
 
         const selection = document.getSelection();
         const newRange = selection.getRangeAt(0);
@@ -107,8 +127,15 @@ const EditTableInnerUi = ({parentMethod})=>{
         }else{ //포커스 있으면 그대로 진행
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
-            window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
         }
+
+        let range = document.createRange();
+		range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
+		range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
+		const selection1 = document.getSelection();
+		selection1.removeAllRanges();
+		selection1.addRange(range);
+
         document.getElementById("editTableUi").classList.add("hide");
         event.stopPropagation();
 

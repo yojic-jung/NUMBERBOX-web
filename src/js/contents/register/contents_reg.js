@@ -249,12 +249,168 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 	}
-	
+
+	//4번, validation 순서 바뀌어도 되는 독립적인 로직
+	//테이블의 셀에 포커스가 있을때 탭 누르면 다음 셀로 이동
+	if(event.keyCode===9){
+		let parentTable = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.editInnerTable');
+		let targetCell= document.getSelection().getRangeAt(0).endContainer;
+		//수식 요소인 경우
+		if(targetCell.tagName !== undefined){
+			targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
+		}else{
+			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
+		}
+
+		if(parentTable===null) return;
+		
+		let trDom ;
+		if(parentTable.childNodes[0].tagName==="TBODY"){
+			trDom =parentTable.childNodes[0].childNodes;
+		}else{
+			trDom = parentTable.childNodes;
+		}
+		let rowLength = trDom.length;
+		let colLength = trDom[0].childNodes.length;
+		let targetRowIdx = -1;
+		let targetColIdx = -1;
+
+		//포커스를 가진 셀의 행,열 인덱스 구하기
+		for(let rowIdx = 0; rowIdx<rowLength; rowIdx++){
+			for(let colIdx = 0; colIdx<colLength; colIdx++){
+				if(trDom[rowIdx].childNodes[colIdx] === targetCell){
+					targetRowIdx = rowIdx;
+					targetColIdx = colIdx;
+					continue;
+				}
+			}
+		}
+
+		let focusCellDom;
+		//마지막 열인 경우
+		if(targetColIdx === colLength-1){
+			//마지막 행, 열인 경우
+			if(targetRowIdx === rowLength-1){
+				event.preventDefault();
+				return;
+			} 
+			focusCellDom = trDom[targetRowIdx+1].childNodes[0];
+		}else{
+			focusCellDom = trDom[targetRowIdx].childNodes[targetColIdx+1];
+		}
+
+		let range = document.createRange();
+		range.setStart(focusCellDom, 0);
+		range.setEnd(focusCellDom, 0);
+		const selection1 = document.getSelection();
+		selection1.removeAllRanges();
+		selection1.addRange(range);
+		event.preventDefault();
+	}
+
+	//아래로 40, 위로 38
+	//5번, validation 순서 바뀌어도 되는 독립적인 로직
+	//테이블의 셀에 포커스가 있을때 위 아래로 셀 이동 가능
+	if(event.keyCode===40 || event.keyCode===38){
+
+		let parentTable;
+		//수식 요소인 경우 셀 이동만 비활성(수식 요소 내에서 위아래 이동은 가능 해야함)	
+		//수식요소 안에 값 없는 경우
+		if(document.getSelection().getRangeAt(0).endContainer.tagName !== undefined){
+			if(document.getSelection().getRangeAt(0).endContainer.closest('.borderBox')!==null){
+				console.log("빠짐");
+				return;
+			}else{
+				parentTable = document.getSelection().getRangeAt(0).endContainer.closest('.editInnerTable');
+			}
+		}
+
+		if(document.getSelection().getRangeAt(0).endContainer.parentElement.tagName !== undefined){
+			if(document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.borderBox')!==null){
+				console.log("빠짐2");
+				return;
+			}else{
+				parentTable = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.editInnerTable');
+			}
+		}
+		
+		if(parentTable===null){
+			console.log("빠짐3");
+			return;
+		} 
+
+		let trDom ;
+		if(parentTable.childNodes[0].tagName==="TBODY"){
+			trDom =parentTable.childNodes[0].childNodes;
+		}else{
+			trDom = parentTable.childNodes;
+		}
+		let rowLength = trDom.length;
+		let colLength = trDom[0].childNodes.length;
+		let targetRowIdx = -1;
+		let targetColIdx = -1;
+
+		let targetCell= document.getSelection().getRangeAt(0).endContainer;
+		//수식 요소인 경우
+		if(targetCell.tagName !== undefined){
+			targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
+		}else{
+			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
+		}
+		console.log(targetCell);
+		console.log("행 갯수 : "+rowLength);
+		console.log("열 갯수 : "+colLength);
+
+		//포커스를 가진 셀의 행,열 인덱스 구하기
+		for(let rowIdx = 0; rowIdx<rowLength; rowIdx++){
+			for(let colIdx = 0; colIdx<colLength; colIdx++){
+				if(trDom[rowIdx].childNodes[colIdx] === targetCell){
+					targetRowIdx = rowIdx;
+					targetColIdx = colIdx;
+					continue;
+				}
+			}
+		}
+		console.log("로우 Idx:"+targetRowIdx);
+		console.log("콜 Idx:"+targetColIdx);
+		let focusCellDom;
+		//위로 화살표 누른 경우
+		if(event.keyCode===38){
+			//첫번째 행인 경우 
+			if(targetRowIdx===0){
+				event.preventDefault();
+				return;
+			} 
+			else{
+				focusCellDom = trDom[targetRowIdx-1].childNodes[targetColIdx];
+			}
+		}
+
+		//아래로 화살표 누른 경우
+		if(event.keyCode===40){
+			//첫번째 행인 경우 
+			if(targetRowIdx===rowLength-1){
+				event.preventDefault();
+				return;
+			} 
+			else{
+				focusCellDom = trDom[targetRowIdx+1].childNodes[targetColIdx];
+			}
+		}
+		
+
+		let range = document.createRange();
+		range.setStart(focusCellDom, 0);
+		range.setEnd(focusCellDom, 0);
+		const selection1 = document.getSelection();
+		selection1.removeAllRanges();
+		selection1.addRange(range);
+		event.preventDefault();
+	}
 	
 	//alt 단축키 제어
 	if(event.altKey) event.preventDefault();
 }
-
 
 //테이블 td 너비 변경 위한 변수 
 let mousedown = false; 
@@ -313,8 +469,6 @@ const TCstopColResize = async () => {
 *   테이블 컬럼의 오른쪽 윤곽선을 클릭한 경우
 */
 const cell_right = async (obj) => {
-	console.log(window.event.offsetX);
-	console.log(obj.style.width);
 	//+5 한 이유는 td에 padding 값 있으므로(하드코딩)
 	if(window.event.offsetX > parseInt(obj.style.width)+5) return true;
 	else return false;
@@ -327,7 +481,6 @@ export const reg_mDownTdWidthChange = async () => {
     try{
         let now_mousedown = window.event.target;
         if(now_mousedown.className.toUpperCase().indexOf("INNERTBTD")>-1){
-			console.log(parseInt(now_mousedown.style.width))
 			if(await cell_right(now_mousedown)){
 				await TCstartColResize(now_mousedown);
 			}

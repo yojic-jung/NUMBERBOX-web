@@ -53,13 +53,11 @@ export const fadeIn = async (targetId) => {
   let op = 0.1;  // initial opacity
   let timer = setInterval(function () {
     if (op >= 1){
-      console.log("페이드인 종료");
       clearInterval(timer);
     }
     dom.style.display= "inline-block"
     dom.style.opacity = op;
     op += 0.1;
-    console.log(op);
   }, 30);
 }
 
@@ -68,13 +66,11 @@ export const fadeOut = async (targetId) => {
   let op = 1;  // initial opacity
   let timer = setInterval(function () {
     if (op <= 0.1 ){
-      console.log("페이드아웃 종료");
       clearInterval(timer);
       dom.style.display = 'none';
     }
     dom.style.opacity = op;
     op -=  0.1;
-    console.log(op);
   }, 30);
 }
 
