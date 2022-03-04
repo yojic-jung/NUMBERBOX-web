@@ -78,30 +78,11 @@
 }
 
 
-/** 기존 span 분수 표현 **/
-/*
-#nbExpBase{
-    display:inline-block;
-    min-width:0.5em; 
-    min-height:0.8em;
-    border:1px dashed gray;
-
-
-}
-#nbExp{
-    display:inline-block;
-    min-width:1em; 
-    border:1px dashed gray;
-    min-height:1em;
-    font-size:0.3em
-}
-*/
-
 
 /** 지수 표현 **/
 .nbExpBox{
-    vertical-align: -0.385em;;
     border-spacing: 0px;
+    margin-right: 0.2em;
     text-align: center;
     position: relative;
 }
@@ -119,26 +100,28 @@
 }
 .nbExpTmp{
     min-width: 1em;
-    line-height: 120%;
+    line-height: 110%;
     padding:0px;
     position: relative;
-    bottom:2em;
+    bottom:0.7em;
+    right: -0.1em;
     font-size:0.3em;
 }
 
+/** 분수용 괄호 옆 지수 **/
 .nbFracExpTmp{
+    line-height: 110%;
     min-width: 1em;
-    line-height: 120%;
     padding:0px;
     position: relative;
-    bottom:3.5em;
-    right: 0.5em;
+    top:-2em;
+    right: 0.3em;
     font-size:0.3em;
 }
 
 /** 아래첨자 표현 **/
 .nbSubBox{
-    vertical-align: -0.35em;;
+    vertical-align: text-bottom;
     border-spacing: 0px;
     text-align: center;
     position: relative;
@@ -157,7 +140,7 @@
 
 .nbSubTmp{
     min-width: 1em;
-    line-height: 120%;
+    line-height: 110%;
     padding:0px;
     font-size:0.3em;
     position: relative;
@@ -167,12 +150,14 @@
 
 /** 양방향 아래첨자 표현 **/
 .nbBiDirSubBox{
-    vertical-align: -0.35em;;
+    line-height: 110%;
+    vertical-align:text-bottom;
     border-spacing: 0px;
     text-align: center;
     position: relative;
 }
 .nbBiDirSubBase{
+    vertical-align:bottom;
     padding:0px;
     font-size:1em;
 }
@@ -203,30 +188,48 @@
 }
 
 .nbNumer{
-    padding: 3px 2px 0 2px;
+    padding: 4px 2px 0 2px;
     font-size:1em;
     border-bottom:0.5px solid black;
     min-width:1em;
-    line-height: 140%;
+    line-height: 110%;
 }
 .nbDenom{
     font-size:1em;
     padding: 0 2px 0 2px;
     border-top:0.5px solid black;
     min-width:1em;
-    line-height: 140%;
+    line-height: 110%;
 }
 
-
+/** 분수 안 지수 **/
+.nbNumer .nbExpTmp{
+    bottom:0.5em;
+    right: 0em;
+}
+.nbDenom .nbExpTmp{
+    bottom:0.2em;
+    right: 0em;
+}
 /** 분수에 분수 **/
 .nbFracBox .nbFracBox{
-    vertical-align: -1.2em;;
+    vertical-align: middle;
 }
 
-/** 삼각함수 **/
+/** 분수 안 루트 안 지수 **/
+.nbNumer  .nbRootBox .nbExpTmp{
+    bottom:0.2em;
+}
+.nbDenom  .nbRootBox .nbExpTmp{
+    bottom:0.2em;
+}
+
+/** 삼각함수, 삼각함수는 글꼴이 달라 line-heigth가 다른 수식 요소와 다름 **/
 .nbTrigonBox{
-    vertical-align: -0.25em;;
+    line-height: 120%;
+    vertical-align:text-bottom;
     border-spacing: 0px;
+    padding: 0;
 }
 .nbTrigon{
     padding:0px;
@@ -237,12 +240,14 @@
 
 /** 윗점 **/
 .nbOverDotBox{
-    vertical-align: -0.59em;
-    margin: 0px;;
+    vertical-align:text-bottom;
+    line-height: 110%;
     border-spacing: 0px;
     position: relative;
 }
-
+.nbOverDotBase{
+    padding: 0px;
+}
 .nbOverDotBase::before{
     content: '\2219';
     text-align: center;
@@ -250,11 +255,17 @@
     top:-0.6em;
     left:0.15em;
 }
+
 /** 악센트 표현 **/
 .nbAccentBox{
-    vertical-align: -0.625em;
+    vertical-align:text-bottom;
+    line-height: 110%;
     border-spacing: 0px;
+    padding: 0px;;
     position: relative;
+}
+.nbAccentBase{
+    padding: 0px;;
 }
 .nbAccentBase::before{
     content: '\02C6';
@@ -290,23 +301,59 @@
 .nbRootBox{
     margin-left: 0.8em;
     position: relative;
-    vertical-align:-0.54em;;
+    vertical-align:text-bottom;
     border-spacing: 0px;
 }
 
 .nbRootBase{
     font-size:1em;
-    padding: 0px 1px 0px 2px;
+    padding: 0px 2px;
     border-top: 2px solid black;
     min-width: 1em;
     text-align: center;
+    line-height: 110%;
 }
 
 .nbRootBase::before{
     content:'\221A';
     position: absolute;
-    font-size:1.6em;
-    left:-0.51em;
+    font-size:1.4em;
+    top:0.15em;
+    left:-0.5em;
+}
+
+/** 루트 안 순환소수 **/
+.nbRootBase .nbOverDotBox{
+    margin-top:0.2em;
+    line-height: 110%;
+
+}
+
+.nbRootBase .nbOverDotBase::before{
+    content: '\2219';
+    text-align: center;
+    position: absolute;
+    top:-0.6em;
+    left:0.15em;
+}
+/** 루트 안 악센트 **/
+.nbRootBase .nbAccentBox{
+    line-height: 110%;
+    margin-top:0.2em;
+}
+
+.nbRootBase .nbAccentBase::before{
+    content: '\02C6';
+    text-align: center;
+    position: absolute;
+    top:-0.2em;
+    left:0.14em;
+}
+
+/** 루트 안 지수 **/
+.nbRootBase .nbExpTmp{
+    bottom:0.35em;
+    right: 0;
 }
 
 /** 루트 안 분수 **/
@@ -327,17 +374,17 @@
     content:'\221A';
     position: absolute;
     font-family:'rootFracFont';
-    font-size:2.8em;
+    font-size:2.2em;
     font-weight: 100;
-    top:0.3em;
-    left:-0.52em;
+    top:0.25em;
+    left:-0.51em;
 }
 
 .nbRootFracBox .nbNumer .nbExpTmp {
-    bottom:1.8em;
+    bottom:0.2em;
 }
 .nbRootFracBox .nbDenom .nbExpTmp {
-    bottom:1.8em;
+    bottom:0.2em;
 }
 
 
@@ -346,22 +393,24 @@
 }
 
 .nbDenom .nbRootBox{
-    margin-top:3px;
+    margin-top:2px;
 }
 
 /** 선분, 직선**/
 .nbOverlineBox, .nbArrowBox{
-    vertical-align: -0.46em;
+    vertical-align: text-bottom;
     position:relative;
     border-spacing: 0px;
     padding: 0px;
     margin:0 2px;
-    line-height: 140%;
+    line-height: 110%;
 }
 .nbOverlineBase, .nbRightArrowBase, .nbLeftArrowBase, .nbBiDirArrowBase{
     min-width: 0.8em;
     text-align: center;
     padding: 0px;
+    vertical-align: bottom;
+    height: 1.2em;
     border-top:1px solid black;
 }
 
@@ -369,7 +418,7 @@
     content:'\276F';
     font-size: 0.5em;;
     position:absolute;
-    top:-1.2em;
+    top:-0.9em;
     right: -0.2em;
 }
 
@@ -377,7 +426,7 @@
     content:'\276E';
     font-size: 0.5em;;
     position:absolute;
-    top:-1.2em;
+    top:-0.9em;
     left: -0.2em;
 }
 
@@ -385,15 +434,15 @@
     content:'\276F';
     font-size: 0.5em;;
     position:absolute;
-    top:-1.2em;
-    right: -0.2em;
+    top:-0.9em;
+    right:-0.2em;
 }
 
 .nbBiDirArrowBase::before{
     content:'\276E';
     font-size: 0.5em;;
     position:absolute;
-    top:-1.2em;
+    top:-0.9em;
     left: -0.2em;
 }
 
@@ -401,11 +450,11 @@
 /** 큰 괄호(분수용) **/
 .nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox{
     display: inline-block;
-    vertical-align: -0.65em;
+    vertical-align: middle;
 }
 .nbAbsValBox{
     display: inline-block;
-    vertical-align: -0.4em;
+    vertical-align: middle;
 }
 .nbL-R-BrckBox, .nbL-C-BrckBox, .nbL-S-BrckBox{
    margin-left:-0.3em;
@@ -435,9 +484,28 @@
     right:0.15em;
 }
 
+
+/** 경우(연립방정식 표현) **/
+.nbCaseBrckBox{
+    position: relative;
+    vertical-align: middle;
+    border-spacing: 0px;
+}
+.nbCaseBrck{
+    font-size:20px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+.nbCaseFir{
+
+}
+
+.nbCaseSec{
+}
+
 /** 단축키 Ui에서만 사용 **/
 .nbUiSmallAbsVal{
-    font-size:10px;
+    font-size:12px;
 }
 
 /** 편집화면에서만 사용되는 속성, 시작 **/
