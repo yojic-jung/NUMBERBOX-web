@@ -22,6 +22,7 @@
 }
 
 
+
 /** 출력화면 문제번호 **/
 @font-face {
     font-family: 'screenNumber';
@@ -60,6 +61,12 @@
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
    /** src:url("font/GmarketSansTTFLight.ttf") 추후 변경 필요**/
     font-weight: 100;
+}
+
+@font-face {
+    font-family: 'formulaFont';
+    src:url('font/STIXTwoText-MediumItalic.ttf')
+    format('truetype');
 }
 
 .nbFomularEditor { 
@@ -508,6 +515,20 @@
 }
 
 .nbCaseSec{
+}
+
+/** 사각형 조건 박스 **/
+.nbCondBox{
+    position: relative;
+    vertical-align: -0.5em;
+}
+.nbCondBase{
+    line-height: 130%;
+    font-size: 14px;
+    padding: 1px 8px;
+    min-width:30px;
+    border: 1px solid black;
+    text-align: center;
 }
 
 /** 단축키 Ui에서만 사용 **/

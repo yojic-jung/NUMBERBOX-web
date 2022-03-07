@@ -72,20 +72,15 @@ const NbWebEditor = ({parentMethod})=>{
 
 		//문제입력과 해설입력 창에만 적용
 		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
-			if(style=="justifyLeft" || style=="justifyCenter"  || style=="justifyRight" ){
-
-			
-				document.execCommand(style);
-				
-
-
-			}else{
-				document.execCommand(style);
-			}
-			
+			document.execCommand(style);
 		}else{
-			event.stopPropagation();
-			return;
+			//밑줄은 객관식도 가능
+			if(style==="underline" ){
+				document.execCommand(style);
+			}else{
+				event.stopPropagation();
+				return;
+			}
 		}
 		/*
 		if(style=="underline"){
