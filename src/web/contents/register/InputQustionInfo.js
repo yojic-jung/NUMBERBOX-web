@@ -79,19 +79,6 @@ const InputQustionInfo = ({parentMethod, updateModeUniqNo})=>{
 		if(updateModeUniqNo!==""){
 			let contentsNo = updateModeUniqNo.split(",");
 			formData.append("contentsNo", contentsNo[2]);
-
-			/*
-			//문제 이미지 src는 있지만 file에 없는 경우(기존 이미지 그대로 등록하려는 경우), update 없이 기존 이미지 등록
-			if(!document.getElementById("contentsImgOutput").classList.contains('hide') 
-			&& document.getElementById("contentsImg").value.length===0){
-				formData.append("conImgDel", "N");
-			}
-			//해설 이미지 src는 있지만 file에 없는 경우(기존 이미지 그대로 등록하려는 경우), update 없이 기존 이미지 등록
-			if(!document.getElementById("solutionImgOutput").classList.contains('hide') 
-			&&  document.getElementById("solutionImg").value.length===0){
-				formData.append("solImgDel", "N");
-			}
-			*/
 		}
 		// FormData의 값 확인
 		/*
