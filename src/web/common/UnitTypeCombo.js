@@ -4,11 +4,11 @@ import TypeSelBox from './TypeSelBox';
 import CustomUnitSelBox from './CustomUnitSelBox';
 import CustomTypeSelBox from './CustomTypeSelBox';
 import {nb_dataFetch} from 'js/common/common_nb.js';
-import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
+import {reg_unitTypeChange, reg_selectTypeData} from 'js/contents/register/contents_reg.js';
 
 let i=0;    //useState 리렌더링 문제 해결
 
-export const UnitTypeCombo = () => {
+export const UnitTypeCombo = (updateModeUniqNo) => {
   const [subjectBox, setSubjectBox] = useState(new Array());
   const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
   const [secUnitSelBox, setSecUnitSelBox] = useState(new Array());
@@ -16,7 +16,6 @@ export const UnitTypeCombo = () => {
   const [quesTypeBox, setQuesTypeBox] = useState(new Array());
   const [quesTypeKey, setQuesTypeKey] = useState();
   
-
   async function fetchUnitInfo () {
     let jsonObj = await nb_dataFetch('/unitInfo', true);
     setSubjectBox(jsonObj["mathSubjectInfo"]);
@@ -50,8 +49,20 @@ export const UnitTypeCombo = () => {
   }
 
   useEffect((event) => {
-    fetchUnitInfo(event);
-  },[]);
+    const asyncUseEffect = async () => {
+      let unitTypeNo = updateModeUniqNo["updateModeUniqNo"].split(",");
+      const jsonObj = await nb_dataFetch('/typeInfo?unitUniqNo='+unitTypeNo[0], true);
+      setQuesTypeBox(jsonObj["mathTypeInfo"]);
+      setQuesTypeKey(i);
+      await reg_selectTypeData("quesType", "cusSelQuesTypeTitle",  "cusSelQuesTypeDiv", unitTypeNo[1]);
+    }
+    if(updateModeUniqNo["updateModeUniqNo"]===""){
+      fetchUnitInfo(event);
+    }else{
+      asyncUseEffect();
+    }
+   
+  },[updateModeUniqNo["updateModeUniqNo"]]);
 
  
  

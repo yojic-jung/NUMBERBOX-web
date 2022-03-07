@@ -7,12 +7,12 @@ import "css/staff/staff.css";
 
 const RegisterQuestion = ()=>{
   return (
-    <>
+    <div id="registerQuestion">
       <div className="staff-title">문제 만들기</div>
       <div className="register-div">
         <FormulaEditor />
       </div>
-    </>
+    </div>
   );
 }
 

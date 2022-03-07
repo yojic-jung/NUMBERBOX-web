@@ -4,15 +4,18 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
-import {nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_imgFileDel, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
+import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
 import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom
-		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange} from 'js/contents/register/contents_reg';
+		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange, reg_selectUnitOrTypeData} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
 const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
 let shortCutKeyList;
-const FormulaEditor = () => {
+
+let conImgName="N";	//컨텐츠 이미지 존재 여부
+let solImgName="N";	//해설 이미지 존재 여부
+const FormulaEditor = ({contentsNo}) => {
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
 	const [solutionText, setSolutionText] = useState("");	// 사용자 입력 해설
 	const [answerText, setAnswerText] = useState("");		// 사용자 입력 정답
@@ -27,6 +30,98 @@ const FormulaEditor = () => {
 	const[shortCutKey, setShortCutKey] = useState("");
 	const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
 
+	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
+console.log(contentsNo);
+    const removeAddedEvent = () => {
+		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
+		window.removeEventListener('mousemove', reg_mMoveTdWidthChange);
+		window.removeEventListener('mouseup', reg_mUpTdWidthChange);
+		window.removeEventListener('selectstart', reg_selStartTdWidthChange);
+		window.removeEventListener('scroll', topMenuFixed);
+		window.removeEventListener('resize', topMenuWidth);
+    }
+
+	let targetDomWidth=window.innerWidth/2;
+	const topMenuWidth = ()=>{
+		targetDomWidth =  document.getElementsByClassName("right")[0].offsetWidth;
+		document.getElementById("topShortkeyDiv").style.width =targetDomWidth+"px";
+	}
+
+	const topMenuFixed = ()=>{
+		if(contentsNo!==undefined){
+			targetDomWidth = document.getElementsByClassName("right")[0].offsetWidth;
+			nb_topMenuFixed("topShortkeyDiv", targetDomWidth, "outerFormulaEditor")
+		}
+		else nb_topMenuFixed("topShortkeyDiv", targetDomWidth, null)
+	}
+
+	let executeCnt = 0;		//최초 한번만 이미지 삭제 confirm 경고창 발생
+	let executeSolCnt = 0;
+	const customImgUpld = async (targetId) =>{
+		let updtImg = false;
+		if((targetId === "contentsImg" && conImgName!=="N" && executeCnt === 0) 
+			|| (targetId === "solutionImg" && solImgName!=="N" && executeSolCnt===0) ){
+			updtImg = await window.confirm("등록된 이미지를 삭제하고 새로운 이미지를 등록하시겠습니까?");
+			if(updtImg){
+				let formData = new FormData();
+				formData.append("contentsNo",contentsNo)
+				formData.append("conOrSol",targetId)
+				let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
+				if(returnObj.updateCond !== 1){
+					alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
+					return false;
+				} 
+				document.getElementById("imgUpdt").value = "Y";
+				document.getElementById(targetId).click()
+				if(targetId === "contentsImg") executeCnt ++;
+				else executeSolCnt ++;
+			} 
+		}else{
+			document.getElementById(targetId).click();
+		}
+	}
+
+	const imgFileDel = async (outputId, fileTagId) => {  //outputId는 출력 dom
+		if((outputId==="contentsImgOutput" && conImgName!=="N" && executeCnt === 0) 
+			|| (outputId==="solutionImgOutput" && solImgName!=="N" && executeSolCnt === 0)){
+			if(window.confirm("등록된 이미지를 삭제하시겠습니까?")){
+				
+				if(outputId === "contentsImgOutput"){
+					let formData = new FormData();
+					formData.append("contentsNo",contentsNo)
+					formData.append("conOrSol","contentsImg")
+					let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
+					if(returnObj.updateCond !== 1){
+						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
+						return false;
+					} 
+					document.getElementById("imgUpdt").value = "Y";
+					executeCnt ++;
+				} 
+				else{
+					let formData = new FormData();
+					formData.append("contentsNo",contentsNo)
+					formData.append("conOrSol","solutionImg")
+					let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
+					if(returnObj.updateCond !== 1){
+						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
+						return false;
+					}
+					document.getElementById("imgUpdt").value = "Y";
+					executeSolCnt ++;
+				} 
+			}else{
+				return;
+			}
+		}
+
+		document.getElementById(fileTagId).value= "";
+		
+		let output = document.getElementById(outputId);
+		output.src = "";
+		output.classList.add('hide');
+	  }
+
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
@@ -34,12 +129,10 @@ const FormulaEditor = () => {
 			setShortCutKey(jsonObj);
 			setIsFetchShotCutKey(true);
 			shortCutKeyList = jsonObj["shortCutKey"]
-	
-			const targetDomWidth =  document.getElementById("topShortkeyDiv").offsetWidth;
-			window.addEventListener('scroll', ()=>{
-				nb_topMenuFixed("topShortkeyDiv", targetDomWidth)
-			});
-			
+			if(contentsNo!==undefined) document.getElementById("outerFormulaEditor").addEventListener('scroll', topMenuFixed);
+			else window.addEventListener('scroll', topMenuFixed);
+			window.addEventListener('resize', topMenuWidth);
+
 			document.getElementById("contents-show").addEventListener("contextmenu",(e)=>{
 				e.preventDefault();
 				return false;
@@ -54,22 +147,134 @@ const FormulaEditor = () => {
 			});
 
 			//테이블 너비 변경 이벤트
-			window.addEventListener('mousedown', async () =>{
-				await reg_mDownTdWidthChange();
-			});
-			window.addEventListener('mousemove', async () =>{
-				await reg_mMoveTdWidthChange();
-			});
-			window.addEventListener('mouseup', async () =>{
-				await reg_mUpTdWidthChange();
-			});
-			window.addEventListener('selectstart', async () =>{
-				await reg_selStartTdWidthChange();
-			});
+			window.addEventListener('mousedown', await reg_mDownTdWidthChange);
+			window.addEventListener('mousemove', await reg_mMoveTdWidthChange);
+			window.addEventListener('mouseup', await reg_mUpTdWidthChange);
+			window.addEventListener('selectstart', await reg_selStartTdWidthChange);
+
+
+			let myContents;
+			//수정모드
+			if(contentsNo!==undefined){
+				myContents = await nb_dataFetch('/takeMyContents?contentsno='+contentsNo, true);
+
+				setContentsText(myContents["myContents"].contents);
+				document.getElementById("contentsFormulaEditor").innerHTML = myContents["myContents"].contents;
+				setSolutionText(myContents["myContents"].solution);
+				document.getElementById("solutionFormulaEditor").innerHTML = myContents["myContents"].solution;
+				setAnswerText(myContents["myContents"].answer);
+				document.getElementById("answerFormulaEditor").innerHTML = myContents["myContents"].answer;
+				document.getElementById("answerFormulaEditor").innerHTML = myContents["myContents"].answer;
+
+				let choiceAnswers = document.getElementsByName("choiceAnswer");
+				let choiceAnswerShowVal;
+				if(myContents["myContents"].choiceAnswer != null){
+					for(let i=0; i<choiceAnswers.length; i++){
+						if(myContents["myContents"].choiceAnswer.indexOf(choiceAnswers[i].value)>-1){
+							choiceAnswers[i].checked =true;
+							if(choiceAnswerShowVal=== undefined) choiceAnswerShowVal = choiceAnswers[i].value;
+							else choiceAnswerShowVal += ","+choiceAnswers[i].value;
+							setMultiAnswerText(choiceAnswerShowVal)
+							document.getElementById('isBlank').classList.remove("hide");
+
+						}
+					}
+				}
+				console.log(myContents["myContents"].contentsImg);
+				console.log(myContents["myContents"].solutionImg);
+				if(myContents["myContents"].firNo.length!=0){
+					document.getElementById("firNoShow").classList.remove("hide");
+					document.getElementById("secNoShow").classList.remove("hide");
+					document.getElementById("thrNoShow").classList.remove("hide");
+					document.getElementById("fourNoShow").classList.remove("hide");
+					document.getElementById("fifNoShow").classList.remove("hide");
+				}else{
+					document.getElementById("firNoShow").classList.add("hide");
+					document.getElementById("secNoShow").classList.add("hide");
+					document.getElementById("thrNoShow").classList.add("hide");
+					document.getElementById("fourNoShow").classList.add("hide");
+					document.getElementById("fifNoShow").classList.add("hide");
+				}
+				setFirNo(myContents["myContents"].firNo);
+				document.getElementById("firNoFormulaEditor").innerHTML = myContents["myContents"].firNo;
+				setSecNo(myContents["myContents"].secNo);
+				document.getElementById("secNoFormulaEditor").innerHTML = myContents["myContents"].secNo;
+				setThrNo(myContents["myContents"].thrNo);
+				document.getElementById("thrNoFormulaEditor").innerHTML = myContents["myContents"].thrNo;
+				setFourNo(myContents["myContents"].fourNo);
+				document.getElementById("fourNoFormulaEditor").innerHTML = myContents["myContents"].fourNo;
+				setFifNo(myContents["myContents"].fifNo);
+				document.getElementById("fifNoFormulaEditor").innerHTML = myContents["myContents"].fifNo;
+
+				//이미지 file 셋팅 필요(문제 및 정답)(X)
+				if(myContents["myContents"].contentsImg !== null){
+					document.getElementById("contentsImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].contentsImg;
+					conImgName = myContents["myContents"].contentsImg;
+				}else{
+					conImgName="N"
+				}
+				if(myContents["myContents"].solutionImg !== null){
+					document.getElementById("solutionImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].solutionImg;
+					solImgName = myContents["myContents"].solutionImg;
+				}else{
+					solImgName="N"
+				}
+
+				// 주관식 객관식 마지막 validation에서 처리 필요(X)
+
+				document.getElementById("workMem").value = myContents["myContents"].workMem;
+				document.getElementById("workMem").classList.add("customBlueBoxComplete");
+
+				//원본 책
+				document.getElementById("originRef").value = myContents["myContents"].originRef;
+				document.getElementById("cusOrgRefSelTitle").innerHTML =document.getElementById("originRef")[document.getElementById("originRef").selectedIndex].innerText;
+				document.getElementById("cusOrgRefSelDiv").classList.add("nbCustomSelected");
+
+				//원본 문제 번호
+				document.getElementById("originNo").value = myContents["myContents"].originNo;
+				document.getElementById("originNo").classList.add("customBlueBoxComplete");
+
+				//문제난이도
+				document.getElementById("quesLevel").value = myContents["myContents"].quesLevel;
+				document.getElementById("cusQuesSelTitle").innerHTML =document.getElementById("quesLevel")[document.getElementById("quesLevel").selectedIndex].innerText;
+				document.getElementById("cusQuesSelDiv").classList.add("nbCustomSelected");
+				
+
+				//과목
+				document.getElementById("subject").value = myContents["myUnitInfo"].subject;
+				document.getElementById("cusSelSubTitle").innerHTML =document.getElementById("subject")[document.getElementById("subject").selectedIndex].innerText;
+				document.getElementById("cusSelSubDiv").classList.add("nbCustomSelected");
+				let trigEv = new Object();
+				let sub    = new Object();
+				trigEv.target= sub;
+				trigEv.target.id= "subject";
+				await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+
+				document.getElementById("firUnit").value = myContents["myUnitInfo"].firUnit;
+				document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
+				document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
+				trigEv.target.id= "firUnit";
+				await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
+
+				document.getElementById("secUnit").value = myContents["myUnitInfo"].secUnit;
+				document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
+				document.getElementById("cusSelSecUnitDiv").classList.add("nbCustomSelected");
+				trigEv.target.id= "secUnit";
+				await reg_unitTypeChange(trigEv, "cusSelThrUnit","thrUnit", true);
+
+				await reg_selectUnitOrTypeData("thrUnit", "cusSelThrUnitTitle",  "cusSelThrUnitDiv", myContents["myContents"].unitUniqNo);
+				
+				//유형
+				setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo);
+				//수정시간 서버에서 수정 필요
+
+			}
 		}
 
 		asyncUseEffect();
-      },[]);
+
+		return () => removeAddedEvent();
+      },[contentsNo]);
 
 	const initFormElement = async function(){
 		setContentsText("");
@@ -85,7 +290,10 @@ const FormulaEditor = () => {
 
 	}
 	const getCheckedVal = async function(event){
-		setMultiAnswerText(await nb_getCheckedVal(event));
+		let chkVal = await nb_getCheckedVal(event);
+		if(chkVal.length!==0) document.getElementById("isBlank").classList.remove("hide");
+		else document.getElementById("isBlank").classList.add("hide");
+		setMultiAnswerText(chkVal);
 	}
 
 	const contentsValidation = async function(){
@@ -282,34 +490,34 @@ const FormulaEditor = () => {
 		<div className="twoFlexLayout" >
 			<div className="left">
 				<div id="contents-show" className="contents-show">
+					<div className="mini-title4">문제</div>
 					<div id="ques-show">
-						<div className="mini-title4">[문제]</div>
 						<div dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
 						<div id="quesImg-show">
-							<img src="" id="contentsImgOutput" onDoubleClick={() => nb_imgFileDel("contentsImgOutput", "contentsImg")} alt="" />
+							<img src="" id="contentsImgOutput" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", contentsNo);}} alt="" />
 						</div>
 						<div id="multi-show">
-							<div><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
-							<div><span id="secNoShow" className="hide">&#9313; </span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
-							<div><span id="thrNoShow" className="hide">&#9314; </span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
-							<div><span id="fourNoShow" className="hide">&#9315; </span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
-							<div><span id="fifNoShow" className="hide">&#9316; </span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
+							<div className="firDiv"><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
+							<div className="secDiv"><span id="secNoShow" className="hide">&#9313; </span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
+							<div className="thrDiv"><span id="thrNoShow" className="hide">&#9314; </span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
+							<div className="fourDiv"><span id="fourNoShow" className="hide">&#9315; </span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
+							<div className="fifDiv"><span id="fifNoShow" className="hide">&#9316; </span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
-					<hr/>
-					<div id="sol-show">
-						<div className="mini-title4">[해설]</div>
-						<div dangerouslySetInnerHTML={{__html:solutionText}}></div> 
-						<div id="quesImg-show">
-							<img src="" id="solutionImgOutput" onDoubleClick={() => nb_imgFileDel("solutionImgOutput", "solutionImg")} alt="" />
-						</div>
-					</div>
-					<hr/>
-					<div id="ans-show">
-						<span className="mini-title4">[정답]</span>&nbsp;
-						<div>
-							<span dangerouslySetInnerHTML={{__html:multiAnswerText}}></span>
+					<div className="mini-title4">정답 및 해설</div>
+					<div className="ansSol-show">
+						<span className='ansContents2 ansShow'>
+							<span className='mini-title6'> 정답</span>&nbsp;&nbsp;
+							<span className="" dangerouslySetInnerHTML={{__html:multiAnswerText}}></span>
+							<span id="isBlank" className="marginRFive hide"></span>
 							<span dangerouslySetInnerHTML={{__html:answerText}}></span>
+						</span>
+						<div id="sol-show">
+						<span className='mini-title6'> 해설</span>&nbsp;&nbsp;
+							<div className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
+							<div id="quesImg-show">
+								<img src="" id="solutionImgOutput" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", contentsNo)} alt="" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -332,8 +540,11 @@ const FormulaEditor = () => {
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
 				
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
-					<div className="mini-title">문제 이미지 첨부 <input id="contentsImg" name="contentsImg" type="file" accept="image/*" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput");nb_addClass("contentsImgOutput","marginTopTenAuto")}} /></div>
-					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
+					<div className="mini-title marginBox">
+						<span id="cusConUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("contentsImg")}}>문제 이미지 첨부</span> 
+						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
+						<input id="contentsImg" name="contentsImg" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
+						</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
@@ -352,12 +563,14 @@ const FormulaEditor = () => {
 				</div>
 
 				<div id="ansSolOptBox" className="ansSolOptBox marginTen hide">
-					<div className="mini-title">해설 이미지 첨부 <input id="solutionImg" name="solutionImg" accept="image/*" type="file" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput");nb_addClass("solutionImgOutput","marginTopTenAuto")}} /></div>
-					<div className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</div>
+					<div className="mini-title marginBox">
+						<span id="cusSolUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("solutionImg")}}>해설 이미지 첨부</span> 
+						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
+						<input id="solutionImg" name="solutionImg" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
+					</div>
 					<div className="mini-title">정답</div>
 					<div>
-						<div className="mini-title2">주관식 정답(필수)</div> 
-						<div className="mini-desc marginLeftFive">객관식 문제의 경우 번호를 제외한 주관식 정답까지 입력해주세요.(복수개의 경우 쉼표로 구분)</div>
+						<div className="mini-title2">주관식 정답</div> 
 						<div id="answerFormulaEditor" className="answerFormulaEditor onlyEdit" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => formulaConvert(event, shortCutKeyList)} onClick={()=>dressYellowBox()}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
@@ -384,7 +597,7 @@ const FormulaEditor = () => {
 
 			</div>
 		</div>
-		<InputQustionInfo parentMethod={initFormElement}/>
+		<InputQustionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo}/>
 		</form>
 	</>
   );

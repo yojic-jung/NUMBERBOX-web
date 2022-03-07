@@ -1,5 +1,5 @@
 import React from 'react';
-import { nb_fCustomSelDivClk, nb_fCustomSelSpanClk, nb_fCustomOptClk} from 'js/common/common_nb.js';
+import { nb_fCustomSelDivClk,  nb_fCustomOptClk} from 'js/common/common_nb.js';
 import {MathJaxContext, MathJax} from "better-react-mathjax";
 
 const config = {

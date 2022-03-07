@@ -2,9 +2,28 @@ import React, { useEffect } from 'react';
 
 
 const EditTableInnerUi = ({parentMethod})=>{
+    
+    const removeAddedEvent = () => {
+        document.body.removeEventListener('click',exceptTbDomClk);
+    }
 
+    const exceptTbDomClk = async (event ) =>{
+        let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
+        if(idBorderDesc) return;
+
+        let tagetDom = event.target.closest('button');
+        if(tagetDom==null) {
+            document.getElementById("editTableUi").classList.add("hide");
+            return;
+        }
+        let targetId = tagetDom.id;
+        if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
+            document.getElementById("editTableUi").classList.add("hide");
+        } 
+    }
 
     useEffect(()=>{
+
         let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
 		for(let i=0; i<tdList.length; i++){
 			tdList[i].addEventListener('mouseover', function(event){
@@ -14,21 +33,8 @@ const EditTableInnerUi = ({parentMethod})=>{
 			});
 			tdList[i].addEventListener('click', (event)=>addEditTable(event));
 		}
-
-        document.body.addEventListener('click',function(event){
-            let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
-            if(idBorderDesc) return;
-
-            let tagetDom = event.target.closest('button');
-            if(tagetDom==null) {
-                document.getElementById("editTableUi").classList.add("hide");
-                return;
-            }
-            let targetId = tagetDom.id;
-            if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
-                document.getElementById("editTableUi").classList.add("hide");
-            } 
-        });
+        document.body.addEventListener('click',exceptTbDomClk);
+        return removeAddedEvent();
     },[])
 
     const addCellUiClass = async (rowIdx, colIdx) => {

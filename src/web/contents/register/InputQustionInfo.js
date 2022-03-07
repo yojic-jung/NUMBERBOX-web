@@ -4,7 +4,7 @@ import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv} from 'js/contents/register/contents_reg';
 
-const InputQustionInfo = ({parentMethod})=>{
+const InputQustionInfo = ({parentMethod, updateModeUniqNo})=>{
 
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
@@ -74,7 +74,25 @@ const InputQustionInfo = ({parentMethod})=>{
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
+		
+		//수정모드로 들어온 경우
+		if(updateModeUniqNo!==""){
+			let contentsNo = updateModeUniqNo.split(",");
+			formData.append("contentsNo", contentsNo[2]);
 
+			/*
+			//문제 이미지 src는 있지만 file에 없는 경우(기존 이미지 그대로 등록하려는 경우), update 없이 기존 이미지 등록
+			if(!document.getElementById("contentsImgOutput").classList.contains('hide') 
+			&& document.getElementById("contentsImg").value.length===0){
+				formData.append("conImgDel", "N");
+			}
+			//해설 이미지 src는 있지만 file에 없는 경우(기존 이미지 그대로 등록하려는 경우), update 없이 기존 이미지 등록
+			if(!document.getElementById("solutionImgOutput").classList.contains('hide') 
+			&&  document.getElementById("solutionImg").value.length===0){
+				formData.append("solImgDel", "N");
+			}
+			*/
+		}
 		// FormData의 값 확인
 		/*
 		for (var pair of formData.entries()) {
@@ -143,7 +161,10 @@ const InputQustionInfo = ({parentMethod})=>{
 			trigEv.target= sub;
 			trigEv.target.id= "quesTab";
 			await reg_quesAnsTabClkEv(trigEv);
-			await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
+
+			// 수정모드인 경우 자동종료
+			if(updateModeUniqNo!=="") document.getElementById("modalFormulCloseBtn").click();
+			else await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
 		}
 	  }
 
@@ -156,7 +177,7 @@ const InputQustionInfo = ({parentMethod})=>{
 				<div className="mini-title3">문제 단원 및 유형 정보를 입력해주세요.</div>
 				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => nb_completeBlueBox(event, 2)}/>
 				
-				<UnitTypeCombo />
+				<UnitTypeCombo updateModeUniqNo={updateModeUniqNo} />
 				
 				<div>
 					<CustomSelBoxUp value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxUp>

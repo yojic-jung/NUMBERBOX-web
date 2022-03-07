@@ -1,0 +1,50 @@
+
+.quesRootDiv, .solRootDiv{
+    position: relative;
+    width:406px;
+    line-height: 160%;
+}
+.quesDiv, .ansSolDiv{
+    width: 356px;
+    margin-left: 50px;
+    word-break: keep-all;
+    position: relative;
+}
+.quesNumber, .solNumber{
+    font-family: 'screenNumber';
+    width:50px;
+    font-size: 22px;
+    vertical-align: middle;
+    text-align: center;
+    display: inline-block;
+    position: relative;
+    left:-50px;
+}
+.quesContents, .ansContents{
+    margin-left: -50px;
+}
+
+.quesContents2, .ansContents2{
+    display: block;
+    width: 356px;
+    margin: auto;
+    ;
+}
+
+.quesConMultiShow{
+    margin-top:15px;
+}
+
+.ansShow{
+    border-bottom: 2px solid dimgray;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.solContents{
+    padding-left: 2px;
+}
+
+.firDiv, .secDiv, .thrDiv, .fourDiv, .fifDiv{
+    display: inline-block;
+}

@@ -138,19 +138,32 @@ export const reg_mulChoiceTabClkEv = async (e) => {
 * 객관식 보기 글자수 4개 미만인 경우 2줄 출력
 */
 export const reg_threeDivGridChk = async () => {
-	let firNoLen = document.getElementById("firNoFormulaEditor").textContent.length;
-	let secNoLen = document.getElementById("secNoFormulaEditor").textContent.length;
-	let thrNoLen = document.getElementById("thrNoFormulaEditor").textContent.length;
-	let fourNoLen = document.getElementById("fourNoFormulaEditor").textContent.length;
-	let fifNoLen = document.getElementById("fifNoFormulaEditor").textContent.length;
-
-	if(firNoLen < 4 && secNoLen < 4 && thrNoLen < 4 && fourNoLen < 4 && fifNoLen < 4){
-		document.getElementById("multi-show").classList.add("threeDivGrid");
-		document.getElementById("multi-show").classList.remove("oneDivGrid");
-	}else{
-		document.getElementById("multi-show").classList.remove("threeDivGrid");
-		document.getElementById("multi-show").classList.add("oneDivGrid");
+	let multiShowDiv = document.getElementById("multi-show");
+	let maxWidth=0;
+	multiShowDiv.classList.remove("oneDivGrid");
+	multiShowDiv.classList.remove("twoDivGrid");
+	multiShowDiv.classList.remove("threeDivGrid");
+	maxWidth = document.getElementsByClassName("firDiv")[0].offsetWidth;
+	if(maxWidth < document.getElementsByClassName("secDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("secDiv")[0].offsetWidth;
+	if(maxWidth < document.getElementsByClassName("thrDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("thrDiv")[0].offsetWidth;
+	if(maxWidth < document.getElementsByClassName("fourDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("fourDiv")[0].offsetWidth;
+	if(maxWidth < document.getElementsByClassName("fifDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("fifDiv")[0].offsetWidth;
+	if(maxWidth<170 && maxWidth>90){
+		multiShowDiv.classList.remove("oneDivGrid");
+		multiShowDiv.classList.remove("threeDivGrid");
+		multiShowDiv.classList.add("twoDivGrid");
+	}  
+	else if(maxWidth<=90) {
+		multiShowDiv.classList.remove("oneDivGrid");
+		multiShowDiv.classList.remove("twoDivGrid");
+		multiShowDiv.classList.add("threeDivGrid");
 	}
+	else{
+		multiShowDiv.classList.remove("twoDivGrid");
+		multiShowDiv.classList.remove("threeDivGrid");
+		multiShowDiv.classList.add("oneDivGrid");
+	} 
+
 }
 
 
@@ -318,7 +331,6 @@ export const reg_preventKeyEvent = async (event) => {
 		//수식요소 안에 값 없는 경우
 		if(document.getSelection().getRangeAt(0).endContainer.tagName !== undefined){
 			if(document.getSelection().getRangeAt(0).endContainer.closest('.borderBox')!==null){
-				console.log("빠짐");
 				return;
 			}else{
 				parentTable = document.getSelection().getRangeAt(0).endContainer.closest('.editInnerTable');
@@ -327,7 +339,6 @@ export const reg_preventKeyEvent = async (event) => {
 
 		if(document.getSelection().getRangeAt(0).endContainer.parentElement.tagName !== undefined){
 			if(document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.borderBox')!==null){
-				console.log("빠짐2");
 				return;
 			}else{
 				parentTable = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.editInnerTable');
@@ -335,7 +346,6 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 		
 		if(parentTable===null){
-			console.log("빠짐3");
 			return;
 		} 
 
@@ -357,9 +367,6 @@ export const reg_preventKeyEvent = async (event) => {
 		}else{
 			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
 		}
-		console.log(targetCell);
-		console.log("행 갯수 : "+rowLength);
-		console.log("열 갯수 : "+colLength);
 
 		//포커스를 가진 셀의 행,열 인덱스 구하기
 		for(let rowIdx = 0; rowIdx<rowLength; rowIdx++){
@@ -371,8 +378,6 @@ export const reg_preventKeyEvent = async (event) => {
 				}
 			}
 		}
-		console.log("로우 Idx:"+targetRowIdx);
-		console.log("콜 Idx:"+targetColIdx);
 		let focusCellDom;
 		//위로 화살표 누른 경우
 		if(event.keyCode===38){
@@ -530,4 +535,31 @@ export const reg_selStartTdWidthChange = async () => {
             return false;
         }
     }catch(event){ return true; }
+}
+
+/*
+* 정의 : 단원 및 유형 콤보박스 및 커스텀 셀박스 서버 데이터 매핑 함수
+*/
+export const reg_selectUnitOrTypeData = async (targetId, titleTag, divTag, compareStr ) => {
+
+	let subjects =  document.getElementById(targetId);
+	for(let i=0; i<subjects.length; i++){
+		if(subjects[i].dataset.uniqNo == compareStr){	//삼항식 쓰면 오류남
+			subjects[i].selected = true;
+			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerHTML;
+			document.getElementById(divTag).classList.add("nbCustomSelected");
+		}
+	}
+}
+
+export const reg_selectTypeData = async (targetId, titleTag, divTag, compareStr ) => {
+	let subjects =  document.getElementById(targetId);
+	for(let i=0; i<subjects.length; i++){
+		if(subjects[i].dataset.typeNo == compareStr){	//삼항식 쓰면 오류남
+			subjects[i].selected = true;
+			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerHTML;
+			document.getElementById(divTag).classList.add("nbCustomSelected");
+			
+		}
+	}
 }

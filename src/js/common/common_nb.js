@@ -96,13 +96,27 @@ export const nb_addClass = async (targetId, className) => {
 * 설명 : input file에 등록된 파일 이미지를 쇼하는 함수
 */
 
-export const nb_loadFile = async (event, outputId) => {	//outputId는 출력 dom
+export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId는 출력 dom
     let reader = new FileReader();
     let output = document.getElementById(outputId);
     reader.onload = async function(){
       output.src = reader.result;
     };
     if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
+    console.log(contentsNo)
+    if(contentsNo!== undefined){
+      let formData = new FormData();
+      formData.append("contentsNo",contentsNo);
+      console.log(event.target.id);
+      formData.append(event.target.id ,event.target.files[0])
+      let returnObj = await nb_formDataFetch("/changeConOrSolImg",formData, true);
+      if(returnObj.updateCond !== 1) {
+        alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
+        return false;
+      }
+      document.getElementById("imgUpdt").value = "Y";
+    }else{
+    }
     reader.readAsDataURL(event.target.files[0]);
     output.classList.remove('hide');
   };
@@ -269,13 +283,45 @@ export const nb_completeBlueBox = async function(event, charLength){
 /*
 * 상단 메뉴 고정 fixed 함수
 */
-export const nb_topMenuFixed = async function(targetId, targetDomWidth){
+export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDomId){
   let targetDom = document.getElementById(targetId);
-  if(targetDom.offsetTop<window.pageYOffset){
-    targetDom.classList.add("fixedTopMenu");
-    targetDom.style.width =targetDomWidth+"px";
+  if(targetDomWidth===0)return;
+
+  //부모 요소 없이 상단 브라우저 높이로 고정하는 경우
+  if(parentDomId==null){
+    if(targetDom.offsetTop<window.pageYOffset){
+      targetDom.classList.add("fixedTopMenu");
+      targetDom.style.width =targetDomWidth+"px";
+    }else{
+      targetDom.classList.remove("fixedTopMenu");
+    }
   }else{
-    targetDom.classList.remove("fixedTopMenu");
+    let parentDomOffsetY = document.getElementById(parentDomId).getBoundingClientRect().top
+    let targetDomOffsteY = targetDom.getBoundingClientRect().top
+    if(parentDomOffsetY > targetDomOffsteY+5){
+      targetDom.classList.add("fixedTopMenu");
+      targetDom.style.width =targetDomWidth+"px";
+    }else{
+      targetDom.classList.remove("fixedTopMenu");
+    }
   }
+
 }
 
+  
+/*
+* 모달 팝업 열었을시 부모창 스크롤 방지
+*/
+export const nb_modalScrollStrt = () =>{
+  let scrollY = window.scrollY
+  document.getElementById("root").style.overflow = "hidden";
+  return scrollY;
+}
+
+/*
+* 모달 팝업 닫았을시 부모창 스크롤 기존 위치로
+*/
+export const nb_modalScrollEnd = (scrollY) =>{
+  document.getElementById("root").style.overflow = "unset"
+  window.scrollTo(0, scrollY)
+}

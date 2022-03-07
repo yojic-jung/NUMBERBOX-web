@@ -21,6 +21,13 @@
     unicode-range: U+0061-007A;
 }
 
+
+/** 출력화면 문제번호 **/
+@font-face {
+    font-family: 'screenNumber';
+    src:url('font/MinSans-Bold.ttf')
+    format('truetype');
+}
 /* 
 *  영어 대문자 : U+0041-005A
 *  숫자        : U+0030-0039

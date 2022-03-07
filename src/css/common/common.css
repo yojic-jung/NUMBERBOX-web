@@ -1,7 +1,28 @@
 .hide{display:none !important;}
 
+.inBlock{
+    display:inline-block;
+}
+
+
+.paddingLFive{
+    padding-left: 5px;
+}
+
 .marginFive{
     margin:5px;
+}
+.marginRFive{
+    margin-right:5px;
+}
+.marginFiveVetical{
+    margin:5px 0;
+}
+.marginTenVetical{
+    margin:10px 0;
+}
+.mini-title.marginBox{
+    margin:10px 0 30px 0;
 }
 
 .marginTen{
@@ -17,22 +38,58 @@
 }
 
 .marginUpTen{
-    margin-top:20px;
+    margin-top:10px;
 }
 
 .marginLeftFive{
     margin-left:5px;
 }
+.uploadBtn{
+    cursor: pointer;
+    color:white;
+    background: rgb(61, 147, 190);
+    box-shadow: inset 0 -3px 0 0 rgb(0 0 0 / 10%);
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.uploadBtn::after{
+    cursor: pointer;
+    display: inline-block;
+    content:'';
+    background: rgb(48,140,187) url("img/uploadBtn.JPG") no-repeat;
+    background-size:25px;
+    background-position: 2px 2px;
+    border-left:2px solid rgb(56, 133, 172);
+    box-shadow: inset 0 -3px 0 0 rgb(0 0 0 / 10%);
+    position: relative;
+    top: 8px;
+    right:-5px;
+    text-align: center;
+    width: 30px;
+    height: 28px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+}
 .descBox{
-    font-size:12px;
+    font-size:13px;
     margin:5px;
-    font-weight: bold;
-    color: #fab700;
+    font-weight:bolder;
+    color: rgb(61, 147, 190);
 }
 .MJXc-display{
     display: inline-block !important;
 }
 
+.oneDivGrid{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+.twoDivGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
 .threeDivGrid{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -41,10 +98,6 @@
     display:flex;
     flex:2;
     height:100%;
-}
-.oneDivGrid{
-    display: grid;
-    grid-template-columns: 1fr;
 }
 
 .boxHighLight:focus{
@@ -73,17 +126,26 @@
     margin:10px 0 20px 0;
 }
 .mini-title4{
-    display: inline-block;
-    font-family: 'malgunGothic';
-    font-size:14px;
-    font-weight:500;
-    margin-bottom:5px;
+    color: #072e61;
+    background-color: #e6e9eb;
+    padding: 10px 0 10px 25px;
+    border-top: 2px solid dimgray;
+    border-bottom: 1px solid lightgray;
+    font-family: 'jejuGothic';
+    margin-bottom:10px;
 }
 .mini-title5{
     font-family: 'jejuGothic';
     color:rgb(117, 156, 228);
     margin:10px 0 0 0;
 }
+.mini-title6{
+    display: inline-block;
+    font-family: 'jejuGothic';
+    font-weight: 600;
+}
+
+
 .selBox{
     padding:3px;
     background-color: none;
