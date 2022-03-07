@@ -520,12 +520,12 @@
 /** 사각형 조건 박스 **/
 .nbCondBox{
     position: relative;
-    vertical-align: -0.5em;
+    vertical-align: -0.55em;
 }
 .nbCondBase{
     line-height: 130%;
     font-size: 14px;
-    padding: 1px 8px;
+    padding: 3px 8px 0 8px;
     min-width:22px;
     border: 1px solid black;
     text-align: center;
