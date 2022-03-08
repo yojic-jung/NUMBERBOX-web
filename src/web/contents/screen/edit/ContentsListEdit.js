@@ -365,7 +365,7 @@ const ContentsListEdit = ()=>{
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState  && <FormulaEditor contentsNo={contentsNo}/>}
             </div>
-            <input id="imgUpdt" type="text" defaultValue="N" />
+            <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
             </>
 
   );
