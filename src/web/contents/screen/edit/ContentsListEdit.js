@@ -109,16 +109,18 @@ const ContentsListEdit = ()=>{
             if(contentsList.length!==0){
                 let multiShowDiv = document.getElementsByClassName("quesConMultiShow");
                 let maxWidth;
+                
                 for(let i=0; i<multiShowDiv.length; i++){
+                    multiShowDiv[i].classList.remove("oneDivGrid");
+                    multiShowDiv[i].classList.remove("twoDivGrid");
+                    multiShowDiv[i].classList.remove("threeDivGrid");
+
                     maxWidth = multiShowDiv[i].querySelector(".firDiv").offsetWidth;
                     if(maxWidth < multiShowDiv[i].querySelector(".secDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".secDiv").offsetWidth;
                     if(maxWidth < multiShowDiv[i].querySelector(".thrDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".thrDiv").offsetWidth;
                     if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
                     if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
-                    
-                    multiShowDiv[i].classList.remove("oneDivGrid");
-                    multiShowDiv[i].classList.remove("twoDivGrid");
-                    multiShowDiv[i].classList.remove("threeDivGrid");
+
                     if(maxWidth<170 && maxWidth>90)  multiShowDiv[i].classList.add("twoDivGrid");
                     else if(maxWidth<=90) multiShowDiv[i].classList.add("threeDivGrid");
                     else multiShowDiv[i].classList.add("oneDivGrid");
