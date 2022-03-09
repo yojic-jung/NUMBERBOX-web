@@ -116,6 +116,9 @@ const ContentsListEdit = ()=>{
                     if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
                     if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
                     
+                    multiShowDiv[i].classList.remove("oneDivGrid");
+                    multiShowDiv[i].classList.remove("twoDivGrid");
+                    multiShowDiv[i].classList.remove("threeDivGrid");
                     if(maxWidth<170 && maxWidth>90)  multiShowDiv[i].classList.add("twoDivGrid");
                     else if(maxWidth<=90) multiShowDiv[i].classList.add("threeDivGrid");
                     else multiShowDiv[i].classList.add("oneDivGrid");
@@ -232,17 +235,6 @@ const ContentsListEdit = ()=>{
                 else if(contentsMap.quesLevel=="4")quesLevel="중상";
                 else if(contentsMap.quesLevel=="5")quesLevel="상";
 
-                let firNoLen = contentsMap.firNo.length;
-                let secNoLen = contentsMap.firNo.length;
-                let thrNoLen = contentsMap.firNo.length;
-                let fourNoLen = contentsMap.firNo.length;
-                let fifNoLen = contentsMap.firNo.length;
-            
-                let threeDivGrid = "";
-                if(firNoLen < 4 && secNoLen < 4 && thrNoLen < 4 && fourNoLen < 4 && fifNoLen < 4){
-                    threeDivGrid = " threeDivGrid";
-                }
-
                 let isBlank="";
                 if(contentsMap.choiceAnswer===null)isBlank="hide";
 
@@ -276,7 +268,7 @@ const ContentsListEdit = ()=>{
                                                         <div id="quesImg-show" className={"quesImg-show "+isConImgHide}>
                                                             <img src={conImgPath} id="contentsImgOutput" alt="" />
                                                         </div>
-                                                        <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide+threeDivGrid}>
+                                                        <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide}>
                                                             <div className="firDiv"><span id="workFirNoShow">&#9312; </span><span dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
                                                             <div className="secDiv"><span id="workSecNoShow">&#9313; </span><span dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
                                                             <div className="thrDiv"><span id="workThrNoShow">&#9314; </span><span dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
