@@ -295,10 +295,16 @@
     color:white;
 }
 
-#quesImg-show{
+.quesImg-show{
     text-align: center;
     width:70%;
-    margin:auto;
+    margin:0 auto 0 auto;
+}
+
+.solImg-show{
+    text-align: center;
+    width:70%;
+    margin:0px auto 0 auto;
 }
 
 /** 문제 출력 사이즈 대략 356px(테스트 필요) **/
@@ -321,6 +327,12 @@
 
 #contentsImgOutput, #solutionImgOutput{
     width:100%;
+}
+#contentsImgOutput{
+    margin-top: 15px;
+}
+#solutionImgOutput{
+    margin-bottom: 15px;
 }
 
 .multiChoiceView{
@@ -554,7 +566,7 @@
     border-spacing: 0px;
     border-collapse: collapse;
     table-layout: fixed;
-    margin:10px auto;
+    margin:15px auto 0 auto;
     border:0.5px solid gray;
 }
 .editInnerTable tr{
@@ -942,7 +954,7 @@
 }
 
 .fixedBox{
-    padding: 10px;
+    padding: 0 10px;
     box-shadow: 0 0 5px 5px #999;
     border-radius: 10px;
     border:2px solid dimgray;
@@ -971,4 +983,14 @@
 .ansSol-show{
     padding: 10px 0;
     margin-bottom: 100px;
+}
+
+.scrollFixBugMargin{
+    height: 15vh;
+}
+
+#outerFormulaEditor .fixedTopMenu{
+    position: sticky;
+    top:0px;
+    z-index: 11;
 }

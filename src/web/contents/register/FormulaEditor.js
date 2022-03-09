@@ -5,7 +5,7 @@ import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
 import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
-import {reg_threeDivGridChk , reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom
+import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom
 		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange, reg_selectUnitOrTypeData} from 'js/contents/register/contents_reg';
 
 
@@ -31,8 +31,8 @@ const FormulaEditor = ({contentsNo}) => {
 	const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
 
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
-console.log(contentsNo);
-    const removeAddedEvent = () => {
+
+	const removeAddedEvent = () => {
 		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
 		window.removeEventListener('mousemove', reg_mMoveTdWidthChange);
 		window.removeEventListener('mouseup', reg_mUpTdWidthChange);
@@ -53,6 +53,23 @@ console.log(contentsNo);
 			nb_topMenuFixed("topShortkeyDiv", targetDomWidth, "outerFormulaEditor")
 		}
 		else nb_topMenuFixed("topShortkeyDiv", targetDomWidth, null)
+	}
+
+	const multiChoiceGridSet = () => {
+		let multiGrid = document.getElementById("multi-show");
+		multiGrid.classList.remove("oneDivGrid");
+		multiGrid.classList.remove("twoDivGrid");
+		multiGrid.classList.remove("threeDivGrid");
+
+		let maxWidth = document.getElementsByClassName("firDiv")[0].offsetWidth;
+		if(maxWidth < document.getElementsByClassName("secDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("secDiv")[0].offsetWidth
+		if(maxWidth <document.getElementsByClassName("thrDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("thrDiv")[0].offsetWidth
+		if(maxWidth < document.getElementsByClassName("fourDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("fourDiv")[0].offsetWidth
+		if(maxWidth < document.getElementsByClassName("fifDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("fifDiv")[0].offsetWidth
+
+		if(maxWidth<170 && maxWidth>90)  document.getElementById("multi-show").classList.add("twoDivGrid");
+		else if(maxWidth<=90) multiGrid.classList.add("threeDivGrid");
+		else multiGrid.classList.add("oneDivGrid");
 	}
 
 	let executeCnt = 0;		//최초 한번만 이미지 삭제 confirm 경고창 발생
@@ -180,8 +197,7 @@ console.log(contentsNo);
 						}
 					}
 				}
-				console.log(myContents["myContents"].contentsImg);
-				console.log(myContents["myContents"].solutionImg);
+
 				if(myContents["myContents"].firNo.length!=0){
 					document.getElementById("firNoShow").classList.remove("hide");
 					document.getElementById("secNoShow").classList.remove("hide");
@@ -206,15 +222,19 @@ console.log(contentsNo);
 				setFifNo(myContents["myContents"].fifNo);
 				document.getElementById("fifNoFormulaEditor").innerHTML = myContents["myContents"].fifNo;
 
-				//이미지 file 셋팅 필요(문제 및 정답)(X)
+				await multiChoiceGridSet();
+
+				//이미지 file 셋팅 필요(문제 및 정답)
 				if(myContents["myContents"].contentsImg !== null){
 					document.getElementById("contentsImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].contentsImg;
+					document.getElementById("contentsImgOutput").classList.remove("hide");
 					conImgName = myContents["myContents"].contentsImg;
 				}else{
 					conImgName="N"
 				}
 				if(myContents["myContents"].solutionImg !== null){
 					document.getElementById("solutionImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].solutionImg;
+					document.getElementById("solutionImgOutput").classList.remove("hide");
 					solImgName = myContents["myContents"].solutionImg;
 				}else{
 					solImgName="N"
@@ -385,7 +405,6 @@ console.log(contentsNo);
 	}
 
 
-
 	const formulaConvert = async (event, shortCutKeyList) => {
 		let evIdName = event.target.id
 		event.stopPropagation();
@@ -493,8 +512,8 @@ console.log(contentsNo);
 					<div className="mini-title4">문제</div>
 					<div id="ques-show">
 						<div dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
-						<div id="quesImg-show">
-							<img src="" id="contentsImgOutput" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", contentsNo);}} alt="" />
+						<div id="quesImg-show" className="quesImg-show">
+							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", contentsNo);}} alt="" />
 						</div>
 						<div id="multi-show">
 							<div className="firDiv"><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
@@ -514,10 +533,11 @@ console.log(contentsNo);
 						</span>
 						<div id="sol-show">
 						<span className='mini-title6'> 해설</span>&nbsp;&nbsp;
-							<div className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
-							<div id="quesImg-show">
-								<img src="" id="solutionImgOutput" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", contentsNo)} alt="" />
+							<div id="solImg-show" className="solImg-show">
+								<img src="" id="solutionImgOutput" className="hide" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", contentsNo)} alt="" />
 							</div>
+							<div className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
+
 						</div>
 					</div>
 				</div>
@@ -547,11 +567,11 @@ console.log(contentsNo);
 						</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_threeDivGridChk();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
+						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
@@ -597,6 +617,7 @@ console.log(contentsNo);
 
 			</div>
 		</div>
+		<div className="scrollFixBugMargin"></div>
 		<InputQustionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo}/>
 		</form>
 	</>

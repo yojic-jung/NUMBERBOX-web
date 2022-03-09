@@ -44,7 +44,3 @@
 .solContents{
     padding-left: 2px;
 }
-
-.firDiv, .secDiv, .thrDiv, .fourDiv, .fifDiv{
-    display: inline-block;
-}

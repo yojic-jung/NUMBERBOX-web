@@ -273,7 +273,7 @@ const ContentsListEdit = ()=>{
                                                     <div className='quesDiv'>
                                                         <span className='quesNumber'>{quesNumber}</span>
                                                         <span className='quesContents' dangerouslySetInnerHTML={{__html:contentsMap.contents}}></span> 
-                                                        <div id="quesImg-show" className={" "+isConImgHide}>
+                                                        <div id="quesImg-show" className={"quesImg-show "+isConImgHide}>
                                                             <img src={conImgPath} id="contentsImgOutput" alt="" />
                                                         </div>
                                                         <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide+threeDivGrid}>
@@ -304,10 +304,10 @@ const ContentsListEdit = ()=>{
                                                         </div>
                                                         <div id="workSolShow" className='solShow'>
                                                             <span className='mini-title6'>해설</span>
-                                                            <div className='solContents' dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div> 
-                                                            <div id="quesImg-show" className={isSolImgHide}>
+                                                            <div id="solImg-show" className={"solImg-show "+isSolImgHide}>
                                                                 <img src={solImgPath} id="solutionImgOutput" alt="" />
                                                             </div>
+                                                            <div className='solContents' dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div> 
                                                         </div>
                                                     </div>
                                                 </div>

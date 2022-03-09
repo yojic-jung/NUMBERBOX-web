@@ -103,7 +103,7 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
       output.src = reader.result;
     };
     if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
-    console.log(contentsNo)
+
     if(contentsNo!== undefined){
       let formData = new FormData();
       formData.append("contentsNo",contentsNo);
@@ -115,7 +115,6 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
         return false;
       }
       document.getElementById("imgUpdt").value = "Y";
-    }else{
     }
     reader.readAsDataURL(event.target.files[0]);
     output.classList.remove('hide');
@@ -296,14 +295,14 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
       targetDom.classList.remove("fixedTopMenu");
     }
   }else{
-    let parentDomOffsetY = document.getElementById(parentDomId).getBoundingClientRect().top
-    let targetDomOffsteY = targetDom.getBoundingClientRect().top
-    if(parentDomOffsetY > targetDomOffsteY+5){
+    let parentDomScrollTop= document.getElementById(parentDomId).scrollTop
+    if(parentDomScrollTop > 12){
       targetDom.classList.add("fixedTopMenu");
       targetDom.style.width =targetDomWidth+"px";
     }else{
       targetDom.classList.remove("fixedTopMenu");
     }
+
   }
 
 }
