@@ -310,7 +310,7 @@ const ContentsListEdit = ()=>{
                                                                     <span className='mini-title6'> 정답</span>&nbsp;&nbsp;
                                                                     <span  dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
                                                                     <span className={"marginRFive "+isBlank}></span>
-                                                                    <span dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
+                                                                    <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
                                                                 </span>
                                                             </div>
                                                         </div>
