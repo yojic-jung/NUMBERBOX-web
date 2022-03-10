@@ -105,19 +105,26 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
     if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
 
     if(contentsNo!== undefined){
+      let targetId = event.target.id
       let formData = new FormData();
       formData.append("contentsNo",contentsNo);
-      console.log(event.target.id);
-      formData.append(event.target.id ,event.target.files[0])
+      formData.append(targetId, event.target.files[0])
       let returnObj = await nb_formDataFetch("/changeConOrSolImg",formData, true);
+      document.getElementById("imgUpdt").value = "Y";
+      reader.readAsDataURL(event.target.files[0]);
+      output.classList.remove('hide');
       if(returnObj.updateCond !== 1) {
         alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
         return false;
+      }else{
+        return "Y";
       }
-      document.getElementById("imgUpdt").value = "Y";
+    }else{
+      reader.readAsDataURL(event.target.files[0]);
+      output.classList.remove('hide');
+      return "";
     }
-    reader.readAsDataURL(event.target.files[0]);
-    output.classList.remove('hide');
+    
   };
 
 /*
@@ -136,13 +143,19 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
 /*
 * 정의 : 이미지 파일 확장자 체크 함수
 */
-export const nb_extensionCheck = async (event, outputTarget) => {
+export const nb_extensionCheck = async (event, outputTarget, updtMode) => {
     let targetId = event.target.id;
     let obj = document.getElementById(targetId);
     let file =	document.getElementById(targetId).files[0];
     if(file== undefined){     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
-      await nb_imgFileDel(outputTarget,targetId)
-      return false;
+      //수정모드일때는 수정모드에 있는 함수로 DB에 등록된 이미지 제거
+      if(updtMode!== undefined){
+          return false;
+      }else{
+        await nb_imgFileDel(outputTarget,targetId)
+        return false;
+      }
+     
     }
     // file[0].size 는 파일 용량 정보입니다.
     if(file.size > 1024*1024*1){
@@ -158,8 +171,9 @@ export const nb_extensionCheck = async (event, outputTarget) => {
     // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
     if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
     }else{
-      alert('이미지  파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
+      alert('이미지 파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
       await nb_imgFileDel(outputTarget,targetId)
+      return false;
     }
 }
 

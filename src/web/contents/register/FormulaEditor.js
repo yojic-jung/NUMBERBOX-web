@@ -4,7 +4,7 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
-import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
+import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, nb_imgFileDel} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom, reg_eraseEditTbUI
 		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange, reg_selectUnitOrTypeData} from 'js/contents/register/contents_reg';
 
@@ -33,7 +33,6 @@ const FormulaEditor = ({contentsNo}) => {
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
 
 	const removeAddedEvent = () => {
-		console.log("이벤트 제거");
 		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
 		window.removeEventListener('mousemove', reg_mMoveTdWidthChange);
 		window.removeEventListener('mouseup', reg_mUpTdWidthChange);
@@ -76,12 +75,10 @@ const FormulaEditor = ({contentsNo}) => {
 	}
 
 
-	let executeCnt = 0;		//최초 한번만 이미지 삭제 confirm 경고창 발생
-	let executeSolCnt = 0;
 	const customImgUpld = async (targetId) =>{
 		let updtImg = false;
-		if((targetId === "contentsImg" && conImgName!=="N" && executeCnt === 0) 
-			|| (targetId === "solutionImg" && solImgName!=="N" && executeSolCnt===0) ){
+		if((targetId === "contentsImg" && conImgName!=="N" ) 
+			|| (targetId === "solutionImg" && solImgName!=="N") ){
 			updtImg = await window.confirm("등록된 이미지를 삭제하고 새로운 이미지를 등록하시겠습니까?");
 			if(updtImg){
 				let formData = new FormData();
@@ -91,11 +88,18 @@ const FormulaEditor = ({contentsNo}) => {
 				if(returnObj.updateCond !== 1){
 					alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
 					return false;
-				} 
+				}else{
+					if(targetId === "contentsImg"){
+						nb_imgFileDel("contentsImgOutput", "contentsImg");
+						conImgName="N";
+					} 
+					else if(targetId === "solutionImg"){
+						nb_imgFileDel("solutionImgOutput", "solutionImg");
+						solImgName="N";
+					} 
+				}
 				document.getElementById("imgUpdt").value = "Y";
 				document.getElementById(targetId).click()
-				if(targetId === "contentsImg") executeCnt ++;
-				else executeSolCnt ++;
 			} 
 		}else{
 			document.getElementById(targetId).click();
@@ -103,8 +107,8 @@ const FormulaEditor = ({contentsNo}) => {
 	}
 
 	const imgFileDel = async (outputId, fileTagId) => {  //outputId는 출력 dom
-		if((outputId==="contentsImgOutput" && conImgName!=="N" && executeCnt === 0) 
-			|| (outputId==="solutionImgOutput" && solImgName!=="N" && executeSolCnt === 0)){
+		if((outputId==="contentsImgOutput" && conImgName!=="N") 
+			|| (outputId==="solutionImgOutput" && solImgName!=="N") ){
 			if(window.confirm("등록된 이미지를 삭제하시겠습니까?")){
 				
 				if(outputId === "contentsImgOutput"){
@@ -115,9 +119,11 @@ const FormulaEditor = ({contentsNo}) => {
 					if(returnObj.updateCond !== 1){
 						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
 						return false;
-					} 
+					}else{
+						nb_imgFileDel("contentsImgOutput", "contentsImg");
+						conImgName="N";
+					}
 					document.getElementById("imgUpdt").value = "Y";
-					executeCnt ++;
 				} 
 				else{
 					let formData = new FormData();
@@ -127,9 +133,11 @@ const FormulaEditor = ({contentsNo}) => {
 					if(returnObj.updateCond !== 1){
 						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
 						return false;
+					}else{
+						nb_imgFileDel("solutionImgOutput", "solutionImg");
+						solImgName="N";
 					}
 					document.getElementById("imgUpdt").value = "Y";
-					executeSolCnt ++;
 				} 
 			}else{
 				return;
@@ -142,6 +150,38 @@ const FormulaEditor = ({contentsNo}) => {
 		output.src = "";
 		output.classList.add('hide');
 	  }
+
+	  const loadFile = async (event, outputId, contentsNo) => {	//outputId는 출력 dom
+		let reader = new FileReader();
+		let output = document.getElementById(outputId);
+		reader.onload = async function(){
+		  output.src = reader.result;
+		};
+		if(event.target.files[0]==undefined) return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
+	
+		if(contentsNo!== undefined){
+		  let targetId = event.target.id
+		  let formData = new FormData();
+		  formData.append("contentsNo",contentsNo);
+		  formData.append(targetId, event.target.files[0])
+		  let returnObj = await nb_formDataFetch("/changeConOrSolImg",formData, true);
+		  document.getElementById("imgUpdt").value = "Y";
+		  reader.readAsDataURL(event.target.files[0]);
+		  output.classList.remove('hide');
+		  if(returnObj.updateCond !== 1) {
+			alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
+			return false;
+		  }else{
+			  if(targetId === "contentsImg") conImgName = "Y";
+			  else if(targetId === "solutionImg") solImgName = "Y";
+		  }
+		}else{
+		  reader.readAsDataURL(event.target.files[0]);
+		  output.classList.remove('hide');
+		  return "";
+		}
+		
+	  };
 
 
 	useEffect(() => {
@@ -517,7 +557,7 @@ const FormulaEditor = ({contentsNo}) => {
 					<div id="ques-show">
 						<div dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
 						<div id="quesImg-show" className="quesImg-show">
-							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", contentsNo);}} alt="" />
+							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", {contentsNo});}} alt="" />
 						</div>
 						<div id="multi-show">
 							<div className="firDiv"><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
@@ -538,7 +578,7 @@ const FormulaEditor = ({contentsNo}) => {
 						<div id="sol-show">
 						<span className='mini-title6'> 해설</span>&nbsp;&nbsp;
 							<div id="solImg-show" className="solImg-show">
-								<img src="" id="solutionImgOutput" className="hide" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", contentsNo)} alt="" />
+								<img src="" id="solutionImgOutput" className="hide" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", {contentsNo})} alt="" />
 							</div>
 							<div className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
 
@@ -567,8 +607,8 @@ const FormulaEditor = ({contentsNo}) => {
 					<div className="mini-title marginBox">
 						<span id="cusConUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("contentsImg")}}>문제 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
-						<input id="contentsImg" name="contentsImg" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput");nb_loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
-						</div>
+						<input id="contentsImg" name="contentsImg" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput", contentsNo); loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
+					</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();}} onClick={()=>dressYellowBox()}></div><br/>
@@ -590,7 +630,7 @@ const FormulaEditor = ({contentsNo}) => {
 					<div className="mini-title marginBox">
 						<span id="cusSolUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("solutionImg")}}>해설 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
-						<input id="solutionImg" name="solutionImg" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput");nb_loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
+						<input id="solutionImg" name="solutionImg" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput", contentsNo); loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
 					</div>
 					<div className="mini-title">정답</div>
 					<div>

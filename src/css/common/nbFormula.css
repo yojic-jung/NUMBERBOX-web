@@ -4,14 +4,28 @@
     format('truetype');
 }
 
-/* 한글, 특수문자 기호 */
+/*
+* 한글 : U+AC00-D7A3
+* 특수문자 : U+0020-002F, U+003A-0040
+* 대괄호 및 기타 특수문자 : U+005B-0060
+* 중괄호 : U+007B-007E
+* ㄱ원형문자 : U+3260-3264
+*/
 @font-face {
     font-family: 'nbFormulaFont';
     src:url('font/JejuGothic-Regular.ttf')
     format('truetype');
     unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
-    
 }
+@font-face {
+    font-family: 'nbFormulaFont';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/OTJeongsogeonhaeLA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range:  U+3260-3264;
+
+}
+
 
 /* 영어 대문자 */
 @font-face {
@@ -20,7 +34,6 @@
     format('truetype');
     unicode-range: U+0061-007A;
 }
-
 
 
 /** 출력화면 문제번호 **/
@@ -67,6 +80,13 @@
     font-family: 'formulaFont';
     src:url('font/STIXTwoText-MediumItalic.ttf')
     format('truetype');
+}
+
+@font-face {
+    font-family: 'caseBrck';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .nbFomularEditor { 
@@ -506,15 +526,12 @@
     border-spacing: 0px;
 }
 .nbCaseBrck{
-    font-size:20px;
-    font-family: 'MJXc-TeX-size2-Rw';
+    font-size:38px;
+    font-family: 'caseBrck';
     font-weight: 100;
 }
-.nbCaseFir{
-
-}
-
-.nbCaseSec{
+.nbCaseFir, .nbCaseSec{
+    min-width: 20px;
 }
 
 /** 사각형 조건 박스 **/
