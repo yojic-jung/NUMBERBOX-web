@@ -24,10 +24,11 @@ const ContentsListEdit = ()=>{
     const [contentsLen, setContentsLen] = useState(0);
     const [contentsNo, setContentsNo] = useState("");
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
+
+
     const removeAddedEvent = () => {
         document.body.removeEventListener('click',nb_fCustomSelClose);
     }
-
 
 
     const modalPopupOpen = async (event)  =>{
@@ -42,6 +43,7 @@ const ContentsListEdit = ()=>{
         await setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
         setModalState(true);
     }
+
 
     const modalPopupClose = async (event, isSearch) =>{
         await nb_closeBtn("outerFormulaEditor"); 
@@ -78,16 +80,40 @@ const ContentsListEdit = ()=>{
         document.getElementById("cusSelThrUnitTitle").innerHTML =document.getElementById("thrUnit")[document.getElementById("thrUnit").selectedIndex].innerText;
         document.getElementById("cusSelThrUnitDiv").classList.add("nbCustomSelected");
         
-        console.log(isSearch);
         //모달창에서 저장하기 버튼을 누른 경우에만 검색, event.isTrusted객체는 사용자 액션, 자바스크립트 강제 이벤트 발생 구분 객체
         if(!event.isTrusted) await searchMyWorkList(true);
         else if(document.getElementById("imgUpdt").value === "Y"){
             await searchMyWorkList(true);
             document.getElementById("imgUpdt").value = "N";
         } 
+        await multiChoiceGridSet();
         nb_modalScrollEnd(scrollY)
+        
     }
     
+
+    const  multiChoiceGridSet = async () => {
+        let multiShowDiv = document.getElementsByClassName("quesConMultiShow");
+        let maxWidth;
+        
+        for(let i=0; i<multiShowDiv.length; i++){
+            multiShowDiv[i].classList.remove("oneDivGrid");
+            multiShowDiv[i].classList.remove("twoDivGrid");
+            multiShowDiv[i].classList.remove("threeDivGrid");
+    
+            maxWidth = multiShowDiv[i].querySelector(".firDiv").offsetWidth;
+            if(maxWidth < multiShowDiv[i].querySelector(".secDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".secDiv").offsetWidth;
+            if(maxWidth < multiShowDiv[i].querySelector(".thrDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".thrDiv").offsetWidth;
+            if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
+            if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
+    
+            if(maxWidth<170 && maxWidth>90)  multiShowDiv[i].classList.add("twoDivGrid");
+            else if(maxWidth<=90) multiShowDiv[i].classList.add("threeDivGrid");
+            else multiShowDiv[i].classList.add("oneDivGrid");
+        }
+    }
+
+
     useEffect(()=>{
         const asyncUseEffect = async function(){
             let jsonObj = await nb_dataFetch('/unitInfo', true);
@@ -107,30 +133,18 @@ const ContentsListEdit = ()=>{
             document.body.addEventListener('click',nb_fCustomSelClose);
         }else{
             if(contentsList.length!==0){
-                let multiShowDiv = document.getElementsByClassName("quesConMultiShow");
-                let maxWidth;
-                
-                for(let i=0; i<multiShowDiv.length; i++){
-                    multiShowDiv[i].classList.remove("oneDivGrid");
-                    multiShowDiv[i].classList.remove("twoDivGrid");
-                    multiShowDiv[i].classList.remove("threeDivGrid");
-
-                    maxWidth = multiShowDiv[i].querySelector(".firDiv").offsetWidth;
-                    if(maxWidth < multiShowDiv[i].querySelector(".secDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".secDiv").offsetWidth;
-                    if(maxWidth < multiShowDiv[i].querySelector(".thrDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".thrDiv").offsetWidth;
-                    if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
-                    if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
-
-                    if(maxWidth<170 && maxWidth>90)  multiShowDiv[i].classList.add("twoDivGrid");
-                    else if(maxWidth<=90) multiShowDiv[i].classList.add("threeDivGrid");
-                    else multiShowDiv[i].classList.add("oneDivGrid");
-                }
+                multiChoiceGridSet();
             }
             fExecuteWidth = false;
         }
 
         return removeAddedEvent;
         }, [contentsList]);
+
+
+
+
+
         const searchMyWorkListByEnter = async function(event){
             if(event.keyCode === 13){
                 event.preventDefault();
@@ -138,6 +152,8 @@ const ContentsListEdit = ()=>{
                 
             }
         }
+
+
         const searchMyWorkList = async function(hasNotiPhrases){
             let customSubject = document.getElementById("cusSelSubTitle");
             let subject = document.getElementById("subject");
@@ -209,6 +225,8 @@ const ContentsListEdit = ()=>{
             }
 
         }
+
+
         const workContentsList = contentsList.map( (contentsMap, idx) => {
                 let quesNumber;
                 if(idx<9){
@@ -306,12 +324,12 @@ const ContentsListEdit = ()=>{
                                                     </div>
                                                 </div>
                                             </td>
-                                            
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
         });
+
 
   return ( <>
   
