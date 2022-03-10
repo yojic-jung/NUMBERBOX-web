@@ -5,7 +5,7 @@ import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import InputQustionInfo from 'web/contents/register/InputQustionInfo';
 import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch,nb_loadFile, nb_addClass, nb_extensionCheck, nb_getCheckedVal} from 'js/common/common_nb.js';
-import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom
+import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom, reg_eraseEditTbUI
 		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange, reg_selectUnitOrTypeData} from 'js/contents/register/contents_reg';
 
 
@@ -39,6 +39,7 @@ const FormulaEditor = ({contentsNo}) => {
 		window.removeEventListener('selectstart', reg_selStartTdWidthChange);
 		window.removeEventListener('scroll', topMenuFixed);
 		window.removeEventListener('resize', topMenuWidth);
+        document.body.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
     }
 
 	let targetDomWidth=window.innerWidth/2;
@@ -54,6 +55,7 @@ const FormulaEditor = ({contentsNo}) => {
 		}
 		else nb_topMenuFixed("topShortkeyDiv", targetDomWidth, null)
 	}
+
 
 	const multiChoiceGridSet = () => {
 		let multiGrid = document.getElementById("multi-show");
@@ -71,6 +73,7 @@ const FormulaEditor = ({contentsNo}) => {
 		else if(maxWidth<=90) multiGrid.classList.add("threeDivGrid");
 		else multiGrid.classList.add("oneDivGrid");
 	}
+
 
 	let executeCnt = 0;		//최초 한번만 이미지 삭제 confirm 경고창 발생
 	let executeSolCnt = 0;

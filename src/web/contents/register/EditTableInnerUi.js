@@ -1,26 +1,7 @@
 import React, { useEffect } from 'react';
-
+import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg';
 
 const EditTableInnerUi = ({parentMethod})=>{
-    
-    const removeAddedEvent = () => {
-        document.body.removeEventListener('click',exceptTbDomClk);
-    }
-
-    const exceptTbDomClk = async (event ) =>{
-        let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
-        if(idBorderDesc) return;
-
-        let tagetDom = event.target.closest('button');
-        if(tagetDom==null) {
-            document.getElementById("editTableUi").classList.add("hide");
-            return;
-        }
-        let targetId = tagetDom.id;
-        if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
-            document.getElementById("editTableUi").classList.add("hide");
-        } 
-    }
 
     useEffect(()=>{
 
@@ -33,8 +14,7 @@ const EditTableInnerUi = ({parentMethod})=>{
 			});
 			tdList[i].addEventListener('click', (event)=>addEditTable(event));
 		}
-        document.body.addEventListener('click',exceptTbDomClk);
-        return removeAddedEvent();
+        document.body.addEventListener('click',reg_eraseEditTbUI);
     },[])
 
     const addCellUiClass = async (rowIdx, colIdx) => {

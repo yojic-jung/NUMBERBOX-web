@@ -563,3 +563,22 @@ export const reg_selectTypeData = async (targetId, titleTag, divTag, compareStr 
 		}
 	}
 }
+
+
+/*
+*	정의 : 편집기 표 추가ui 표 이외의 요소 클릭시 사라지는 효과
+*/
+export const reg_eraseEditTbUI = async (event ) =>{
+	let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
+	if(idBorderDesc) return;
+
+	let tagetDom = event.target.closest('button');
+	if(tagetDom==null) {
+		document.getElementById("editTableUi").classList.add("hide");
+		return;
+	}
+	let targetId = tagetDom.id;
+	if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
+		document.getElementById("editTableUi").classList.add("hide");
+	} 
+}
