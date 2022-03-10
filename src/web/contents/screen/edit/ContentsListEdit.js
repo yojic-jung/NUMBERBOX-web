@@ -26,11 +26,6 @@ const ContentsListEdit = ()=>{
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
 
 
-    const removeAddedEvent = () => {
-        document.body.removeEventListener('click',nb_fCustomSelClose);
-    }
-
-
     const modalPopupOpen = async (event)  =>{
         workMemVal = document.getElementById("workMem").value;
         subjectVal = document.getElementById("subject").value;
@@ -138,7 +133,6 @@ const ContentsListEdit = ()=>{
             fExecuteWidth = false;
         }
 
-        return removeAddedEvent;
         }, [contentsList]);
 
 

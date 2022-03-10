@@ -33,6 +33,7 @@ const FormulaEditor = ({contentsNo}) => {
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
 
 	const removeAddedEvent = () => {
+		console.log("이벤트 제거");
 		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
 		window.removeEventListener('mousemove', reg_mMoveTdWidthChange);
 		window.removeEventListener('mouseup', reg_mUpTdWidthChange);
