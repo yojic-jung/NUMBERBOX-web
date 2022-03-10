@@ -44,9 +44,3 @@
 .solContents{
     padding-left: 2px;
 }
-
-
-/** 첫줄 div 태그 있을시 줄바꿈되어 번호 줄 안맞는 오류 해결 **/
-.quesContents > div:first-child, .answerSheet > div:first-child{
-    display: inline;
-}
