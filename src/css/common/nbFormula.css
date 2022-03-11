@@ -9,7 +9,7 @@
 * 특수문자 : U+0020-002F, U+003A-0040
 * 대괄호 및 기타 특수문자 : U+005B-0060
 * 중괄호 : U+007B-007E
-* ㄱ원형문자 : U+3260-3264
+
 */
 @font-face {
     font-family: 'nbFormulaFont';
@@ -17,12 +17,15 @@
     format('truetype');
     unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
 }
+/*
+* ㄱ원형문자 : U+3260-3266
+*/
 @font-face {
     font-family: 'nbFormulaFont';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/OTJeongsogeonhaeLA.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-    unicode-range:  U+3260-3264;
+    unicode-range:  U+3260-3266;
 
 }
 
