@@ -22,7 +22,7 @@
 
 .right{
     width:50%;
-    min-width: 580px;
+    min-width: 620px;
     display:inline-block;
     padding:10px 0px;
 }
@@ -428,6 +428,8 @@
     vertical-align: middle;
 }
 
+
+
 .shortCutKey .nbCaseBrck{
     font-size:20px;
 }
@@ -440,6 +442,17 @@
 
 }
 
+.shortCutKey .nbThrCasekBox .borderBox{
+    min-width: 10px;
+    font-size:0px;
+    height: 7px;
+    border:1px dashed white;
+}
+
+.shortCutKey .nbThrCaseBrck{
+    font-family: "caseBrck";
+    font-size:20px;
+}
 
 .numberBox{
     color:white;

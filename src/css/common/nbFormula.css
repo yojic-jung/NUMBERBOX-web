@@ -68,6 +68,11 @@
     unicode-range: U+002D;
 }
 
+@font-face {
+    font-family: 'formulaFont';
+    src:url('font/STIXTwoText-MediumItalic.ttf')
+    format('truetype');
+}
 
 @font-face {
     font-family: 'rootFracFont';
@@ -76,15 +81,17 @@
     font-weight: 100;
 }
 
-@font-face {
-    font-family: 'formulaFont';
-    src:url('font/STIXTwoText-MediumItalic.ttf')
-    format('truetype');
-}
 
 @font-face {
     font-family: 'caseBrck';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MapoDacapo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/MapoDacapoA.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -518,6 +525,27 @@
     right:0.15em;
 }
 
+/** 이항계수 **/
+.nbBinomCoBox {
+    vertical-align: middle;
+    border-spacing: 0px;
+    text-align: center;
+    margin:0px 1px;
+
+}
+
+.nbBinomCoFir {
+    padding: 0px 2px 0 2px;
+    font-size:1em;
+    min-width:1em;
+    line-height: 110%;
+}
+.nbBinomCoSec {
+    font-size:1em;
+    padding: 0 2px 0 2px;
+    min-width:1em;
+    line-height: 110%;
+}
 
 /** 경우(연립방정식 표현) **/
 .nbCaseBrckBox{
@@ -533,6 +561,23 @@
 .nbCaseFir, .nbCaseSec{
     min-width: 20px;
 }
+
+/** 세가지 경우(연립방정식 표현) **/
+.nbThrCasekBox{
+    position: relative;
+    vertical-align: middle;
+    border-spacing: 0px;
+}
+.nbThrCaseBrck{
+    font-size:65px;
+    font-family: "MapoDacapo";
+    font-weight: 100;
+}
+.nbThrCaseFir, .nbThrCaseSec, .nbThrCaseThr{
+    min-width: 20px;
+}
+
+
 
 /** 사각형 조건 박스 **/
 .nbCondBox{
