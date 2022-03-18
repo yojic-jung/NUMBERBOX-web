@@ -51,13 +51,18 @@ const ContentsListEdit = ()=>{
        
         let trigEv = new Object();
         let sub    = new Object();
+       
+        
         trigEv.target= sub;
         trigEv.target.id= "subject";
+        document.getElementById("subject").value = subjectVal;
         await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
         document.getElementById("subject").value = subjectVal;
         document.getElementById("cusSelSubTitle").innerHTML =document.getElementById("subject")[document.getElementById("subject").selectedIndex].innerText;
         document.getElementById("cusSelSubDiv").classList.add("nbCustomSelected");
-
+        //두번 실행해야함, 자식 콤보의 첫번째 인덱스를 display:none 패스 후 자식 콤보의 대단원, 중단원, 소단원 등의 콤보 제목정보가 추가되는데
+        //과목 이벤트 한번만 실행되면  대단원에는 display:none 패스 후 대단원 option태그 추가되므로 콤보제목 태그가 아닌 다른 태그가 들어오게됨
+        await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
 
         document.getElementById("firUnit").value = firUnitVal;
         document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
