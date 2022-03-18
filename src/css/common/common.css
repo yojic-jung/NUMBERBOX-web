@@ -85,10 +85,12 @@
 .oneDivGrid{
     display: grid;
     grid-template-columns: 1fr;
+    align-items: center;
 }
 .twoDivGrid{
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: center;
 }
 .threeDivGrid{
     display: grid;
@@ -281,3 +283,7 @@
 	margin-right: -15px;
 }
 
+
+.hidden{
+    visibility:hidden 
+}

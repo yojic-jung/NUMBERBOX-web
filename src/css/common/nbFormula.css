@@ -5,8 +5,9 @@
 }
 
 /*
-* 한글 : U+AC00-D7A3
-* 특수문자 : U+0020-002F, U+003A-0040
+* 한글 : U+AC00-D7A
+* 숫자 : U+003A-0040
+* 특수문자 : U+0020-002F
 * 대괄호 및 기타 특수문자 : U+005B-0060
 * 중괄호 : U+007B-007E
 
@@ -15,7 +16,7 @@
     font-family: 'nbFormulaFont';
     src:url('font/JejuGothic-Regular.ttf')
     format('truetype');
-    unicode-range: U+AC00-D7A3, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
+    unicode-range: U+AC00-D7A3, U+0020-002F,  U+005B-0060, U+007B-007E;
 }
 /*
 * ㄱ원형문자 : U+3260-3266
@@ -56,10 +57,17 @@
     font-family: 'nbFormulaFont';
     src:url("font/STIXTwoText-Medium.ttf")
     format('truetype');
-    unicode-range: U+0041-005A, U+0030-0039, U+03B1-03C9, U+003C-003E, U+002B;
+    unicode-range: U+0041-005A, U+03B1-03C9, U+003C-003E, U+002B;
     letter-spacing: 2px;
 }
 
+@font-face {
+    font-family: 'nbFormulaFont';
+    src:url("font/STIXTwoText-SemiBold.ttf")
+    format('truetype');
+    unicode-range: U+0030-0039;
+    letter-spacing: 2px;
+}
 /*
 * -(대쉬, 마이너스) 기호 : U+002D;
 */
@@ -613,11 +621,11 @@
 
 
 .onlyEdit *::selection{
-    background:rgb(228, 226, 226);
+    background:rgb(230, 228, 228);
     color:black;
 }
-
-.onlyEdit .nbBox::selection, .onlyEdit .borderBox::selection {
+/*
+.onlyEdit .nbBox::selection, .onlyEdit .borderBox::selection  {
     background:rgb(192, 191, 191) !important;
     color:rgb(77, 76, 76) !important;
 }
@@ -629,7 +637,7 @@
     background:rgb(192, 191, 191) !important;
     color:rgb(77, 76, 76) !important;
 }
-
+*/
 .onlyEdit:focus .borderBox{
     border:1px dashed gray;
 }
