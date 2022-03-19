@@ -431,7 +431,9 @@
     top:0.25em;
     left:-0.51em;
 }
-
+.nbRootFracBox .nbFracBox{
+    display: inline-block;
+} 
 .nbRootFracBox .nbNumer .nbExpTmp {
     bottom:0.2em;
 }

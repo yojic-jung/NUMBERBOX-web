@@ -6,7 +6,7 @@
 //수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택되야하는데 안되는 요소 별도 처리
 const vacantDomAllSel = ["nbCaseBrckBox", "nbThrCasekBox"];
 //입력불가 수식요소 
-const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbRootFracBase", "nbThrCaseBrck", "nbCaseBrck"];
+const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
 //위로 키보드 이벤트 미적용 대상
 const noApplyUpKeyList = ["nbDenom", "nbBiDirSubBase", "nbRightSub", "nbBinomCoSec", "nbCaseSec", "nbThrCaseSec", "nbThrCaseThr"];
 //아래로 키보드 이벤트 미적용 대상
