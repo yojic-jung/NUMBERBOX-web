@@ -579,7 +579,7 @@
     border-spacing: 0px;
     border-collapse: collapse;
     table-layout: fixed;
-    margin:15px auto 0 auto;
+    margin:15px auto 15px auto;
     border:0.5px solid gray;
 }
 .editInnerTable tr{
