@@ -158,12 +158,12 @@ export const reg_threeDivGridChk = async () => {
 	if(maxWidth < document.getElementsByClassName("thrDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("thrDiv")[0].offsetWidth;
 	if(maxWidth < document.getElementsByClassName("fourDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("fourDiv")[0].offsetWidth;
 	if(maxWidth < document.getElementsByClassName("fifDiv")[0].offsetWidth) maxWidth =document.getElementsByClassName("fifDiv")[0].offsetWidth;
-	if(maxWidth<170 && maxWidth>90){
+	if(maxWidth<190 && maxWidth>130){
 		multiShowDiv.classList.remove("oneDivGrid");
 		multiShowDiv.classList.remove("threeDivGrid");
 		multiShowDiv.classList.add("twoDivGrid");
 	}  
-	else if(maxWidth<=90) {
+	else if(maxWidth<=130) {
 		multiShowDiv.classList.remove("oneDivGrid");
 		multiShowDiv.classList.remove("twoDivGrid");
 		multiShowDiv.classList.add("threeDivGrid");

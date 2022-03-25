@@ -282,8 +282,8 @@ const ContentsListEdit = ()=>{
                                             <td className='td1'>
                                                 <div id="workQuesShow" className='workQuesShow quesRootDiv'>
                                                     <div className='quesDiv'>
-                                                        <span className='quesNumber'>{quesNumber}</span>
-                                                        <span className='quesContents' dangerouslySetInnerHTML={{__html:contentsMap.contents}}></span> 
+                                                        <div className='quesNumber'>{quesNumber}</div>
+                                                        <div className='quesContents' dangerouslySetInnerHTML={{__html:contentsMap.contents}}></div> 
                                                         <div id="quesImg-show" className={"quesImg-show "+isConImgHide}>
                                                             <img src={conImgPath} id="contentsImgOutput" alt="" />
                                                         </div>
@@ -304,13 +304,12 @@ const ContentsListEdit = ()=>{
                                                         <div id="workAnsShow" className='ansShow'>
                                                             <div>
                                                                 
-                                                                <span className='solNumber'>{quesNumber}</span>
-                                                                <span className='ansContents'>
-                                                                    <span className='mini-title6'> 정답</span>&nbsp;&nbsp;
+                                                                <div className='ansContents'>
+                                                                    <span className='mini-title6'>{quesNumber}. 답</span>&nbsp;&nbsp;
                                                                     <span  dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
                                                                     <span className={"marginRFive "+isBlank}></span>
                                                                     <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
-                                                                </span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div id="workSolShow" className='solShow'>

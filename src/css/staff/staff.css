@@ -13,7 +13,7 @@
 
 
 .left{
-    width:420px;
+    width:470px;
     color:white;
     display:inline-block;
     padding:10px 0px;
@@ -307,10 +307,10 @@
     margin:0px auto 0 auto;
 }
 
-/** 문제 출력 사이즈 대략 356px(테스트 필요) **/
+/** 문제 출력 사이즈 대략 406px(테스트 필요) **/
 #ques-show, #sol-show, #ans-show{
-    width: 356px;
-    margin: auto;
+    width: 406px;
+    margin-left: 25px;
     word-break: keep-all;
 }
 #ques-show{
@@ -334,7 +334,9 @@
 #solutionImgOutput{
     margin-bottom: 15px;
 }
-
+.answerFormulaEditor{
+    line-height: 160%;
+}
 .multiChoiceView{
     display: inline-block;
     width:50%;
@@ -345,6 +347,7 @@
     margin:5px 5px 5px 24px;
     padding:5px;
     position: relative;
+   
 }
 .multiChoiceView::before{
     display: flex;
@@ -575,7 +578,7 @@
     font-size: 14px;
 }
 .editInnerTable{
-    width:320px;
+    width:380px;
     border-spacing: 0px;
     border-collapse: collapse;
     table-layout: fixed;

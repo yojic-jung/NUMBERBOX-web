@@ -4,29 +4,34 @@
     width:406px;
     line-height: 160%;
 }
+
+ 
 .quesDiv, .ansSolDiv{
-    width: 356px;
-    margin-left: 50px;
+    width: 406px;
+    margin-left: 30px;
     word-break: keep-all;
     position: relative;
 }
-.quesNumber, .solNumber{
+.quesNumber {
+    font-family: 'screenNumber';
+    font-size: 22px;
+    display: inline-block;
+}
+.solNumber{
     font-family: 'screenNumber';
     width:50px;
     font-size: 22px;
     vertical-align: middle;
     text-align: center;
     display: inline-block;
-    position: relative;
+    position: absolute;
     left:-50px;
 }
-.quesContents, .ansContents{
-    margin-left: -50px;
-}
+
 
 .quesContents2, .ansContents2{
     display: block;
-    width: 356px;
+    width: 406px;
     margin: auto;
     ;
 }

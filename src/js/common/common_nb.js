@@ -304,11 +304,14 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
   if(parentDomId==null){
     if(targetDom.offsetTop<window.pageYOffset){
       targetDom.classList.add("fixedTopMenu");
+      if(targetDomWidth <620)targetDomWidth =620;
       targetDom.style.width =targetDomWidth+"px";
+      targetDom.style.left = document.getElementsByClassName("right")[0].getBoundingClientRect().left+"px";
     }else{
       targetDom.classList.remove("fixedTopMenu");
     }
   }else{
+    //모달팝업인 경우
     let parentDomScrollTop= document.getElementById(parentDomId).scrollTop
     if(parentDomScrollTop > 12){
       targetDom.classList.add("fixedTopMenu");
@@ -316,6 +319,7 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
     }else{
       targetDom.classList.remove("fixedTopMenu");
     }
+    targetDom.style.left = document.getElementsByClassName("right")[0].getBoundingClientRect().left+"px";
 
   }
 
