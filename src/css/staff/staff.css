@@ -967,6 +967,37 @@
 
 .firDiv, .secDiv, .thrDiv, .fourDiv, .fifDiv{
     display: inline-block;
+    position: relative;
+    padding-left:20px;
+}
+.firDivContents, .secDivContents, .thrDivContents, .fourDivContents, .fifDivContents,
+#firNoShow, #secNoShow, #thrNoShow, #fourNoShow, #fifNoShow{
+    margin-left:-20px;
+}
+.firDiv::before{
+    content: '\2460\00A0';
+    position: relative;
+    left:-20px;
+}
+.secDiv::before{
+    content: '\2461\00A0';
+    position: relative;
+    left:-20px;
+}
+.thrDiv::before{
+    content: '\2462\00A0';
+    position: relative;
+    left:-20px;
+}
+.fourDiv::before{
+    content: '\2463\00A0';
+    position: relative;
+    left:-20px;
+}
+.fifDiv::before{
+    content: '\2464\00A0';
+    position: relative;
+    left:-20px;
 }
 
 .fixedBox{

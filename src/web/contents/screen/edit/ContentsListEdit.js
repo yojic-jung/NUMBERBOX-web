@@ -288,11 +288,11 @@ const ContentsListEdit = ()=>{
                                                             <img src={conImgPath} id="contentsImgOutput" alt="" />
                                                         </div>
                                                         <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide}>
-                                                            <div className="firDiv"><span id="workFirNoShow">&#9312; </span><span dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
-                                                            <div className="secDiv"><span id="workSecNoShow">&#9313; </span><span dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
-                                                            <div className="thrDiv"><span id="workThrNoShow">&#9314; </span><span dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
-                                                            <div className="fourDiv"><span id="workFourNoShow">&#9315; </span><span dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
-                                                            <div className="fifDiv"><span id="workFifNoShow">&#9316; </span><span dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
+                                                            <div className="firDiv"><span className="firDivContents" dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
+                                                            <div className="secDiv"><span className="secDivContents" dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
+                                                            <div className="thrDiv"><span className="thrDivContents" dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
+                                                            <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
+                                                            <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                         </div>
                                                     </div>
                                                 </div>

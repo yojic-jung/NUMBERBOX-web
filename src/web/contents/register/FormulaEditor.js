@@ -245,17 +245,17 @@ const FormulaEditor = ({contentsNo}) => {
 				}
 
 				if(myContents["myContents"].firNo.length!=0){
-					document.getElementById("firNoShow").classList.remove("hide");
-					document.getElementById("secNoShow").classList.remove("hide");
-					document.getElementById("thrNoShow").classList.remove("hide");
-					document.getElementById("fourNoShow").classList.remove("hide");
-					document.getElementById("fifNoShow").classList.remove("hide");
+					document.getElementById("firDiv").classList.remove("hide");
+					document.getElementById("secDiv").classList.remove("hide");
+					document.getElementById("thrDiv").classList.remove("hide");
+					document.getElementById("fourDiv").classList.remove("hide");
+					document.getElementById("fifDiv").classList.remove("hide");
 				}else{
-					document.getElementById("firNoShow").classList.add("hide");
-					document.getElementById("secNoShow").classList.add("hide");
-					document.getElementById("thrNoShow").classList.add("hide");
-					document.getElementById("fourNoShow").classList.add("hide");
-					document.getElementById("fifNoShow").classList.add("hide");
+					document.getElementById("firDiv").classList.add("hide");
+					document.getElementById("secDiv").classList.add("hide");
+					document.getElementById("thrDiv").classList.add("hide");
+					document.getElementById("fourDiv").classList.add("hide");
+					document.getElementById("fifDiv").classList.add("hide");
 				}
 				setFirNo(myContents["myContents"].firNo);
 				document.getElementById("firNoFormulaEditor").innerHTML = myContents["myContents"].firNo;
@@ -510,41 +510,41 @@ const FormulaEditor = ({contentsNo}) => {
 		}
 		else if(evIdName=="firNoFormulaEditor"){
 			if(userInnerText.length!=0){
-				document.getElementById("firNoShow").classList.remove("hide");
+				document.getElementById("firDiv").classList.remove("hide");
 			}else{
-				document.getElementById("firNoShow").classList.add("hide");
+				document.getElementById("firDiv").classList.add("hide");
 			}
 			setFirNo(userInputText);
 		}
 		else if(evIdName=="secNoFormulaEditor"){
 			if(userInnerText.length!=0){
-				document.getElementById("secNoShow").classList.remove("hide");
+				document.getElementById("secDiv").classList.remove("hide");
 			}else{
-				document.getElementById("secNoShow").classList.add("hide");
+				document.getElementById("secDiv").classList.add("hide");
 			}
 			setSecNo(userInputText);
 		}
 		else if(evIdName=="thrNoFormulaEditor"){
 			if(userInnerText.length!=0){
-				document.getElementById("thrNoShow").classList.remove("hide");
+				document.getElementById("thrDiv").classList.remove("hide");
 			}else{
-				document.getElementById("thrNoShow").classList.add("hide");
+				document.getElementById("thrDiv").classList.add("hide");
 			}
 			setThrNo( userInputText);
 		}
 		else if(evIdName=="fourNoFormulaEditor"){
 			if(userInnerText.length!=0){
-				document.getElementById("fourNoShow").classList.remove("hide");
+				document.getElementById("fourDiv").classList.remove("hide");
 			}else{
-				document.getElementById("fourNoShow").classList.add("hide");
+				document.getElementById("fourDiv").classList.add("hide");
 			}
 			setFourNo(userInputText);
 		}
 		else if(evIdName=="fifNoFormulaEditor"){
 			if(userInnerText.length!=0){
-				document.getElementById("fifNoShow").classList.remove("hide");
+				document.getElementById("fifDiv").classList.remove("hide");
 			}else{
-				document.getElementById("fifNoShow").classList.add("hide");
+				document.getElementById("fifDiv").classList.add("hide");
 			}
 			setFifNo(userInputText);
 		}
@@ -567,11 +567,11 @@ const FormulaEditor = ({contentsNo}) => {
 							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", {contentsNo});}} alt="" />
 						</div>
 						<div id="multi-show">
-							<div className="firDiv"><span id="firNoShow" className="hide">&#9312; </span><span dangerouslySetInnerHTML={{__html:firNo}}></span></div>
-							<div className="secDiv"><span id="secNoShow" className="hide">&#9313; </span><span dangerouslySetInnerHTML={{__html:secNo}}></span></div>
-							<div className="thrDiv"><span id="thrNoShow" className="hide">&#9314; </span><span dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
-							<div className="fourDiv"><span id="fourNoShow" className="hide">&#9315; </span><span dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
-							<div className="fifDiv"><span id="fifNoShow" className="hide">&#9316; </span><span dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
+							<div id="firDiv" className="firDiv hide"><span id="firNoShow" dangerouslySetInnerHTML={{__html:firNo}}></span></div>
+							<div id="secDiv" className="secDiv hide"><span id="secNoShow" dangerouslySetInnerHTML={{__html:secNo}}></span></div>
+							<div id="thrDiv" className="thrDiv hide"><span id="thrNoShow" dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
+							<div id="fourDiv" className="fourDiv hide"><span id="fourNoShow" dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
+							<div id="fifDiv" className="fifDiv hide"><span id="fifNoShow" dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
 					<div className="mini-title4">정답 및 해설</div>
