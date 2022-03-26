@@ -232,7 +232,6 @@ export const reg_writeDisableDom = async (event) =>{
 
 export const reg_tableUpDownKeyEvent = async (event ,userKeyCode)=>{
 	if( (!event.shiftKey && userKeyCode===40)|| (!event.shiftKey && userKeyCode===38) ){
-
 		let parentTable;
 		//수식 요소인 경우 셀 이동만 비활성(수식 요소 내에서 위아래 이동은 가능 해야함)	
 		//수식요소 안에 값 없는 경우
@@ -290,7 +289,6 @@ export const reg_tableUpDownKeyEvent = async (event ,userKeyCode)=>{
 		if(userKeyCode===38){
 			//첫번째 행인 경우 
 			if(targetRowIdx===0){
-				event.preventDefault();
 				return true;
 			} 
 			else{
@@ -302,7 +300,6 @@ export const reg_tableUpDownKeyEvent = async (event ,userKeyCode)=>{
 		if(userKeyCode===40){
 			//마지막째 행인 경우 
 			if(targetRowIdx===rowLength-1){
-				event.preventDefault();
 				return true;
 			} 
 			else{
@@ -345,10 +342,12 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 					}else{
 						rootFocusNbBox=focusNbBox.previousSibling
 					}
-
 					let orgRange = window.getSelection()
 					let range = document.createRange();
 					if(rootFocusNbBox===null){
+						range.setStart(focusNbBox, 0);
+						range.setEnd(focusNbBox, 0);
+					}else if(rootFocusNbBox.classList !== undefined && rootFocusNbBox.classList.contains("innerTbTd")) {
 						range.setStart(focusNbBox, 0);
 						range.setEnd(focusNbBox, 0);
 					}else{
@@ -391,6 +390,9 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 						if(rootFocusNbBox.length!==undefined){
 							range.setStart(rootFocusNbBox, rootFocusNbBox.length);
 							range.setEnd(rootFocusNbBox, rootFocusNbBox.length);
+						}else if(rootFocusNbBox.classList !== undefined && rootFocusNbBox.classList.contains("innerTbTd")) {
+							range.setStart(focusNbBox, 0);
+							range.setEnd(focusNbBox, 0);
 						}else{
 							range.setStart(rootFocusNbBox, 1);
 							range.setEnd(rootFocusNbBox, 1);
@@ -426,6 +428,9 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 					if(rootFocusNbBox===null){
 						range.setStart(focusNbBox, 1);
 						range.setEnd(focusNbBox, 1);
+					}else if(rootFocusNbBox.classList !== undefined && rootFocusNbBox.classList.contains("innerTbTd")) {
+						range.setStart(focusNbBox, 1);
+						range.setEnd(focusNbBox, 1);
 					}else{
 						range.setStart(rootFocusNbBox, 0);
 						range.setEnd(rootFocusNbBox, 0);
@@ -455,6 +460,9 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 					let orgRange = window.getSelection()
 					let range = document.createRange();
 					if(rootFocusNbBox===null){
+						range.setStart(focusNbBox, 1);
+						range.setEnd(focusNbBox, 1);
+					}else if(rootFocusNbBox.classList !== undefined && rootFocusNbBox.classList.contains("innerTbTd")) {
 						range.setStart(focusNbBox, 1);
 						range.setEnd(focusNbBox, 1);
 					}else{
@@ -1058,7 +1066,6 @@ export const reg_selectFormulaElement = async (event) => {
 						let focusNode = window.getSelection().focusNode
 						let orgRange = window.getSelection()
 						orgRange.removeAllRanges();
-						console.log("3")
 						if(focusNode === strtContainer){
 							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 1, focusNbRootBox, 0);
 							else orgRange.setBaseAndExtent(anchorNbRootBox, 1, anchorNbRootBox, 0);
@@ -1087,7 +1094,6 @@ export const reg_selectFormulaElement = async (event) => {
 						let focusNode = window.getSelection().focusNode
 						let orgRange = window.getSelection()
 						orgRange.removeAllRanges();
-						console.log("4")
 						if(focusNode === strtContainer){
 							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 1, focusNbRootBox, 0);
 							else orgRange.setBaseAndExtent(anchorNbRootBox, 1, anchorNbRootBox, 0);
@@ -1104,7 +1110,6 @@ export const reg_selectFormulaElement = async (event) => {
 					let focusNode = window.getSelection().focusNode;
 					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 					orgRange.removeAllRanges();
-					console.log("5")
 					if(focusNode === strtContainer){
 						orgRange.setBaseAndExtent(focusNbBox, 1, focusNbBox, 0);
 					}else{
@@ -1132,7 +1137,6 @@ export const reg_selectFormulaElement = async (event) => {
 						let focusNode = window.getSelection().focusNode;
 						let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 						orgRange.removeAllRanges();
-						console.log("6")
 						if(focusNode === strtContainer){
 							orgRange.setBaseAndExtent(anchorNodeOneDepth, 1, focusNodeOneDepth, 0);
 						}else{
@@ -1148,7 +1152,6 @@ export const reg_selectFormulaElement = async (event) => {
 							let focusOffset = window.getSelection().focusOffset;
 							let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 							orgRange.removeAllRanges();
-							console.log("7")
 							if(focusNode === strtContainer){
 								orgRange.setBaseAndExtent(anchorNodeOneDepth, 1, focusNode, focusOffset);
 							}else{
@@ -1166,7 +1169,6 @@ export const reg_selectFormulaElement = async (event) => {
 							let anchorOffset = window.getSelection().anchorOffset;
 							let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 							orgRange.removeAllRanges();
-							console.log("8")
 							if(focusNode === strtContainer){
 								orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNodeOneDepth, 0);
 							}else{
@@ -1183,7 +1185,6 @@ export const reg_selectFormulaElement = async (event) => {
 			let focusNode = window.getSelection().focusNode;
 			let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 			orgRange.removeAllRanges();
-			console.log("9")
 			if(focusNode === strtContainer){
 				orgRange.setBaseAndExtent(anchorNbBox, 1, focusNbBox, 0);
 			}else{

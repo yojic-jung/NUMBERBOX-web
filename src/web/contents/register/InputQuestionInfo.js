@@ -228,11 +228,11 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 			solutionImg.classList.add('hide');
 
 			//contents-show 객관식 번호 초기화
-			document.getElementById("firNoShow").classList.add('hide');
-			document.getElementById("secNoShow").classList.add('hide');
-			document.getElementById("thrNoShow").classList.add('hide');
-			document.getElementById("fourNoShow").classList.add('hide');
-			document.getElementById("fifNoShow").classList.add('hide');
+			document.getElementById("firDiv").classList.add('hide');
+			document.getElementById("secDiv").classList.add('hide');
+			document.getElementById("thrDiv").classList.add('hide');
+			document.getElementById("fourDiv").classList.add('hide');
+			document.getElementById("fifDiv").classList.add('hide');
 
 			//문제입력 탭 클릭상태
 			let trigEv = new Object();
