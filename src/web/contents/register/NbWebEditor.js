@@ -133,6 +133,7 @@ const NbWebEditor = ({parentMethod})=>{
             </table>
             <span className="editTableArrow">&#129171;</span>
         </button>
+
         <div id="editTableUi" className="editTableUi hide">
                 <EditTableInnerUi parentMethod={parentMethod}></EditTableInnerUi>
                 

@@ -4,11 +4,100 @@ import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv} from 'js/contents/register/contents_reg';
 
-const InputQustionInfo = ({parentMethod, updateModeUniqNo})=>{
+const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
       },[]);
+
+
+
+	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈)
+	  const trimRegisterContents = async function() {
+		let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
+		let targetHtml = ["contents", "solution" ,"firNo" , "secNo", "thrNo", "fourNo", "fifNo", "answer"];
+
+		for(let i=0; i<targetId.length; i++){
+			document.getElementById(targetId[i]).classList.remove("hide");
+			let whileIdx=0;
+			while(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n"){
+			// 띄어쓰기는 제거안함
+			//while(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n" || encodeURI(document.getElementById(targetId[i]).innerText.substr(-1)) === '%C2%A0'){
+				whileIdx++
+				if(whileIdx>500){
+					alert("[무한루프 에러] 공백문자 제거 도중 에러 발생");
+					break;
+				}
+				if(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n"){
+					let brTag = document.getElementById(targetId[i]).querySelectorAll("br");
+					if(brTag!== null){
+						if(brTag[brTag.length-1].closest(".nbBox") === null){
+							brTag[brTag.length-1].remove();
+							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+						} else{
+							break;
+						}
+					}else{
+						break;
+					}
+				}
+			}
+			//띄어쓰기의 경우 수식요소 안에 띄어쓰기 사용한 경우 정상작동 안함
+			//사용자가 일부러 마지막에 띄어쓰기 주는 경우도 있음
+			/*
+			while(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n" || encodeURI(document.getElementById(targetId[i]).innerText.substr(-1)) === '%C2%A0'){
+				whileIdx++
+				if(whileIdx>500){
+					alert("[무한루프 에러] 공백문자 제거 도중 에러 발생");
+					break;
+				}
+				if(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n"){
+					console.log("무한루프1");
+					let brTag = document.getElementById(targetId[i]).querySelectorAll("br");
+					if(brTag!== null){
+						if(brTag[brTag.length-1].closest(".nbBox") === null){
+							brTag[brTag.length-1].remove();
+							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+						} else{
+							break;
+						}
+					}else{
+						break;
+					}
+				}else if(encodeURI(document.getElementById(targetId[i]).innerText.substr(-1)) === '%C2%A0'){
+					let spaceIdx = document.getElementById(targetId[i]).innerHTML.lastIndexOf("&nbsp;");
+					let spaceIdx2 = document.getElementById(targetId[i]).innerHTML.lastIndexOf(" ");
+					if(spaceIdx !== -1 && spaceIdx2 !== -1){
+						if(spaceIdx < spaceIdx2){
+							console.log("무한루프3");
+							document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx2)
+							+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx2+1, document.getElementById(targetId[i]).innerHTML.length-1);
+							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+						}else{
+							console.log("무한루프4");
+							document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx)
+							+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx+6, document.getElementById(targetId[i]).innerHTML.length-1);
+							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+						}
+					}else if(spaceIdx !== -1 && spaceIdx2 === -1){
+						console.log("무한루프5");
+						document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx)
+						+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx+6, document.getElementById(targetId[i]).innerHTML.length-1);
+						document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+					}else if(spaceIdx === -1 && spaceIdx2 !== -1){
+						console.log("무한루프6");
+						document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx2)
+						+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx2+1, document.getElementById(targetId[i]).innerHTML.length-1);
+						document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+					}else{
+						break;
+					}
+				}
+				
+			}
+			*/
+		}
+	  }
 
 	  const contentsFinalValidation = async function(){
 		 let customSubject = document.getElementById("cusSelSubTitle");
@@ -70,7 +159,10 @@ const InputQustionInfo = ({parentMethod, updateModeUniqNo})=>{
 			alert("원본 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.");
 			return false;
 		}
-		
+
+		 // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈, 띄어쓰기)
+		await trimRegisterContents();
+
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
@@ -195,4 +287,4 @@ const InputQustionInfo = ({parentMethod, updateModeUniqNo})=>{
   );
 }
 
-export default InputQustionInfo;
+export default InputQuestionInfo;

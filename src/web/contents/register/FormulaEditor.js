@@ -3,7 +3,7 @@ import FormulaShortCutKey from './FormulaShortCutKey';
 import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
-import InputQustionInfo from 'web/contents/register/InputQustionInfo';
+import InputQuestionInfo from 'web/contents/register/InputQuestionInfo';
 import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, nb_imgFileDel} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom, reg_eraseEditTbUI
 		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange
@@ -494,8 +494,8 @@ const FormulaEditor = ({contentsNo}) => {
 	}
 
 	const showFormulaEditor = async function(evIdName){
-		let userInnerText = document.getElementById(evIdName).innerText.replaceAll("<","&lt;").replaceAll(">","&gt;");
-		let userInputText = document.getElementById(evIdName).innerHTML.trim();
+		let userInnerText = document.getElementById(evIdName).innerText;
+		let userInputText = document.getElementById(evIdName).innerHTML;
 		userInnerText = userInnerText.replace( "/\n$/" , '');
 		if(userInnerText == '\n' )userInnerText="";
 
@@ -669,7 +669,7 @@ const FormulaEditor = ({contentsNo}) => {
 			</div>
 		</div>
 		<div className="scrollFixBugMargin"></div>
-		<InputQustionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo}/>
+		<InputQuestionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo}/>
 		</form>
 	</>
   );

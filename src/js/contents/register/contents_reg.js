@@ -538,7 +538,19 @@ export const reg_preventKeyEvent = async (event) => {
 			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
 		}
 
-		if(parentTable===null) return;
+		if(parentTable===null) {
+			const selection = document.getSelection();
+            const newRange = selection.getRangeAt(0);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
+            let tmpNode= document.createElement('span');
+            tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            newRange.deleteContents();
+            newRange.insertNode(tmpNode);
+			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+			event.preventDefault();
+			return;}
 		
 		let trDom ;
 		if(parentTable.childNodes[0].tagName==="TBODY"){
