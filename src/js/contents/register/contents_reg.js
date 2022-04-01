@@ -18,8 +18,6 @@ const lineMoveBugEleFont = ["nbL-R-Brck ", "nbR-R-Brck" , "nbL-C-Brck ", "nbR-C-
 const lineMoveBugTbElePosition = ["nbExpBox", "nbSubBox"];
 const lineMoveBugTdElePosition = ["nbExpTmp", "nbSubTmp", "nbFracExpTmp","nbLeftSub", "nbRightSub"];
 
-//셀렉트가 되어있을때 재 클릭시 셀렉트 이벤트 다시 적용되는 문제 해결 변수
-let alreadySelected = false;
 /*
  * 정의 : 과목, 대단원, 중단원, 소단원, 유형 콤보박스 onChange 이벤트 함수
  * 설명 : childElement는 자식 요소, isUnitBubbleEv는 연쇄 이벤트 실행 여부
@@ -1093,9 +1091,6 @@ export const reg_selectFormulaElement = async (event) => {
 	if(focusNbBox.classList === undefined) focusNbBox = focusNbBox.parentElement.closest('.nbBox');
 	else focusNbBox = focusNbBox.closest('.nbBox');
 
-	//마우스업 이벤트 발생전 마우스다운 이벤트에서 이미 셀렉트 되어있는지(이벤트가 적용되어있는지) 판단
-	if(alreadySelected) return;	 
-	
 	
 	//셀렉션의 앵커와 포커스에 수식요소 있는 경우
 	if(anchorNbBox !== null && focusNbBox !== null){
@@ -1333,7 +1328,7 @@ export const reg_selectFormulaElement = async (event) => {
 					}
 				}
 			}
-		//최상위 수식요소가 다른 경우 alreadySelected
+		//최상위 수식요소가 다른 경우
 		}else{
 			let orgRange = window.getSelection()
 			let focusNode = window.getSelection().focusNode;
@@ -1652,6 +1647,7 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 } 
 
 export const reg_selectCheck = () => {
-	if(!window.getSelection().isCollapsed) alreadySelected =true;
-	else alreadySelected =false;
+	if(!window.getSelection().isCollapsed) {
+		window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, window.getSelection().anchorNode, window.getSelection().anchorOffset);
+	}
 }
