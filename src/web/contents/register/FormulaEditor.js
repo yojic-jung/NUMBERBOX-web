@@ -489,7 +489,6 @@ const FormulaEditor = ({contentsNo}) => {
             tmpNode.innerHTML = nbGrammer;
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
-			console.log(nbGrammer);
 			newRange.innerHTML=nbGrammer;
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
 		}
@@ -608,8 +607,8 @@ const FormulaEditor = ({contentsNo}) => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);console.log("13");reg_dressSelectionBackColor()}} onClick={()=>{dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);console.log("14");reg_dressSelectionBackColor()}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor()}} onClick={()=>{dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor()}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>

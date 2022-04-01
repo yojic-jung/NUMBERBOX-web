@@ -343,6 +343,7 @@ export const reg_preventKeyEvent = async (event) => {
 	if(await reg_writeDisableDom(event))event.preventDefault();
 	//[end]
 
+	
 	//3번 
 	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , yellow 요소 전체 입혀줘야함
 	if(userKeyCode == "8" || userKeyCode == "46" ){
@@ -384,18 +385,23 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 
 		if(parentTable===null) {
-			const selection = document.getSelection();
-            const newRange = selection.getRangeAt(0);
-            selection.removeAllRanges();
-            selection.addRange(newRange);
-			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
-            let tmpNode= document.createElement('span');
-            tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            newRange.deleteContents();
-            newRange.insertNode(tmpNode);
-			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-			event.preventDefault();
-			return;}
+			if(event.shiftKey){
+				/*
+				const selection = document.getSelection();
+				const newRange = selection.getRangeAt(0);
+				selection.removeAllRanges();
+				selection.addRange(newRange);
+				//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
+				let tmpNode= document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+				newRange.deleteContents();
+				newRange.insertNode(tmpNode);
+				window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+				event.preventDefault();
+				*/
+			}
+			return;
+		}
 		
 		let trDom ;
 		if(parentTable.childNodes[0].tagName==="TBODY"){
@@ -486,7 +492,13 @@ export const reg_preventKeyEvent = async (event) => {
 			return;
 		}
 	}
-
+	
+	
+	
+	/* shift + 키보드 상하 셀렉션 규칙
+	* 앵커를 전역변수로 생성한 뒤 셀렉션을 없애고(셀렉션을 없애지 않으면 키보드 위아래 이동 방식에서 리무브 됨) 
+	* 포커스는 포커스노드에 맞춘 후
+	* 키보드 화살표 위아래가 이동하는 포커스를 새로운 포커스로 잡아 셀렉션 영역 마지막에 생성 */
 	let anchorNode = window.getSelection().anchorNode
 	let anchorOffset = window.getSelection().anchorOffset;
 	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
@@ -766,6 +778,23 @@ export const reg_preventKeyEvent = async (event) => {
 	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
 		window.getSelection().setBaseAndExtent(anchorNode, anchorOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
 	}
+
+
+	//띄어쓰기 다섯칸 shift+space bar
+	if(event.shiftKey && userKeyCode === 32){
+		const selection = document.getSelection();
+		const newRange = selection.getRangeAt(0);
+		selection.removeAllRanges();
+		selection.addRange(newRange);
+		//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
+		let tmpNode= document.createElement('span');
+		tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		newRange.deleteContents();
+		newRange.insertNode(tmpNode);
+		window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+		event.preventDefault();
+	}
+
 	//alt 단축키 제어
 	if(event.altKey) event.preventDefault();
 }
@@ -1605,36 +1634,22 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 
 	//키보드 상하 화살표 누른 경우(셀렉트)
 	if( (userKeyCode===38 || userKeyCode===40) ){
-		let contentEditEle = window.getSelection().getRangeAt(0).startContainer;
-		if(contentEditEle.classList !== undefined){
-			if(contentEditEle.classList.contains("contentEditClass"));
-			else contentEditEle = contentEditEle.parentElement;
-		}else{
-			contentEditEle = contentEditEle.parentElement;
-		}
-		
-		//상위에 수식요소 있는 경우 위아래 라인이동 이벤트 적용X
-		if(contentEditEle.closest(".nbBox") !== null) return;
-		if(contentEditEle.parentElement!== null){
-			while(!contentEditEle.getAttribute("contenteditable")){
-				contentEditEle = contentEditEle.parentElement;
+		/*
+		let focusEle = window.getSelection().focusNode;
+		if(!window.getSelection().isCollapsed){
+			if(focusEle.classList === undefined) focusEle = focusEle.parentElement;
+			if(focusEle.closest(".nbBox") !== null){
+				while(focusEle.parentElement.closest(".nbBox")!== null){
+					focusEle = focusEle.parentElement.closest(".nbBox");
+				}
 			}
+			if(userKeyCode===38) window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 0);
+			else window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 1);
 		}
-		//위아래 화살표 누른 경우 수식 hidden 제거
-		let nbBoxes = contentEditEle.querySelectorAll(".nbBox");
-		for(let i=0; i<nbBoxes.length; i++){
-			//nbBoxes[i].classList.remove("hidden");
-		}
-
-		//수식 hidden으로 인해 수식요소 셀렉트 색상 안 입혀지는 문제 해결
-		let selection1 = document.getSelection();
-		let anchorNode= selection1.anchorNode; 
-		let anchorOffset = selection1.anchorOffset;
-		let focusNode = selection1.focusNode;
-		let focusOffset =selection1.focusOffset;
-		selection1.removeAllRanges();
-		selection1.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+		*/
 	}
+
+
 } 
 
 export const reg_selectCheck = () => {
