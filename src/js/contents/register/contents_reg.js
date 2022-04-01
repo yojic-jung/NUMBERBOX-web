@@ -487,8 +487,16 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 
+	let anchorNode = window.getSelection().anchorNode
+	let anchorOffset = window.getSelection().anchorOffset;
+	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
+		event.preventDefault();
+		window.getSelection().setBaseAndExtent(window.getSelection().focusNode, window.getSelection().focusOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
+	}
+	
 	//키보드 상하 화살표 누른 경우(커서 라인 이동)
-	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed && !event.shiftKey ){
+	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed ){
+		if(document.activeElement.firstChild === null) return;
 	//5번, validation 순서 바뀌어도 되는 독립적인 로직
 		await reg_lineMoveBugFixStrt();
 		/*
@@ -661,6 +669,7 @@ export const reg_preventKeyEvent = async (event) => {
 				tmpNode.className = "tmpCaretPoint";
 				tmpNode.innerHTML = ".";
 				if(userKeyCode === 38){
+					console.log(document.activeElement.firstChild);
 					if(document.activeElement.firstChild.classList === undefined){
 						document.activeElement.prepend(tmpNode);
 					}else{	//div 요소가 있을때 div 요소 밖에 집어넣으면 밑에 줄에 캐럿이 생성되어 커서 포인터가 정확하지 않음
@@ -754,6 +763,9 @@ export const reg_preventKeyEvent = async (event) => {
 		await reg_lineMoveBugFixEnd();
 	}
 
+	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
+		window.getSelection().setBaseAndExtent(anchorNode, anchorOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
+	}
 	//alt 단축키 제어
 	if(event.altKey) event.preventDefault();
 }
