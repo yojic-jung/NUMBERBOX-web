@@ -225,6 +225,7 @@ export const reg_writeDisableDom = async (event) =>{
 	}
 
 	if(isDisableBox && (event.keyCode == "8" || event.keyCode == "46" )) {
+		console.log("백스페이스3")
 		//입력 불가 수식요소 삭제시 부모요소 전체 선택
 		document.getSelection().getRangeAt(0).selectNode(focusParDom.closest('table'));
 		return true;
@@ -321,30 +322,70 @@ export const reg_lineMoveBugFixEnd = async () =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
+
+	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
+	if(userKeyCode === 229 && event.code === "Backspace"){
+		const newRange = window.getSelection().getRangeAt(0)
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(newRange);
+		let tmpNode= document.createElement('span');
+		tmpNode.innerHTML = "&nbsp;"
+		tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
+		newRange.insertNode(tmpNode);
+		return;
+	}
 	//1번 validation
-	//백스페이스 및 del 이벤트, 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
-	if((userKeyCode == "8" || userKeyCode == "46" ) && document.getSelection().getRangeAt(0).endContainer.children != undefined){
-		//드래그 한 경우
-		if(!document.getSelection().isCollapsed){
-			if(document.getSelection().getRangeAt(0).endContainer.children[0].classList.contains('nbBox')){
+	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
+	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
+	//뒤에 공백을 추가해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
+	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
+		console.log("백스페이스1")
+		let nbBox = document.getSelection().getRangeAt(0).endContainer;
+		if(nbBox.classList === undefined) nbBox = document.getSelection().getRangeAt(0).endContainer.parentElement;
+		if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
+			if(!document.getSelection().isCollapsed){
+				console.log("들어옴")
+				await reg_removeSelectionBackColor();
 				const selection = document.getSelection();
-				const newRange = selection.getRangeAt(0);
-				newRange.deleteContents();
-				event.preventDefault();
+				let strtContainer = selection.getRangeAt(0).startContainer;
+				let strtOffset = selection.getRangeAt(0).startOffset;
+				let tmpNode= document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"		//ctrl+z에서 삭제 시켜줘야함
+
+				//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 앞에도 공백 붙여줌
+				let strtNbBox = document.getSelection().getRangeAt(0).startContainer;
+				if(strtNbBox.classList === undefined) strtNbBox = document.getSelection().getRangeAt(0).startContainer.parentElement;
+				if(strtNbBox.closest(".nbBox")!== null || (strtNbBox.querySelector(".nbBox") !== null && strtNbBox.id !== document.activeElement.id)){
+					let tmpNode2 = document.createElement('span');	
+					tmpNode2.innerHTML = "&nbsp;"
+					tmpNode2.className = "tmpReGenerBugFix2"		//ctrl+z에서 삭제 시켜줘야함
+					strtNbBox.before(tmpNode2);
+					nbBox.after(tmpNode)
+					selection.removeAllRanges();
+					selection.setBaseAndExtent(tmpNode2, 0, tmpNode, 1);
+					return;
+				}
+				nbBox.after(tmpNode)
+				selection.removeAllRanges();
+				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
+				return;
 			}
 		}
+		
 	}
 	//[end]
 
 	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
 	//입력 불가 수식 box요소 제어[start]
-	if(await reg_writeDisableDom(event))event.preventDefault();
+	if(await reg_writeDisableDom(event)) event.preventDefault();
 	//[end]
 
 	
 	//3번 
 	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , yellow 요소 전체 입혀줘야함
-	if(userKeyCode == "8" || userKeyCode == "46" ){
+	if(userKeyCode === 8 || userKeyCode === 46 ){
+		console.log("백스페이스2")
 		let nbBoxDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox');
 		if(nbBoxDom!=undefined){
 			let nbBoxInnerText = nbBoxDom.innerText.replace(/\r\n|\n|\r|\s*/g, "");
@@ -546,7 +587,6 @@ export const reg_preventKeyEvent = async (event) => {
 		let moveRange;
 		let isExeptDom = await upDownKeyRule(event.shiftKey,userKeyCode);
 		if(isExeptDom){	//예외 수식요소인 경우
-			console.log("예외 수식 케이스")
 			//분수의 경우 분모는 무조건 분자로, 분자는 분모로(이항계수도 마찬가지)
 			//경우의 수의 경우 위아래 이동 케이스 순서에 맞춰서
 			let focusParDom = document.getSelection().getRangeAt(0).startContainer;
@@ -569,7 +609,6 @@ export const reg_preventKeyEvent = async (event) => {
 					if(userKeyCode===38) moveRange = document.caretPositionFromPoint(position.x, focusParDom.getBoundingClientRect().y-focusParDom.getBoundingClientRect().height*0.5);
 					else moveRange = document.caretPositionFromPoint(position.x, focusParDom.getBoundingClientRect().y+focusParDom.getBoundingClientRect().height*1.5);
 				}
-				console.log(moveRange);
 			}
 		}else{
 			// 키보드 위로 화살표 버튼 누른 경우
@@ -641,16 +680,11 @@ export const reg_preventKeyEvent = async (event) => {
 		let moveStrtContainer = null;
 		if(moveRange.startContainer.classList !== undefined) moveStrtContainer =moveRange.startContainer;
 		else if(moveRange.startContainer.parentElement.classList !== undefined) moveStrtContainer =moveRange.startContainer.parentElement;
-		console.log(moveStrtContainer)
 		
 		//테이블 맨 윗줄 밑 맨 아랫줄 라인 이동 구현
 		let isTbMove = true;
 		if(isTable){
 			if(moveStrtContainer.closest(".innerTbTd")===null){
-				console.log("무브 테이블");
-				console.log(moveStrtContainer)
-				console.log(moveStrtContainer.closest(".innerTbTd"))
-				console.log(parentTable)
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpCaretPoint";
 				tmpNode.innerHTML = ".";
@@ -679,7 +713,6 @@ export const reg_preventKeyEvent = async (event) => {
 				tmpNode.className = "tmpCaretPoint";
 				tmpNode.innerHTML = ".";
 				if(userKeyCode === 38){
-					console.log(document.activeElement.firstChild);
 					if(document.activeElement.firstChild.classList === undefined){
 						document.activeElement.prepend(tmpNode);
 					}else{	//div 요소가 있을때 div 요소 밖에 집어넣으면 밑에 줄에 캐럿이 생성되어 커서 포인터가 정확하지 않음
@@ -795,6 +828,20 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//alt 단축키 제어
 	if(event.altKey) event.preventDefault();
+
+	setTimeout(function(){
+		//ctrl+z(키코드 90)와 ctrl+v(키코드 86)인 경우
+		if( (userKeyCode === 90 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey)){
+			let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
+			for(let i=0; i<tmpReGenerBugFix.length; i++){
+				tmpReGenerBugFix[i].remove();
+			}
+			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
+			for(let i=0; i<tmpReGenerBugFix2.length; i++){
+				tmpReGenerBugFix2[i].remove();
+			}
+		}
+	}, 0);
 }
 
 //테이블 td 너비 변경 위한 변수 
@@ -1249,7 +1296,6 @@ export const reg_selectFormulaElement = async (event) => {
 				}
 			
 				if(isAllSel){
-					console.log("isAllSel")
 					let orgRange = window.getSelection()
 					let focusNode = window.getSelection().focusNode;
 					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
@@ -1259,7 +1305,6 @@ export const reg_selectFormulaElement = async (event) => {
 					}else{
 						orgRange.setBaseAndExtent(focusNbBox, 0, focusNbBox, 1);
 					}
-					console.log(focusNbBox);
 					await reg_dressSelectionBackColor();
 					return;
 				}else{
@@ -1388,6 +1433,15 @@ export const reg_selectFormulaElement = async (event) => {
 */
 export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
+
+	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
+	if(event.keyCode === 229 && event.code === "Backspace"){
+		if(document.getElementsByClassName("tmpFocuHideBugFix")[0] !== undefined){
+			document.getElementsByClassName("tmpFocuHideBugFix")[0].remove()
+		}
+	}
+	
+	
 	//키보드 좌우 화살표 누른 경우(셀렉트)
 	if(event.shiftKey && (userKeyCode===37 || userKeyCode===39)){
 		let strtNbBox = document.getSelection().getRangeAt(0).startContainer;

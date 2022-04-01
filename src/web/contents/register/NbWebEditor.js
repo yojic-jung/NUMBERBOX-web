@@ -72,7 +72,22 @@ const NbWebEditor = ({parentMethod})=>{
 
 		//문제입력과 해설입력 창에만 적용
 		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
+
+			//정렬버그 해결(뒤에 공백 주어 수식요소 재성성되는 문제 해결)
+			let nbBoxes = document.getElementById(focusId).querySelectorAll(".nbBox");
+			let tmpNode= document.createElement('span');
+			tmpNode.innerHTML = "&nbsp;"
+			tmpNode.className = "tmpReGenerBugFix"
+			for(let i=0; i<nbBoxes.length; i++){
+				nbBoxes[i].after(tmpNode)
+			}
 			document.execCommand(style);
+			//정렬버그 공백 다시 제거
+			let tmpReGenerBugFix = document.getElementById(focusId).querySelectorAll(".tmpReGenerBugFix");
+			for(let i=0; i<tmpReGenerBugFix.length; i++){
+				tmpReGenerBugFix[i].remove();
+			}
+
 		}else{
 			//밑줄은 객관식도 가능
 			if(style==="underline" ){
