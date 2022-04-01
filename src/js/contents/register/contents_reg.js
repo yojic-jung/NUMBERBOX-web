@@ -1634,7 +1634,6 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 
 	//키보드 상하 화살표 누른 경우(셀렉트)
 	if( (userKeyCode===38 || userKeyCode===40) ){
-		/*
 		let focusEle = window.getSelection().focusNode;
 		if(!window.getSelection().isCollapsed){
 			if(focusEle.classList === undefined) focusEle = focusEle.parentElement;
@@ -1642,11 +1641,11 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 				while(focusEle.parentElement.closest(".nbBox")!== null){
 					focusEle = focusEle.parentElement.closest(".nbBox");
 				}
+				if(userKeyCode===38) window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 0);
+				else window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 1);
 			}
-			if(userKeyCode===38) window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 0);
-			else window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 1);
+			
 		}
-		*/
 	}
 
 
