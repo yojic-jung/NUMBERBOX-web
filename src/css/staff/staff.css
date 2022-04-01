@@ -338,15 +338,17 @@
     line-height: 160%;
 }
 .multiChoiceView{
-    display: inline-block;
+   /* 인라인 블락시 contentEditable이 enter시에 div를 만들지 않고 <br/>을 만들어 상하 라인 이동 오류
+   display: inline-block;   */
     width:50%;
     min-height: 1em;
     background: white;
     color:black;
     border:2px solid rgba(8, 32, 80, 0.5);
-    margin:5px 5px 5px 24px;
+    margin:10px 5px 10px 24px;
     padding:5px;
     position: relative;
+    line-height: 160%;
    
 }
 .multiChoiceView::before{
@@ -1043,3 +1045,8 @@
     top:0px;
     z-index: 11;
 }
+.fullHeight{
+    height: unset;
+}
+
+

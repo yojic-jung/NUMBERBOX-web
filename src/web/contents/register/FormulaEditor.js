@@ -7,7 +7,7 @@ import InputQuestionInfo from 'web/contents/register/InputQuestionInfo';
 import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, nb_imgFileDel} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_getMappingShortCutKey, reg_preventKeyEvent, reg_writeDisableDom, reg_eraseEditTbUI
 		,reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange
-		,reg_selectUnitOrTypeData, reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck} from 'js/contents/register/contents_reg';
+		,reg_selectUnitOrTypeData, reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, reg_dressSelectionBackColor} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -40,6 +40,7 @@ const FormulaEditor = ({contentsNo}) => {
 		window.removeEventListener('selectstart', reg_selStartTdWidthChange);
 		window.removeEventListener('scroll', topMenuFixed);
 		window.removeEventListener('resize', topMenuWidth);
+		window.removeEventListener('mousedown', reg_removeSelectionBackColor);
         document.body.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
     }
 
@@ -215,6 +216,8 @@ const FormulaEditor = ({contentsNo}) => {
 			window.addEventListener('mouseup', await reg_mUpTdWidthChange);
 			window.addEventListener('selectstart', await reg_selStartTdWidthChange);
 
+			//수식요소 배경색 지정
+			window.addEventListener('mousedown', await reg_removeSelectionBackColor);
 
 			let myContents;
 			//수정모드
@@ -486,6 +489,7 @@ const FormulaEditor = ({contentsNo}) => {
             tmpNode.innerHTML = nbGrammer;
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
+			console.log(nbGrammer);
 			newRange.innerHTML=nbGrammer;
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
 		}
@@ -604,8 +608,8 @@ const FormulaEditor = ({contentsNo}) => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);}} onClick={()=>{dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onMouseUp={(event)=>reg_selectFormulaElement(event)}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);console.log("13");reg_dressSelectionBackColor()}} onClick={()=>{dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);console.log("14");reg_dressSelectionBackColor()}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -618,11 +622,11 @@ const FormulaEditor = ({contentsNo}) => {
 					</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div><br/>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div><br/>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div><br/>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div><br/>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div><br/>
+						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
+						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
@@ -642,7 +646,7 @@ const FormulaEditor = ({contentsNo}) => {
 					<div className="mini-title">정답</div>
 					<div>
 						<div className="mini-title2">주관식 정답</div> 
-						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>reg_selectFormulaElement(event)}></div>
+						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();}} onClick={()=>dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
 						<div className="mini-title2">객관식 정답(선택) </div>

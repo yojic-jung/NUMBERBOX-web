@@ -502,11 +502,7 @@
 
 
 /** 큰 괄호(분수용) **/
-.nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox{
-    display: inline-block;
-    vertical-align: middle;
-}
-.nbAbsValBox{
+.nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox, .nbAbsValBox{
     display: inline-block;
     vertical-align: middle;
 }
@@ -525,7 +521,7 @@
 }
 .nbAbsVal{
     font-size: 30px;
-    font-family: 'malgunGothic';
+    font-family: 'caseBrck';
     font-weight: 100;
 }
 .nbL-R-Brck, .nbL-C-Brck,.nbL-S-Brck{
@@ -626,20 +622,24 @@
     background:rgb(230, 228, 228);
     color:black;
 }
-/*
-.onlyEdit .nbBox::selection, .onlyEdit .borderBox::selection  {
-    background:rgb(192, 191, 191) !important;
-    color:rgb(77, 76, 76) !important;
+
+.onlyEdit .nbBox::selection, .onlyEdit .borderBox::selection, .onlyEdit .borderBox span::selection,
+ .onlyEdit .nbThrCaseBrck::selection, .onlyEdit .nbCaseBrck::selection{
+    background:rgb(235, 238, 245) !important;
 }
-.onlyEdit .nbBox::-moz-selection, .onlyEdit .borderBox::-moz-selection  {
-    background:rgb(192, 191, 191) !important;
-    color:rgb(77, 76, 76) !important;
+.onlyEdit .nbBox::-moz-selection, .onlyEdit .borderBox::-moz-selection, .onlyEdit .borderBox span::selection,
+.onlyEdit .nbThrCaseBrck::selection, .onlyEdit .nbCaseBrck::selection{
+    background:rgb(230, 233, 241) !important;
 }
-.onlyEdit .nbBox::-webkit-selection, .onlyEdit .borderBox::-webkit-selection  {
-    background:rgb(192, 191, 191) !important;
-    color:rgb(77, 76, 76) !important;
+.onlyEdit .nbBox::-webkit-selection, .onlyEdit .borderBox::-webkit-selection, .onlyEdit .borderBox span::selection,
+.onlyEdit .nbThrCaseBrck::selection, .onlyEdit .nbCaseBrck::selection{
+    background:rgb(230, 233, 241) !important;
 }
-*/
+
+.onlyEdit .nbSelectionDiv{
+    background:rgb(235, 238, 245) !important;
+}
+
 .onlyEdit:focus .borderBox{
     border:1px dashed gray;
 }
@@ -682,6 +682,8 @@
 .onlyEdit .nbAccentBase {
     min-width: 0.3em;
 }
+
+
 /*
 .onlyEdit .nbL-R-BrckBox, .onlyEdit .nbL-C-BrckBox, .onlyEdit .nbL-S-BrckBox{
     margin:0 1px;
@@ -708,4 +710,46 @@
     margin-block-end: 0em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
+}
+
+
+/*
+* 버그해결. 키보드 상하 이동의 tmpCaretPoint의 글자 크기를 지정하지 않으면 getBoundingClientRect의 높이가 
+* 다른 요소의 글자크기에 의해 지정되어 정상적인 상하 이동이 되지 않음
+*/
+.tmpCaretPoint{
+    font-size:16px; 
+}
+
+.nbExpTmp .tmpCaretPoint, .nbSubTmp .tmpCaretPoint, .nbFracExpTmp .tmpCaretPoint, .nbLeftSub .tmpCaretPoint, .nbRightSub .tmpCaretPoint{
+    font-size:0.3em;
+}
+
+
+/*
+* 버그해결. 키보드 상하 이동 시 지수(윗첨자), 아래첨자, 순열과 조합(첨자)의 경우  
+* 줄간격, position, 글자크기가 일반 텍스트와 맞지 않아 위치 이동 정상적이지 않음.
+*/
+.upDownLineMoveBugFixTb{
+    vertical-align: text-bottom;
+    top:unset;
+    bottom:unset;
+    padding:unset;
+}
+.upDownLineMoveBugFixTd{
+    line-height: 160% !important;
+    top:unset;
+    bottom:unset;
+    padding:unset;
+}
+
+.upDownLineMoveBugFixFont{
+    font-family: unset;
+    font-size: unset;
+    font-weight: unset;
+    padding:0 2.5px
+}
+
+.test{
+    background-color: dimgray;
 }
