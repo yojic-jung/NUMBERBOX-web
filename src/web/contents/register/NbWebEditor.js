@@ -74,18 +74,27 @@ const NbWebEditor = ({parentMethod})=>{
 		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
 
 			//정렬버그 해결(뒤에 공백 주어 수식요소 재성성되는 문제 해결)
-			let nbBoxes = document.getElementById(focusId).querySelectorAll(".nbBox");
-			let tmpNode= document.createElement('span');
-			tmpNode.innerHTML = "&nbsp;"
-			tmpNode.className = "tmpReGenerBugFix"
-			for(let i=0; i<nbBoxes.length; i++){
-				nbBoxes[i].after(tmpNode)
+
+			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
+				let nbBoxes = document.getElementById(focusId).querySelectorAll(".nbBox");
+				let tmpNode = document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"
+				let tmpNode2 = document.createElement('span');
+				tmpNode2.innerHTML = "&nbsp;"
+				tmpNode2.className = "tmpReGenerBugFix"
+				for(let i=0; i<nbBoxes.length; i++){
+					nbBoxes[i].before(tmpNode2);
+					nbBoxes[i].after(tmpNode);
+				}
 			}
 			document.execCommand(style);
 			//정렬버그 공백 다시 제거
-			let tmpReGenerBugFix = document.getElementById(focusId).querySelectorAll(".tmpReGenerBugFix");
-			for(let i=0; i<tmpReGenerBugFix.length; i++){
-				tmpReGenerBugFix[i].remove();
+			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
+				let tmpReGenerBugFix = document.getElementById(focusId).querySelectorAll(".tmpReGenerBugFix");
+				for(let i=0; i<tmpReGenerBugFix.length; i++){
+					tmpReGenerBugFix[i].remove();
+				}
 			}
 
 		}else{

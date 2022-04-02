@@ -323,6 +323,30 @@ export const reg_lineMoveBugFixEnd = async () =>{
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
 
+	
+	if(!document.getSelection().isCollapsed){
+		//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
+		await reg_removeSelectionBackColor();
+		//수식이 셀렉트 영역의 마지막에 있는 경우 글자 입력하면 수식이 재생성 되는 버그 해결
+		let nbBox = document.getSelection().getRangeAt(0).endContainer;
+		if(nbBox.classList !== undefined){
+			if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
+				const selection = document.getSelection();
+				let strtContainer = selection.getRangeAt(0).startContainer;
+				let strtOffset = selection.getRangeAt(0).startOffset;
+				let tmpNode= document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"
+				nbBox.after(tmpNode)
+				selection.removeAllRanges();
+				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
+				document.getElementsByClassName(".tmpReGenerBugFix")[0].remove();
+				return;
+			}
+		}
+	}
+	
+	
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
 		const newRange = window.getSelection().getRangeAt(0)
@@ -339,7 +363,6 @@ export const reg_preventKeyEvent = async (event) => {
 	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
 	//뒤에 공백을 추가해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
-		console.log("백스페이스1")
 		let nbBox = document.getSelection().getRangeAt(0).endContainer;
 		if(nbBox.classList !== undefined){
 			if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
