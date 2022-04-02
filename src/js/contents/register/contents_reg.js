@@ -887,7 +887,6 @@ export const reg_preventKeyEvent = async (event) => {
 	setTimeout(function(){
 		//ctrl+z(키코드 90)와 ctrl+v(키코드 86)인 경우
 		//if( (userKeyCode === 90 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey)){
-		if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40 && !event.shiftKey)){
 			let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 			for(let i=0; i<tmpReGenerBugFix.length; i++){
 				tmpReGenerBugFix[i].remove();
@@ -896,7 +895,6 @@ export const reg_preventKeyEvent = async (event) => {
 			for(let i=0; i<tmpReGenerBugFix2.length; i++){
 				tmpReGenerBugFix2[i].remove();
 			}
-		}
 			
 		//}
 	}, 0);
