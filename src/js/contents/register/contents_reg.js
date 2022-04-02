@@ -335,17 +335,19 @@ export const reg_preventKeyEvent = async (event) => {
 		newRange.insertNode(tmpNode);
 		return;
 	}
-	
+
+	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
+	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
+		await reg_removeSelectionBackColor();
+	}
+
 	//1번 validation
 	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
 	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
 	//(3) 백스페이스 del 뿐만 아니라 셀렉트 된 상태에서 다른 글자 입력하여도 수식 삭제할 수 있으므로 키코드 구분 없이 모든 키에 대해 적용
 	//키다운 끝나면 setTimeout에서 tmpReGenerBugFix 클래스 제거
 	//뒤에 공백을 추가 해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
-	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 &&userKeyCode !== 40 && !event.shiftKey)){
-		//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
-		await reg_removeSelectionBackColor();
-		
+	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40 && !event.shiftKey)){
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
 		let selection = document.getSelection();
