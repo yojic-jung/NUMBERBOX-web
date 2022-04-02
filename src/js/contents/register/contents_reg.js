@@ -341,7 +341,6 @@ export const reg_preventKeyEvent = async (event) => {
 				selection.removeAllRanges();
 				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
 				document.getElementsByClassName(".tmpReGenerBugFix")[0].remove();
-				return;
 			}
 		}
 	}
