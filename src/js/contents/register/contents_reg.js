@@ -323,29 +323,7 @@ export const reg_lineMoveBugFixEnd = async () =>{
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
 
-	
-	if(!document.getSelection().isCollapsed){
-		//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
-		await reg_removeSelectionBackColor();
-		//수식이 셀렉트 영역의 마지막에 있는 경우 글자 입력하면 수식이 재생성 되는 버그 해결
-		let nbBox = document.getSelection().getRangeAt(0).endContainer;
-		if(nbBox.classList !== undefined){
-			if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
-				const selection = document.getSelection();
-				let strtContainer = selection.getRangeAt(0).startContainer;
-				let strtOffset = selection.getRangeAt(0).startOffset;
-				let tmpNode= document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpReGenerBugFix"
-				nbBox.after(tmpNode)
-				selection.removeAllRanges();
-				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
-				document.getElementsByClassName(".tmpReGenerBugFix")[0].remove();
-			}
-		}
-	}
-	
-	
+	console.log(userKeyCode)
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
 		const newRange = window.getSelection().getRangeAt(0)
@@ -357,6 +335,55 @@ export const reg_preventKeyEvent = async (event) => {
 		newRange.insertNode(tmpNode);
 		return;
 	}
+	
+	//1번 validation
+	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
+	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
+	//(3) 백스페이스 del 뿐만 아니라 셀렉트 된 상태에서 다른 글자 입력하여도 수식 삭제할 수 있으므로 키코드 구분 없이 모든 키에 대해 적용
+	//키다운 끝나면 setTimeout에서 tmpReGenerBugFix 클래스 제거
+	//뒤에 공백을 추가 해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
+	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 &&userKeyCode !== 40 && !event.shiftKey)){
+		//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
+		await reg_removeSelectionBackColor();
+		
+		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
+		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
+		let selection = document.getSelection();
+		let strtContainer = selection.getRangeAt(0).startContainer;
+		let strtOffset = selection.getRangeAt(0).startOffset;
+		let endContainer = document.getSelection().getRangeAt(0).endContainer;
+		if(endContainer.classList !== undefined){
+			if(endContainer.closest(".nbBox")!== null || (endContainer.querySelector(".nbBox") !== null && endContainer.id !== document.activeElement.id)){
+				let tmpNode= document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"
+				endContainer.after(tmpNode)
+				selection.removeAllRanges();
+				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
+			}
+		}
+
+		selection = document.getSelection();
+		strtContainer = selection.getRangeAt(0).startContainer;
+		if(strtContainer.classList !== undefined) {
+			if(strtContainer.closest(".nbBox")!== null || (strtContainer.querySelector(".nbBox") !== null && strtContainer.id !== document.activeElement.id)){
+				console.log("수식 버그")
+				console.log(strtContainer);
+				strtOffset = selection.getRangeAt(0).startOffset;
+				endContainer = document.getSelection().getRangeAt(0).endContainer;
+				let endOffset = document.getSelection().getRangeAt(0).endOffset;
+				let tmpNode2 = document.createElement('span');	
+				tmpNode2.innerHTML = "&nbsp;"
+				tmpNode2.className = "tmpReGenerBugFix2"		//ctrl+z에서 삭제 시켜줘야함
+				strtContainer.before(tmpNode2);
+				selection.removeAllRanges();
+				selection.setBaseAndExtent(endContainer, endOffset, tmpNode2, 0, );
+			}
+		}
+	}
+	
+
+	/*
 	//1번 validation
 	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
 	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
@@ -400,6 +427,7 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 	//[end]
+	*/
 
 	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
 	//입력 불가 수식 box요소 제어[start]
@@ -856,7 +884,8 @@ export const reg_preventKeyEvent = async (event) => {
 
 	setTimeout(function(){
 		//ctrl+z(키코드 90)와 ctrl+v(키코드 86)인 경우
-		if( (userKeyCode === 90 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey)){
+		//if( (userKeyCode === 90 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey)){
+		if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40 && !event.shiftKey)){
 			let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 			for(let i=0; i<tmpReGenerBugFix.length; i++){
 				tmpReGenerBugFix[i].remove();
@@ -866,6 +895,8 @@ export const reg_preventKeyEvent = async (event) => {
 				tmpReGenerBugFix2[i].remove();
 			}
 		}
+			
+		//}
 	}, 0);
 }
 
