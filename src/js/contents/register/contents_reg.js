@@ -341,38 +341,41 @@ export const reg_preventKeyEvent = async (event) => {
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
 		console.log("백스페이스1")
 		let nbBox = document.getSelection().getRangeAt(0).endContainer;
-		if(nbBox.classList === undefined) nbBox = document.getSelection().getRangeAt(0).endContainer.parentElement;
-		if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
-			if(!document.getSelection().isCollapsed){
-				console.log("들어옴")
-				await reg_removeSelectionBackColor();
-				const selection = document.getSelection();
-				let strtContainer = selection.getRangeAt(0).startContainer;
-				let strtOffset = selection.getRangeAt(0).startOffset;
-				let tmpNode= document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpReGenerBugFix"		//ctrl+z에서 삭제 시켜줘야함
+		if(nbBox.classList !== undefined){
+			if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
+				if(!document.getSelection().isCollapsed){
+					await reg_removeSelectionBackColor();
+					const selection = document.getSelection();
+					let strtContainer = selection.getRangeAt(0).startContainer;
+					let strtOffset = selection.getRangeAt(0).startOffset;
+					let tmpNode= document.createElement('span');
+					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.className = "tmpReGenerBugFix"		//ctrl+z에서 삭제 시켜줘야함
+	
+					//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 앞에도 공백 붙여줌
+					let strtNbBox = document.getSelection().getRangeAt(0).startContainer;
+					if(strtNbBox.classList !== undefined) {
+						if(strtNbBox.closest(".nbBox")!== null || (strtNbBox.querySelector(".nbBox") !== null && strtNbBox.id !== document.activeElement.id)){
+							console.log("수식 버그")
+							console.log(strtNbBox);
+							let tmpNode2 = document.createElement('span');	
+							tmpNode2.innerHTML = "&nbsp;"
+							tmpNode2.className = "tmpReGenerBugFix2"		//ctrl+z에서 삭제 시켜줘야함
+							strtNbBox.before(tmpNode2);
+							nbBox.after(tmpNode)
+							selection.removeAllRanges();
+							selection.setBaseAndExtent(tmpNode2, 0, tmpNode, 1);
+							return;
+						}
+					}
 
-				//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 앞에도 공백 붙여줌
-				let strtNbBox = document.getSelection().getRangeAt(0).startContainer;
-				if(strtNbBox.classList === undefined) strtNbBox = document.getSelection().getRangeAt(0).startContainer.parentElement;
-				if(strtNbBox.closest(".nbBox")!== null || (strtNbBox.querySelector(".nbBox") !== null && strtNbBox.id !== document.activeElement.id)){
-					let tmpNode2 = document.createElement('span');	
-					tmpNode2.innerHTML = "&nbsp;"
-					tmpNode2.className = "tmpReGenerBugFix2"		//ctrl+z에서 삭제 시켜줘야함
-					strtNbBox.before(tmpNode2);
 					nbBox.after(tmpNode)
 					selection.removeAllRanges();
-					selection.setBaseAndExtent(tmpNode2, 0, tmpNode, 1);
+					selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
 					return;
 				}
-				nbBox.after(tmpNode)
-				selection.removeAllRanges();
-				selection.setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
-				return;
 			}
 		}
-		
 	}
 	//[end]
 
