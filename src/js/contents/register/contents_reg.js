@@ -352,19 +352,31 @@ export const reg_preventKeyEvent = async (event) => {
 		
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
-		let commonContainer = window.getSelection().getRangeAt(0).commonAncestorContainer;
+		let selection = window.getSelection();
+		let range = selection.getRangeAt(0);
+		let strtContainer = range.startContainer;
+		let strtOffset = range.startOffset;
+		let endContainer = range.endContainer;
+		let endOffset = range.endOffset;
+		let commonContainer = range.commonAncestorContainer;
 
-		if(commonContainer.classList !== undefined){
+		let nbBoxes;
+		if(commonContainer.classList === undefined){
 			commonContainer = commonContainer.parentElement;
+			nbBoxes = commonContainer.querySelectorAll('.nbBox');
+		}else{
+			if(commonContainer.classList.contains("nbBox")){
+				nbBoxes = [commonContainer];
+			}else{
+				nbBoxes = commonContainer.querySelectorAll('.nbBox');
+			}
 		}
 
-		let nbBoxes = commonContainer.querySelectorAll('.nbBox');
 		let rangeBox = [];
 		for(let i=0; i<nbBoxes.length; i++){
-			if(window.getSelection().containsNode(nbBoxes[i])) rangeBox.push(nbBoxes[i])
+			if(selection.containsNode(nbBoxes[i])) rangeBox.push(nbBoxes[i])
 		}
 		if(rangeBox.length !== 0){
-			console.log(rangeBox);
 			let tmpNode = document.createElement('span');
 			tmpNode.innerHTML = "&nbsp;"
 			tmpNode.className = "tmpReGenerBugFix"
@@ -373,7 +385,23 @@ export const reg_preventKeyEvent = async (event) => {
 			tmpNode2.className = "tmpReGenerBugFix2"
 			rangeBox[0].before(tmpNode);
 			rangeBox[rangeBox.length-1].after(tmpNode2);
-			window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
+			let isNbBoxFirst = false;
+			let isNbBoxLast = false;
+			if(!selection.containsNode(tmpNode)){
+				isNbBoxFirst =true;
+			}
+			if(!selection.containsNode(tmpNode2)){
+				isNbBoxLast = true;
+			}
+			if(isNbBoxFirst && isNbBoxLast){
+				window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
+			}else if(isNbBoxFirst && !isNbBoxLast){
+				window.getSelection().setBaseAndExtent(tmpNode, 0, endContainer, endOffset);
+			}else if(!isNbBoxFirst && isNbBoxLast){
+				window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode2, 1);
+			}else{
+				window.getSelection().setBaseAndExtent(strtContainer, strtOffset, endContainer, endOffset);
+			}
 		}
 		
 
