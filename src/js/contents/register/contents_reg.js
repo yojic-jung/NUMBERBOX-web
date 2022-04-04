@@ -225,7 +225,6 @@ export const reg_writeDisableDom = async (event) =>{
 	}
 
 	if(isDisableBox && (event.keyCode == "8" || event.keyCode == "46" )) {
-		console.log("백스페이스3")
 		//입력 불가 수식요소 삭제시 부모요소 전체 선택
 		document.getSelection().getRangeAt(0).selectNode(focusParDom.closest('table'));
 		return true;
@@ -323,7 +322,6 @@ export const reg_lineMoveBugFixEnd = async () =>{
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
 
-	console.log(userKeyCode)
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
 		const newRange = window.getSelection().getRangeAt(0)
@@ -358,12 +356,20 @@ export const reg_preventKeyEvent = async (event) => {
 		let strtOffset = selection.getRangeAt(0).startOffset;
 		let endContainer = document.getSelection().getRangeAt(0).endContainer;
 		if(endContainer.classList !== undefined){
-			if(endContainer.closest(".nbBox")!== null || (endContainer.querySelector(".nbBox") !== null && endContainer.id !== document.activeElement.id)){
+			console.log("실행1");
+			console.log(endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")));
+			console.log((endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id));
+				
+			if( (endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")) )
+			|| (endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id)){
+				
 				if(endContainer.closest(".nbBox")!== null){
 					endContainer = endContainer.closest(".nbBox")
 				}else if(endContainer.querySelector(".nbBox") !== null){
-					endContainer = endContainer.querySelector(".nbBox")
+					endContainer = endContainer.querySelector(".nbBox");
+					console.log(window.getSelection().containsNode(endContainer));
 				}
+
 				let tmpNode= document.createElement('span');
 				tmpNode.innerHTML = "&nbsp;"
 				tmpNode.className = "tmpReGenerBugFix"
@@ -376,13 +382,17 @@ export const reg_preventKeyEvent = async (event) => {
 		selection = document.getSelection();
 		strtContainer = selection.getRangeAt(0).startContainer;
 		if(strtContainer.classList !== undefined) {
-			if(strtContainer.closest(".nbBox")!== null || (strtContainer.querySelector(".nbBox") !== null && strtContainer.id !== document.activeElement.id)){
-				console.log("수식 버그")
+			console.log("실행1");
+			console.log(strtContainer.closest(".nbBox")!== null && window.getSelection().containsNode(strtContainer.closest(".nbBox")));
+			console.log((strtContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(strtContainer.querySelector(".nbBox")) && strtContainer.id !== document.activeElement.id));
+			if((strtContainer.closest(".nbBox")!== null && window.getSelection().containsNode(strtContainer.closest(".nbBox")) )
+			|| (strtContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(strtContainer.querySelector(".nbBox")) &&  strtContainer.id !== document.activeElement.id)){
 				if(strtContainer.closest(".nbBox")!== null){
 					strtContainer = strtContainer.closest(".nbBox")
 				}else if(strtContainer.querySelector(".nbBox") !== null){
 					strtContainer = strtContainer.querySelector(".nbBox")
 				}
+				console.log("실행2");
 				strtOffset = selection.getRangeAt(0).startOffset;
 				endContainer = document.getSelection().getRangeAt(0).endContainer;
 				let endOffset = document.getSelection().getRangeAt(0).endOffset;
@@ -452,7 +462,6 @@ export const reg_preventKeyEvent = async (event) => {
 	//3번 
 	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , yellow 요소 전체 입혀줘야함
 	if(userKeyCode === 8 || userKeyCode === 46 ){
-		console.log("백스페이스2")
 		let nbBoxDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox');
 		if(nbBoxDom!=undefined){
 			let nbBoxInnerText = nbBoxDom.innerText.replace(/\r\n|\n|\r|\s*/g, "");

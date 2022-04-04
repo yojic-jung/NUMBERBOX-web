@@ -141,9 +141,6 @@ const ContentsListEdit = ()=>{
         }, [contentsList]);
 
 
-
-
-
         const searchMyWorkListByEnter = async function(event){
             if(event.keyCode === 13){
                 event.preventDefault();
@@ -151,7 +148,6 @@ const ContentsListEdit = ()=>{
                 
             }
         }
-
 
         const searchMyWorkList = async function(hasNotiPhrases){
             let customSubject = document.getElementById("cusSelSubTitle");
