@@ -349,24 +349,91 @@ export const reg_preventKeyEvent = async (event) => {
 	&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
 		 && !event.shiftKey && !event.ctrlKey && !event.altKey )
 		 || (userKeyCode === 88 && event.ctrlKey)){
+		
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
-		let selection = document.getSelection();
-		let strtContainer = selection.getRangeAt(0).startContainer;
-		let strtOffset = selection.getRangeAt(0).startOffset;
-		let endContainer = document.getSelection().getRangeAt(0).endContainer;
+		let commonContainer = window.getSelection().getRangeAt(0).commonAncestorContainer;
+
+		if(commonContainer.classList !== undefined){
+			commonContainer = commonContainer.parentElement;
+		}
+
+		let nbBoxes = commonContainer.querySelectorAll('.nbBox');
+		let rangeBox = [];
+		for(let i=0; i<nbBoxes.length; i++){
+			if(window.getSelection().containsNode(nbBoxes[i])) rangeBox.push(nbBoxes[i])
+		}
+		if(rangeBox.length !== 0){
+			console.log(rangeBox);
+			let tmpNode = document.createElement('span');
+			tmpNode.innerHTML = "&nbsp;"
+			tmpNode.className = "tmpReGenerBugFix"
+			let tmpNode2 = document.createElement('span');
+			tmpNode2.innerHTML = "&nbsp;"
+			tmpNode2.className = "tmpReGenerBugFix2"
+			rangeBox[0].before(tmpNode);
+			rangeBox[rangeBox.length-1].after(tmpNode2);
+		}
+		
+
+		/*
+		let tmpNode = document.createElement('span');
+		tmpNode.innerHTML = "&nbsp;"
+		tmpNode.className = "tmpReGenerBugFix"
+		let tmpNode2 = document.createElement('span');
+		tmpNode2.innerHTML = "&nbsp;"
+		tmpNode2.className = "tmpReGenerBugFix2"
+		if(strtContainer.classList !== undefined && strtContainer.closest(".nbBox") !== null){
+			strtContainer.closest(".nbBox").before(tmpNode);
+		}else{
+			oldRange.insertNode(tmpNode);
+		}
+		
+		selection.collapseToEnd();
+		if(endContainer.classList !== undefined && endContainer.closest(".nbBox") !== null){
+			endContainer.closest(".nbBox").after(tmpNode2);
+		}else{
+			window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+		}
+
+		selection.removeAllRanges();
+		selection.setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
+		event.preventDefault();
+		return;
+		*/
+		/*
 		if(endContainer.classList !== undefined){
 			console.log("실행1");
 			console.log(endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")));
 			console.log((endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id));
-				
+			let nbBoxes = endContainer.querySelectorAll(".nbBox");
+			let lastNbBox = nbBoxes[0];
+			for(let i=0; i<nbBoxes.length; i++){
+				if(window.getSelection().containsNode(nbBoxes[i])){
+					lastNbBox = nbBoxes[i]
+				}else{
+					break;
+				}
+
+			}
 			if( (endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")) )
 			|| (endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id)){
 				
 				if(endContainer.closest(".nbBox")!== null){
 					endContainer = endContainer.closest(".nbBox")
 				}else if(endContainer.querySelector(".nbBox") !== null){
-					endContainer = endContainer.querySelector(".nbBox");
+					//endContainer에 여러개의 수식요소가 있을 수 있음
+					let nbBoxes = endContainer.querySelectorAll(".nbBox");
+					let lastNbBox = nbBoxes[0];
+					for(let i=0; i<nbBoxes.length; i++){
+						if(window.getSelection().containsNode(nbBoxes[i])){
+							lastNbBox = nbBoxes[i]
+						}else{
+							break;
+						}
+
+					}
+					endContainer = lastNbBox;
 					console.log(window.getSelection().containsNode(endContainer));
 				}
 
@@ -404,6 +471,7 @@ export const reg_preventKeyEvent = async (event) => {
 				selection.setBaseAndExtent(endContainer, endOffset, tmpNode2, 0, );
 			}
 		}
+		*/
 	}
 	
 
