@@ -359,6 +359,11 @@ export const reg_preventKeyEvent = async (event) => {
 		let endContainer = document.getSelection().getRangeAt(0).endContainer;
 		if(endContainer.classList !== undefined){
 			if(endContainer.closest(".nbBox")!== null || (endContainer.querySelector(".nbBox") !== null && endContainer.id !== document.activeElement.id)){
+				if(endContainer.closest(".nbBox")!== null){
+					endContainer = endContainer.closest(".nbBox")
+				}else if(endContainer.querySelector(".nbBox") !== null){
+					endContainer = endContainer.querySelector(".nbBox")
+				}
 				let tmpNode= document.createElement('span');
 				tmpNode.innerHTML = "&nbsp;"
 				tmpNode.className = "tmpReGenerBugFix"
@@ -373,7 +378,11 @@ export const reg_preventKeyEvent = async (event) => {
 		if(strtContainer.classList !== undefined) {
 			if(strtContainer.closest(".nbBox")!== null || (strtContainer.querySelector(".nbBox") !== null && strtContainer.id !== document.activeElement.id)){
 				console.log("수식 버그")
-				console.log(strtContainer);
+				if(strtContainer.closest(".nbBox")!== null){
+					strtContainer = strtContainer.closest(".nbBox")
+				}else if(strtContainer.querySelector(".nbBox") !== null){
+					strtContainer = strtContainer.querySelector(".nbBox")
+				}
 				strtOffset = selection.getRangeAt(0).startOffset;
 				endContainer = document.getSelection().getRangeAt(0).endContainer;
 				let endOffset = document.getSelection().getRangeAt(0).endOffset;
