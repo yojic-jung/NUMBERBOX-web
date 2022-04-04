@@ -349,7 +349,6 @@ export const reg_preventKeyEvent = async (event) => {
 	&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
 		 && !event.shiftKey && !event.ctrlKey && !event.altKey )
 		 || (userKeyCode === 88 && event.ctrlKey)){
-		
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
 		let selection = window.getSelection();
@@ -359,6 +358,11 @@ export const reg_preventKeyEvent = async (event) => {
 		let endContainer = range.endContainer;
 		let endOffset = range.endOffset;
 		let commonContainer = range.commonAncestorContainer;
+
+		let isLeftDir = true;
+		if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
+			isLeftDir =false
+		}
 
 		let nbBoxes;
 		if(commonContainer.classList === undefined){
@@ -383,29 +387,46 @@ export const reg_preventKeyEvent = async (event) => {
 			let tmpNode2 = document.createElement('span');
 			tmpNode2.innerHTML = "&nbsp;"
 			tmpNode2.className = "tmpReGenerBugFix2"
+			
 			rangeBox[0].before(tmpNode);
+
 			rangeBox[rangeBox.length-1].after(tmpNode2);
+
 			let isNbBoxFirst = false;
 			let isNbBoxLast = false;
-			if(!selection.containsNode(tmpNode)){
+
+			//containsNode 정상작동 안함(ctrl+z에서 셀렉트 범위 제대로 못잡음)
+			let tmpReGenerBugFix = window.getSelection().getRangeAt(0).cloneContents();
+			console.log(tmpReGenerBugFix);
+			if(!window.getSelection().containsNode(tmpNode)){
 				isNbBoxFirst =true;
 			}
-			if(!selection.containsNode(tmpNode2)){
+			if(!window.getSelection().containsNode(tmpNode2)){
 				isNbBoxLast = true;
 			}
+			selection.removeAllRanges();
 			if(isNbBoxFirst && isNbBoxLast){
-				window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
+				console.log("1")
+				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode2, 1, tmpNode, 0);
+				else window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
 			}else if(isNbBoxFirst && !isNbBoxLast){
-				window.getSelection().setBaseAndExtent(tmpNode, 0, endContainer, endOffset);
+				console.log("2")
+				if(isLeftDir) window.getSelection().setBaseAndExtent(endContainer, endOffset, tmpNode, 0);
+				else window.getSelection().setBaseAndExtent(tmpNode, 0, endContainer, endOffset);
 			}else if(!isNbBoxFirst && isNbBoxLast){
-				window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode2, 1);
+				console.log("3")
+				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode2, 1, strtContainer, strtOffset);
+				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode2, 1);
+				
 			}else{
-				window.getSelection().setBaseAndExtent(strtContainer, strtOffset, endContainer, endOffset);
+				console.log("4")
+				if(isLeftDir) window.getSelection().setBaseAndExtent(endContainer, endOffset, strtContainer, strtOffset);
+				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, endContainer, endOffset);
 			}
 		}
-		
 
 		/*
+		let oldRange = selection.getRangeAt(0);
 		let tmpNode = document.createElement('span');
 		tmpNode.innerHTML = "&nbsp;"
 		tmpNode.className = "tmpReGenerBugFix"
@@ -413,13 +434,18 @@ export const reg_preventKeyEvent = async (event) => {
 		tmpNode2.innerHTML = "&nbsp;"
 		tmpNode2.className = "tmpReGenerBugFix2"
 		if(strtContainer.classList !== undefined && strtContainer.closest(".nbBox") !== null){
+			//수식요소 앞에 포커스 있을때 공백이 테이블 태그 안으로 들어감
+			//수식요소 안에서 셀렉트시 정상 작동안함 
 			strtContainer.closest(".nbBox").before(tmpNode);
 		}else{
 			oldRange.insertNode(tmpNode);
 		}
 		
 		selection.collapseToEnd();
+		window.getSelection().getRangeAt(0).insertNode(tmpNode2);
 		if(endContainer.classList !== undefined && endContainer.closest(".nbBox") !== null){
+			//수식요소 뒤에 포커스 있을때 공백이 테이블 태그 안으로 들어감 
+			//수식요소 안에서 셀렉트시 정상 작동안함
 			endContainer.closest(".nbBox").after(tmpNode2);
 		}else{
 			window.getSelection().getRangeAt(0).insertNode(tmpNode2);
@@ -427,9 +453,8 @@ export const reg_preventKeyEvent = async (event) => {
 
 		selection.removeAllRanges();
 		selection.setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
-		event.preventDefault();
-		return;
 		*/
+
 		/*
 		if(endContainer.classList !== undefined){
 			console.log("실행1");
@@ -447,7 +472,8 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 			if( (endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")) )
 			|| (endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id)){
-				
+				console.log(endContainer)
+				console.log(document.activeElement.id)
 				if(endContainer.closest(".nbBox")!== null){
 					endContainer = endContainer.closest(".nbBox")
 				}else if(endContainer.querySelector(".nbBox") !== null){
@@ -500,9 +526,9 @@ export const reg_preventKeyEvent = async (event) => {
 				selection.setBaseAndExtent(endContainer, endOffset, tmpNode2, 0, );
 			}
 		}
-		*/
+			*/
+
 	}
-	
 
 	/*
 	//1번 validation
