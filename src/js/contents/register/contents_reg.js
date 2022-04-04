@@ -373,6 +373,7 @@ export const reg_preventKeyEvent = async (event) => {
 			tmpNode2.className = "tmpReGenerBugFix2"
 			rangeBox[0].before(tmpNode);
 			rangeBox[rangeBox.length-1].after(tmpNode2);
+			window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
 		}
 		
 
