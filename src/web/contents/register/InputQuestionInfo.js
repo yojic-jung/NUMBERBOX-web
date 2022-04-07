@@ -243,7 +243,10 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 
 			// 수정모드인 경우 자동종료
 			if(updateModeUniqNo!=="") document.getElementById("modalFormulCloseBtn").click();
-			else await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
+			else{
+				await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
+				document.getElementById("contentsFormulaEditor").focus()
+			} 
 		}
 	  }
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg';
+import {reg_eraseEditTbUI, reg_reGenerFormulBugFix} from 'js/contents/register/contents_reg';
 
 const EditTableInnerUi = ({parentMethod})=>{
 
@@ -29,9 +29,11 @@ const EditTableInnerUi = ({parentMethod})=>{
 		document.getElementById('nByNtag').innerHTML= (Number(rowIdx)+1)+"&#9747;"+(Number(colIdx)+1)
 	}
 
-    const addEditTable = (event)=>{
-        event.preventDefault();
 
+    let tableIdx=0;
+    const addEditTable = async (event)=>{
+        event.preventDefault();
+        tableIdx++;
         let isNoneTdBorder = document.getElementById("tbBorderCheck").checked;
 
         //table 노드 생성
@@ -39,6 +41,7 @@ const EditTableInnerUi = ({parentMethod})=>{
         let cellIdx = Number(event.target.dataset.col)+1;
         let tmpNode= document.createElement('table');
         tmpNode.className = "editInnerTable";
+        tmpNode.id= "editInnerTable"+tableIdx;
         for(let i=0;i<rowIdx;i++){
             let rowNode= document.createElement('tr');
             for(let j=0; j<cellIdx;j++){
@@ -60,10 +63,15 @@ const EditTableInnerUi = ({parentMethod})=>{
 
         //포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
         if(document.getSelection().focusNode==null){
-            document.getElementById(targetDomId).appendChild(tmpNode);
+            //document.getElementById(targetDomId).appendChild(tmpNode);
+            //위 방식도 정상작동
+		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+            document.getElementById(targetDomId).focus()
+            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
+            
             let range = document.createRange();
-            range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
-            range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
+            range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
+            range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
             const selection1 = document.getSelection();
             selection1.removeAllRanges();
             selection1.addRange(range);
@@ -75,14 +83,14 @@ const EditTableInnerUi = ({parentMethod})=>{
         }
 
         //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], (걸쳐있는 수식 요소 모두 제거 후 추가할지 결정 후 개발 필요)
-        let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('table');
-        let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('table')
-        if(startDom!=null && startDom.classList.contains('nbBox')){
+        let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('.nbBox');
+        let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox')
+        if(startDom!=null){
             document.getElementById("editTableUi").classList.add("hide");
             event.stopPropagation();
             return;
         }
-        if(endDom!=null && endDom.classList.contains('nbBox')){
+        if(endDom!=null){
             document.getElementById("editTableUi").classList.add("hide");
             event.stopPropagation();
             return;
@@ -108,16 +116,48 @@ const EditTableInnerUi = ({parentMethod})=>{
         selection.addRange(newRange);
         let focusId =document.activeElement.id;
 
-        if(focusId != targetDomId){
-            document.getElementById(targetDomId).appendChild(tmpNode);
+        if(focusId !== targetDomId){
+            //document.getElementById(targetDomId).appendChild(tmpNode);
+            //위 방식도 정상작동
+		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+            document.getElementById(targetDomId).focus()
+            let tmpCaretPoint= document.createElement('span');
+		    tmpCaretPoint.className = "tmpCaretPoint";
+		    tmpCaretPoint.innerHTML = ".";
+            document.getElementById(targetDomId).appendChild(tmpCaretPoint);
+            let range = document.createRange();
+            window.getSelection().removeAllRanges();
+            range.setStart(tmpCaretPoint, 0);
+            range.setEnd(tmpCaretPoint, 0);//
+            window.getSelection().addRange(range);
+            document.getElementsByClassName("tmpCaretPoint")[0].remove();
+            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
         }else{ //포커스 있으면 그대로 진행
-            newRange.deleteContents();
-            newRange.insertNode(tmpNode);
-        }
+            //newRange.deleteContents();
+            //newRange.insertNode(tmpNode);
+            //위 방식도 정상작동
+		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+            if( !document.getSelection().isCollapsed ){
+                if(await reg_reGenerFormulBugFix(false)) return;
+            }
+            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
+            let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
+			for(let i=0; i<tmpReGenerBugFix.length; i++){
+				tmpReGenerBugFix[i].remove();
+			}
+			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
+			for(let i=0; i<tmpReGenerBugFix2.length; i++){
+				tmpReGenerBugFix2[i].remove();
+			}
 
+        }
+       
         let range = document.createRange();
-		range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
-		range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
+		//range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
+		//range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
+        range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
+        range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
+        console.log(document.getElementById(tmpNode.id).childNodes[0].childNodes[0])
 		const selection1 = document.getSelection();
 		selection1.removeAllRanges();
 		selection1.addRange(range);

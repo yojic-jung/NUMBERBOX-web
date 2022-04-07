@@ -1,5 +1,8 @@
 import {React, useEffect, useState} from "react";
-import {reg_getMappingShortCutKeyClk, reg_writeDisableDom} from 'js/contents/register/contents_reg';
+import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix} from 'js/contents/register/contents_reg';
+
+//입력불가 수식요소 (FormulaShorCutKey.js에도 똑같이 정의함)
+const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
 
 const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod}) => {
     const [shortCutKey, setShortCutKey] = useState(new Array());
@@ -50,6 +53,7 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         const isWriteDisableDom = await reg_writeDisableDom(event)
 		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
 			let nbGrammer = mappingKey[0]["nbGrammer"];
+            /*
 			//현재 포커스에 단축키 수식 추가
             const selection = document.getSelection();
             const newRange = selection.getRangeAt(0);
@@ -60,7 +64,53 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
             newRange.deleteContents();
             newRange.insertNode(tmpNode);
 			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-            
+            */
+			//위 방식도 정상작동
+			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+			nbGrammer = "<span>"+nbGrammer+"</span>";
+            if( !document.getSelection().isCollapsed ){
+                await reg_reGenerFormulBugFix(true);
+            }
+			document.execCommand("insertHTML", false ,nbGrammer);
+            let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
+			for(let i=0; i<tmpReGenerBugFix.length; i++){
+				tmpReGenerBugFix[i].remove();
+			}
+			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
+			for(let i=0; i<tmpReGenerBugFix2.length; i++){
+				tmpReGenerBugFix2[i].remove();
+			}
+
+            //포커스 재설정 필요한 수식요소 포커스 설정
+            let focusNbBorderBox = window.getSelection().focusNode;
+			if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
+			focusNbBorderBox = focusNbBorderBox.closest(".borderBox");
+
+            if(focusNbBorderBox !== null) {
+                //입력 불가 요소는 수식 오른쪽에 포커스
+                for(let i=0; i<writeDisabledDom.length; i++){
+                    if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
+                        window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox);
+                        window.getSelection().collapseToEnd();
+
+                    }
+                }
+
+                if(focusNbBorderBox.classList.contains("nbThrCaseThr")){
+                    console.log(focusNbBorderBox.closest(".nbBox"))
+                    let nbBox = focusNbBorderBox.closest(".nbBox")
+                    console.log(nbBox.querySelector(".nbCaseFir"))
+                    window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
+                    window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
+
+                }else if(focusNbBorderBox.classList.contains("nbCaseSec")){
+                    window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
+                    window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
+                }
+            }
+
+            await reg_dressYellowBox();
+			event.preventDefault();
             // borderBox 수식 요소인 경우 borderBox안의 caret에 포커스 주기
             /*
             if(document.getElementsByClassName("caret").length !== 0){

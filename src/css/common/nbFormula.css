@@ -591,7 +591,7 @@
 /** 사각형 조건 박스 **/
 .nbCondBox{
     position: relative;
-    vertical-align: -0.55em;
+    vertical-align: middle;
 }
 .nbCondBase{
     line-height: 130%;
@@ -647,6 +647,11 @@
 .onlyEdit:focus .yellowBorderBox{
     border :2px dashed rgb(255, 196, 1) !important;
 }
+
+.onlyEdit:focus .grayBorderBox{
+    border :2px dashed gray !important;
+}
+
 
 .onlyEdit .nbTrigon.borderBox{
     min-width:1em;

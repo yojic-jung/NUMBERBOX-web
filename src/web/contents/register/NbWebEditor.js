@@ -50,18 +50,17 @@ const NbWebEditor = ({parentMethod})=>{
 		} 
 
         //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], 사용할지 안할지 판단 필요
-        let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('table');
-        let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('table')
-        if(startDom!=null && startDom.classList.contains('nbBox')){
+        let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('.nbBox');
+        let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox')
+        if(startDom!=null){
             event.stopPropagation();
             return;
         }
-        if(endDom!=null && endDom.classList.contains('nbBox')){
+        if(endDom!=null){
             event.stopPropagation();
             return;
         }
  		//드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [end]
-		 
 		 const selection = document.getSelection();
 		 const newRange = selection.getRangeAt(0);
 		 selection.removeAllRanges();
@@ -72,18 +71,25 @@ const NbWebEditor = ({parentMethod})=>{
 
 		//문제입력과 해설입력 창에만 적용
 		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
-
-			//정렬버그 해결(뒤에 공백 주어 수식요소 재성성되는 문제 해결)
-
+			//정렬버그 해결
 			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
+				//복붙하여 span에 text-align적용되어 정렬 안되는 버그 해결
+				let span = document.getElementById(document.activeElement.id).querySelectorAll("span");
+				for(let i=0; i<span.length; i++){
+					console.log(span[i].style.textAlign)
+					if(span[i].style.textAlign !== ""){
+						span[i].style.textAlign = ""
+					}
+				}
+				//수식요소 뒤에 공백 주어 라인 마지막에 수식 있는 경우 수식요소 재성성되는 문제 해결
 				let nbBoxes = document.getElementById(focusId).querySelectorAll(".nbBox");
-				let tmpNode = document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpReGenerBugFix"
-				let tmpNode2 = document.createElement('span');
-				tmpNode2.innerHTML = "&nbsp;"
-				tmpNode2.className = "tmpReGenerBugFix"
 				for(let i=0; i<nbBoxes.length; i++){
+					let tmpNode = document.createElement('span');
+					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.className = "tmpReGenerBugFix"
+					let tmpNode2 = document.createElement('span');
+					tmpNode2.innerHTML = "&nbsp;"
+					tmpNode2.className = "tmpReGenerBugFix"
 					nbBoxes[i].before(tmpNode2);
 					nbBoxes[i].after(tmpNode);
 				}

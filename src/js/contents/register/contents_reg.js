@@ -5,7 +5,7 @@
 
 //수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택되야하는데 안되는 요소 별도 처리
 const vacantDomAllSel = ["nbCaseBrckBox", "nbThrCasekBox"];
-//입력불가 수식요소 
+//입력불가 수식요소 (FormulaShorCutKey.js에도 똑같이 정의함)
 const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
 //위로 키보드 이벤트 미적용 대상
 const noApplyUpKeyList = ["nbDenom", "nbBinomCoSec", "nbCaseSec", "nbThrCaseSec", "nbThrCaseThr"];
@@ -181,6 +181,61 @@ export const reg_threeDivGridChk = async () => {
 
 }
 
+/*
+* 정의 : 에디터 모드 포커스 yellowBox 클래스 추가 함수(onKeyUp, onClick)
+* 대상 : 문제, 해설, 객관식보기(5개), 주관식 정답
+*/
+export const reg_dressYellowBox = async()=>{
+	//드래그 없이 포커스만 하나 있는 경우
+	if(window.getSelection().isCollapsed && window.getSelection().rangeCount !== 0){
+		let yellowBorderBox = document.getElementsByClassName("yellowBorderBox");
+		while (yellowBorderBox.length > 0) {
+			yellowBorderBox[0].classList.remove('yellowBorderBox');
+		}
+
+		let grayBorderBox = document.getElementsByClassName("grayBorderBox");
+		while (grayBorderBox.length > 0) {
+			grayBorderBox[0].classList.remove('grayBorderBox');
+		}
+
+		//parentElement가 아닌 포커스 컨테이너가 borderBox인 경우(비어있는 요소에 포커스)
+		let focusDom = document.getSelection().getRangeAt(0).startContainer;
+		let focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement
+
+		//입력불가 요소는 옐로우박스 안 입힘
+		for(let i=0; i<writeDisabledDom.length; i++){
+			if(focusDom.classList!==undefined){
+				if(focusDom.classList.contains(writeDisabledDom[i])){
+					focusDom.classList.add("grayBorderBox");
+					return;
+				}
+			}else{
+				if(focusParDom.classList.contains(writeDisabledDom[i])){
+					focusParDom.classList.add("grayBorderBox");
+					return;
+				}
+			}
+			
+		}
+
+		if(focusDom.classList!==undefined){
+			if(focusDom.classList.contains("borderBox")){
+				focusDom.classList.add("yellowBorderBox");
+				return;
+			} 
+		}
+		
+		if(focusParDom!==undefined){
+			focusParDom=focusParDom.closest(".borderBox");
+			if(focusParDom!==null){
+				focusParDom.classList.add("yellowBorderBox");
+			}
+		}
+
+	
+
+	}
+}
 
 /*
 *  수식 alt키 단축키 이벤트
@@ -314,41 +369,8 @@ export const reg_lineMoveBugFixEnd = async () =>{
 		}
 }
 
-/*
-*	정의 : 키값 입력 제어 이벤트
-*	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
-*			alt키 제어(단축키 사용용도)
-*/
-export const reg_preventKeyEvent = async (event) => {
-	let userKeyCode = event.keyCode;
 
-	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
-	if(userKeyCode === 229 && event.code === "Backspace"){
-		const newRange = window.getSelection().getRangeAt(0)
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(newRange);
-		let tmpNode= document.createElement('span');
-		tmpNode.innerHTML = "&nbsp;"
-		tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
-		newRange.insertNode(tmpNode);
-		return;
-	}
-
-	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
-	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
-		await reg_removeSelectionBackColor();
-	}
-
-	//1번 validation
-	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
-	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
-	//(3) 백스페이스 del 뿐만 아니라 셀렉트 된 상태에서 다른 글자 입력하여도 수식 삭제할 수 있으므로 키코드 구분 없이 모든 키에 대해 적용
-	//키다운 끝나면 setTimeout에서 tmpReGenerBugFix 클래스 제거
-	//뒤에 공백을 추가 해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
-	if( (!document.getSelection().isCollapsed 
-	&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
-		 && !event.shiftKey && !event.ctrlKey && !event.altKey )
-		 || (userKeyCode === 88 && event.ctrlKey)){
+export const reg_reGenerFormulBugFix = async (isShorcutKey) =>{
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
 		let selection = window.getSelection();
@@ -358,6 +380,62 @@ export const reg_preventKeyEvent = async (event) => {
 		let endContainer = range.endContainer;
 		let endOffset = range.endOffset;
 		let commonContainer = range.commonAncestorContainer;
+
+		//하나의 수식요소 안에서는 적용안함, 수식요소 셀렉트 적용규칙은 reg_keyEvSelectFormulaElement에서 정의
+		let strtNbBox = strtContainer;
+		if(strtNbBox.classList !== undefined && strtNbBox.closest(".nbBox") !== null){
+			strtNbBox = strtNbBox.closest(".nbBox")
+		}else{
+			strtNbBox = strtNbBox.parentElement.closest(".nbBox")
+		}
+		let endNbBox = endContainer;
+		if(endNbBox.classList !== undefined && endNbBox.closest(".nbBox") !== null){
+			endNbBox = endNbBox.closest(".nbBox")
+		}else{
+			endNbBox = endNbBox.parentElement.closest(".nbBox")
+		}
+		let rootStrtNbBox = null;
+		if(strtNbBox !== null){
+			while(strtNbBox.parentElement.closest('.nbBox')!==null){
+				strtNbBox = strtNbBox.parentElement.closest('.nbBox');
+			}
+			rootStrtNbBox = strtNbBox;
+		}
+		let rootEndNbBox =null;
+		if(endNbBox !== null){
+			while(endNbBox.parentElement.closest('.nbBox')!==null){
+				endNbBox = endNbBox.parentElement.closest('.nbBox');
+			}
+			rootEndNbBox = endNbBox;
+		}
+		//하나의 수식요소 밑(최상위 수식요소가 같은 경우) 적용
+		if(rootStrtNbBox !== null && rootStrtNbBox === rootEndNbBox){
+			if(isShorcutKey) return false;
+			else return true;
+		}
+
+
+
+		/*
+		//비어있는 수식 요소 전체 셀렉트 된 경우, 비어있는 수식 요소 삭제
+		if(strtContainer===endContainer && strtOffset===0 && endOffset===1){
+			if(strtContainer.classList !== undefined && strtContainer.closest(".nbBox") !== null){
+				*/
+				//let nbBoxInnerText = strtContainer.closest(".nbBox").innerText.replace(/\r\n|\n|\r|\s*/g, "");
+				/*
+				if(nbBoxInnerText.length===0){
+					return true;
+				}else if(nbBoxInnerText.length===1){
+					for(let i=0; i<vacantDomAllSel.length; i++){
+						if(strtContainer.closest(".nbBox").classList.contains(vacantDomAllSel[i])){
+							return true;
+						}
+					}
+				}
+			}
+			
+		}
+		*/
 
 		let isLeftDir = true;
 		if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
@@ -390,41 +468,92 @@ export const reg_preventKeyEvent = async (event) => {
 			
 			rangeBox[0].before(tmpNode);
 
-			rangeBox[rangeBox.length-1].after(tmpNode2);
+			//범위 내에 마지막 노드가 첫번째 노드의 자식 노드인 경우 첫번째 노드 앞뒤에 공배추가(최상위에 공백 추가)
+			//범위 내에 마지막 노드가 다른 수식요소의 하위요소일때 최상위 수식요소 뒤에 공백추가
+			if(rangeBox[rangeBox.length-1].closest(".nbBox")!==null){
+				let rootRangeBox = rangeBox[rangeBox.length-1];
+				while(rootRangeBox.parentElement.closest(".nbBox") !== null){
+					rootRangeBox = rootRangeBox.parentElement.closest(".nbBox");
+				}
+				rootRangeBox.after(tmpNode2);
+				
+			}else{
+				rangeBox[rangeBox.length-1].after(tmpNode2); 
+			}
 
 			let isNbBoxFirst = false;
 			let isNbBoxLast = false;
 
 			//containsNode 정상작동 안함(ctrl+z에서 셀렉트 범위 제대로 못잡음)
 			let tmpReGenerBugFix = window.getSelection().getRangeAt(0).cloneContents();
-			console.log(tmpReGenerBugFix);
 			if(!window.getSelection().containsNode(tmpNode)){
 				isNbBoxFirst =true;
 			}
 			if(!window.getSelection().containsNode(tmpNode2)){
 				isNbBoxLast = true;
 			}
+
 			selection.removeAllRanges();
 			if(isNbBoxFirst && isNbBoxLast){
-				console.log("1")
 				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode2, 1, tmpNode, 0);
 				else window.getSelection().setBaseAndExtent(tmpNode, 0, tmpNode2, 1);
 			}else if(isNbBoxFirst && !isNbBoxLast){
-				console.log("2")
 				if(isLeftDir) window.getSelection().setBaseAndExtent(endContainer, endOffset, tmpNode, 0);
 				else window.getSelection().setBaseAndExtent(tmpNode, 0, endContainer, endOffset);
 			}else if(!isNbBoxFirst && isNbBoxLast){
-				console.log("3")
 				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode2, 1, strtContainer, strtOffset);
 				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode2, 1);
 				
 			}else{
-				console.log("4")
 				if(isLeftDir) window.getSelection().setBaseAndExtent(endContainer, endOffset, strtContainer, strtOffset);
 				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, endContainer, endOffset);
 			}
-		}
 
+	}
+
+	return false;
+
+}
+
+/*
+*	정의 : 키값 입력 제어 이벤트
+*	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
+*			alt키 제어(단축키 사용용도)
+*/
+export const reg_preventKeyEvent = async (event) => {
+	let userKeyCode = event.keyCode;
+	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
+	if(userKeyCode === 229 && event.code === "Backspace"){
+		const newRange = window.getSelection().getRangeAt(0)
+		window.getSelection().removeAllRanges();
+		window.getSelection().addRange(newRange);
+		let tmpNode= document.createElement('span');
+		tmpNode.innerHTML = "&nbsp;"
+		tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
+		newRange.insertNode(tmpNode);
+		return;
+	}
+
+	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
+	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
+		await reg_removeSelectionBackColor();
+	}
+
+	//1번 validation
+	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
+	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
+	//(3) 백스페이스 del 뿐만 아니라 셀렉트 된 상태에서 다른 글자 입력하여도 수식 삭제할 수 있으므로 키코드 구분 없이 모든 키에 대해 적용
+	//키다운 끝나면 setTimeout에서 tmpReGenerBugFix 클래스 제거
+	//뒤에 공백을 추가 해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
+	if( (!document.getSelection().isCollapsed 
+		&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
+		 && !event.shiftKey && !event.ctrlKey && !event.altKey )
+		 || (userKeyCode === 88 && event.ctrlKey)
+		 || (userKeyCode === 86 && event.ctrlKey)
+		 || (userKeyCode !== 18 && event.altKey)){
+
+			
+			if(await reg_reGenerFormulBugFix(userKeyCode !== 18 && event.altKey)) return;
 		/*
 		let oldRange = selection.getRangeAt(0);
 		let tmpNode = document.createElement('span');
@@ -457,9 +586,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 		/*
 		if(endContainer.classList !== undefined){
-			console.log("실행1");
-			console.log(endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")));
-			console.log((endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id));
+			//복붙한 수식 끝에 있으면 여전히 재생성
 			let nbBoxes = endContainer.querySelectorAll(".nbBox");
 			let lastNbBox = nbBoxes[0];
 			for(let i=0; i<nbBoxes.length; i++){
@@ -472,8 +599,6 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 			if( (endContainer.closest(".nbBox")!== null && window.getSelection().containsNode(endContainer.closest(".nbBox")) )
 			|| (endContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(endContainer.querySelector(".nbBox")) && endContainer.id !== document.activeElement.id)){
-				console.log(endContainer)
-				console.log(document.activeElement.id)
 				if(endContainer.closest(".nbBox")!== null){
 					endContainer = endContainer.closest(".nbBox")
 				}else if(endContainer.querySelector(".nbBox") !== null){
@@ -489,7 +614,6 @@ export const reg_preventKeyEvent = async (event) => {
 
 					}
 					endContainer = lastNbBox;
-					console.log(window.getSelection().containsNode(endContainer));
 				}
 
 				let tmpNode= document.createElement('span');
@@ -504,9 +628,6 @@ export const reg_preventKeyEvent = async (event) => {
 		selection = document.getSelection();
 		strtContainer = selection.getRangeAt(0).startContainer;
 		if(strtContainer.classList !== undefined) {
-			console.log("실행1");
-			console.log(strtContainer.closest(".nbBox")!== null && window.getSelection().containsNode(strtContainer.closest(".nbBox")));
-			console.log((strtContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(strtContainer.querySelector(".nbBox")) && strtContainer.id !== document.activeElement.id));
 			if((strtContainer.closest(".nbBox")!== null && window.getSelection().containsNode(strtContainer.closest(".nbBox")) )
 			|| (strtContainer.querySelector(".nbBox") !== null && window.getSelection().containsNode(strtContainer.querySelector(".nbBox")) &&  strtContainer.id !== document.activeElement.id)){
 				if(strtContainer.closest(".nbBox")!== null){
@@ -514,7 +635,6 @@ export const reg_preventKeyEvent = async (event) => {
 				}else if(strtContainer.querySelector(".nbBox") !== null){
 					strtContainer = strtContainer.querySelector(".nbBox")
 				}
-				console.log("실행2");
 				strtOffset = selection.getRangeAt(0).startOffset;
 				endContainer = document.getSelection().getRangeAt(0).endContainer;
 				let endOffset = document.getSelection().getRangeAt(0).endOffset;
@@ -530,12 +650,21 @@ export const reg_preventKeyEvent = async (event) => {
 
 	}
 
-	/*
-	//1번 validation
-	//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
-	//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
-	//뒤에 공백을 추가해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
+		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox")
+		if(nbBoxes.length!==0 && !window.getSelection().containsNode(nbBoxes[nbBoxes.length-1])){
+			//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
+			let tmpNode = document.createElement('span');
+			tmpNode.innerHTML = "&nbsp;"
+			tmpNode.className = "tmpReGenerBugFix"
+			nbBoxes[nbBoxes.length-1].after(tmpNode);
+		}
+			
+		/*
+		//1번 validation
+		//(1) 백스페이스(키코드 8) 및 del(키코드 46) 이벤트, 셀렉트한 경우 박스요소 수식 삭제 후에도 재생성되는 버그 수정[start]
+		//(2) 잘라내기(키코드 88), 마지막 요소가 수식요소인 경우 수식 재성성 되는 버그 해결
+		//뒤에 공백을 추가해주어서 해결(ctrl+z와 ctrl+v에서 공백 제거해주어야함)
 		let nbBox = document.getSelection().getRangeAt(0).endContainer;
 		if(nbBox.classList !== undefined){
 			if(nbBox.closest(".nbBox")!== null || (nbBox.querySelector(".nbBox") !== null && nbBox.id !== document.activeElement.id)){
@@ -552,8 +681,6 @@ export const reg_preventKeyEvent = async (event) => {
 					let strtNbBox = document.getSelection().getRangeAt(0).startContainer;
 					if(strtNbBox.classList !== undefined) {
 						if(strtNbBox.closest(".nbBox")!== null || (strtNbBox.querySelector(".nbBox") !== null && strtNbBox.id !== document.activeElement.id)){
-							console.log("수식 버그")
-							console.log(strtNbBox);
 							let tmpNode2 = document.createElement('span');	
 							tmpNode2.innerHTML = "&nbsp;"
 							tmpNode2.className = "tmpReGenerBugFix2"		//ctrl+z에서 삭제 시켜줘야함
@@ -572,9 +699,9 @@ export const reg_preventKeyEvent = async (event) => {
 				}
 			}
 		}
+		*/
 	}
 	//[end]
-	*/
 
 	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
 	//입력 불가 수식 box요소 제어[start]
@@ -585,20 +712,36 @@ export const reg_preventKeyEvent = async (event) => {
 	//3번 
 	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , yellow 요소 전체 입혀줘야함
 	if(userKeyCode === 8 || userKeyCode === 46 ){
-		let nbBoxDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox');
+		let endContainer = document.getSelection().getRangeAt(0).endContainer;
+
+		let nbBoxDom;
+		if(endContainer.classList !== undefined) nbBoxDom=endContainer.closest('.nbBox');
+		else nbBoxDom=endContainer.parentElement.closest('.nbBox');
 		if(nbBoxDom!=undefined){
 			let nbBoxInnerText = nbBoxDom.innerText.replace(/\r\n|\n|\r|\s*/g, "");
 			if(nbBoxInnerText.length===0){
-				document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
+				let range = document.createRange();
+				range.setStart(nbBoxDom, 0);
+				range.setEnd(nbBoxDom, 1);
+				const selection1 = document.getSelection();
+				selection1.removeAllRanges();
+				selection1.addRange(range);
+				//document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
 				let childTd = nbBoxDom.querySelectorAll('td');
 				for(let i=0; i<childTd.length; i++){
-					childTd[0].classList.add('yellowBorderBox');
+					childTd[i].classList.add('yellowBorderBox');
 				}
 				event.preventDefault();
 			}else if(nbBoxInnerText.length===1){
 				for(let i=0; i<vacantDomAllSel.length; i++){
 					if(nbBoxDom.classList.contains(vacantDomAllSel[i])){
-						document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
+						let range = document.createRange();
+						range.setStart(nbBoxDom, 0);
+						range.setEnd(nbBoxDom, 1);
+						const selection1 = document.getSelection();
+						selection1.removeAllRanges();
+						selection1.addRange(range);
+						//document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
 						let childTd = nbBoxDom.querySelectorAll('td');
 						for(let i=0; i<childTd.length; i++){
 							childTd[0].classList.add('yellowBorderBox');
@@ -747,7 +890,7 @@ export const reg_preventKeyEvent = async (event) => {
 	//키보드 상하 화살표 누른 경우(커서 라인 이동)
 	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed ){
 		if(document.activeElement.firstChild === null) return;
-	//5번, validation 순서 바뀌어도 되는 독립적인 로직
+		//5번, validation 순서 바뀌어도 되는 독립적인 로직
 		await reg_lineMoveBugFixStrt();
 		/*
 		*  브라우저의 절대좌표로 하단 라인에 텍스트 요소 판단하므로 브라우저 화면에 요소들이 모두 보여야 함.
@@ -762,16 +905,37 @@ export const reg_preventKeyEvent = async (event) => {
 		모든 커서 포인터에 캐럿을 집어넣어 좌표 파악 */
 		const newRange = window.getSelection();
 		let tempRange = newRange.getRangeAt(0);
+		let endContainer =tempRange.endContainer;
+		let endOffset =tempRange.endOffset;
 		newRange.removeAllRanges();
 		newRange.addRange(tempRange);
 		let tempNode= document.createElement('span');
 		tempNode.className = "tmpCaretPoint";
 		tempNode.innerHTML = ".";
 		tempRange.deleteContents();
-		tempRange.insertNode(tempNode);
+
+		//수식편집기 ctrl+v 한 경우 div 마지막에 br태그가 붙어 키보드 위로 이동이 정상적이지 않음
+		let isCarotInserted = false;
+		if(endContainer.tagName === "DIV" && endContainer.childNodes.length === endOffset && endOffset!==0){
+			if(endContainer.childNodes[endContainer.childNodes.length-1].tagName === "BR"){
+				endContainer.childNodes[endContainer.childNodes.length-1].before(tempNode);
+				isCarotInserted=true;
+			}
+		}
+
+		//요소를 ctrl+v한 경우 BR 태그로 캐럿이 빠지는 경우가 있음, BR 태그로 캐럿이 빠지면 무한루프 돔
+		if(!isCarotInserted){
+			if(endContainer.tagName === "BR"){
+				endContainer.before(tempNode)
+			}else{
+				tempRange.insertNode(tempNode);
+			}
+		}
+
 		// 커서 포인터와 이동할 커서 포인터를 브라우저 중앙에 두어 null값 안나오도록 구현, 커서 포인터가 브라우저 맨 하단에 있으면 아래 텍스트 있어도 절대 좌표이므로 포인터 못 잡음.
 		document.getElementsByClassName("tmpCaretPoint")[0].scrollIntoView({block:"center"});	
 		let position = document.getElementsByClassName("tmpCaretPoint")[0].getBoundingClientRect();
+
 		window.getSelection().collapseToStart();		//collapseToStart 명령어 실행 안하면 셀렉트 상태라 옐로우 박스 안 입혀짐.
 		
 		//현재 포커스가 표 안에 있는지 판별
@@ -1012,21 +1176,79 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//띄어쓰기 다섯칸 shift+space bar
 	if(event.shiftKey && userKeyCode === 32){
+		/*
 		const selection = document.getSelection();
 		const newRange = selection.getRangeAt(0);
 		selection.removeAllRanges();
 		selection.addRange(newRange);
 		//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
 		let tmpNode= document.createElement('span');
-		tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
 		newRange.deleteContents();
 		newRange.insertNode(tmpNode);
 		window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+		*/
+		//위 방식도 정상작동
+		//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+		document.execCommand("insertHTML", false ,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		event.preventDefault();
 	}
 
 	//alt 단축키 제어
-	if(event.altKey) event.preventDefault();
+	if(event.altKey){
+		const mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyList);
+		const isWriteDisableDom = await reg_writeDisableDom(event)
+		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
+			let nbGrammer = mappingKey[0]["nbGrammer"];
+			/*
+			//현재 포커스에 단축키 수식 추가
+			const selection = document.getSelection();
+			const newRange = selection.getRangeAt(0);
+			selection.removeAllRanges();
+			selection.addRange(newRange);
+			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
+			let tmpNode= document.createElement('span');
+			tmpNode.innerHTML = nbGrammer;
+			newRange.deleteContents();
+			newRange.insertNode(tmpNode);
+			newRange.innerHTML=nbGrammer;
+			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
+			*/
+			//위 방식도 정상작동
+			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
+
+			if(nbGrammer.length !== 0){
+				nbGrammer = "<span>"+nbGrammer+"</span>";
+				document.execCommand("insertHTML", false ,nbGrammer);
+	
+				//포커스 재설정 필요한 수식요소 포커스 설정
+				let focusNbBorderBox = window.getSelection().focusNode;
+				if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
+				focusNbBorderBox = focusNbBorderBox.closest(".borderBox");
+				
+				if(focusNbBorderBox !== null) {
+					//입력 불가 요소는 수식 오른쪽에 포커스
+					for(let i=0; i<writeDisabledDom.length; i++){
+						if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
+							window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox);
+							window.getSelection().collapseToEnd();
+						}
+					}
+	
+					//연립방정식은 제일 첫번째 borderBox에 포커스
+					if(focusNbBorderBox.classList.contains("nbThrCaseThr")){
+						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
+						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
+	
+					}else if(focusNbBorderBox.classList.contains("nbCaseSec")){
+						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
+						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
+					}
+				}
+			}
+		}
+		event.preventDefault();
+	}
 
 	setTimeout(function(){
 		//ctrl+z(키코드 90)와 ctrl+v(키코드 86)인 경우
