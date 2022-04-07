@@ -650,6 +650,22 @@ export const reg_preventKeyEvent = async (event) => {
 
 	}
 
+	//div 태그 라인의 마지막요소가 수식인 라인에  ctrl+v하면 수식 재생성됨
+	if( document.getSelection().isCollapsed && (userKeyCode === 86 && event.ctrlKey) ) {
+		let focusNode = window.getSelection().focusNode;
+		if(focusNode.classList === undefined) focusNode = focusNode.parentElement;
+		let parentDiv = focusNode.closest("div");
+		let lastNbBoxes = parentDiv.querySelectorAll(".nbBox");
+		let tmpNode= document.createElement('span');
+		tmpNode.innerHTML = "&nbsp;"
+		tmpNode.className = "tmpReGenerBugFix"
+		let lastNbBox= lastNbBoxes[lastNbBoxes.length-1];
+		while(lastNbBox.parentElement.closest(".nbBox") !== null){
+			lastNbBox=lastNbBox.parentElement.closest(".nbBox");
+		}
+		lastNbBox.after(tmpNode);
+	}
+
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
 		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox")
 		if(nbBoxes.length!==0 && !window.getSelection().containsNode(nbBoxes[nbBoxes.length-1])){
