@@ -272,6 +272,7 @@ export const reg_getMappingShortCutKeyClk = (formulaId, keyMapList) => {
 *			true, false로 입력불가 수식요소인지만 판별
 */
 export const reg_writeDisableDom = async (event) =>{
+	if(document.getSelection().rangeCount === 0) return;
 	let focusParDom = document.getSelection().getRangeAt(0).endContainer;
 	if(focusParDom.classList === undefined) focusParDom = focusParDom.parentElement;
 	let isDisableBox = false;
@@ -322,7 +323,7 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 }
 
 /*
-*	정의 : reg_preventKeyEvent에서 사용되는 라인 이동 버그 요소 제어
+*	정의 : reg_preventKeyEvent 에서 사용되는 라인 이동 버그 요소 제어
 *	설명 : 분수용 괄호, 첨자의 경우 글자크기 및 줄간격이 다른 텍스트와 달라 라인 이동 정상적이지 않음
 *		   다른 텍스트와 동일하게 작동하도록 변환 함수
 */
@@ -408,8 +409,9 @@ export const reg_reGenerFormulBugFix = async (isShorcutKey) =>{
 			}
 			rootEndNbBox = endNbBox;
 		}
-		//하나의 수식요소 밑(최상위 수식요소가 같은 경우) 적용
-		if(rootStrtNbBox !== null && rootStrtNbBox === rootEndNbBox){
+		//최상위 수식요소가 같고 현재 선택 요소가 최상위가 아닌 경우 적용하지 않음(선택한 요소가 최상위 요소이면 적용)
+		if(rootStrtNbBox !== null && rootStrtNbBox === rootEndNbBox 
+			&& rootStrtNbBox !== range.startContainer && rootEndNbBox !== range.endContainer){
 			if(isShorcutKey) return false;
 			else return true;
 		}
@@ -522,6 +524,15 @@ export const reg_reGenerFormulBugFix = async (isShorcutKey) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
+
+	if(!event.ctrlKey){
+		//테이블 셀렉트 색상 제거
+		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+		for(let i=0; i<nbSelectionTbTd.length; i++){
+			nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+		}
+	}
+
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
 		const newRange = window.getSelection().getRangeAt(0)
@@ -659,22 +670,78 @@ export const reg_preventKeyEvent = async (event) => {
 		let tmpNode= document.createElement('span');
 		tmpNode.innerHTML = "&nbsp;"
 		tmpNode.className = "tmpReGenerBugFix"
-		let lastNbBox= lastNbBoxes[lastNbBoxes.length-1];
-		while(lastNbBox.parentElement.closest(".nbBox") !== null){
-			lastNbBox=lastNbBox.parentElement.closest(".nbBox");
+		if(lastNbBoxes.length !== 0){
+			let lastNbBox= lastNbBoxes[lastNbBoxes.length-1];
+			while(lastNbBox.parentElement.closest(".nbBox") !== null){
+				lastNbBox=lastNbBox.parentElement.closest(".nbBox");
+			}
+			lastNbBox.after(tmpNode);
 		}
-		lastNbBox.after(tmpNode);
 	}
 
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
-		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox")
+		//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
+		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox");
+		if(nbBoxes.length !== 0){
+			let lastNbBox = nbBoxes[nbBoxes.length-1]
+			while(lastNbBox.parentElement.closest(".nbBox") !== null){
+				lastNbBox = lastNbBox.parentElement.closest(".nbBox");
+			}
+			console.log(window.getSelection().getRangeAt(0).getBoundingClientRect());
+			console.log(lastNbBox.getBoundingClientRect())
+		}
+		
+		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
+			console.log(element.nextSibling)
+			if(element.nextSibling !== null){
+				console.log(element.nextSibling.length)
+
+			}
+			if(element.nextSibling === null || element.nextSibling.length===0){
+				let tmpNode = document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"
+				element.after(tmpNode);
+			}
+		});
+
+		/*
+		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox");
 		if(nbBoxes.length!==0 && !window.getSelection().containsNode(nbBoxes[nbBoxes.length-1])){
 			//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
-			let tmpNode = document.createElement('span');
-			tmpNode.innerHTML = "&nbsp;"
-			tmpNode.className = "tmpReGenerBugFix"
-			nbBoxes[nbBoxes.length-1].after(tmpNode);
+			
+			let lastNbBox = nbBoxes[nbBoxes.length-1]
+			while(lastNbBox.parentElement.closest(".nbBox") !== null){
+				lastNbBox = lastNbBox.parentElement.closest(".nbBox");
+			}
+
+
+
+			if(lastNbBox.nextSibling === null){
+				console.log("1");
+				let lastNbBoxWrapDiv = lastNbBox.parentElement.closest("div")
+				if(lastNbBoxWrapDiv !== null && lastNbBoxWrapDiv !== document.activeElement){
+					console.log("2");
+					if(lastNbBoxWrapDiv.nextSibling === null){
+						console.log("마지막 요소");
+						let tmpNode = document.createElement('span');
+						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.className = "tmpReGenerBugFix"
+						nbBoxes[nbBoxes.length-1].after(tmpNode);
+					}
+				}
+			}else{
+				//lastNbBox.nextSibling === undefined인 경우는 lastNbBox.nextSibling html 요소인 경우
+				if(lastNbBox.nextSibling === undefined || lastNbBox.nextSibling.length === 0){
+					console.log("마지막 요소2");
+					let tmpNode = document.createElement('span');
+					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.className = "tmpReGenerBugFix"
+					nbBoxes[nbBoxes.length-1].after(tmpNode);
+				}
+			}
 		}
+		*/
 			
 		/*
 		//1번 validation
@@ -1234,9 +1301,33 @@ export const reg_preventKeyEvent = async (event) => {
 			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
 
 			if(nbGrammer.length !== 0){
-				nbGrammer = "<span>"+nbGrammer+"</span>";
-				document.execCommand("insertHTML", false ,nbGrammer);
-	
+				//document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
+				if(window.getSelection().isCollapsed){
+					const newRange = window.getSelection().getRangeAt(0)
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange(newRange);
+					let tmpNode= document.createElement('span');
+					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.className = "tmpReGenerBugFix"
+					let tmpNode2= document.createElement('span');
+					tmpNode2.innerHTML = "&nbsp;"
+					tmpNode2.className = "tmpReGenerBugFix2"
+					newRange.insertNode(tmpNode2);
+					newRange.insertNode(tmpNode);
+					newRange.selectNode(tmpNode2)
+				}else{
+					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
+					if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
+					strtContainer = strtContainer.closest("div");
+					if(window.getSelection().getRangeAt(0).startOffset===0 && strtContainer !== null){
+						let tmpNode= document.createElement('span');
+						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.className = "tmpReGenerBugFix"
+						strtContainer.prepend(tmpNode);
+					}
+				}
+				document.execCommand("insertHTML", false , nbGrammer);
+
 				//포커스 재설정 필요한 수식요소 포커스 설정
 				let focusNbBorderBox = window.getSelection().focusNode;
 				if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
@@ -1276,6 +1367,41 @@ export const reg_preventKeyEvent = async (event) => {
 			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
 			for(let i=0; i<tmpReGenerBugFix2.length; i++){
 				tmpReGenerBugFix2[i].remove();
+			}
+
+			if( userKeyCode === 86 && event.ctrlKey){
+				let copiedEditInnerTable = document.getElementById(document.activeElement.id).querySelector(".copiedEditInnerTable");
+				if(copiedEditInnerTable !== null){
+					copiedEditInnerTable.classList.remove("copiedEditInnerTable");
+					let innerTbTd = copiedEditInnerTable.querySelectorAll(".innerTbTd")
+
+					for(let i=0; i<innerTbTd.length; i++){
+						if(!innerTbTd[i].classList.contains("nbSelectionTbTd")){
+							innerTbTd[i].remove();
+						}else{
+							innerTbTd[i].addEventListener('mousedown', reg_tbCellMouseDown);
+							innerTbTd[i].addEventListener('mousemove', reg_tbCellMouseMove);
+						}
+					}
+					
+					let innerTr = copiedEditInnerTable.querySelectorAll("tr");
+					for(let i=0; i<innerTr.length; i++){
+						let td = innerTr[i].querySelectorAll("td");
+						if(td.length===0) innerTr[i].remove();
+					}
+					innerTr = copiedEditInnerTable.querySelectorAll("tr");
+					for(let i=0; i<innerTr.length; i++){
+						let td = innerTr[i].querySelectorAll("td");
+						for(let j=0; j<td.length; j++){
+							td[j].id="innerTbTd"+i+j;
+						}
+					}
+				}
+
+				let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+				for(let i=0; i<nbSelectionTbTd.length; i++){
+						nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+				}
 			}
 			
 		//}
@@ -2138,8 +2264,218 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 
 } 
 
+
 export const reg_selectCheck = () => {
+	//셀렉트 이후 셀렉트 안되는 문제 해결, 마우스 다운시에 셀레트 제거
 	if(!window.getSelection().isCollapsed) {
 		window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, window.getSelection().anchorNode, window.getSelection().anchorOffset);
+	}
+}
+
+
+/*
+* 테이블 셀렉트 색상 제거
+*/
+export const reg_tbSelBackgroundRemove = async () => {
+	//테이블 셀렉트 색상 제거
+	let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+	for(let i=0; i<nbSelectionTbTd.length; i++){
+		nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+	}
+}
+
+
+
+/*
+* 정의 : 테이블 셀렉트 색상 마우스 다운 이벤트
+*/
+let isTbMouseDown = false;
+let agoFocusInnerTbTd=null;
+let lastFocusNode= null;
+export const reg_tbCellMouseDown = async () =>{
+	//테이블 셀렉트 색상 제거
+	let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+	for(let i=0; i<nbSelectionTbTd.length; i++){
+		nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+	}
+	isTbMouseDown=true;
+}
+
+/*
+* 정의 : 테이블 셀렉트 색상 마우스 무브 이벤트
+*/
+export const reg_tbCellMouseMove = async () =>{
+	if(!isTbMouseDown) return;
+	let anchorInnerTbTd = window.getSelection().anchorNode;
+	if(anchorInnerTbTd.classList === undefined) anchorInnerTbTd = anchorInnerTbTd.parentElement;
+	anchorInnerTbTd = anchorInnerTbTd.closest(".innerTbTd");
+	let focusInnerTbTd = window.getSelection().focusNode;
+	if(focusInnerTbTd.classList === undefined) focusInnerTbTd = focusInnerTbTd.parentElement;
+	focusInnerTbTd = focusInnerTbTd.closest(".innerTbTd");
+	if(focusInnerTbTd === null) return;
+	if(anchorInnerTbTd !== focusInnerTbTd){
+		let anchorRowCol = anchorInnerTbTd.id.substring(9);
+		let focusRowCol = focusInnerTbTd.id.substring(9)
+		let lowerRowCol = focusRowCol;
+		let biggerRowCol = anchorRowCol;
+		if(Number(anchorRowCol) < Number(focusRowCol)){
+			lowerRowCol = anchorRowCol
+			biggerRowCol = focusRowCol
+		}
+		if(Number(lowerRowCol.substring(1)) > Number(biggerRowCol.substring(1))){
+			let tmpLowerRowCol = lowerRowCol;
+			let tmpBiggerRowCol = biggerRowCol;
+			lowerRowCol = tmpLowerRowCol.substring(0, 1) + tmpBiggerRowCol.substring(1)
+			biggerRowCol = tmpBiggerRowCol.substring(0, 1) + tmpLowerRowCol.substring(1)
+		}
+
+		if(agoFocusInnerTbTd !==focusInnerTbTd){
+			let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+			for(let i=0; i<nbSelectionTbTd.length; i++){
+				nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+			}
+		}
+
+		for(let row=lowerRowCol.substring(0, 1); row<=biggerRowCol.substring(0, 1); row++){
+			for(let col=lowerRowCol.substring(1); col<=biggerRowCol.substring(1); col++){
+				let innerTbTdId = "innerTbTd"+row+col;
+				focusInnerTbTd.closest(".editInnerTable").querySelector("#"+innerTbTdId).classList.add("nbSelectionTbTd");
+			}
+		}
+		lastFocusNode = focusInnerTbTd;
+	}
+	agoFocusInnerTbTd=focusInnerTbTd;
+}
+
+/*
+* 정의 : 테이블 셀렉트 색상 키업 이벤트
+*/
+let isTbSelExecuted = false;
+let firstAnchor = null;
+export const reg_tbCellKeyUp = async (event) =>{
+	if(event.shiftKey && (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) ){
+		let anchorInnerTbTd = window.getSelection().anchorNode;
+		if(anchorInnerTbTd.classList === undefined) anchorInnerTbTd = anchorInnerTbTd.parentElement;
+		anchorInnerTbTd = anchorInnerTbTd.closest(".innerTbTd");
+		let focusInnerTbTd = window.getSelection().focusNode;
+		if(focusInnerTbTd.classList === undefined) focusInnerTbTd = focusInnerTbTd.parentElement;
+		focusInnerTbTd = focusInnerTbTd.closest(".innerTbTd");
+
+		if(anchorInnerTbTd === null || focusInnerTbTd === null) return;
+		if(anchorInnerTbTd !== focusInnerTbTd){
+			if(isTbSelExecuted){
+				anchorInnerTbTd = firstAnchor;
+				window.getSelection().getRangeAt(0).setStart(anchorInnerTbTd, 0)
+			}else{
+				firstAnchor = anchorInnerTbTd;
+			}
+			let anchorRowCol = anchorInnerTbTd.id.substring(9);
+			let focusRowCol = focusInnerTbTd.id.substring(9)
+			let lowerRowCol = focusRowCol;
+			let biggerRowCol = anchorRowCol;
+			if(Number(anchorRowCol) < Number(focusRowCol)){
+				lowerRowCol = anchorRowCol
+				biggerRowCol = focusRowCol
+			}
+			if(Number(lowerRowCol.substring(1)) > Number(biggerRowCol.substring(1))){
+				let tmpLowerRowCol = lowerRowCol;
+				let tmpBiggerRowCol = biggerRowCol;
+				lowerRowCol = tmpLowerRowCol.substring(0, 1) + tmpBiggerRowCol.substring(1)
+				biggerRowCol = tmpBiggerRowCol.substring(0, 1) + tmpLowerRowCol.substring(1)
+			}
+	
+			if(agoFocusInnerTbTd !==focusInnerTbTd){
+				let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+				for(let i=0; i<nbSelectionTbTd.length; i++){
+					nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
+				}
+			}
+	
+			for(let row=lowerRowCol.substring(0, 1); row<=biggerRowCol.substring(0, 1); row++){
+				for(let col=lowerRowCol.substring(1); col<=biggerRowCol.substring(1); col++){
+					let innerTbTdId = "innerTbTd"+row+col;
+					focusInnerTbTd.closest(".editInnerTable").querySelector("#"+innerTbTdId).classList.add("nbSelectionTbTd");
+				}
+			}
+			let nbSelectionDiv = document.querySelectorAll(".nbSelectionDiv");
+			for(let i=0; i<nbSelectionDiv.length; i++){
+				nbSelectionDiv[i].classList.remove("nbSelectionDiv");
+			}
+			isTbSelExecuted = true;
+			window.getSelection().setBaseAndExtent(focusInnerTbTd, 0, focusInnerTbTd, 0);
+		}
+		agoFocusInnerTbTd=focusInnerTbTd;
+	}else if(!event.shiftKey){
+		isTbSelExecuted = false;
+	}
+}
+
+/*
+* 정의 : 테이블 셀렉트 색상 마우스 업 이벤트
+*/
+export const reg_tbCellMouseUp = async () =>{
+	isTbMouseDown=false;
+	let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
+	if(nbSelectionTbTd.length !== 0) {
+		window.getSelection().getRangeAt(0).selectNodeContents(lastFocusNode);
+		let nbSelectionDiv = document.querySelectorAll(".nbSelectionDiv");
+		for(let i=0; i<nbSelectionDiv.length; i++){
+			nbSelectionDiv[i].classList.remove("nbSelectionDiv");
+		}
+	}
+}
+
+
+/*
+* 정의 : 테이블 셀렉트 색상 복사 이벤트
+*/
+export const reg_tbCellCopy = async (event)=>{
+	let nbSelectionTbTd = document.querySelector(".nbSelectionTbTd");
+	if(nbSelectionTbTd !== null){
+		let wrapSpan = document.createElement("span");
+		wrapSpan.className = "copiedEditInnerTable";
+		wrapSpan.innerHTML = nbSelectionTbTd.closest(".editInnerTable").outerHTML
+		event.clipboardData.setData('text/html', wrapSpan.outerHTML);
+		event.preventDefault();
+	}
+}
+
+/*
+* 정의 : 테이블 안에 테이블 붙여넣기 금지
+*/
+export const reg_tbPasteInPastePrevent = async (event)=>{
+	let data= event.clipboardData.getData("text/html"); 
+	let wrapSpan = document.createElement('span'); 
+	wrapSpan.innerHTML = data; 
+	let tbEle = wrapSpan.querySelector(".copiedEditInnerTable");
+
+	if(tbEle !== null){
+		let anchorNode = window.getSelection().anchorNode;
+		let focusNode = window.getSelection().focusNode;
+		if(anchorNode.classList === undefined) anchorNode = anchorNode.parentElement;
+		if(focusNode.classList === undefined) focusNode = focusNode.parentElement;
+
+		let anchorTbBox = anchorNode.closest(".editInnerTable");
+		let focusTbBox = focusNode.closest(".editInnerTable");
+
+		if(anchorTbBox !== null || focusTbBox !== null){
+			event.preventDefault();
+		}
+	}
+}
+
+
+
+/*
+* 정의 : 표 붙여넣기 금지
+*/
+export const reg_tbPastePrevent = async (event)=>{
+	let data= event.clipboardData.getData("text/html"); 
+	let wrapSpan = document.createElement('span'); 
+	wrapSpan.innerHTML = data; 
+	let tbEle = wrapSpan.querySelector(".editInnerTable");
+
+	if(tbEle !== null){
+		event.preventDefault();
 	}
 }

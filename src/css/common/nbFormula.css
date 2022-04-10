@@ -135,7 +135,6 @@
 .nbExpBox{
     border-spacing: 0px;
     margin-right: 0.2em;
-    text-align: center;
     position: relative;
 }
 
@@ -148,7 +147,7 @@
     position: relative;
     bottom:0.9em;
     font-size:0.3em;
-    
+    text-align: center;
 }
 .nbExpTmp{
     min-width: 1em;
@@ -158,6 +157,7 @@
     bottom:0.7em;
     right: -0.1em;
     font-size:0.3em;
+    text-align: center;
 }
 
 /** 분수용 괄호 옆 지수 **/
@@ -175,12 +175,12 @@
 .nbSubBox{
     vertical-align: text-bottom;
     border-spacing: 0px;
-    text-align: center;
     position: relative;
 }
 .nbSubBase{
     padding:0px;
     font-size:1em;
+    text-align: center;
 }
 .nbSub{
     padding:0px;
@@ -188,6 +188,7 @@
     position: relative;
     top:0.9em;
     right:0.3em;
+    text-align: center;
 }
 
 .nbSubTmp{
@@ -198,6 +199,7 @@
     position: relative;
     top:0.3em;
     right:0.1em;
+    text-align: center;
 }
 
 /** 양방향 아래첨자 표현 **/
@@ -205,13 +207,14 @@
     line-height: 110%;
     vertical-align:text-bottom;
     border-spacing: 0px;
-    text-align: center;
     position: relative;
 }
 .nbBiDirSubBase{
     vertical-align:bottom;
     padding:0px;
     font-size:1em;
+    text-align: center;
+
 }
 .nbLeftSub{
     padding:0px;
@@ -219,6 +222,8 @@
     position: relative;
     top:0.9em;
     left:0.1em;
+    text-align: center;
+
 }
 
 .nbRightSub{
@@ -227,6 +232,8 @@
     position: relative;
     top:0.9em;
     right:0em;
+    text-align: center;
+
 }
 
 
@@ -234,7 +241,6 @@
 .nbFracBox {
     vertical-align: middle;
     border-spacing: 0px;
-    text-align: center;
     margin:0px 1px;
 
 }
@@ -245,6 +251,7 @@
     border-bottom:0.5px solid black;
     min-width:1em;
     line-height: 110%;
+    text-align: center;
 }
 .nbDenom{
     font-size:1em;
@@ -252,6 +259,7 @@
     border-top:0.5px solid black;
     min-width:1em;
     line-height: 110%;
+    text-align: center;
 }
 
 /** 분수 안 지수 **/
@@ -538,9 +546,7 @@
 .nbBinomCoBox {
     vertical-align: middle;
     border-spacing: 0px;
-    text-align: center;
     margin:0px 1px;
-
 }
 
 .nbBinomCoFir {
@@ -548,12 +554,14 @@
     font-size:1em;
     min-width:1em;
     line-height: 110%;
+    text-align: center;
 }
 .nbBinomCoSec {
     font-size:1em;
     padding: 0 2px 0 2px;
     min-width:1em;
     line-height: 110%;
+    text-align: center;
 }
 
 /** 경우(연립방정식 표현) **/
@@ -623,6 +631,10 @@
     color:black;
 }
 
+.onlyEdit .innerTbTd::selection{
+    background:rgb(228, 226, 226) !important;;
+}
+
 .onlyEdit .nbBox::selection, .onlyEdit .borderBox::selection, .onlyEdit .borderBox span::selection,
  .onlyEdit .nbThrCaseBrck::selection, .onlyEdit .nbCaseBrck::selection{
     background:rgb(235, 238, 245) !important;
@@ -637,6 +649,10 @@
 }
 
 .onlyEdit .nbSelectionDiv{
+    background:rgb(235, 238, 245) !important;
+}
+
+.onlyEdit .nbSelectionTbTd{
     background:rgb(235, 238, 245) !important;
 }
 

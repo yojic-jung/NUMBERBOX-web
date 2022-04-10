@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
-import {reg_eraseEditTbUI, reg_reGenerFormulBugFix} from 'js/contents/register/contents_reg';
+import {reg_eraseEditTbUI, reg_reGenerFormulBugFix, reg_tbCellMouseDown, reg_tbCellMouseMove} from 'js/contents/register/contents_reg';
 
 const EditTableInnerUi = ({parentMethod})=>{
 
     useEffect(()=>{
-
         let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
 		for(let i=0; i<tdList.length; i++){
-			tdList[i].addEventListener('mouseover', function(event){
+			tdList[i].addEventListener('mouseover', function(){
 				let rowIdx = tdList[i].dataset.row
 				let colIdx = tdList[i].dataset.col;
 				addCellUiClass(rowIdx, colIdx)
@@ -29,6 +28,8 @@ const EditTableInnerUi = ({parentMethod})=>{
 		document.getElementById('nByNtag').innerHTML= (Number(rowIdx)+1)+"&#9747;"+(Number(colIdx)+1)
 	}
 
+    
+
 
     let tableIdx=0;
     const addEditTable = async (event)=>{
@@ -48,6 +49,7 @@ const EditTableInnerUi = ({parentMethod})=>{
                 let colNode= document.createElement('td');
                 colNode.className = "innerTbTd";
                 colNode.id = "innerTbTd"+i+j;
+                
                 colNode.style.width= 260/cellIdx+"px";
                 if(!isNoneTdBorder) colNode.className ="innerTbTd noneBorderTd"
                 let brNode = document.createElement('br');
@@ -72,6 +74,13 @@ const EditTableInnerUi = ({parentMethod})=>{
             let range = document.createRange();
             range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
             range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
+            
+            let innerTbTd = document.getElementById(tmpNode.id).querySelectorAll(".innerTbTd");
+            for(let i=0; i<innerTbTd.length; i++){
+                innerTbTd[i].addEventListener('mousedown', reg_tbCellMouseDown);
+                innerTbTd[i].addEventListener('mousemove', reg_tbCellMouseMove);
+            }
+
             const selection1 = document.getSelection();
             selection1.removeAllRanges();
             selection1.addRange(range);
@@ -157,10 +166,15 @@ const EditTableInnerUi = ({parentMethod})=>{
 		//range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
         range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
         range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
-        console.log(document.getElementById(tmpNode.id).childNodes[0].childNodes[0])
 		const selection1 = document.getSelection();
 		selection1.removeAllRanges();
 		selection1.addRange(range);
+
+        let innerTbTd = document.getElementById(tmpNode.id).querySelectorAll(".innerTbTd");
+        for(let i=0; i<innerTbTd.length; i++){
+            innerTbTd[i].addEventListener('mousedown', reg_tbCellMouseDown);
+            innerTbTd[i].addEventListener('mousemove', reg_tbCellMouseMove);
+        }
 
         document.getElementById("editTableUi").classList.add("hide");
         event.stopPropagation();

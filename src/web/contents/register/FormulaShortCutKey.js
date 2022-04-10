@@ -71,7 +71,31 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
             if( !document.getSelection().isCollapsed ){
                 await reg_reGenerFormulBugFix(true);
             }
+            //document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
+            if(window.getSelection().isCollapsed){
+                const newRange = window.getSelection().getRangeAt(0)
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(newRange);
+                let tmpNode= document.createElement('span');
+                tmpNode.innerHTML = "&nbsp;"
+                tmpNode.className = "tmpReGenerBugFix"
+                let tmpNode2= document.createElement('span');
+                tmpNode2.innerHTML = "&nbsp;"
+                tmpNode2.className = "tmpReGenerBugFix2"
+                newRange.insertNode(tmpNode2);
+                newRange.insertNode(tmpNode);
+                newRange.selectNode(tmpNode2)
+            }else{
+                let strtContainer = window.getSelection().getRangeAt(0).startContainer;
+                if(window.getSelection().getRangeAt(0).startContainer.classList !== undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer;
+                strtContainer = strtContainer.parentElement.closest("div");
+                let tmpNode= document.createElement('span');
+                tmpNode.innerHTML = "&nbsp;"
+                tmpNode.className = "tmpReGenerBugFix"
+                strtContainer.prepend(tmpNode);
+            }
 			document.execCommand("insertHTML", false ,nbGrammer);
+            
             let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 			for(let i=0; i<tmpReGenerBugFix.length; i++){
 				tmpReGenerBugFix[i].remove();
