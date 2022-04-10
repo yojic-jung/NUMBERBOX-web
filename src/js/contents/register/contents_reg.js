@@ -687,6 +687,7 @@ export const reg_preventKeyEvent = async (event) => {
 					element = element.parentElement.closest(".nbBox");
 				}
 				if(element.nextSibling === null){
+					
 					let tmpNode = document.createElement('span');
 					tmpNode.innerHTML = "&nbsp;"
 					tmpNode.className = "tmpReGenerBugFix";
@@ -1306,18 +1307,20 @@ export const reg_preventKeyEvent = async (event) => {
 			if(nbGrammer.length !== 0){
 				//document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
 				if(window.getSelection().isCollapsed){
-					const newRange = window.getSelection().getRangeAt(0)
-					window.getSelection().removeAllRanges();
-					window.getSelection().addRange(newRange);
-					let tmpNode= document.createElement('span');
-					tmpNode.innerHTML = "&nbsp;"
-					tmpNode.className = "tmpReGenerBugFix"
-					let tmpNode2= document.createElement('span');
-					tmpNode2.innerHTML = "&nbsp;"
-					tmpNode2.className = "tmpReGenerBugFix2"
-					newRange.insertNode(tmpNode2);
-					newRange.insertNode(tmpNode);
-					newRange.selectNode(tmpNode2)
+					if(nbGrammer.indexOf("nbBox")>-1){
+						const newRange = window.getSelection().getRangeAt(0)
+						window.getSelection().removeAllRanges();
+						window.getSelection().addRange(newRange);
+						let tmpNode= document.createElement('span');
+						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.className = "tmpReGenerBugFix"
+						let tmpNode2= document.createElement('span');
+						tmpNode2.innerHTML = "&nbsp;"
+						tmpNode2.className = "tmpReGenerBugFix2"
+						newRange.insertNode(tmpNode2);
+						newRange.insertNode(tmpNode);
+						newRange.selectNode(tmpNode2)
+					}
 				}else{
 					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 					if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
@@ -1330,7 +1333,7 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 				}
 				document.execCommand("insertHTML", false , nbGrammer);
-
+				
 				//포커스 재설정 필요한 수식요소 포커스 설정
 				let focusNbBorderBox = window.getSelection().focusNode;
 				if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
