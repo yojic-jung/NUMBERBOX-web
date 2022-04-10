@@ -695,10 +695,12 @@ export const reg_preventKeyEvent = async (event) => {
 				while(element.parentElement.closest(".nbBox") !== null){
 					element = element.parentElement.closest(".nbBox");
 				}
-				let tmpNode = document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpReGenerBugFix"
-				element.after(tmpNode);
+				if(element.nextSibling === null){
+					let tmpNode = document.createElement('span');
+					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.className = "tmpReGenerBugFix"
+					element.after(tmpNode);
+				}
 			}else if(element.nextSibling.length===0){
 				let tmpNode = document.createElement('span');
 				tmpNode.innerHTML = "&nbsp;"
