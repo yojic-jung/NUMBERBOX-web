@@ -681,15 +681,6 @@ export const reg_preventKeyEvent = async (event) => {
 
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
 		//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
-		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox");
-		if(nbBoxes.length !== 0){
-			let lastNbBox = nbBoxes[nbBoxes.length-1]
-			while(lastNbBox.parentElement.closest(".nbBox") !== null){
-				lastNbBox = lastNbBox.parentElement.closest(".nbBox");
-			}
-			console.log(lastNbBox.getBoundingClientRect())
-		}
-		
 		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
 			if(element.nextSibling === null){
 				while(element.parentElement.closest(".nbBox") !== null){
@@ -698,8 +689,20 @@ export const reg_preventKeyEvent = async (event) => {
 				if(element.nextSibling === null){
 					let tmpNode = document.createElement('span');
 					tmpNode.innerHTML = "&nbsp;"
-					tmpNode.className = "tmpReGenerBugFix"
-					element.after(tmpNode);
+					tmpNode.className = "tmpReGenerBugFix";
+					if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
+						let tmpNode2 = document.createElement('span');
+						tmpNode2.innerHTML = "&nbsp;"
+						tmpNode2.className = "tmpPosition";
+						window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+						if(element !== tmpNode2.previousSibling){
+							element.after(tmpNode);
+						}
+						tmpNode2.remove();
+					}else{
+						element.after(tmpNode);
+					}
+					
 				}
 			}else if(element.nextSibling.length===0){
 				let tmpNode = document.createElement('span');
@@ -722,12 +725,9 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 			if(lastNbBox.nextSibling === null){
-				console.log("1");
 				let lastNbBoxWrapDiv = lastNbBox.parentElement.closest("div")
 				if(lastNbBoxWrapDiv !== null && lastNbBoxWrapDiv !== document.activeElement){
-					console.log("2");
 					if(lastNbBoxWrapDiv.nextSibling === null){
-						console.log("마지막 요소");
 						let tmpNode = document.createElement('span');
 						tmpNode.innerHTML = "&nbsp;"
 						tmpNode.className = "tmpReGenerBugFix"
@@ -737,7 +737,6 @@ export const reg_preventKeyEvent = async (event) => {
 			}else{
 				//lastNbBox.nextSibling === undefined인 경우는 lastNbBox.nextSibling html 요소인 경우
 				if(lastNbBox.nextSibling === undefined || lastNbBox.nextSibling.length === 0){
-					console.log("마지막 요소2");
 					let tmpNode = document.createElement('span');
 					tmpNode.innerHTML = "&nbsp;"
 					tmpNode.className = "tmpReGenerBugFix"
