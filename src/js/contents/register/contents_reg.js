@@ -687,17 +687,19 @@ export const reg_preventKeyEvent = async (event) => {
 			while(lastNbBox.parentElement.closest(".nbBox") !== null){
 				lastNbBox = lastNbBox.parentElement.closest(".nbBox");
 			}
-			console.log(window.getSelection().getRangeAt(0).getBoundingClientRect());
 			console.log(lastNbBox.getBoundingClientRect())
 		}
 		
 		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
-			console.log(element.nextSibling)
-			if(element.nextSibling !== null){
-				console.log(element.nextSibling.length)
-
-			}
-			if(element.nextSibling === null || element.nextSibling.length===0){
+			if(element.nextSibling === null){
+				while(element.parentElement.closest(".nbBox") !== null){
+					element = element.parentElement.closest(".nbBox");
+				}
+				let tmpNode = document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix"
+				element.after(tmpNode);
+			}else if(element.nextSibling.length===0){
 				let tmpNode = document.createElement('span');
 				tmpNode.innerHTML = "&nbsp;"
 				tmpNode.className = "tmpReGenerBugFix"
