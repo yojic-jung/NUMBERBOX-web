@@ -524,7 +524,7 @@ export const reg_reGenerFormulBugFix = async (isShorcutKey) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-
+	console.log(userKeyCode);
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -535,14 +535,21 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
-		const newRange = window.getSelection().getRangeAt(0)
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(newRange);
-		let tmpNode= document.createElement('span');
-		tmpNode.innerHTML = "&nbsp;"
-		tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
-		newRange.insertNode(tmpNode);
-		return;
+		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
+		if(previousEle !== null && previousEle.classList !== undefined){
+			if(previousEle.classList.contains("nbBox")){
+				console.log("한글 포커스")
+				const newRange = window.getSelection().getRangeAt(0)
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(newRange);
+				let tmpNode= document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
+				newRange.insertNode(tmpNode);
+				return;
+			}
+		}
+		
 	}
 
 	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
@@ -680,30 +687,90 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
-		//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
-		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
-			if(element.nextSibling === null){
-				while(element.parentElement.closest(".nbBox") !== null){
-					element = element.parentElement.closest(".nbBox");
-				}
-				if(element.nextSibling === null){
-					
-					let tmpNode = document.createElement('span');
-					tmpNode.innerHTML = "&nbsp;"
-					tmpNode.className = "tmpReGenerBugFix";
-					if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
-						let tmpNode2 = document.createElement('span');
-						tmpNode2.innerHTML = "&nbsp;"
-						tmpNode2.className = "tmpPosition";
-						window.getSelection().getRangeAt(0).insertNode(tmpNode2);
-						if(element !== tmpNode2.previousSibling){
-							element.after(tmpNode);
+
+		let childDiv = document.getElementById(document.activeElement.id).querySelectorAll("div");
+		for(let i=0; i<childDiv.length; i++){
+			//div태그의 마지막이 수식요소인 경우, 수식 재생성 오류 해결
+			//마지막요소가 br이고 br 이전이 수식요소인 경우 재생성 안됨, 오직 마지막 요소가 수식요소인 경우 또는 수식이 span에 감싸져있는 경우 재생성됨
+			if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.classList.contains("nbBox")){
+					if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
+						console.log("테이블 마지막 실행")
+						let lastNbBox = childDiv[i].lastElementChild;	//변수 지정 안 한채 사용하면 tmpNode가 lastElementChild로 잡힐 수 있음
+						let tmpNode = document.createElement('span');
+						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.className = "tmpReGenerBugFix";
+						if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
+							let tmpNode2 = document.createElement('span');
+							tmpNode2.innerHTML = "&nbsp;"
+							tmpNode2.className = "tmpPosition";
+							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+							console.log(tmpNode2.previousSibling)
+							console.log(lastNbBox)
+							if(lastNbBox !== tmpNode2.previousSibling){
+								childDiv[i].lastElementChild.after(tmpNode);
+							}
+							tmpNode2.remove();
+						}else{
+							childDiv[i].lastElementChild.after(tmpNode);
 						}
-						tmpNode2.remove();
-					}else{
-						element.after(tmpNode);
+					}
+			//수식이 span에 감싸져있는 경우 재생성 버그 해결
+			}else if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.tagName === "SPAN"){
+				let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
+				if(lastNbBox.length !== 0){
+					lastNbBox = lastNbBox[lastNbBox.length-1];
+					console.log(lastNbBox)
+					if(lastNbBox.parentElement !== undefined){
+						while(lastNbBox.parentElement.closest(".nbBox") !== null){
+							lastNbBox = lastNbBox.parentElement.closest(".nbBox");
+						}
 					}
 					
+					if(lastNbBox.nextSibling === null || lastNbBox.nextSibling.length===0){
+						console.log("span 안에서도 실행")
+						let tmpNode = document.createElement('span');
+						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.className = "tmpReGenerBugFix";
+						if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
+							let tmpNode2 = document.createElement('span');
+							tmpNode2.innerHTML = "&nbsp;"
+							tmpNode2.className = "tmpPosition";
+							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+							if(lastNbBox !== tmpNode2.previousSibling){
+								console.log("bb")
+								lastNbBox.after(tmpNode);
+							}
+							tmpNode2.remove();
+						}else{
+							lastNbBox.after(tmpNode);
+						}
+					}
+				}
+			}
+		}
+		/*
+		//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
+		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
+			while(element.parentElement.closest(".nbBox") !== null){
+				element = element.parentElement.closest(".nbBox");
+			}
+
+			//테이블 옆에 아무 요소 없는지 체크
+			if(element.nextSibling === null){
+				let tmpNode = document.createElement('span');
+				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.className = "tmpReGenerBugFix";
+				if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
+					let tmpNode2 = document.createElement('span');
+					tmpNode2.innerHTML = "&nbsp;"
+					tmpNode2.className = "tmpPosition";
+					window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+					if(element !== tmpNode2.previousSibling){
+						element.after(tmpNode);
+					}
+					tmpNode2.remove();
+				}else{
+					element.after(tmpNode);
 				}
 			}else if(element.nextSibling.length===0){
 				let tmpNode = document.createElement('span');
@@ -712,6 +779,7 @@ export const reg_preventKeyEvent = async (event) => {
 				element.after(tmpNode);
 			}
 		});
+		*/
 
 		/*
 		let nbBoxes = document.getElementById(document.activeElement.id).querySelectorAll(".nbBox");
@@ -1307,6 +1375,7 @@ export const reg_preventKeyEvent = async (event) => {
 			if(nbGrammer.length !== 0){
 				//document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
 				if(window.getSelection().isCollapsed){
+					//테이블 요소인 경우에만 셀렉트 된 상태에서 수식 들어감, 일반 수식요소 셀렉트 된 상태에서 들어가면 span(tmpReGenerBugFix)태그 안에 들어가서 입력 후 바로 삭제 됨 
 					if(nbGrammer.indexOf("nbBox")>-1){
 						const newRange = window.getSelection().getRangeAt(0)
 						window.getSelection().removeAllRanges();
