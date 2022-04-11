@@ -730,7 +730,7 @@ export const reg_preventKeyEvent = async (event) => {
 						let spanTag = lastNbBox
 						while(spanTag.parentElement.closest("span") !== null){
 							spanTag=spanTag.parentElement.closest("span") ;
-							if(spanTag.nextSibling !== null || spanTag.nextSibling.length!==0){
+							if(spanTag.nextSibling !== null || (spanTag.nextSibling !== null && spanTag.nextSibling.length!==0)){
 								isLastDom = false;
 								break;
 							}
