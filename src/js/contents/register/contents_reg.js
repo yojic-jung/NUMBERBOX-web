@@ -716,6 +716,7 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 			//수식이 span에 감싸져있는 경우 재생성 버그 해결
 			}else if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.tagName === "SPAN"){
+				/*
 				let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
 				if(lastNbBox.length !== 0){
 					lastNbBox = lastNbBox[lastNbBox.length-1];
@@ -758,6 +759,7 @@ export const reg_preventKeyEvent = async (event) => {
 						
 					}
 				}
+				*/
 			}
 		}
 		/*
