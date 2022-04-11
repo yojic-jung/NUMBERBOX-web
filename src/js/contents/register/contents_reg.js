@@ -524,7 +524,6 @@ export const reg_reGenerFormulBugFix = async (isShorcutKey) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-	console.log(userKeyCode);
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -538,7 +537,6 @@ export const reg_preventKeyEvent = async (event) => {
 		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
 		if(previousEle !== null && previousEle.classList !== undefined){
 			if(previousEle.classList.contains("nbBox")){
-				console.log("한글 포커스")
 				const newRange = window.getSelection().getRangeAt(0)
 				window.getSelection().removeAllRanges();
 				window.getSelection().addRange(newRange);
@@ -693,7 +691,6 @@ export const reg_preventKeyEvent = async (event) => {
 			//마지막요소가 br이고 br 이전이 수식요소인 경우 재생성 안됨, 오직 마지막 요소가 수식요소인 경우 또는 수식이 span에 감싸져있는 경우 재생성됨
 			if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.classList.contains("nbBox")){
 					if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
-						console.log("테이블 마지막 실행")
 						let lastNbBox = childDiv[i].lastElementChild;	//변수 지정 안 한채 사용하면 tmpNode가 lastElementChild로 잡힐 수 있음
 						let tmpNode = document.createElement('span');
 						tmpNode.innerHTML = "&nbsp;"
@@ -703,8 +700,6 @@ export const reg_preventKeyEvent = async (event) => {
 							tmpNode2.innerHTML = "&nbsp;"
 							tmpNode2.className = "tmpPosition";
 							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
-							console.log(tmpNode2.previousSibling)
-							console.log(lastNbBox)
 							if(lastNbBox !== tmpNode2.previousSibling){
 								childDiv[i].lastElementChild.after(tmpNode);
 							}
@@ -718,7 +713,6 @@ export const reg_preventKeyEvent = async (event) => {
 				let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
 				if(lastNbBox.length !== 0){
 					lastNbBox = lastNbBox[lastNbBox.length-1];
-					console.log(lastNbBox)
 					if(lastNbBox.parentElement !== undefined){
 						while(lastNbBox.parentElement.closest(".nbBox") !== null){
 							lastNbBox = lastNbBox.parentElement.closest(".nbBox");
@@ -735,7 +729,6 @@ export const reg_preventKeyEvent = async (event) => {
 								break;
 							}
 						}
-
 						if(isLastDom){
 							let tmpNode = document.createElement('span');
 							tmpNode.innerHTML = "&nbsp;"
@@ -746,7 +739,6 @@ export const reg_preventKeyEvent = async (event) => {
 								tmpNode2.className = "tmpPosition";
 								window.getSelection().getRangeAt(0).insertNode(tmpNode2);
 								if(lastNbBox !== tmpNode2.previousSibling){
-									console.log("bb")
 									lastNbBox.after(tmpNode);
 								}
 								tmpNode2.remove();
@@ -1447,12 +1439,12 @@ export const reg_preventKeyEvent = async (event) => {
 		//ctrl+z(키코드 90)와 ctrl+v(키코드 86)인 경우
 		//if( (userKeyCode === 90 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey)){
 			let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
-			for(let i=0; i<tmpReGenerBugFix.length; i++){
-				tmpReGenerBugFix[i].remove();
+			while (tmpReGenerBugFix.length > 0) {
+				tmpReGenerBugFix[0].remove();
 			}
 			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
-			for(let i=0; i<tmpReGenerBugFix2.length; i++){
-				tmpReGenerBugFix2[i].remove();
+			while (tmpReGenerBugFix2.length > 0) {
+				tmpReGenerBugFix2[0].remove();
 			}
 
 			if( userKeyCode === 86 && event.ctrlKey){
