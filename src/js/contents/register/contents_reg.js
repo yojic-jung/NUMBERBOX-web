@@ -687,7 +687,6 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey)){
-		/*
 		let childDiv = document.getElementById(document.activeElement.id).querySelectorAll("div");
 		for(let i=0; i<childDiv.length; i++){
 			//div태그의 마지막이 수식요소인 경우, 수식 재생성 오류 해결
@@ -760,7 +759,6 @@ export const reg_preventKeyEvent = async (event) => {
 				}
 			}
 		}
-		*/
 		/*
 		//백스페이스,del,ctrl+x로 라인의 마지막에 수식 있는 라인을 위로 이동시킬때 수식 재생성됨
 		document.getElementById(document.activeElement.id).querySelectorAll(".nbBox").forEach((element)=>{
