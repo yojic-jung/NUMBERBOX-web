@@ -727,23 +727,35 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 					
 					if(lastNbBox.nextSibling === null || lastNbBox.nextSibling.length===0){
-						console.log("span 안에서도 실행")
-						let tmpNode = document.createElement('span');
-						tmpNode.innerHTML = "&nbsp;"
-						tmpNode.className = "tmpReGenerBugFix";
-						if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
-							let tmpNode2 = document.createElement('span');
-							tmpNode2.innerHTML = "&nbsp;"
-							tmpNode2.className = "tmpPosition";
-							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
-							if(lastNbBox !== tmpNode2.previousSibling){
-								console.log("bb")
+						let isLastDom = true;
+						let spanTag = lastNbBox
+						while(spanTag.parentElement.closest("span") !== null){
+							spanTag=spanTag.parentElement.closest("span") ;
+							if(spanTag.nextSibling !== null || spanTag.nextSibling.length!==0){
+								isLastDom = false;
+								break;
+							}
+						}
+
+						if(isLastDom){
+							let tmpNode = document.createElement('span');
+							tmpNode.innerHTML = "&nbsp;"
+							tmpNode.className = "tmpReGenerBugFix";
+							if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
+								let tmpNode2 = document.createElement('span');
+								tmpNode2.innerHTML = "&nbsp;"
+								tmpNode2.className = "tmpPosition";
+								window.getSelection().getRangeAt(0).insertNode(tmpNode2);
+								if(lastNbBox !== tmpNode2.previousSibling){
+									console.log("bb")
+									lastNbBox.after(tmpNode);
+								}
+								tmpNode2.remove();
+							}else{
 								lastNbBox.after(tmpNode);
 							}
-							tmpNode2.remove();
-						}else{
-							lastNbBox.after(tmpNode);
 						}
+						
 					}
 				}
 			}
