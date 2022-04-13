@@ -38,6 +38,52 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         selection.addRange(newRange);
         //셀렉트(드래그)한 부분이 없이 오로지 포커스가 하나인 경우
         if(document.getSelection().isCollapsed) window.getSelection().collapseToEnd();	   //포커스 줘야 activeElement.id 정상적으로 뽑아옴
+        else{
+            let childDiv = document.getElementById(document.activeElement.id).querySelectorAll("div");
+            for(let i=0; i<childDiv.length; i++){
+                //div태그의 마지막이 수식요소인 경우, 수식 재생성 오류 해결
+                //마지막요소가 br이고 br 이전이 수식요소인 경우 재생성 안됨, 오직 마지막 요소가 수식요소인 경우 또는 수식이 span에 감싸져있는 경우 재생성됨
+                if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.classList.contains("nbBox")){
+                        if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
+                            let tmpNode = document.createElement('span');
+                            tmpNode.innerHTML = "&nbsp;"
+                            tmpNode.className = "tmpReGenerBugFix";
+                            childDiv[i].lastElementChild.after(tmpNode);
+                        }
+                //수식이 span에 감싸져있는 경우 재생성 버그 해결
+                }else if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.tagName === "SPAN"){
+                    let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
+                    if(lastNbBox.length !== 0){
+                        lastNbBox = lastNbBox[lastNbBox.length-1];
+                        if(lastNbBox.parentElement !== undefined){
+                            while(lastNbBox.parentElement.closest(".nbBox") !== null){
+                                lastNbBox = lastNbBox.parentElement.closest(".nbBox");
+                            }
+                        }
+                        
+                        if(lastNbBox.nextSibling === null || lastNbBox.nextSibling.length===0){
+                            let isLastDom = true;
+                            let spanTag = lastNbBox
+                            while(spanTag.parentElement.closest("span") !== null){
+                                spanTag=spanTag.parentElement.closest("span") ;
+                                if(spanTag.nextSibling !== null || (spanTag.nextSibling !== null && spanTag.nextSibling.length!==0)){
+                                    isLastDom = false;
+                                    break;
+                                }
+                            }
+                            if(isLastDom){
+                                let tmpNode = document.createElement('span');
+                                tmpNode.innerHTML = "&nbsp;"
+                                tmpNode.className = "tmpReGenerBugFix";
+                                lastNbBox.after(tmpNode);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        
 
         let focusId = document.activeElement.id;
         //문제입력, 해설입력, 객관식 보기, 주관식 정답에만 적용
