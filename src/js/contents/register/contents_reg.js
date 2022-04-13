@@ -1200,7 +1200,7 @@ export const reg_preventKeyEvent = async (event) => {
 						}
 
 						//div 마지막이 수식인 경우 tmpReGenerBugFix가 이미 추가되어 있어 수식이 tmpReGenerBugFix안으로 들어가 입력되지 않고 삭제되어버리는 버그 해결
-						if(tmpNode2.nextSibling.classList !== undefined){
+						if(tmpNode2.nextSibling !== null && tmpNode2.nextSibling.classList !== undefined){
 							if(tmpNode2.nextSibling.classList.contains("tmpReGenerBugFix")){
 								tmpNode2.nextSibling.remove();
 							}
@@ -1233,7 +1233,7 @@ export const reg_preventKeyEvent = async (event) => {
 					//입력 불가 요소는 수식 오른쪽에 포커스
 					for(let i=0; i<writeDisabledDom.length; i++){
 						if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
-							window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox);
+							window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox.closest(".nbBox"));
 							window.getSelection().collapseToEnd();
 						}
 					}

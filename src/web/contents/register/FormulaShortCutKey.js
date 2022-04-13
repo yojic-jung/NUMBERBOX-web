@@ -160,16 +160,13 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 //입력 불가 요소는 수식 오른쪽에 포커스
                 for(let i=0; i<writeDisabledDom.length; i++){
                     if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
-                        window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox);
+                        window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox.closest(".nbBox"));
                         window.getSelection().collapseToEnd();
 
                     }
                 }
 
                 if(focusNbBorderBox.classList.contains("nbThrCaseThr")){
-                    console.log(focusNbBorderBox.closest(".nbBox"))
-                    let nbBox = focusNbBorderBox.closest(".nbBox")
-                    console.log(nbBox.querySelector(".nbCaseFir"))
                     window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
                     window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
 
