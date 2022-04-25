@@ -107,8 +107,10 @@
     border:1px solid #B2CCFF;
     box-shadow:0 0 2px 2px #B2CCFF;
 }
-
-
+.linkNoneCss{
+    text-decoration: none;
+    color:unset;
+}
 
 .mini-title{
     font-size:15px;
@@ -126,7 +128,7 @@
     font-family: 'jejuGothic';
     text-align: center;
     color:rgb(148, 148, 148);
-    margin:10px 0 20px 0;
+    margin:10px 0 40px 0;
 }
 .mini-title4{
     color: #072e61;
@@ -206,7 +208,7 @@
 
 .rightAbsolBox{
     position: absolute; 
-    top: 50px; 
+    top: 70px; 
     right: 30px; 
     width: 100px;
     text-align: center; 
@@ -286,4 +288,8 @@
 
 .hidden{
     visibility:hidden 
+}
+
+.pointer{
+    cursor: pointer;
 }

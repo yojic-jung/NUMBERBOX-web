@@ -3,14 +3,14 @@ import FormulaEditor from 'web/contents/register/FormulaEditor'
 import {nb_dataFetch} from 'js/common/common_nb.js';
 import CustomUnitSelBox from 'web/common/CustomUnitSelBox';
 import UnitSelBox from 'web/common/UnitSelBox';
-import {nb_fCustomSelClose, nb_completeBlueBox, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
+import {nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
 import {nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd} from 'js/common/common_nb.js';
+import TopMenuBar from 'web/common/TopMenuBar';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
 let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
-let workMemVal;             //모달 팝업 닫았을시 검색조건 유지
 let subjectVal;
 let firUnitVal;
 let secUnitVal;
@@ -27,7 +27,6 @@ const ContentsListEdit = ()=>{
 
 
     const modalPopupOpen = async (event)  =>{
-        workMemVal = document.getElementById("workMem").value;
         subjectVal = document.getElementById("subject").value;
         firUnitVal = document.getElementById("firUnit").value;
         secUnitVal = document.getElementById("secUnit").value;
@@ -45,10 +44,6 @@ const ContentsListEdit = ()=>{
         await setModalState(false);
 
         //이전 검색조건 셋팅
-        document.getElementById("workMem").value = workMemVal;
-        document.getElementById("workMem").classList.add("customBlueBoxComplete");
-
-       
         let trigEv = new Object();
         let sub    = new Object();
        
@@ -116,7 +111,7 @@ const ContentsListEdit = ()=>{
 
     useEffect(()=>{
         const asyncUseEffect = async function(){
-            let jsonObj = await nb_dataFetch('/unitInfo', true);
+            let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectBox(jsonObj["mathSubjectInfo"]);
             setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
             setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
@@ -175,10 +170,6 @@ const ContentsListEdit = ()=>{
                 alert("소단원을 선택해주세요.");
                 return false;
             }
-            if(document.getElementById("workMem").value.length<2){
-                alert("이름을 적어주세요.")
-                return false;
-            }
 
             let formData = new FormData(document.getElementById("workSearchForm"));
             formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
@@ -189,7 +180,7 @@ const ContentsListEdit = ()=>{
             }
             */
                 
-            let returnObj = await nb_formDataFetch("/takeContents",formData, true);
+            let returnObj = await nb_formDataFetch("/mathInfo/takeContents",formData, true);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }
@@ -268,8 +259,14 @@ const ContentsListEdit = ()=>{
                                     <thead>
                                         <tr>
                                             <td>
-                                                <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button>
-                                                 원본교재: {contentsMap.originRef}, 원본문제: {contentsMap.originNo}, 난이도: {quesLevel}</td>
+                                                <div className='twoFlexLayout'>
+                                                    <div><button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button></div>
+                                                    <div>
+                                                        원본교재: {contentsMap.originRef}, 원본문제: {contentsMap.originNo}, 난이도: {quesLevel}<br/>
+                                                        유형 : {contentsMap.mathTypeInfo.quesType}
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>정답 및 해설</td>
                                         </tr>
                                     </thead>
@@ -326,17 +323,14 @@ const ContentsListEdit = ()=>{
 
 
   return ( <>
-  
+            <TopMenuBar isMain={false}/>
   		    <div id="notifyBox" className='notifyBox'></div>
-              
-                <div className='staff-title'>문제 변형 작업내역</div>
                 { !modalState &&
                 <div>
                     <div id="workListUnitTypeRoot" className='workListUnitTypeRoot'>
                         <form method="post" id="workSearchForm">
                             <div id="workListUnitType" className='workListUnitType'>
                                 <div className='mini-title5'>
-                                    <input id="workMem" name="workMem" className='customBlueBox' type="text" placeholder='이름을 적어주세요...' onKeyDown={(event)=>{searchMyWorkListByEnter(event);}} onClick={event => nb_completeBlueBox(event, 2)} onBlur={event => nb_completeBlueBox(event, 2)}/>
                                     &nbsp; 단원정보를 선택하여 나의 문제를 확인 해보세요. 
                                 </div>
                                 <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>

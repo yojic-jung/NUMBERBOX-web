@@ -4,19 +4,18 @@ import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv} from 'js/contents/register/contents_reg';
 
-const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
+const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
       },[]);
-
-
 
 	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈)
 	  const trimRegisterContents = async function() {
 		let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
 		let targetHtml = ["contents", "solution" ,"firNo" , "secNo", "thrNo", "fourNo", "fifNo", "answer"];
 
+		document.getElementById("contentsOptBox").classList.remove("hide");
 		for(let i=0; i<targetId.length; i++){
 			document.getElementById(targetId[i]).classList.remove("hide");
 			let whileIdx=0;
@@ -42,60 +41,6 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 					}
 				}
 			}
-			//띄어쓰기의 경우 수식요소 안에 띄어쓰기 사용한 경우 정상작동 안함
-			//사용자가 일부러 마지막에 띄어쓰기 주는 경우도 있음
-			/*
-			while(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n" || encodeURI(document.getElementById(targetId[i]).innerText.substr(-1)) === '%C2%A0'){
-				whileIdx++
-				if(whileIdx>500){
-					alert("[무한루프 에러] 공백문자 제거 도중 에러 발생");
-					break;
-				}
-				if(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n"){
-					console.log("무한루프1");
-					let brTag = document.getElementById(targetId[i]).querySelectorAll("br");
-					if(brTag!== null){
-						if(brTag[brTag.length-1].closest(".nbBox") === null){
-							brTag[brTag.length-1].remove();
-							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-						} else{
-							break;
-						}
-					}else{
-						break;
-					}
-				}else if(encodeURI(document.getElementById(targetId[i]).innerText.substr(-1)) === '%C2%A0'){
-					let spaceIdx = document.getElementById(targetId[i]).innerHTML.lastIndexOf("&nbsp;");
-					let spaceIdx2 = document.getElementById(targetId[i]).innerHTML.lastIndexOf(" ");
-					if(spaceIdx !== -1 && spaceIdx2 !== -1){
-						if(spaceIdx < spaceIdx2){
-							console.log("무한루프3");
-							document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx2)
-							+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx2+1, document.getElementById(targetId[i]).innerHTML.length-1);
-							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-						}else{
-							console.log("무한루프4");
-							document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx)
-							+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx+6, document.getElementById(targetId[i]).innerHTML.length-1);
-							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-						}
-					}else if(spaceIdx !== -1 && spaceIdx2 === -1){
-						console.log("무한루프5");
-						document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx)
-						+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx+6, document.getElementById(targetId[i]).innerHTML.length-1);
-						document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-					}else if(spaceIdx === -1 && spaceIdx2 !== -1){
-						console.log("무한루프6");
-						document.getElementById(targetId[i]).innerHTML = document.getElementById(targetId[i]).innerHTML.substr(0, spaceIdx2)
-						+ document.getElementById(targetId[i]).innerHTML.substr(spaceIdx2+1, document.getElementById(targetId[i]).innerHTML.length-1);
-						document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-					}else{
-						break;
-					}
-				}
-				
-			}
-			*/
 		}
 	  }
 
@@ -115,11 +60,6 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 		 let cusOriginRef = document.getElementById("cusOrgRefSelTitle");
 		 let originRef = document.getElementById("originRef");
 		 let originNo = document.getElementById("originNo");
-
-		 if(document.getElementById("workMem").value.length<2){
-			 alert("이름을 적어주세요.")
-			 return false;
-		 }
 
 		 if(customSubject.innerText=="과목" || subject.selectedIndex==0){
 			 alert("과목을 선택해주세요.");
@@ -171,6 +111,8 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 		if(updateModeUniqNo!==""){
 			let contentsNo = updateModeUniqNo.split(",");
 			formData.append("contentsNo", contentsNo[2]);
+			console.log(userNo);
+			formData.append("userNo", userNo);
 		}
 		// FormData의 값 확인
 		/*
@@ -179,13 +121,12 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 		}
 		*/
 			
-		let returnObj = await nb_formDataFetch("/registerContents",formData, true);
+		let returnObj = await nb_formDataFetch("/mathInfo/registerContents",formData, true);
 		if(returnObj.error!=undefined){
-			alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+			alert("["+returnObj.status+" "+returnObj.error+"]\n메시지 : "+returnObj.message);
 		}
 
 		if(returnObj["saveSuccess"]){
-			
 			//유형, 난이도, 원본문제 초기화
 			customQuesType.innerText="유형정보"
 			quesType.selectedIndex=0;
@@ -247,6 +188,13 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 				await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
 				document.getElementById("contentsFormulaEditor").focus()
 			} 
+		}else{
+			//문제입력 탭 클릭상태
+			let trigEv = new Object();
+			let sub    = new Object();
+			trigEv.target= sub;
+			trigEv.target.id= "quesTab";
+			await reg_quesAnsTabClkEv(trigEv);
 		}
 	  }
 
@@ -257,7 +205,6 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo})=>{
 		<div id="contentsInfo" className="contentsInfo hide">
 				<div className="closeBtn" onClick={ () => nb_closeBtn("contentsInfo")}>&#88;</div>
 				<div className="mini-title3">문제 단원 및 유형 정보를 입력해주세요.</div>
-				<input id="workMem"  name="workMem" type="text" className="customBlueBox" placeholder="이름을 적어주세요..." onBlur={event => nb_completeBlueBox(event, 2)}/>
 				
 				<UnitTypeCombo updateModeUniqNo={updateModeUniqNo} />
 				

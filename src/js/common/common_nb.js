@@ -1,3 +1,8 @@
+export const nb_isLogin = () => {
+  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  return isLogin;
+}
+
 /*
  * 정의 : web에서 was의 data를 fetch하는 공통 함수
  * 설명 : transitEffect는 spinner 효과 사용여부 판단
@@ -10,14 +15,33 @@ export const nb_dataFetch = async (url, transitEffect) => {
   } 
   
   let returnVal = null;
-  await fetch(url)
-  .then(async (response) => response.text() )
+  await fetch(url, {
+      method: 'get',	// 방식은 get
+      headers: {
+        'access-token':window.localStorage.getItem("access-token")
+      }
+  })
+  .then(async (response) => {
+    if(response.headers.get("access-token") !== null){
+      window.localStorage.setItem("access-token", response.headers.get("access-token"));
+    }else if(response.headers.get("tokenExpired") !== null) {
+      alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
+      window.localStorage.setItem("access-token", null);
+      document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      window.location.href = "/";
+    }
+    return response.text();} )
   .then(async (data) => { 
     if(transitEffect){
       document.getElementById("page-transit").classList.add("hide");
       document.getElementById("page-transit-img").classList.add("hide");
     }
-    returnVal = JSON.parse(data)
+    if(data !== ""){
+      returnVal = JSON.parse(data);
+      if(returnVal.existMsg){
+        alert(returnVal.serverMsg);
+      }
+    }
   });
   return returnVal
 }
@@ -33,20 +57,68 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
       method: 'post',	// 방식은 post
       headers: {
+        'access-token':window.localStorage.getItem("access-token")
       },
       body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
     })
-    .then(async (response) => response.text() )
-    .then(async (data) => {	// obj에는 서버사이드에서 전송해준 DB등록 성공여부가 담겨있다.
+    .then(async (response) => {
+      if(response.headers.get("access-token") !== null) {
+        window.localStorage.setItem("access-token", response.headers.get("access-token"));
+      }else if(response.headers.get("tokenExpired") !== null) {
+        alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
+        window.localStorage.setItem("access-token", null);
+        document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        window.location.href = "/";
+      }
+      return response.text();} )
+    .then(async (data) => {
       if(transitEffect){
         document.getElementById("page-transit").classList.add("hide");
         document.getElementById("page-transit-img").classList.add("hide");
       }
-      returnVal = JSON.parse(data)
+
+      if(data !== ""){
+        returnVal = JSON.parse(data)
+        if(returnVal.existMsg){
+          alert(returnVal.serverMsg);
+        }
+      }
+      
     });
     return returnVal;
   }
 
+  
+  /*
+  * 로그인 요청
+  */
+  export const nb_formJsonFetch = async (url, formData, transitEffect) => {
+    if(transitEffect){
+      document.getElementById("page-transit").classList.remove("hide");
+      document.getElementById("page-transit-img").classList.remove("hide");
+    } 
+  
+    let returnVal = null;
+      await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
+        method: 'post',	// 방식은 post
+        headers: {
+        },
+        body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
+      })
+      .then(async (response) => {
+        if(response.headers.get("access-token") !== null){
+          window.localStorage.setItem("access-token", response.headers.get("access-token"));
+        }
+        return response.text();
+      }).then(async (data) => {	
+        if(transitEffect){
+          document.getElementById("page-transit").classList.add("hide");
+          document.getElementById("page-transit-img").classList.add("hide");
+        }
+        returnVal = JSON.parse(data)
+      });
+      return returnVal;
+    }
 
 export const fadeIn = async (targetId) => {
   let dom = document.getElementById(targetId);
@@ -62,9 +134,11 @@ export const fadeIn = async (targetId) => {
 }
 
 export const fadeOut = async (targetId) => {
+  console.log(targetId);
   let dom = document.getElementById(targetId);
   let op = 1;  // initial opacity
   let timer = setInterval(function () {
+    console.log(op <= 0.1);
     if (op <= 0.1 ){
       clearInterval(timer);
       dom.style.display = 'none';
@@ -109,7 +183,7 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
       let formData = new FormData();
       formData.append("contentsNo",contentsNo);
       formData.append(targetId, event.target.files[0])
-      let returnObj = await nb_formDataFetch("/changeConOrSolImg",formData, true);
+      let returnObj = await nb_formDataFetch("/mathInfo/changeConOrSolImg",formData, true);
       document.getElementById("imgUpdt").value = "Y";
       reader.readAsDataURL(event.target.files[0]);
       output.classList.remove('hide');

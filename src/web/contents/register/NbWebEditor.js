@@ -76,7 +76,6 @@ const NbWebEditor = ({parentMethod})=>{
 				//복붙하여 span에 text-align적용되어 정렬 안되는 버그 해결
 				let span = document.getElementById(document.activeElement.id).querySelectorAll("span");
 				for(let i=0; i<span.length; i++){
-					console.log(span[i].style.textAlign)
 					if(span[i].style.textAlign !== ""){
 						span[i].style.textAlign = ""
 					}

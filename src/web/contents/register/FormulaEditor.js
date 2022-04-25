@@ -35,6 +35,8 @@ const FormulaEditor = ({contentsNo}) => {
 
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
 
+	const[userNo, setUserNo] = useState("");
+
 	const removeAddedEvent = () => {
 		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
 		window.removeEventListener('mousemove', reg_mMoveTdWidthChange);
@@ -119,10 +121,15 @@ const FormulaEditor = ({contentsNo}) => {
 			updtImg = await window.confirm("등록된 이미지를 삭제하고 새로운 이미지를 등록하시겠습니까?");
 			if(updtImg){
 				let formData = new FormData();
+				formData.append("userNo",userNo);
 				formData.append("contentsNo",contentsNo)
 				formData.append("conOrSol",targetId)
-				let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
-				if(returnObj.updateCond !== 1){
+				let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
+
+				if(returnObj.updateCond === -1) {
+					return false;
+				}
+				else if(returnObj.updateCond !== 1){
 					alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
 					return false;
 				}else{
@@ -150,10 +157,14 @@ const FormulaEditor = ({contentsNo}) => {
 				
 				if(outputId === "contentsImgOutput"){
 					let formData = new FormData();
+					formData.append("userNo",userNo);
 					formData.append("contentsNo",contentsNo)
 					formData.append("conOrSol","contentsImg")
-					let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
-					if(returnObj.updateCond !== 1){
+					let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
+					if(returnObj.updateCond === -1) {
+						return false;
+					 }
+					else if(returnObj.updateCond !== 1){
 						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.")
 						return false;
 					}else{
@@ -164,10 +175,14 @@ const FormulaEditor = ({contentsNo}) => {
 				} 
 				else{
 					let formData = new FormData();
+					formData.append("userNo", userNo);
 					formData.append("contentsNo",contentsNo)
 					formData.append("conOrSol","solutionImg")
-					let returnObj = await nb_formDataFetch("/delConOrSolImg",formData, true);
-					if(returnObj.updateCond !== 1){
+					let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
+					if(returnObj.updateCond === -1) {
+						return false;
+					 }
+					else if(returnObj.updateCond !== 1){
 						alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
 						return false;
 					}else{
@@ -199,13 +214,23 @@ const FormulaEditor = ({contentsNo}) => {
 		if(contentsNo!== undefined){
 		  let targetId = event.target.id
 		  let formData = new FormData();
+		  formData.append("userNo",userNo);
 		  formData.append("contentsNo",contentsNo);
 		  formData.append(targetId, event.target.files[0])
-		  let returnObj = await nb_formDataFetch("/changeConOrSolImg",formData, true);
+		  let returnObj = await nb_formDataFetch("/mathInfo/changeConOrSolImg",formData, true);
 		  document.getElementById("imgUpdt").value = "Y";
 		  reader.readAsDataURL(event.target.files[0]);
 		  output.classList.remove('hide');
-		  if(returnObj.updateCond !== 1) {
+		  if(returnObj.updateCond === -1) {
+			await nb_imgFileDel(outputId, event.target.id);
+			reader.onload = async function(){
+				output.src = "";
+			};
+			if(targetId === "contentsImg") conImgName = "Y";
+			else if(targetId === "solutionImg") solImgName = "Y";
+			return false;
+		  }
+		  else if(returnObj.updateCond !== 1) {
 			alert("정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.");
 			return false;
 		  }else{
@@ -223,7 +248,7 @@ const FormulaEditor = ({contentsNo}) => {
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
-			let jsonObj = await nb_dataFetch('/takeShortCutKey', true);
+			let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
 			setIsFetchShotCutKey(true);
 			shortCutKeyList = jsonObj["shortCutKey"]
@@ -266,8 +291,12 @@ const FormulaEditor = ({contentsNo}) => {
 			let myContents;
 			//수정모드
 			if(contentsNo!==undefined){
-				myContents = await nb_dataFetch('/takeMyContents?contentsno='+contentsNo, true);
-
+				myContents = await nb_dataFetch('/mathInfo/takeMyContents?contentsno='+contentsNo, true);
+				console.log(myContents.existMsg);
+				if(myContents.existMsg){
+					document.getElementById("saveBtn").remove();
+					return;
+				}
 				setContentsText(myContents["myContents"].contents);
 				document.getElementById("contentsFormulaEditor").innerHTML = myContents["myContents"].contents;
 				setSolutionText(myContents["myContents"].solution);
@@ -335,9 +364,6 @@ const FormulaEditor = ({contentsNo}) => {
 
 				// 주관식 객관식 마지막 validation에서 처리 필요(X)
 
-				document.getElementById("workMem").value = myContents["myContents"].workMem;
-				document.getElementById("workMem").classList.add("customBlueBoxComplete");
-
 				//원본 책
 				document.getElementById("originRef").value = myContents["myContents"].originRef;
 				document.getElementById("cusOrgRefSelTitle").innerHTML =document.getElementById("originRef")[document.getElementById("originRef").selectedIndex].innerText;
@@ -381,6 +407,9 @@ const FormulaEditor = ({contentsNo}) => {
 				setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo);
 				//수정시간 서버에서 수정 필요
 
+				//문제제작자
+				console.log(myContents["myContents"].userNo);
+				setUserNo(myContents["myContents"].userNo);
 			}
 		}
 
@@ -671,7 +700,7 @@ const FormulaEditor = ({contentsNo}) => {
 			</div>
 		</div>
 		<div className="scrollFixBugMargin"></div>
-		<InputQuestionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo}/>
+		<InputQuestionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} userNo={userNo}/>
 		</form>
 	</>
   );

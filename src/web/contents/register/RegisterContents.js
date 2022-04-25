@@ -3,17 +3,19 @@ import FormulaEditor from './FormulaEditor'
 import "css/common/common.css";
 import "css/common/nbFormula.css";
 import "css/staff/staff.css";
+import TopMenuBar from 'web/common/TopMenuBar';
 
-
-const RegisterQuestion = ()=>{
+const RegisterContents = ()=>{
   return (
-    <div id="registerQuestion">
-      <div className="staff-title">문제 만들기</div>
-      <div className="register-div">
-        <FormulaEditor />
+    <>
+      <TopMenuBar />
+      <div id="registerQuestion">
+        <div className="register-div">
+          <FormulaEditor />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default RegisterQuestion;
+export default RegisterContents;

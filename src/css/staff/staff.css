@@ -119,7 +119,7 @@
     padding:5px;
     margin:5px;
 }
-#subject:focus, #firUnit:focus, #secUnit:focus, #thrUnit:focus, #quesType:focus, #quesLevel:focus, #workMem:focus
+#subject:focus, #firUnit:focus, #secUnit:focus, #thrUnit:focus, #quesType:focus, #quesLevel:focus
 ,#originNo:focus, #originRef:focus, #answer:focus, #firNo:focus, #secNo:focus, #thrNo:focus, #fourNo:focus, #fifNo:focus, #multi-answer:focus{
     outline: none;
     border:1px solid #B2CCFF;

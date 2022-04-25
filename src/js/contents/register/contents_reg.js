@@ -431,7 +431,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 				tmpNode.innerHTML = "&nbsp;"
 				tmpNode.className = "tmpReGenerBugFix"
 				window.getSelection().getRangeAt(0).commonAncestorContainer.after(tmpNode);
-				console.log("수식 마지막 공백 추가1");
 				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode, 1, strtContainer, strtOffset);
 				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
 			}
@@ -457,7 +456,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 						isNbBoxLast = true;
 					}
 					if(!isNbBoxLast){
-						console.log("수식 마지막 공백 추가2");
 						if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode, 1, strtContainer, strtOffset);
 						else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
 					}
@@ -625,7 +623,6 @@ export const reg_preventKeyEvent = async (event) => {
 							}
 							tmpNode2.remove();
 						}else{
-							console.log("라인 마지막 수식 버그")
 							childDiv[i].lastElementChild.after(tmpNode);
 						}
 					}
@@ -1456,6 +1453,7 @@ export const reg_selectTypeData = async (targetId, titleTag, divTag, compareStr 
 */
 export const reg_eraseEditTbUI = async (event ) =>{
 	let idBorderDesc = (event.target.id==="tbBorderDesc" || event.target.id==="tbBorderCheck")
+	if(event.target.tagName==="A") return;
 	if(idBorderDesc) return;
 
 	let tagetDom = event.target.closest('button');

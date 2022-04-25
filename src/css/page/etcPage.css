@@ -1,0 +1,216 @@
+.errorCircle{
+    width:250px;
+    height:250px;
+    border-radius:125px;
+    margin:70px auto 0px auto;
+    display:table;
+    background-color:rgb(55, 113, 178);
+    font-size:50px;
+    text-align:center;
+}
+
+.errorCircleContents{
+    color:white;
+    vertical-align:middle;
+    display:table-cell
+}
+.errorContents{
+    font-size: 20px;
+    line-height: 160%;
+    width:60%;
+    margin:30px auto 0px auto;
+    text-align:center;
+    font-family:'JejuGothic';
+}
+.goBackBtn{
+    cursor: pointer;
+    font-family:'JejuGothic';
+    font-size: 20px;
+    color:gray;
+    padding: 15px;
+    width: 80px;
+    margin:30px auto 0 auto;
+    text-align: center;
+    border-radius: 15px;
+    background: rgb(224, 225, 226);
+    box-shadow: inset 0 -7px 0 0 rgb(0 0 0 / 10%);
+}
+
+.login-menu-title{
+    margin: 0px auto 20px auto;
+    width:1100px;
+    font-family: 'TmoneyRoundWindExtraBold';
+    font-size: 30px;
+    color:#3e6599;
+}
+.login-div{
+    background-color: white;
+    min-height: 410px;
+    width: 500px;
+    line-height: 250%;
+    margin: auto;
+    border-radius: 10px;
+    padding: 30px;
+    font-size: 14px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 7%);
+    box-sizing: border-box;
+}
+
+.login-input-div{
+    width: 90%;
+    margin:5px auto 0 auto;
+}
+.login-input{
+    width: 100%;
+    font-size: 16px;
+    padding: 5px;
+    border: none;
+    border-bottom: 2px solid rgb(228, 228, 237);
+}
+
+.login-input:focus{
+    box-shadow: 0 0 4px green;
+}
+
+.login-input::placeholder{
+    color:rgb(197, 197, 208);
+}
+.login-input:focus{
+    outline: none;
+}
+
+.bage-ground{
+    width: 100%;
+    padding:20px 0 100px 0;
+    background-color: rgb(247, 247, 252);;
+}
+.login-btn-div{
+    width: 90%;
+    margin:30px auto 10px auto;
+}
+.login-btn{
+    cursor: pointer;
+    text-align: center;
+    width: 90%;
+    margin: 40px auto 30px auto;
+    padding: 10px;
+    color:white;
+    background: rgb(55, 113, 178);
+    border:none;
+    border-radius: 5px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.login-etc-info{
+    width: 90%;
+    margin: 20px auto;
+    justify-content: space-between;
+    display: flex;
+}
+
+.signUpDiv{
+    width: 90%;
+    margin: 80px auto 0 auto;
+    text-align: center;
+}
+
+
+.emailPassFind{
+    color: black;
+    text-decoration: none;
+}
+
+.signUpLink{
+    color: black;
+    font-weight: bold;
+}
+
+#checkCircle::before{
+    display: inline-block;
+    font-size:12px;
+    content: '\2714';
+    top:-4px;
+    left: 7px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+#checkCircle{
+    display: inline-block;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(184, 184, 184);
+    border-radius: 10px;
+    vertical-align: text-bottom;
+    position: relative;
+}
+
+.disabled{
+    opacity: 0.6;
+}
+
+.login-signup-desc{
+    font-family: 'JejuGothic';
+    font-size: 20px;
+    text-align: center;
+    margin:20px;
+}
+
+.agreeState{
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+
+.signup-btn-div{
+    width: 90%;
+    margin:60px auto 10px auto;
+}
+
+.loginValDesc{
+    width: 90%;
+    margin: auto;
+    height: 35px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.redText{
+    color: red;
+}
+.blueText{
+    color:rgb(24, 86, 179);
+}
+
+.redBorderBottom {
+    border-bottom: 2px solid red ;
+}
+
+.loginValDescUI{
+    box-shadow: 0 0 4px red;
+}
+.loginErrMsg{
+    text-align: center;
+    line-height: 200%;
+    color:red;
+    border: 2px solid red ;
+    border-radius: 5px;
+    padding:10px 0;
+    width: 90%;
+    margin: auto;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.loginErrMsg::before{
+    content:'\274C';
+}

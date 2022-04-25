@@ -17,7 +17,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   const [quesTypeKey, setQuesTypeKey] = useState();
   
   async function fetchUnitInfo () {
-    let jsonObj = await nb_dataFetch('/unitInfo', true);
+    let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
     setSubjectBox(jsonObj["mathSubjectInfo"]);
     setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
     setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
@@ -42,7 +42,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
     } 
     let target = document.getElementById("thrUnit");
     let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
-    const jsonObj = await nb_dataFetch('/typeInfo?unitUniqNo='+unitUniqNo, true);
+    const jsonObj = await nb_dataFetch('/mathInfo/typeInfo?unitUniqNo='+unitUniqNo, true);
     setQuesTypeBox(jsonObj["mathTypeInfo"]);
     setQuesTypeKey(i);
       i++;
@@ -51,7 +51,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   useEffect((event) => {
     const asyncUseEffect = async () => {
       let unitTypeNo = updateModeUniqNo["updateModeUniqNo"].split(",");
-      const jsonObj = await nb_dataFetch('/typeInfo?unitUniqNo='+unitTypeNo[0], true);
+      const jsonObj = await nb_dataFetch('/mathInfo/typeInfo?unitUniqNo='+unitTypeNo[0], true);
       setQuesTypeBox(jsonObj["mathTypeInfo"]);
       setQuesTypeKey(i);
       await reg_selectTypeData("quesType", "cusSelQuesTypeTitle",  "cusSelQuesTypeDiv", unitTypeNo[1]);
