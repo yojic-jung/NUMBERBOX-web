@@ -3,6 +3,7 @@ export const nb_isLogin = () => {
   return isLogin;
 }
 
+//매니저 권한 임시 구현
 export const nb_isManger = () => {
   let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
   let isManger =false;
@@ -42,10 +43,12 @@ export const nb_dataFetch = async (url, transitEffect) => {
   .then(async (response) => {
     if(response.headers.get("access-token") !== null){
       window.localStorage.setItem("access-token", response.headers.get("access-token"));
+      //매니저 권한 임시 구현
       window.localStorage.setItem("role", response.headers.get("role"));
     }else if(response.headers.get("tokenExpired") !== null) {
       alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
       window.localStorage.setItem("access-token", null);
+      //매니저 권한 임시 구현
       window.localStorage.setItem("role", null);
       document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       window.location.href = "/";
@@ -84,10 +87,12 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     .then(async (response) => {
       if(response.headers.get("access-token") !== null) {
         window.localStorage.setItem("access-token", response.headers.get("access-token"));
+        //매니저 권한 임시 구현
         window.localStorage.setItem("role", response.headers.get("role"));
       }else if(response.headers.get("tokenExpired") !== null) {
         alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
         window.localStorage.setItem("access-token", null);
+        //매니저 권한 임시 구현
         window.localStorage.setItem("role", null);
         document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.href = "/";
@@ -130,6 +135,7 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
       .then(async (response) => {
         if(response.headers.get("access-token") !== null){
           window.localStorage.setItem("access-token", response.headers.get("access-token"));
+          //매니저 권한 임시 구현
           window.localStorage.setItem("role", response.headers.get("role"));
         }
         return response.text();
