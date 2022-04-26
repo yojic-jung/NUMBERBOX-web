@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useEffect } from 'react';
 import {Link} from "react-router-dom";
-import {nb_isLogin} from 'js/common/common_nb.js';
+import {nb_isLogin, nb_isManger, nb_isAdmin} from 'js/common/common_nb.js';
 
 const TopMenuBar = (isMain)=>{
+    
+    useEffect((event) => {
+        window.addEventListener("click", closeMyServiceTap);
+    });
+
     let titleClass = "menu-title";
     let listClass = "menu-list";
     if(isMain.isMain){
@@ -19,8 +24,29 @@ const TopMenuBar = (isMain)=>{
         window.location.href="/";
     }
 
+    const closeMyServiceTap = async(event) => {
+        if(event.target.id === "myService-wrap") return;
+        let myServiceTap = document.getElementsByClassName("myService-list")[0];
+        if(myServiceTap !== undefined){
+            myServiceTap.classList.add("hide");;
+        }
+    }
+
+    const activeMyServiceTap = async() => {
+        let myServiceTap = document.getElementsByClassName("myService-list")[0];
+        let isHide = myServiceTap.classList.contains("hide");
+        if(isHide){
+            myServiceTap.classList.remove("hide");
+        }else{
+            myServiceTap.classList.add("hide");
+        }
+    }
+
     let isLogin = nb_isLogin();
+    let isManger = nb_isManger();
+    let isAdmin = nb_isAdmin();
 return (
+    <>
     <div className='top-div'>
         <div className='bi-jutify-align'>
             <div className={titleClass}><Link className='linkNoneCss' to="/">넘버링크</Link></div>
@@ -31,15 +57,44 @@ return (
                             <td><Link className='linkNoneCss signLoginBtn' to="/login">로그인/회원가입</Link></td>
                         </tr>}
                         {isLogin && <tr>
-                            <td><Link className='linkNoneCss' to="/workContentsList">작업내역</Link></td>
-                            <td><Link className='linkNoneCss' to="/registerContents">문제만들기</Link></td>
-                            <td><span className='pointer' onClick={()=>logoutFunction()}>로그아웃</span></td>
+                            <td>학습지생성</td>
+                            <td>문제검색</td>
+                            <td>문제만들기</td>
+                            <td>도형만들기</td>
+                            <td>컨텐츠공유</td>
+                            <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
+                                <span id="myService" className="myService" ></span>
+                                <ul className="myService-list hide">
+                                    <li>프로필</li>
+                                    <li>나의 저장소</li>
+                                    <li>나의 제작문제</li>
+                                    <li>나의 학습지</li>
+                                    <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
+                                </ul>
+                            </td>
                         </tr>}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    {isManger && <div className='manager-menu'>
+        <div className='bi-jutify-align'>
+            <div>매니저 메뉴</div>
+            <div>
+                <table className='menu-list-table'>
+                    <tbody>
+                        <tr>
+                            <td><Link className='manager-link' to="/workContentsList">작업내역</Link></td>
+                            <td><Link className='manager-link' to="/registerContents">문제만들기</Link></td>
+                            {isAdmin && <td>컨텐츠등록</td>}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>}
+    </>
     )
 }
 

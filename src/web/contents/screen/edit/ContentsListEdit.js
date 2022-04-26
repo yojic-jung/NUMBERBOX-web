@@ -136,14 +136,6 @@ const ContentsListEdit = ()=>{
         }, [contentsList]);
 
 
-        const searchMyWorkListByEnter = async function(event){
-            if(event.keyCode === 13){
-                event.preventDefault();
-                await searchMyWorkList(false);
-                
-            }
-        }
-
         const searchMyWorkList = async function(hasNotiPhrases){
             let customSubject = document.getElementById("cusSelSubTitle");
             let subject = document.getElementById("subject");
@@ -331,7 +323,7 @@ const ContentsListEdit = ()=>{
                         <form method="post" id="workSearchForm">
                             <div id="workListUnitType" className='workListUnitType'>
                                 <div className='mini-title5'>
-                                    &nbsp; 단원정보를 선택하여 나의 문제를 확인 해보세요. 
+                                    &nbsp; 단원정보를 선택하여 원하는 문제를 찾아보세요.
                                 </div>
                                 <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
                                 <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelFirUnit" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -358,7 +350,7 @@ const ContentsListEdit = ()=>{
                 </div>
             }
                     <div id="freshImgPage" className='freshImgPage'>
-                        <div id="searchDesc" className='mini-title5'>내가 만든 문제를 검색 해보세요.</div>
+                        <div id="searchDesc" className='mini-title5'>넘버링크는 사용자와 함께 컨텐츠를 만들어 나갑니다.</div>
                         <img className="" src="/webapp/static/nbImg/paper.gif" alt="" />
                     </div> 
             <div id="outerFormulaEditor" className='fixedBox hide'>

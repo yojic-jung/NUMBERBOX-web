@@ -16,6 +16,7 @@
     margin: auto;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .menu-title{
     font-family: 'TmoneyRoundWindExtraBold';
@@ -27,7 +28,7 @@
 
 .menu-title-etc{
     font-family: 'TmoneyRoundWindExtraBold';
-    font-size: 25px;
+    font-size: 20px;
     color:#3e6599;
     padding: 10px 0;
     text-align: center;
@@ -118,4 +119,48 @@
     font-family: 'jejuGothic';
     line-height: 160%;
     color:white;
+}
+
+.myService-wrap{
+    cursor: pointer;
+    position: relative;
+    background:url("img/defaultProfile.png") no-repeat;
+    background-size: 25px;
+    width:25px;
+    height:25px;
+}
+
+.myService-list{
+    position: absolute;
+    top:20px;
+    right: 0px;
+    font-size:12px;
+    width:110px;
+    list-style: none;
+    padding: 8px 0;
+    line-height: 250%;;
+    text-align: left;
+    border: 0.0625rem solid #e1e1e1;
+    border-radius: 5px;
+    box-shadow: 0 0 0.625rem 0 rgb(0 0 0 / 10%);
+    background-color: white;
+    z-index: 10;
+}
+.myService-list li{
+    text-indent: 10px;
+}
+.myService-list li:hover{
+    cursor: pointer;
+    background-color: rgb(236, 239, 244);
+}
+
+.manager-menu{
+    cursor: default;
+    color:white;
+    background-color: rgb(67, 67, 67);
+}
+
+.manager-link{
+    color:white;
+    text-decoration: none;
 }

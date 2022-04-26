@@ -3,6 +3,24 @@ export const nb_isLogin = () => {
   return isLogin;
 }
 
+export const nb_isManger = () => {
+  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isManger =false;
+  if(isLogin){
+    isManger = window.localStorage.getItem("role") === "MANAGER" || window.localStorage.getItem("role") === "ADMIN" ;
+  }
+  return isManger;
+}
+
+export const nb_isAdmin = () => {
+  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isAdmin =false;
+  if(isLogin){
+    isAdmin = window.localStorage.getItem("role") === "ADMIN";
+  }
+  return isAdmin;
+}
+
 /*
  * 정의 : web에서 was의 data를 fetch하는 공통 함수
  * 설명 : transitEffect는 spinner 효과 사용여부 판단
@@ -24,9 +42,11 @@ export const nb_dataFetch = async (url, transitEffect) => {
   .then(async (response) => {
     if(response.headers.get("access-token") !== null){
       window.localStorage.setItem("access-token", response.headers.get("access-token"));
+      window.localStorage.setItem("role", response.headers.get("role"));
     }else if(response.headers.get("tokenExpired") !== null) {
       alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
       window.localStorage.setItem("access-token", null);
+      window.localStorage.setItem("role", null);
       document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       window.location.href = "/";
     }
@@ -64,9 +84,11 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     .then(async (response) => {
       if(response.headers.get("access-token") !== null) {
         window.localStorage.setItem("access-token", response.headers.get("access-token"));
+        window.localStorage.setItem("role", response.headers.get("role"));
       }else if(response.headers.get("tokenExpired") !== null) {
         alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
         window.localStorage.setItem("access-token", null);
+        window.localStorage.setItem("role", null);
         document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         window.location.href = "/";
       }
@@ -108,6 +130,7 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
       .then(async (response) => {
         if(response.headers.get("access-token") !== null){
           window.localStorage.setItem("access-token", response.headers.get("access-token"));
+          window.localStorage.setItem("role", response.headers.get("role"));
         }
         return response.text();
       }).then(async (data) => {	
