@@ -111,7 +111,6 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 		if(updateModeUniqNo!==""){
 			let contentsNo = updateModeUniqNo.split(",");
 			formData.append("contentsNo", contentsNo[2]);
-			console.log(userNo);
 			formData.append("userNo", userNo);
 		}
 		// FormData의 값 확인

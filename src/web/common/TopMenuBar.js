@@ -43,6 +43,7 @@ const TopMenuBar = (isMain)=>{
     }
 
     let isLogin = nb_isLogin();
+    //매니저 권한 임시 구현
     let isManger = nb_isManger();
     let isAdmin = nb_isAdmin();
 return (

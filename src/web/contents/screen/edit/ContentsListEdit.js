@@ -255,7 +255,7 @@ const ContentsListEdit = ()=>{
                                                     <div><button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button></div>
                                                     <div>
                                                         원본교재: {contentsMap.originRef}, 원본문제: {contentsMap.originNo}, 난이도: {quesLevel}<br/>
-                                                        유형 : {contentsMap.mathTypeInfo.quesType}
+                                                        <span className='hide'>유형 : {contentsMap.mathTypeInfo.quesType}</span>
                                                     </div>
                                                 </div>
                                             </td>
