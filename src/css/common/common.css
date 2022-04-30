@@ -3,8 +3,12 @@
 .inBlock{
     display:inline-block;
 }
-
-
+.center{
+    text-align: center;
+}
+.relative{
+    position: relative;
+}
 .paddingLFive{
     padding-left: 5px;
 }

@@ -12,7 +12,7 @@
     position: relative;
 }
 
-.ggb-cus-btn, .ggb-cus-btn3{
+.ggb-cus-btn, .ggb-cus-btn3, .ggb-cus-btn-manual, .ggb-cus-btn3-manual{
     font-size:13px;
     font-family: 'jejuGothic';
     cursor: pointer;
@@ -31,13 +31,18 @@
     box-shadow: 0 2px 3px #ccc;
     position: relative;
 }
-.ggb-cus-btn3{
+.ggb-cus-btn3, .ggb-cus-btn3-manual{
     vertical-align: bottom;
     padding:2px 13px 11px 2px;
     font-size:10px;
     background:#1984c3 url("img/eraser.png") no-repeat;
     background-size: 22px;
     background-position: right top;
+}
+.ggb-cus-btn3-manual{
+    vertical-align: middle;
+    position: relative;
+    left:2px;
 }
   .ggb-cus-btn.nbCusActive,  .ggb-cus-btn3.nbCusActive{
     color:#0f5177;;
@@ -49,29 +54,59 @@
   .ggb-cus-desc{
     color:rgb(50, 107, 171);
     margin-left:20px;
-    position: absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%, -50%);
+}
+
+.ggb-cus-btn-manual, .ggb-cus-btn3-manual{
+    cursor: unset;
 }
 
 .btn2-wrap{
     position: absolute;
     right:10px;
 }
-.ggb-cus-btn2{
+.ggb-cus-btn2, .ggb-cus-btn2-manual{
     padding:10px;
     margin: 7px 10px;
     width:25px;
     height:25px;
 }
-#ggb-cus-goToPoint{
+#ggb-cus-goToPoint, .ggb-cus-btn2-manual.first{
     cursor: pointer;
     background:url("img/goToPoint.png") no-repeat;
     background-size: 22px;
     background-color: rgb(247, 247, 247);
     border: none;
 }
+#ggb-cus-zoomIn, .ggb-cus-btn2-manual.zoomIn{
+    cursor: pointer;
+    background:url("img/zoom-in.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+#ggb-cus-zoomOut, .ggb-cus-btn2-manual.zoomOut{
+    cursor: pointer;
+    background:url("img/zoom-out.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+
+#ggb-cus-zoomIn.nbCusActive{
+    cursor: pointer;
+    background:url("img/zoom-in-active.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+#ggb-cus-zoomOut.nbCusActive{
+    cursor: pointer;
+    background:url("img/zoom-out-active.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+
 #ggb-cus-capture{
     cursor: pointer;
     background:url("img/screenshot.png") no-repeat;
@@ -80,7 +115,7 @@
     border: none;
 }
 
-#ggb-cus-donwload{
+#ggb-cus-download, .ggb-cus-btn2-manual.down{
     cursor: pointer;
     background:url("img/download.png") no-repeat;
     background-size: 22px;
@@ -88,14 +123,17 @@
     border: none;
 }
 
-#ggb-cus-undo{
+#ggb-cus-undo, .ggb-cus-btn2-manual.undo{
     cursor: pointer;
     background:url("img/undo-button.png") no-repeat;
     background-size: 22px;
     background-color: rgb(247, 247, 247);
     border: none;
 }
-
+.ggb-cus-btn2-manual.first, .ggb-cus-btn2-manual.zoomIn, .ggb-cus-btn2-manual.zoomOut, .ggb-cus-btn2-manual.down, .ggb-cus-btn2-manual.undo{
+    background-color: white;
+    cursor: unset;
+}
 #ggb-cus-axesWrap{
     position: relative;
 }
@@ -220,6 +258,7 @@
 }
 
 .ggb-cus-sel2, .ggb-cus-sel3{
+    outline: none;
     font-size: 16px;
     color: gray;
     border: none;
@@ -365,4 +404,293 @@ body.edit_cursor {
 .descImg{
     background: url("img/labelDesc.PNG") no-repeat;
     background-size: 15px;
+}
+
+.zoomIn{
+    cursor: zoom-in;
+}
+.zoomOut{
+    cursor: zoom-out;
+}
+
+.ggb-cus-guide{
+    cursor:pointer;
+    vertical-align:text-top;
+    border: none;
+    margin: 0 0 0 5px;
+    width: 25px;
+    height: 25px;
+    background: url("img/ggb_guide.png") no-repeat;
+    background-size: 22px;
+}
+
+.ggbCustomGuide{
+    z-index: 99;
+    width: 500px;
+    height: 440px;
+    padding: 20px;
+    margin:auto;
+    box-shadow: 0 0 50px 0 rgb(0 0 0 / 30%);
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    background: white;
+}
+
+.ggb-guide-close-btn{
+    cursor: pointer;
+    float: right;
+    font-size: 30px;
+    color: gray;
+    position: relative;
+    top:-20px
+}
+
+.guide-ul{
+    font-family: 'jejuGothic';
+    word-break: keep-all;
+    list-style-type: none;
+    padding-left:20px;
+}
+
+.guide-ul li{
+    padding: 10px 0;
+    margin: 10px 0;
+    border-bottom: 1px solid gray;
+}
+.guide-shortcut-desc{
+    display: inline-block;
+    width: 350px;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+.ggb-shortcuts{
+    display: inline-block;
+    vertical-align:text-bottom;
+}
+
+.ggb-shortcuts.esc{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_esc.png") no-repeat;
+    background-size: 38px 38px;
+}
+.comma{
+    font-size: 25px;
+}
+
+.ggb-shortcuts.shift{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_shift.png") no-repeat;
+    background-size: 38px 38px;
+}
+.ggb-shortcuts.plus{
+    width: 20px;
+    height: 20px;
+    background: url("img/ggb_plus.png") no-repeat;
+    background-size: 20px 20px;
+    padding-bottom: 9px;
+    margin: 0 2px;
+}
+.ggb-shortcuts.arrow{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_arrows.png") no-repeat;
+    background-size: 38px 38px;
+}
+.ggb-shortcuts.rightClick{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_rightClick.png") no-repeat;
+    background-size: 38px 38px;
+}
+.ggb-shortcuts.mousewheel{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_mousewheel.png") no-repeat;
+    background-size: 38px 38px;
+}
+
+.ggb-shortcuts.del{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_delete.png") no-repeat;
+    background-size: 38px 38px;
+}
+
+.ggb-shortcuts.backspace{
+    width: 38px;
+    height: 38px;
+    background: url("img/ggb_backspace.png") no-repeat;
+    background-size: 38px 38px;
+}
+.ggbUseGuideTap{
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'jejuGothic';
+    color:gray;
+    font-size: 14px;
+}
+
+.ggbUseGuideTap.active{
+    font-weight: bold;
+    color:black;
+    font-size: 16px;
+}
+
+.ggbCusUseGuideTb{
+    margin: 20px 10px 0 10px;
+    font-size: 14px;
+    border-spacing:0;
+    padding: 0;
+    font-weight: 600;
+    border: 1px solid rgb(145, 130, 145);
+    color:rgb(145, 130, 145);
+    border-bottom: none;
+}
+.ggbCusUseGuideTb td{
+    cursor: pointer;
+    text-align: center;
+    padding:5px 15px;
+    border-right: 1px solid gray;
+}
+
+.ggbCusUseGuideTb td:last-child{
+    border-right: none;
+}
+
+.ggbCusUseGuideTb td.active{
+    background: rgb(145, 130, 145);
+    color:white;
+}
+.ggbCusUseGuideContents{
+    width: 460px;
+    height: 320px;
+    font-size: 14px;
+    line-height: 160%;
+    overflow-y: scroll;
+    border-collapse: collapse;
+    margin: 0px 10px;
+    border: 1px solid gray;
+    padding:10px
+}
+
+.graph-guide1{
+    margin-top: 5px;
+    display: inline-block;
+    width: 380px;
+    height: 50px;
+    background: url("img/ggb_graph_guide.png") no-repeat;
+    background-size: 400px 70px;
+}
+.graph-guide2{
+    margin-top: 5px;
+    vertical-align: text-top;
+    display: inline-block;
+    width: 28px;
+    height: 21px;
+    background: url("img/ggb_graph_guide2.png") no-repeat;
+    background-size: 28px 21px;
+    position: relative;
+    top:-10px;
+}
+.graph-guide3{
+    margin-top: 5px;
+    display: inline-block;
+    width: 400px;
+    height: 270px;
+    background: url("img/ggb_graph_guide3.png") no-repeat;
+    background-size: 380px 255px;
+}
+
+
+.text-guide1{
+    margin-top: 5px;
+    display: inline-block;
+    width: 360px;
+    height: 150px;
+    background: url("img/ggb_text_guide.png") no-repeat;
+    background-size: 380px 150px;
+}
+.text-guide2{
+    margin-top: 5px;
+    vertical-align: middle;
+    display: inline-block;
+    width: 315px;
+    height: 90px;
+    background: url("img/ggb_text_guide2.png") no-repeat;
+    background-size: 320px 90px;
+}
+
+.ggbCusUseGuideDesc{
+    position: relative;
+    font-family: 'jejuGothic';
+    word-break:keep-all;
+    margin: 10px 0 40px 20px;
+}
+
+.ggbCusUseGuideDesc.first::before, .ggbCusUseGuideDesc.second::before, .ggbCusUseGuideDesc.third::before{
+    position: absolute;
+    top:1px;
+    left:-23px;
+    font-size: .8em;
+    width: 1em;
+    border-radius: 3em;
+    padding: .1em  .2em;
+    line-height: 1.25em;
+    border: 1px solid rgb(145, 130, 145);
+    background:rgb(145, 130, 145);
+    color: white;
+    display: inline-block;
+    text-align: center;
+}
+
+.ggbCusUseGuideDesc.first::before{
+    content: '1';
+}
+
+.ggbCusUseGuideDesc.second::before{
+    content: '2';
+}
+
+.ggbCusUseGuideDesc.third::before{
+    content: '3';
+}
+
+.btnGuideTitle{
+    font-size: 14px;
+    margin:0px 0 5px 5px;
+    color:rgb(116, 108, 116);
+    font-weight: bold;
+}
+.btnGuideTitle2{
+    font-size: 14px;
+    margin:20px 0 5px 5px;
+    color:rgb(116, 108, 116);
+    font-weight: bold;
+}
+.ggbCusBtnGuideWrap{
+    font-family: 'jejuGothic';
+}
+
+.btnGuide-table{
+    border-spacing: 15px 0;
+    width: 400px;
+    margin:auto;
+    text-align: center;
+}
+
+.ggb-cus-semiTitle{
+    margin: 10px 0;
+    color:rgb(168, 64, 64);
+}
+
+.xAxes-self-arrow{
+    cursor: pointer;
+    position: absolute;
+    top:-5px;
+    left: 110px;
+    color: dimgray;
 }
