@@ -8,6 +8,7 @@ import RegisterContents from 'web/contents/register/RegisterContents'
 import ContentsListEdit from 'web/contents/screen/edit/ContentsListEdit'
 import NotFound from 'web/page/NotFound'
 import {nb_isLogin} from 'js/common/common_nb.js';
+import GraphMake from 'web/contents/contentsFileMenu/GraphMake';
 
 const App = ()=>{
   return (
@@ -20,6 +21,7 @@ const App = ()=>{
             <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login" />} />
             <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents /> : <Navigate to="/login" />} />
             <Route exact path="/workContentsList" element={nb_isLogin()  ? <ContentsListEdit /> : <Navigate to="/login" />} />
+            <Route exact path="/contensFileMenu" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
             <Route exact path={"*"} element={<NotFound />} />
         </Routes>
       </BrowserRouter>

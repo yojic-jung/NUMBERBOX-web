@@ -1,0 +1,368 @@
+.ggb-wrap{
+    width:1200px;
+    margin:auto;
+}
+.ggb-custom-menu{
+    font-family: 'jejuGothic';
+    width:1198px;
+    margin:auto;
+    background-color: rgb(247, 247, 247);
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    position: relative;
+}
+
+.ggb-cus-btn, .ggb-cus-btn3{
+    font-size:13px;
+    font-family: 'jejuGothic';
+    cursor: pointer;
+    margin:5px;
+    padding:5px 10px;
+    display: inline-block;
+    background-color: #1984c3;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 0.5em;
+    border-bottom: 4px solid #0f5177;
+    -moz-transition: 0.1s;
+    -webkit-transition: 0.1s;
+    transition: 0.1s;
+    box-shadow: 0 2px 3px #ccc;
+    position: relative;
+}
+.ggb-cus-btn3{
+    vertical-align: bottom;
+    padding:2px 13px 11px 2px;
+    font-size:10px;
+    background:#1984c3 url("img/eraser.png") no-repeat;
+    background-size: 22px;
+    background-position: right top;
+}
+  .ggb-cus-btn.nbCusActive,  .ggb-cus-btn3.nbCusActive{
+    color:#0f5177;;
+    background-color: #cbe6f6;
+    border-bottom-width: 0;
+    position: relative;
+    top: 2px;
+  }
+  .ggb-cus-desc{
+    color:rgb(50, 107, 171);
+    margin-left:20px;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn2-wrap{
+    position: absolute;
+    right:10px;
+}
+.ggb-cus-btn2{
+    padding:10px;
+    margin: 7px 10px;
+    width:25px;
+    height:25px;
+}
+#ggb-cus-goToPoint{
+    cursor: pointer;
+    background:url("img/goToPoint.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+#ggb-cus-capture{
+    cursor: pointer;
+    background:url("img/screenshot.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+
+#ggb-cus-donwload{
+    cursor: pointer;
+    background:url("img/download.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+
+#ggb-cus-undo{
+    cursor: pointer;
+    background:url("img/undo-button.png") no-repeat;
+    background-size: 22px;
+    background-color: rgb(247, 247, 247);
+    border: none;
+}
+
+#ggb-cus-axesWrap{
+    position: relative;
+}
+.ggb-cus-axesOption{
+    color: #0e3863;
+    line-height: 250%;
+    width:130px;
+    position: absolute;
+    top:15px;
+    left: 0;
+    list-style-type: none;
+    padding: 8px 0;
+    z-index: 99;
+    border: 0.0625rem solid #e1e1e1;
+    border-radius: 5px;
+    box-shadow: 0 0 0.625rem 0 rgb(0 0 0 / 10%);
+    background-color: #f8fcff;
+    font-size: 12px;
+}
+
+.ggb-cus-axesOption li:first-child{
+    border-top: 0.5px solid rgb(221, 219, 219);
+}
+.ggb-cus-axesOption li {
+    text-indent: 5px;
+    border-bottom: 0.5px solid rgb(221, 219, 219);
+}
+
+.ggb-cus-axesOption li:hover {
+    cursor: pointer;
+    background-color: rgb(236, 239, 244);
+}
+
+.ggb-cus-sel{
+    font-family: 'jejuGothic';
+    cursor: pointer;
+    margin:5px;
+    padding:5px 15px 5px 5px;
+    background: white;
+    border: 2px solid gray;
+    border-radius: 5px;
+    position: relative;
+    top:1px;
+    text-align: left;
+}
+.ggb-cus-sel::before{
+    content: '\02C5';
+    position: absolute;
+    top:5px;
+    right: 5px;
+}
+
+.cusAxesPop{
+    z-index: 99;
+    width: 500px;
+    padding-top: 20px;
+    margin:auto;
+    box-shadow: 0 0 50px 0 rgb(0 0 0 / 30%);
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    background: white;
+}
+
+.cusAxesPopTitle{
+    min-height: 20px;
+    font-size: 125%;
+    margin-bottom: 20px;
+    margin-left: 24px;
+    color: rgba(0,0,0,.87);
+}
+.cusAxesPopBtnDiv{
+    display: inline-flex;
+    padding: 8px 8px 8px 24px;
+    position: relative;
+    float: right;
+}
+
+
+.cusAxesPopBtn{
+    display: inline-block;
+    min-width: 64px;
+    height: 36px;
+    background: transparent;
+    color: var(--ggb-primary-color);
+    font-size: 90%;
+    letter-spacing: .04em;
+    line-height: 36px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 0px 8px;
+    margin-left: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.cusAxesPopBtn.ok{
+    padding: 0px 16px;
+    background-color: rgb(99, 86, 207);
+    color: #fff;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+}
+.cusAxesPopBtn.cancel{
+    height: 32px;
+    line-height: 32px;
+    padding: 0px 16px;
+    color: rgba(0,0,0,.54);
+}
+.cusAxesPopBtn.ok:hover{
+    box-shadow: 0px 0px 5px 2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+}
+.cusAxesPopBtn.cancel:hover{
+    color: #6b6b6b;
+    background-color: #eee;
+}
+
+.cusAxesPopContents{
+    font-size: 18px;
+    text-align: center;
+    margin:30px 0;
+}
+
+.ggb-cus-sel2, .ggb-cus-sel3{
+    font-size: 16px;
+    color: gray;
+    border: none;
+    border-bottom: 1px solid gray;
+    width: 110px;
+    margin:0 50px 0 15px;
+}
+
+.ggb-cus-sel3{
+    margin:0 30px 0 15px;
+    font-size: 14px;
+    width: 120px;
+}
+
+.radioWrap{
+    font-size:15px;
+    margin:0 auto 15px auto;
+}
+.radioLabel{
+    width: 100px;
+    text-align: center;
+    border: 0.5px solid gray;
+    background: rgb(248, 248, 248);
+    display: inline-block;
+    padding: 5px 0;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.radioLabel.first{
+    border-right: none;
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+
+}
+input:checked+label {
+    color:white;
+    background: rgb(79, 143, 217);
+    border:0.5px solid  rgb(79, 143, 217);
+}
+
+.ggb-cus-gridHide, .ggb-cus-gridShow{
+    display: inline-block;
+    width:30px;
+    height:30px;
+}
+
+.ggb-cus-gridOption{
+    width:80px;
+    padding: 5px;
+    position: absolute;
+    top:25px;
+    left: 0;
+    z-index: 99;
+    border: 0.0625rem solid #e1e1e1;
+    border-radius: 5px;
+    box-shadow: 0 0 0.625rem 0 rgb(0 0 0 / 10%);
+    background-color: #f8fcff;
+    text-align: center;
+}
+
+.ggb-cus-gridHide{
+    cursor: pointer;
+    background-color: white;
+    border:1px solid gray;
+    border-radius: 5px;
+    margin-right:5px
+}
+
+.ggb-cus-gridShow{
+    cursor: pointer;
+    border:1px solid gray;
+    border-radius: 5px;
+    background:url("img/grid.png") no-repeat;
+    background-size: 30px;
+}
+
+.preventPanel{
+    position: absolute;
+    top:0;
+    left:0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background:white;
+}
+
+.ggb-cus-axesOption-btn{
+    display: inline-block;
+    width: 100%;
+}
+
+.force-hide{
+    display: none !important;
+}
+
+
+
+/* 캡쳐 시 배경 어둡게 */ 
+#screenshot_background { 
+    width: 100%; 
+    height: 100%; 
+    position: fixed;
+    top: 0px; 
+    left: 0px; 
+    display: block; 
+    opacity: 0.3; 
+    text-align: center;
+     box-sizing: border-box; z-index: 2147483647; border-color: black; border-style: solid; } 
+/* 캡쳐 영역만 밝게 하기 위한 요소 */ 
+#screenshot:before, #screenshot:after {
+    border: none !important; 
+    content: "" !important; 
+    height: 100% !important; 
+    position: absolute !important; 
+    width: 100% !important 
+} 
+#screenshot:before { 
+    border-right: 1px solid white !important; 
+    border-bottom: 1px solid white !important; 
+    left: -100% !important; top: -100% !important 
+}
+ #screenshot:after { border-top: 1px solid white !important; 
+    border-left: 1px solid white !important; 
+    left: 0 !important; top: 0 !important 
+} 
+#screenshot {
+     height: 100% !important; 
+     position: fixed !important; 
+     width: 100% !important; 
+     z-index: 2147483648 !important 
+} 
+/* 캡쳐 시 마우스 커서 모양 변경 */ 
+body.edit_cursor { 
+    cursor: crosshair; 
+}
+
+.redbox{
+    color:rgb(240, 132, 44);
+}
+
+.descImg{
+    background: url("img/labelDesc.PNG") no-repeat;
+    background-size: 15px;
+}
