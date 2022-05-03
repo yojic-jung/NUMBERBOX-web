@@ -209,7 +209,7 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 				
 				<div>
 					<CustomSelBoxUp value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxUp>
-					<CustomSelBoxUp value={[{"value":"쎈수학", "originVal":"쎈수학"}, {"value":"RPM", "originVal":"RPM"}]} cusSelId="cusOrgRefSel" originSel="originRef" title="원본교재"></CustomSelBoxUp>
+					<CustomSelBoxUp value={[{"value":"쎈수학", "originVal":"쎈수학"}, {"value":"RPM", "originVal":"RPM"},{"value":"수학의 힘(베타)", "originVal":"수학의 힘(베타)"}]} cusSelId="cusOrgRefSel" originSel="originRef" title="원본교재"></CustomSelBoxUp>
 
 					<input id="originNo" name ="originNo" type="number" className="customBlueBox" placeholder="원본 문제 번호" onBlur={event => nb_completeBlueBox(event, 1)} />
 					

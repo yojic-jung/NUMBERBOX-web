@@ -458,6 +458,11 @@
     margin-top:2px;
 }
 
+/** 분모에 있는 선분, 직선 겹쳐보이는 문제 해결**/
+.nbDenom .nbOverlineBox, .nbDenom .nbArrowBox{
+    margin:2px 2px 0 2px;
+}
+
 /** 선분, 직선**/
 .nbOverlineBox, .nbArrowBox{
     vertical-align: text-bottom;
