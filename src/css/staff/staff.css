@@ -236,13 +236,6 @@
     right: -0.2em;
 }
 
-.shortCutKey .nbLeftArrowBase::before{
-    content:'\276E';
-    font-size: 0.5em;;
-    position:absolute;
-    top:-1.1em;
-    left: -0.2em;
-}
 
 .shortCutKey .nbBiDirArrowBase::after{
     content:'\276F';
@@ -405,12 +398,18 @@
 }
 
 
-.shortCutKey .nbOverlineBase, .shortCutKey .nbRightArrowBase, .shortCutKey .nbLeftArrowBase, .shortCutKey .nbBiDirArrowBase{
+.shortCutKey .nbOverlineBase, .shortCutKey .nbRightArrowBase,   .shortCutKey .nbBiDirArrowBase{
     border-top:1px solid white;
 }
-.keySpan:hover .shortCutKey .nbOverlineBase, .keySpan:hover .shortCutKey .nbRightArrowBase, .keySpan:hover .shortCutKey .nbLeftArrowBase, .keySpan:hover .shortCutKey .nbBiDirArrowBase{
+
+.shortCutKey .nbArcBase{
+height: 1.6em;
+}
+
+.keySpan:hover .shortCutKey .nbOverlineBase, .keySpan:hover .shortCutKey .nbRightArrowBase, .keySpan:hover .shortCutKey .nbBiDirArrowBase{
     border-top:1px solid rgb(20, 71, 101);
 }
+
 
 .shortCutKey .nbL-R-Brck, .shortCutKey .nbR-R-Brck, .shortCutKey .nbL-C-Brck, .shortCutKey .nbR-C-Brck, 
 .shortCutKey .nbL-S-Brck, .shortCutKey .nbR-S-Brck{
