@@ -543,7 +543,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.getElementById(document.activeElement.id).innerHTML === "" || document.getElementById(document.activeElement.id).innerHTML === "<br>"){
 			document.getElementById(document.activeElement.id).innerHTML = "<div><br></div>"
@@ -679,7 +678,6 @@ export const reg_preventKeyEvent = async (event) => {
 	} 
 	//[end]
 
-	
 	//3번 
 	//수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택 , yellow 요소 전체 입혀줘야함
 	if(userKeyCode === 8 || userKeyCode === 46 ){
@@ -714,14 +712,16 @@ export const reg_preventKeyEvent = async (event) => {
 						//document.getSelection().getRangeAt(0).selectNode(nbBoxDom);
 						let childTd = nbBoxDom.querySelectorAll('td');
 						for(let i=0; i<childTd.length; i++){
-							childTd[0].classList.add('yellowBorderBox');
+							childTd[i].classList.add('yellowBorderBox');
 						}
-						if(window.getSelection().isCollapsed) event.preventDefault();
+						event.preventDefault();
 					}
 				}
 			}
 		}
 	}
+
+
 	//4번, validation 순서 바뀌어도 되는 독립적인 로직
 	//테이블의 셀에 포커스가 있을때 탭 누르면 다음 셀로 이동
 	if(userKeyCode===9){
@@ -1217,7 +1217,6 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 				}
 				document.execCommand("insertHTML", false , nbGrammer);
-				
 				//아래 명령어 사용하면 위에 명령어 필요 없음. 단, 포커스 다시 잡아줘야함, 깜빡임도 심함
 				//document.execCommand("insertHTML", false , "<span class='tmpReGenerBugFix'>.</span>"+nbGrammer+"<span class='tmpReGenerBugFix2'>.</span>");
 
@@ -1236,11 +1235,11 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 	
 					//연립방정식은 제일 첫번째 borderBox에 포커스
-					if(focusNbBorderBox.classList.contains("nbThrCaseThr")){
+					if(focusNbBorderBox.classList.contains("nbThrCaseThr") && nbGrammer.indexOf("nbThrCaseThr") > -1){
 						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
 						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
 	
-					}else if(focusNbBorderBox.classList.contains("nbCaseSec")){
+					}else if(focusNbBorderBox.classList.contains("nbCaseSec") && nbGrammer.indexOf("nbCaseSec") > -1){
 						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
 						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
 					}
@@ -1250,8 +1249,6 @@ export const reg_preventKeyEvent = async (event) => {
 		event.preventDefault();
 	}
 
-
-	
 
 	setTimeout(function(){
 		let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
@@ -1675,11 +1672,35 @@ export const reg_selectFormulaElement = async (event) => {
 					isAllSel=true;
 				}else if(strtContainer.classList !== undefined && endContainer.classList !== undefined &&
 					strtContainer.classList.contains('nbNumer') && endContainer.classList.contains('nbDenom')){
+						isAllSel=true;
+				}
+				//순열과 조합 선택요소 다르면 전체 선택
+				else if( (strtParElement.closest('.nbLeftSub') !== null && endParElement.closest('.nbBiDirSubBase') !== null) 
+				|| (strtParElement.closest('.nbLeftSub') !== null && endParElement.closest('.nbRightSub') !== null)
+				|| (strtParElement.closest('.nbBiDirSubBase') !== null && endParElement.closest('.nbRightSub') !== null) ){
 					isAllSel=true;
+				}
+				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
+					(  (strtContainer.classList.contains('nbLeftSub') && endContainer.classList.contains('nbBiDirSubBase'))
+					|| (strtContainer.classList.contains('nbLeftSub') && endContainer.classList.contains('nbRightSub'))
+					|| (strtContainer.classList.contains('nbBiDirSubBase') && endContainer.classList.contains('nbRightSub')) ) ){
+						isAllSel=true;
+				}
+				//이항계수 케이스 다르면 전체 선택
+				else if(strtParElement.closest('.nbBinomCoFir') !== null && endParElement.closest('.nbBinomCoSec') !== null){
+					isAllSel=true;
+				}
+				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
+					  (strtContainer.classList.contains('nbBinomCoFir') && endContainer.classList.contains('nbBinomCoSec')) ){
+						isAllSel=true;
 				}
 				//경우의 수 케이스 다르면 전체 선택
 				else if(strtParElement.closest('.nbCaseFir') !== null && endParElement.closest('.nbCaseSec') !== null){
 					isAllSel=true;
+				}
+				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
+					(  (strtContainer.classList.contains('nbCaseFir') && endContainer.classList.contains('nbCaseSec'))) ){
+						isAllSel=true;
 				}
 				//세가지 경우의 수 케이스 다르면 전체 선택
 				else if( (strtParElement.closest('.nbThrCaseFir') !== null && endParElement.closest('.nbThrCaseSec') !== null)
@@ -1687,7 +1708,13 @@ export const reg_selectFormulaElement = async (event) => {
 				|| (strtParElement.closest('.nbThrCaseSec') !== null && endParElement.closest('.nbThrCaseThr') !== null)){
 					isAllSel=true;
 				}
-				
+				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
+					(  (strtContainer.classList.contains('nbThrCaseFir') && endContainer.classList.contains('nbThrCaseSec'))
+					|| (strtContainer.classList.contains('nbThrCaseFir') && endContainer.classList.contains('nbThrCaseThr'))
+					|| (strtContainer.classList.contains('nbThrCaseSec') && endContainer.classList.contains('nbThrCaseThr')) ) ){
+						isAllSel=true;
+				}
+
 				let anchorNbRootBox = document.getSelection().anchorNode;
 				let focusNbRootBox = document.getSelection().focusNode;
 				if(anchorNbRootBox.classList !== undefined) anchorNbRootBox = anchorNbRootBox.closest(".nbBox");

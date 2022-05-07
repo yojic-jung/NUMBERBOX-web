@@ -401,10 +401,6 @@ body.edit_cursor {
     color:rgb(240, 132, 44);
 }
 
-.descImg{
-    background: url("img/labelDesc.PNG") no-repeat;
-    background-size: 15px;
-}
 
 .zoomIn{
     cursor: zoom-in;

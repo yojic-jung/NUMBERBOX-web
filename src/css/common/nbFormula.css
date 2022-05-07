@@ -107,6 +107,12 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'GowunDodum-Regular';
+    src:url('font/GowunDodum-Regular.ttf')
+    format('truetype');
+}
+
 .nbFomularEditor { 
     border: 1px solid gray; 
     padding:10px;
@@ -500,10 +506,12 @@
 
 .nbArcBase::before{
     content: ')';
+    font-family: 'GowunDodum-Regular';
+    font-size: 20px;
     position: absolute;
-    top:-0.4em;
+    top:-0.35em;
     left:50%;
-    transform:translateX(-40%) rotate(270deg);
+    transform:translateX(-50%) rotate(270deg);
 }
 
 .nbBiDirArrowBase::after{

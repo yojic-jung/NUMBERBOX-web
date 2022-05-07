@@ -7,6 +7,7 @@ import "css/contentsFile/contentsFile.css";
 
 const GraphMake = ()=>{
     const [rendered, setRendered] = useState(false);	// 사용자 입력 문제
+    
     let api;
     const geoGebraCustomInit = ()=> {
         api = window.ggbApplet;
@@ -87,7 +88,7 @@ const GraphMake = ()=>{
                     nbCusActive[i].classList.remove("nbCusActive");
                 }
                 document.getElementById("ggb-cus-labelErase").classList.add("nbCusActive");
-                document.getElementById("ggb-cus-desc").innerHTML = "<span class='redbox'>도형 및 그래프를 클릭하여 <span class='descImg'>&nbsp;&nbsp;&nbsp;</span>레이블을 제거할 수 있습니다.</span>";
+                document.getElementById("ggb-cus-desc").innerHTML = "<span class='redbox'>도형 및 그래프를 클릭하여 레이블을 제거할 수 있습니다.</span>";
             }
         }else if(toolBarmode === 41){
             if(!document.getElementById("ggb-cus-zoomIn").classList.contains("nbCusActive")){

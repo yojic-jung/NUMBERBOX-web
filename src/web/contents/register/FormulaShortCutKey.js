@@ -124,20 +124,20 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 window.getSelection().addRange(newRange);
                 let tmpNode= document.createElement('span');
                 tmpNode.innerHTML = "&nbsp;"
-                tmpNode.className = "tmpReGenerBugFix"
+                tmpNode.className = "tmpReGenerBugFix";
                 let tmpNode2= document.createElement('span');
                 tmpNode2.innerHTML = "&nbsp;"
                 tmpNode2.className = "tmpReGenerBugFix2"
                 newRange.insertNode(tmpNode2);
                 newRange.insertNode(tmpNode);
-                newRange.selectNode(tmpNode2)
+                newRange.selectNode(tmpNode2);
             }else{
                 let strtContainer = window.getSelection().getRangeAt(0).startContainer;
                 if(window.getSelection().getRangeAt(0).startContainer.classList !== undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer;
                 strtContainer = strtContainer.parentElement.closest("div");
                 let tmpNode= document.createElement('span');
-                tmpNode.innerHTML = "&nbsp;"
-                tmpNode.className = "tmpReGenerBugFix"
+                tmpNode.innerHTML = "&nbsp;";
+                tmpNode.className = "tmpReGenerBugFix";
                 strtContainer.prepend(tmpNode);
             }
 			document.execCommand("insertHTML", false ,nbGrammer);
@@ -166,11 +166,11 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                     }
                 }
 
-                if(focusNbBorderBox.classList.contains("nbThrCaseThr")){
+                if(focusNbBorderBox.classList.contains("nbThrCaseThr") && nbGrammer.indexOf("nbThrCaseThr") > -1){
                     window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
                     window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
 
-                }else if(focusNbBorderBox.classList.contains("nbCaseSec")){
+                }else if(focusNbBorderBox.classList.contains("nbCaseSec") && nbGrammer.indexOf("nbCaseSec") > -1){
                     window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
                     window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
                 }
