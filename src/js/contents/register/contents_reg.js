@@ -543,12 +543,12 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
+
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.getElementById(document.activeElement.id).innerHTML === "" || document.getElementById(document.activeElement.id).innerHTML === "<br>"){
 			document.getElementById(document.activeElement.id).innerHTML = "<div><br></div>"
 		}
 	}
-	
 
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
@@ -568,7 +568,7 @@ export const reg_preventKeyEvent = async (event) => {
 				window.getSelection().addRange(newRange);
 				let tmpNode= document.createElement('span');
 				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpFocuHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
+				tmpNode.className = "tmpFocusHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
 				newRange.insertNode(tmpNode);
 				return;
 			}
@@ -1249,7 +1249,6 @@ export const reg_preventKeyEvent = async (event) => {
 		event.preventDefault();
 	}
 
-
 	setTimeout(function(){
 		let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 		while (tmpReGenerBugFix.length > 0) {
@@ -1293,6 +1292,12 @@ export const reg_preventKeyEvent = async (event) => {
 			for(let i=0; i<nbSelectionTbTd.length; i++){
 					nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
 			}
+			
+			//한글 붙여넣기 오류 해결
+			if(!window.getSelection().isCollapsed){
+				window.getSelection().collapseToStart();
+			}
+			
 		}
 	}, 0);
 }
@@ -1920,8 +1925,8 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(event.keyCode === 229 && event.code === "Backspace"){
-		if(document.getElementsByClassName("tmpFocuHideBugFix")[0] !== undefined){
-			document.getElementsByClassName("tmpFocuHideBugFix")[0].remove()
+		if(document.getElementsByClassName("tmpFocusHideBugFix")[0] !== undefined){
+			document.getElementsByClassName("tmpFocusHideBugFix")[0].remove()
 		}
 	}
 	
@@ -2180,7 +2185,6 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 			
 		}
 	}
-
 
 } 
 
