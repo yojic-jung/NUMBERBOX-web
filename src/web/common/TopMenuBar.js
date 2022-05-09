@@ -61,7 +61,8 @@ return (
                             <td>학습지생성</td>
                             <td>문제검색</td>
                             <td>문제만들기</td>
-                            <td><Link className='linkNoneCss' to="/contensFileMenu">컨텐츠</Link></td>
+                            <td><Link className='linkNoneCss' to="/resourceFile">컨텐츠</Link></td>
+                            <td><Link className='linkNoneCss' to="/resourceTools">컨텐츠도구</Link></td>
                             <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
                                 <span id="myService" className="myService" ></span>
                                 <ul className="myService-list hide">
@@ -87,7 +88,7 @@ return (
                         <tr>
                             <td><Link className='manager-link' to="/workContentsList">작업내역</Link></td>
                             <td><Link className='manager-link' to="/registerContents">문제만들기</Link></td>
-                            {isAdmin && <td>컨텐츠등록</td>}
+                            {isAdmin && <td>컨텐츠 등록</td>}
                         </tr>
                     </tbody>
                 </table>

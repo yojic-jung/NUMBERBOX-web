@@ -3,7 +3,7 @@ import TopMenuBar from 'web/common/TopMenuBar';
 import Geogebra from 'react-geogebra';
 import "css/main/main.css";
 import "css/page/etcPage.css";
-import "css/contentsFile/contentsFile.css";
+import "css/resourceFile/resourceFile.css";
 
 const GraphMake = ()=>{
     const [rendered, setRendered] = useState(false);	// 사용자 입력 문제

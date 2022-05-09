@@ -261,9 +261,9 @@ export const nb_extensionCheck = async (event, outputTarget, updtMode) => {
      
     }
     // file[0].size 는 파일 용량 정보입니다.
-    if(file.size > 1024*1024*1){
+    if(file.size > 1024*1024*2){
       // 용량 초과시 경고후 해당 파일의 용량도 보여줌
-        alert("첨부파일 사이즈는 1MB 이내로 등록 가능합니다. ");
+        alert("첨부파일 사이즈는 2MB 이내로 등록 가능합니다. ");
         await nb_imgFileDel(outputTarget,targetId)
         return false;
     }

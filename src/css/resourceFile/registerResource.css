@@ -1,0 +1,145 @@
+.regResourceTb{
+    background-color: white;
+    line-height: 200%;
+    padding: 0 60px;
+    margin: 50px auto 0 auto;
+    border-spacing: 0px 25px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    
+}
+
+#mainCate, #midCate{
+    font-size: 16px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    width: 90%;
+    border: none;
+    border-bottom: 2px solid rgb(228, 228, 237);
+    outline:none !important;
+}
+
+#mainCate option, #midCate option{
+    color:black;
+}
+
+#description{
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 16px;
+    width: 230px;
+    height: 3em;
+    border-radius: 2px;
+    padding: 5px;
+    resize: none;
+    border: 2px solid rgb(228, 228, 237);
+    outline:none !important;
+}
+
+.regResTitle{
+    font-size: 16px;
+    width: 90%;
+    outline:none !important;
+    border-radius: 5px;
+    border: 0.5px solid gray;
+    padding: 5px;
+    border: none;
+    border-bottom: 2px solid rgb(228, 228, 237);
+}
+.submit-btn{
+    cursor: pointer;
+    text-align: center;
+    width: 90%;
+    margin: auto;
+    padding: 5px;
+    color: white;
+    background: rgb(55, 113, 178);
+    border: none;
+    border-radius: 5px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.regResTitle::placeholder{
+    color:rgb(197, 197, 208);
+}
+
+#description::placeholder{
+    color:rgb(197, 197, 208);
+}
+
+.regResDesc{
+    font-family: 'JejuGothic';
+    font-size: 20px;
+    text-align: center;
+    margin: 20px;
+}
+
+.redText2{
+    color:red;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.redBoxValid{
+    box-shadow: 0 0 4px red;
+}
+
+.bageText{
+    color: rgb(201, 201, 211);
+}
+
+.imgFileCustomDesc{
+    font-family: 'jejuGothic';
+    display: inline-block;
+    width: 120px;
+    line-height: 120%;
+    padding: 2px 10px;
+    border: 1px solid gray;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    text-align: center;
+    background:rgb(246, 244, 244);
+    color:rgb(208, 205, 205);
+    cursor: pointer;
+    font-size: 14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.imgFileCustomBtn{
+    overflow:hidden;
+    text-align: center;
+    font-family: 'jejuGothic';
+    cursor: pointer;
+    display: inline-block;
+    line-height: 120%;
+    width: 80px;
+    padding: 3px;
+    background:rgb(90, 134, 182);
+    color:white;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    font-size: 14px;
+}
+
+.imgFileCustomBtn2{
+    overflow:hidden;
+    text-align: center;
+    font-family: 'jejuGothic';
+    cursor: pointer;
+    display: inline-block;
+    line-height: 120%;
+    width: 80px;
+    padding: 3px;
+    background:rgb(220, 134, 134);
+    color:white;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    font-size: 14px;
+}
+
+#imgDiv, #pptDiv{
+    display: inline-block;
+    line-height: 100%;
+}
