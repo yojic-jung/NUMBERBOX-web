@@ -289,7 +289,7 @@ const GraphMake = ()=>{
             window.ggbApplet.undo();
         }else if(targetId === "ggb-cus-labelErase"){
             window.ggbApplet.setCustomToolBar("28");
-            document.getElementById("ggb-cus-desc").innerHTML = "<span class='redbox'>도형 및 그래프를 클릭하여 <span class='descImg'>&nbsp;&nbsp;&nbsp;</span>레이블을 제거할 수 있습니다.</span>";
+            document.getElementById("ggb-cus-desc").innerHTML = "<span class='redbox'>도형 및 그래프를 클릭하여 레이블을 제거할 수 있습니다.</span>";
         }else if(targetId === "ggb-cus-download"){
             window.ggbApplet.writePNGtoFile("myImage.png", 1, false, 72);
         }else if(targetId === "ggb-cus-gridShow"){

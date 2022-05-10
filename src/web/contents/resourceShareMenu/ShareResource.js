@@ -62,6 +62,7 @@ const ShareResource = ()=>{
                                     <span className='down-btn'></span>
                                     <span className='down-ppt-btn'></span>
                                 </div>
+                                <div className="img-title">{contentsMap.title}</div>
                                 <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
                             </div>);
                 }else{
@@ -69,6 +70,7 @@ const ShareResource = ()=>{
                                 <div className='res-over-lay'>
                                     <span className='down-btn'></span>
                                 </div>
+                                <div className="img-title">{contentsMap.title}</div>
                                 <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
                             </div>);
                 }

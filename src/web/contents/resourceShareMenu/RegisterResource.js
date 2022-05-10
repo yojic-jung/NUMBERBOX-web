@@ -122,8 +122,8 @@ const RegisterResource = () => {
         let formData = new FormData(document.getElementById("resourceForm"));
 
         let isValid = true;
-        if(formData.get("title").length === 0 || formData.get("title").length > 10){
-            document.getElementById("titleValDesc").innerText ="컨텐츠 타이틀을 입력해주세요.(10글자 미만)";
+        if(formData.get("title").length === 0 || formData.get("title").length > 15){
+            document.getElementById("titleValDesc").innerText ="컨텐츠 타이틀을 입력해주세요.(15글자 이하)";
             document.getElementById("title").classList.add("redBoxValid");
             isValid = false;
         }

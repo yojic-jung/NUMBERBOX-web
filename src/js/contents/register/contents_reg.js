@@ -1191,18 +1191,22 @@ export const reg_preventKeyEvent = async (event) => {
 							&& document.activeElement.childNodes[0].tagName === "DIV"){
 								document.activeElement.childNodes[0].prepend(tmpNode2);
 								document.activeElement.childNodes[0].prepend(tmpNode);
+						}else if( window.getSelection().getRangeAt(0).startContainer.tagName === "TR" && window.getSelection().getRangeAt(0).endContainer.tagName === "TR"
+						&& window.getSelection().getRangeAt(0).startOffset === 0 && window.getSelection().getRangeAt(0).endOffset === 0
+						&& window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd") !== null ){
+							window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode2);
+							window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode);
 						}else{
 							newRange.insertNode(tmpNode2);
 							newRange.insertNode(tmpNode);
 						}
-
 						//div 마지막이 수식인 경우 tmpReGenerBugFix가 이미 추가되어 있어 수식이 tmpReGenerBugFix안으로 들어가 입력되지 않고 삭제되어버리는 버그 해결
 						if(tmpNode2.nextSibling !== null && tmpNode2.nextSibling.classList !== undefined){
 							if(tmpNode2.nextSibling.classList.contains("tmpReGenerBugFix")){
 								tmpNode2.nextSibling.remove();
 							}
 						}
-						newRange.selectNode(tmpNode2)
+						newRange.selectNode(tmpNode2);
 					}
 				}else{
 					//div의 맨앞에 들어가면 줄바꿈 이루어져서 맨앞에 공백 추가

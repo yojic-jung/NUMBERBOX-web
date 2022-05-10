@@ -128,13 +128,33 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 let tmpNode2= document.createElement('span');
                 tmpNode2.innerHTML = "&nbsp;"
                 tmpNode2.className = "tmpReGenerBugFix2"
-                newRange.insertNode(tmpNode2);
-                newRange.insertNode(tmpNode);
+
+                if(newRange.commonAncestorContainer===document.activeElement && newRange.startOffset===0
+                    && newRange.endOffset===0 && document.activeElement.childNodes[0] !== undefined
+                    && document.activeElement.childNodes[0].tagName === "DIV"){
+                        document.activeElement.childNodes[0].prepend(tmpNode2);
+                        document.activeElement.childNodes[0].prepend(tmpNode);
+                }else if( window.getSelection().getRangeAt(0).startContainer.tagName === "TR" && window.getSelection().getRangeAt(0).endContainer.tagName === "TR"
+                && window.getSelection().getRangeAt(0).startOffset === 0 && window.getSelection().getRangeAt(0).endOffset === 0
+                && window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd") !== null ){
+                    window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode2);
+                    window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode);
+                }else{
+                    newRange.insertNode(tmpNode2);
+                    newRange.insertNode(tmpNode);
+                }
+                //div 마지막이 수식인 경우 tmpReGenerBugFix가 이미 추가되어 있어 수식이 tmpReGenerBugFix안으로 들어가 입력되지 않고 삭제되어버리는 버그 해결
+                if(tmpNode2.nextSibling !== null && tmpNode2.nextSibling.classList !== undefined){
+                    if(tmpNode2.nextSibling.classList.contains("tmpReGenerBugFix")){
+                        tmpNode2.nextSibling.remove();
+                    }
+                }
+
                 newRange.selectNode(tmpNode2);
             }else{
                 let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-                if(window.getSelection().getRangeAt(0).startContainer.classList !== undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer;
-                strtContainer = strtContainer.parentElement.closest("div");
+                if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
+                strtContainer = strtContainer.closest("div");
                 let tmpNode= document.createElement('span');
                 tmpNode.innerHTML = "&nbsp;";
                 tmpNode.className = "tmpReGenerBugFix";
@@ -166,6 +186,7 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                     }
                 }
 
+                //연립방정식은 제일 첫번째 borderBox에 포커스
                 if(focusNbBorderBox.classList.contains("nbThrCaseThr") && nbGrammer.indexOf("nbThrCaseThr") > -1){
                     window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
                     window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);

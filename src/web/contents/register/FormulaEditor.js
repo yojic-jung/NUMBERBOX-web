@@ -9,7 +9,7 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownT
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
-	,reg_tbPastePrevent} from 'js/contents/register/contents_reg';
+		,reg_tbPastePrevent} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
