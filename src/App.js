@@ -5,11 +5,12 @@ import Login from 'web/page/Login'
 import SignUp from 'web/page/SignUp'
 import RegisterQuestion from 'web/contents/register/RegisterQuestion'
 import RegisterContents from 'web/contents/register/RegisterContents'
-import RegisterResource from 'web/contents/register/RegisterResource'
+import RegisterResource from 'web/contents/resourceShareMenu/RegisterResource'
+import ShareResource from 'web/contents/resourceShareMenu/ShareResource'
 import ContentsListEdit from 'web/contents/screen/edit/ContentsListEdit'
 import NotFound from 'web/page/NotFound'
 import {nb_isLogin} from 'js/common/common_nb.js';
-import GraphMake from 'web/contents/resourceFileMenu/GraphMake';
+import GraphMake from 'web/contents/resourceShareMenu/GraphMake';
 
 const App = ()=>{
   return (
@@ -24,6 +25,7 @@ const App = ()=>{
             <Route exact path="/workContentsList" element={nb_isLogin()  ? <ContentsListEdit /> : <Navigate to="/login" />} />
             <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
             <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login" />} />
+            <Route exact path="/shareResource" element={<ShareResource />} />
             <Route exact path={"*"} element={<NotFound />} />
         </Routes>
       </BrowserRouter>

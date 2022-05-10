@@ -2,8 +2,9 @@
     background-color: white;
     line-height: 200%;
     padding: 0 60px;
-    margin: 50px auto 0 auto;
+    margin: 30px auto 0 auto;
     border-spacing: 0px 25px;
+    border-radius: 5px;
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';
     
 }
@@ -13,7 +14,7 @@
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';
     width: 90%;
     border: none;
-    border-bottom: 2px solid rgb(228, 228, 237);
+    border-bottom: 2px solid rgb(211, 211, 216);
     outline:none !important;
 }
 
@@ -29,7 +30,7 @@
     border-radius: 2px;
     padding: 5px;
     resize: none;
-    border: 2px solid rgb(228, 228, 237);
+    border: 2px solid rgb(211, 211, 216);
     outline:none !important;
 }
 
@@ -37,11 +38,10 @@
     font-size: 16px;
     width: 90%;
     outline:none !important;
-    border-radius: 5px;
     border: 0.5px solid gray;
     padding: 5px;
     border: none;
-    border-bottom: 2px solid rgb(228, 228, 237);
+    border-bottom: 2px solid rgb(211, 211, 216);
 }
 .submit-btn{
     cursor: pointer;
@@ -59,11 +59,11 @@
 }
 
 .regResTitle::placeholder{
-    color:rgb(197, 197, 208);
+    color:rgb(189, 189, 189);
 }
 
 #description::placeholder{
-    color:rgb(197, 197, 208);
+    color:rgb(189, 189, 189);
 }
 
 .regResDesc{
@@ -85,7 +85,7 @@
 }
 
 .bageText{
-    color: rgb(201, 201, 211);
+    color: rgb(189, 189, 189);
 }
 
 .imgFileCustomDesc{

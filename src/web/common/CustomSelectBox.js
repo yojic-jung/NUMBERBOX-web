@@ -16,9 +16,9 @@ const CustomSelectBox = ({id, className, name, firstVal, optList, val, parentKey
     
     return (
         <select id={id} name={name} className={className} onChange={changeHandler}>
-                <option key="001" value="0" className={displayMode}>{firstVal}</option>
+                <option key="uniq-0" value="0" className={displayMode}>{firstVal}</option>
 		        {uniqueArr.map((item, index)=>(
-			        <option className={displayMode} key={item.key} value={item[val]} data-parent-key={item[parentKey]}>{item[mainVal]}</option>
+			        <option className={displayMode} key={"uniq-"+index} value={item[val]} data-parent-key={item[parentKey]}>{item[mainVal]}</option>
 		        ))}
        </select>
     );

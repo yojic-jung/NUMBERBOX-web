@@ -61,8 +61,7 @@ return (
                             <td>학습지생성</td>
                             <td>문제검색</td>
                             <td>문제만들기</td>
-                            <td><Link className='linkNoneCss' to="/resourceFile">컨텐츠</Link></td>
-                            <td><Link className='linkNoneCss' to="/resourceTools">컨텐츠도구</Link></td>
+                            <td><Link className='linkNoneCss' to="/shareResource">컨텐츠</Link></td>
                             <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
                                 <span id="myService" className="myService" ></span>
                                 <ul className="myService-list hide">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TopMenuBar from 'web/common/TopMenuBar';
+import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import CustomSelectBox from 'web/common/CustomSelectBox';
 import {nb_dataFetch, nb_formDataFetch} from 'js/common/common_nb.js';
 import "css/resourceFile/registerResource.css";
@@ -10,8 +11,9 @@ const RegisterResource = () => {
 
     useEffect(() => {
         const asyncUseEffect = async function(){
-            let resourceMenu = await nb_dataFetch('/mathInfo/takeResource', true);
+            let resourceMenu = await nb_dataFetch('/mathInfo/takeResourceMenu', true);
             setMainCate(resourceMenu["resourceMenuList"]);
+            document.getElementById("registerResource").classList.add("active")
         }
         asyncUseEffect();
     }, []);
@@ -96,7 +98,6 @@ const RegisterResource = () => {
         }else{
             let fileNames = event.target.files[0].name.split(".");
             let filetype = fileNames[1].toUpperCase();
-             console.log(filetype);
             if(!(filetype === "PPT" || filetype==='PPTX' || filetype==='POT' || filetype==='PDF')){
                 alert("ppt 및 pdf 파일만 등록 가능합니다.(PPT, PPTX, POT, PDF 확장자만 가능)");
                 document.getElementById("pptFile").value = "";
@@ -165,9 +166,10 @@ const RegisterResource = () => {
     return (
         <>
         <TopMenuBar />
+        <ResourceMenuBar/>
         <div className='bage-ground'>
         <form method="post" id="resourceForm" encType="multipart/form-data">
-            <div className='center regResDesc'>사용자들과 공유할 컨텐츠를 등록해주세요.</div>
+            <div className='center regResDesc'>컨텐츠를 등록하여 사용자들과 함께 공유 해보세요!</div>
             <table className='regResourceTb'>
                 <tbody>
                     <tr>

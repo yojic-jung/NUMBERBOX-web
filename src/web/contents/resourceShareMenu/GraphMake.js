@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TopMenuBar from 'web/common/TopMenuBar';
+import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import Geogebra from 'react-geogebra';
 import "css/main/main.css";
 import "css/page/etcPage.css";
@@ -33,6 +34,7 @@ const GraphMake = ()=>{
         setRendered(true);
         window.addEventListener("click", closeAxesOptionTap);
         window.addEventListener("keyup", escMethod);
+        document.getElementById("resourceTools").classList.add("active")
         return () => removeAddedEvent();
     }, []);
 
@@ -366,6 +368,7 @@ const GraphMake = ()=>{
 return (
     <>    
         <TopMenuBar />
+        <ResourceMenuBar/>
         <div className='ggb-custom-menu'>
             <button id="ggb-cus-dot" className="ggb-cus-btn" type='button' onClick={(event)=>{ggbCustomEffect(event)}}>점</button>
             <button id="ggb-cus-line" className="ggb-cus-btn" type='button' onClick={(event)=>{ggbCustomEffect(event)}}>직선</button>

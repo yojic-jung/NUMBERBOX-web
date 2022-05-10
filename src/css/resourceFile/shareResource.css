@@ -1,0 +1,148 @@
+.resourceMenuWrap{
+    padding:10px;
+    background-color: rgb(11, 34, 57);
+}
+
+.resourceMenuDiv{
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 14px;
+    width: 900px;
+    margin: auto;
+}
+
+.resourceMenuBtn{
+    font-size: 16px;
+    color:rgb(221, 221, 221);
+    cursor: pointer;
+    margin:0 25px 0 10px;
+}
+
+.resourceMenuBtn.active{
+    color:white;
+    font-weight: bold;
+}
+
+.resourceMenuBtn:hover{
+    color:white;
+}
+
+.cateDiv{
+    margin:20px auto 10px auto;
+    padding:0px 50px;
+    border-bottom: 1px solid rgb(146, 146, 147);;
+}
+
+
+
+.cateMenu{
+    cursor: pointer;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 14px;
+    display: inline-block;
+    font-weight: bold;
+    color : rgb(103, 119, 157);
+    padding: 10px;
+}  
+
+.cateMenu.active{
+    color : rgb(24, 41, 82);
+    border-bottom: 3px solid rgb(24, 41, 82);;
+}
+
+.cateMenu:hover{
+    color : rgb(24, 41, 82);
+}
+
+.cateWrap{
+    background: rgb(231, 236, 240);
+}
+
+.res-div{
+    position: relative;
+}
+.resWrap{
+    display: grid;
+    padding:10px 0;
+    gap: 5px;
+}
+@media screen and (min-width: 1400px){
+    .resWrap{
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+@media screen and (min-width: 1120px) and (max-width: 1400px){
+    .resWrap{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media screen and (min-width: 840px) and (max-width: 1120px){
+    .resWrap{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media screen and (min-width: 560px) and (max-width: 840px){
+    .resWrap{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media screen and (max-width: 560px){
+    .resWrap{
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.res-img{
+    cursor: pointer;
+    width:100%;
+}
+
+.res-over-lay{
+    cursor: pointer;
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+.res-over-lay:hover{
+    background: rgba(196, 195, 195, 0.3);
+}
+
+.res-over-lay:hover .down-btn{
+    position: absolute;
+    top:5px;
+    right: 5px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: rgb(0, 175, 128) url("img/down-load.png") no-repeat;
+    background-position: center;
+    background-size: 15px;
+    border-radius: 3px;
+}
+
+.res-over-lay:hover .down-btn:hover{
+    background: rgb(0, 175, 128, 0.5) url("img/down-load.png") no-repeat;
+    background-position: center;
+    background-size: 15px;
+}
+
+
+.res-over-lay:hover  .down-ppt-btn{
+    position: absolute;
+    top:32px;
+    right: 5px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url("img/powerpoint.png") no-repeat;
+    background-position: center;
+    background-size: 20px;
+    border-radius: 3px;
+}
+
+.res-over-lay:hover .down-ppt-btn:hover{
+    background: url("img/powerpoint-2.png") no-repeat;
+    background-position: center;
+    background-size: 20px;
+}
