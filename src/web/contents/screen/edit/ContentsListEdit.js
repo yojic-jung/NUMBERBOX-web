@@ -244,7 +244,7 @@ const ContentsListEdit = ()=>{
 
                 let solImgPath;
                 if(contentsMap.solutionImg===null) solImgPath = "";
-                else solImgPath = contentsMap.imgPath+contentsMap.solutionImg;
+                else solImgPath = contentsMap.solutionImgPath+contentsMap.solutionImg;
 
                 return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                 <table className='workListTable'>

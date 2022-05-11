@@ -51,32 +51,34 @@ const ShareResource = ()=>{
         document.getElementById("category-"+param).classList.add("active")
 
         let returnVal = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
-            const initResoureList = returnVal["resourceList"].map( (contentsMap, idx) => {
-                let hasPpt = false;
-                if(contentsMap.pptName !== null){
-                    hasPpt = true;
-                }
-                if(hasPpt){
-                    return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
-                                <div className='res-over-lay'>
-                                    <span className='down-btn'></span>
-                                    <span className='down-ppt-btn'></span>
-                                </div>
-                                <div className="img-title">{contentsMap.title}</div>
-                                <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
-                            </div>);
-                }else{
-                    return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
-                                <div className='res-over-lay'>
-                                    <span className='down-btn'></span>
-                                </div>
-                                <div className="img-title">{contentsMap.title}</div>
-                                <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
-                            </div>);
-                }
-                
-            });
-            setResourceList(initResoureList);
+        console.log(returnVal);
+        const initResoureList = returnVal["resourceList"].map( (contentsMap, idx) => {
+            let hasPpt = false;
+            contentsMap = contentsMap["mathResource"]
+            if(contentsMap.pptName !== null){
+                hasPpt = true;
+            }
+            if(hasPpt){
+                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
+                            <div className='res-over-lay'>
+                                <span className='down-btn'></span>
+                                <span className='down-ppt-btn'></span>
+                            </div>
+                            <div className="img-title">{contentsMap.title}</div>
+                            <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
+                        </div>);
+            }else{
+                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
+                            <div className='res-over-lay'>
+                                <span className='down-btn'></span>
+                            </div>
+                            <div className="img-title">{contentsMap.title}</div>
+                            <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
+                        </div>);
+            }
+            
+        });
+        setResourceList(initResoureList);
     }
     
 return (

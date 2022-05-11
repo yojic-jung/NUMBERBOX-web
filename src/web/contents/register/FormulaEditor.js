@@ -355,7 +355,7 @@ const FormulaEditor = ({contentsNo}) => {
 					conImgName="N"
 				}
 				if(myContents["myContents"].solutionImg !== null){
-					document.getElementById("solutionImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].solutionImg;
+					document.getElementById("solutionImgOutput").src = myContents["myContents"].solutionImgPath+"/"+myContents["myContents"].solutionImg;
 					document.getElementById("solutionImgOutput").classList.remove("hide");
 					solImgName = myContents["myContents"].solutionImg;
 				}else{
