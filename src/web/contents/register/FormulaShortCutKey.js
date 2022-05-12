@@ -173,6 +173,8 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 endElement = endElement.closest(".nbRootBox");
                 if(strtElement !== null && endElement !== null){
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        strtElement.querySelector(".nbRootBase").classList.add("nbCompile");
+                        strtElement.querySelector(".nbRootBase").classList.add("nbRootInFrac");
                         strtElement.classList.add("nbCompile");
                         strtElement.classList.add("nbRootInFrac");
                     }

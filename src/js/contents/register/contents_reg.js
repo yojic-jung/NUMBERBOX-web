@@ -2438,6 +2438,8 @@ export const reg_nbComplie = async (event) => {
 	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbCompile.nbRootInFrac");
 	for(let i=0; i<nbRootBoxes.length; i++){
 		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbRootBoxes[i].querySelector(".nbRootBase").classList.add("nbCompile");
+			nbRootBoxes[i].querySelector(".nbRootBase").classList.add("nbRootInFrac");
 			nbRootBoxes[i].classList.remove("nbCompile");
 			nbRootBoxes[i].classList.remove("nbRootInFrac");
 		}
