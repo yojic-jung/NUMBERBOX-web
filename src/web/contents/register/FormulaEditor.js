@@ -292,7 +292,6 @@ const FormulaEditor = ({contentsNo}) => {
 			//수정모드
 			if(contentsNo!==undefined){
 				myContents = await nb_dataFetch('/mathInfo/takeMyContents?contentsno='+contentsNo, true);
-				console.log(myContents.existMsg);
 				if(myContents.existMsg){
 					document.getElementById("saveBtn").remove();
 					return;
@@ -408,7 +407,6 @@ const FormulaEditor = ({contentsNo}) => {
 				//수정시간 서버에서 수정 필요
 
 				//문제제작자
-				console.log(myContents["myContents"].userNo);
 				setUserNo(myContents["myContents"].userNo);
 			}
 		}
@@ -635,7 +633,7 @@ const FormulaEditor = ({contentsNo}) => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event)}} onClick={()=>{reg_dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)} }></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event)}} onClick={()=>{reg_dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onMouseUp={(event)=>{reg_selectFormulaElement(event);}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onInput={(event)=>{console.log("aa")}}></div>
                 <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onMouseUp={(event)=>{reg_selectFormulaElement(event);}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>

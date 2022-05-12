@@ -163,11 +163,9 @@ export const fadeIn = async (targetId) => {
 }
 
 export const fadeOut = async (targetId) => {
-  console.log(targetId);
   let dom = document.getElementById(targetId);
   let op = 1;  // initial opacity
   let timer = setInterval(function () {
-    console.log(op <= 0.1);
     if (op <= 0.1 ){
       clearInterval(timer);
       dom.style.display = 'none';

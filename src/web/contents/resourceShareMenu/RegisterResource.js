@@ -71,7 +71,6 @@ const RegisterResource = () => {
 
             let cateNo = document.getElementById("mainCate").value+"-"+document.getElementById("midCate").value;
             for(let i=0; i<alreadyCateBtn.length; i++){
-                console.log(cateNo);
                 if(alreadyCateBtn[i].dataset.cateNo === cateNo)return;
             }
             let userCateWrap = document.createElement("div");

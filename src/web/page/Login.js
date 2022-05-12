@@ -42,7 +42,6 @@ const Login = ()=>{
             }else{
                 document.getElementById("loginErrMsg").classList.remove("hide");
                 document.getElementById("loginErrMsg").innerText=returnObj.customErrMsg;
-                console.log(returnObj.customErrMsg);
             }
         }
     }

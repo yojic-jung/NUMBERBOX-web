@@ -543,7 +543,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.getElementById(document.activeElement.id).innerHTML === "" || document.getElementById(document.activeElement.id).innerHTML === "<br>"){
 			document.getElementById(document.activeElement.id).innerHTML = "<div><br></div>"
@@ -1145,7 +1144,7 @@ export const reg_preventKeyEvent = async (event) => {
 		*/
 		//위 방식도 정상작동
 		//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
-		document.execCommand("insertHTML", false ,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		document.execCommand("insertHTML", false ,"&nbsp; &nbsp; &nbsp;");
 		event.preventDefault();
 	}
 

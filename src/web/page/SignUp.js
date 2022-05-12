@@ -22,7 +22,6 @@ const SignUp = ()=>{
 
     const enterKeyEv = async(event) => {
         let userKeycode = event.keyCode;
-        console.log(userKeycode);
         if(userKeycode === 13){
             sigupRequest();
         }
@@ -199,7 +198,6 @@ const SignUp = ()=>{
 
         let formData = new FormData(document.getElementById("signup-form"));
 		let returnObj = await nb_formDataFetch("/signup",formData, true);
-        console.log(returnObj);
         if(returnObj.isSuccess === "success"){
             alert("회원가입이 정상적으로 완료되었습니다.");
             window.location.href = "/";

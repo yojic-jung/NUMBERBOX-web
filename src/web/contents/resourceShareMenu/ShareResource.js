@@ -51,7 +51,6 @@ const ShareResource = ()=>{
         document.getElementById("category-"+param).classList.add("active")
 
         let returnVal = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
-        console.log(returnVal);
         const initResoureList = returnVal["resourceList"].map( (contentsMap, idx) => {
             let hasPpt = false;
             contentsMap = contentsMap["mathResource"]
