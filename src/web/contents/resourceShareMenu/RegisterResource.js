@@ -235,6 +235,10 @@ const RegisterResource = () => {
                         <td><span>세부 카테고리</span></td>
                         <td>
                             <CustomSelectBox id="midCate" className="bageText" name="midCateNo" firstVal="세부 카테고리" optList={mainCate} val="midCateNo" parentKey="mainCateNo" mainVal="midCateName" displayMode="hide" changeHandler={validUiHandler}></CustomSelectBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colSpan="2" className='paddingZero'>
                             <div className='cateDesc'>카테고리는 최대 5개까지 선택 가능합니다.</div>
                             <div id="userCateDiv" className='userCateDiv'></div>
                         </td>

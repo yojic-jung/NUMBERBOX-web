@@ -1,11 +1,11 @@
 .regResourceTb{
     background-color: white;
-    border-spacing: 0 30px;
     padding: 0 40px;
     margin: 30px auto 0 auto;
     border-radius: 10px;
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';
 }
+
 
 .regResourceTb td:first-child{
     vertical-align: top;
@@ -19,7 +19,7 @@
 
 .regResourceTb td{
     line-height: 200%;
-    padding: 0px;
+    padding: 10px 0px;
     border-collapse: collapse;
 }
 
@@ -187,7 +187,8 @@
 }
 
 .userCateDiv{
-    width: 300px;
+    width: 385px;
+    margin: auto;
     display: flex;
     flex-flow: row wrap;
     gap: 12px;
@@ -215,7 +216,12 @@
 }
 
 .cateDesc{
+    text-align: center;
     font-size: 12px;
     font-weight: bold;
     color: rgb(148, 149, 151);
+}
+
+.paddingZero{
+    padding: 0 0 15px 0 !important;
 }
