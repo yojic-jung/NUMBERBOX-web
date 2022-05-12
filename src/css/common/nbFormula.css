@@ -812,12 +812,12 @@
     margin: 0 1px 0 1.4em;
 }
 
-.nbRootBox.nbCompile.nbRootInFrac .nbRootBase {
+.nbRootBase.nbCompile.nbRootInFrac {
     padding: 0px 1px 0px 2px;
     line-height:unset
 }
 
-.nbCompile.nbRootInFrac .nbRootBase::before{
+.nbRootBase.nbCompile.nbRootInFrac::before{
     content: '\221A';
     position: absolute;
     font-family: 'rootFracFont';
