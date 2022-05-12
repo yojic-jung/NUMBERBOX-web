@@ -1221,22 +1221,40 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 				}
 
+				//nb문법 삽입 전 커서 위치 요소 파악(nbCompile)
+				let strtElement = window.getSelection().getRangeAt(0).startContainer;
+				let endElement = window.getSelection().getRangeAt(0).endContainer;
+				if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+				if(endElement.classList === undefined) endElement = endElement.parentElement;
+
+				//nb문법 삽입
 				document.execCommand("insertHTML", false , nbGrammer);
 
 				//nbCompile 루트 안의 분수 컴파일
 				if(nbGrammer.indexOf("nbFracBox") > -1){
-					let strtElement = window.getSelection().getRangeAt(0).startContainer;
-					let endElement = window.getSelection().getRangeAt(0).endContainer;
-					if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
-					if(endElement.classList === undefined) endElement = endElement.parentElement;
-					strtElement = strtElement.closest(".nbRootBox");
-					endElement = endElement.closest(".nbRootBox");
-					if(strtElement !== null && endElement !== null){
+					let nbRootBoxStrt = strtElement.closest(".nbRootBox");
+					let nbRootBoxEnd = endElement.closest(".nbRootBox");
+					if(nbRootBoxStrt !== null && nbRootBoxEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							strtElement.querySelector(".nbRootBase").classList.add("nbCompile");
-							strtElement.querySelector(".nbRootBase").classList.add("nbRootInFrac");
-							strtElement.classList.add("nbCompile");
-							strtElement.classList.add("nbRootInFrac");
+							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbCompile");
+							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
+							nbRootBoxStrt.classList.add("nbCompile");
+							nbRootBoxStrt.classList.add("nbFracInRoot");
+						}
+					}
+
+					let nbFracBoxStrt = strtElement.closest(".nbFracBox");
+					let nbFracBoxEnd = endElement.closest(".nbFracBox");
+					if(nbFracBoxStrt !== null && nbFracBoxEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
+								nbFracBoxStrt.classList.add("nbCompile");
+								nbFracBoxStrt.classList.add("nbFracInDenom");
+							}
+							if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
+								nbFracBoxStrt.classList.add("nbCompile");
+								nbFracBoxStrt.classList.add("nbFracInNumer");
+							}
 						}
 					}
 				}
@@ -2435,13 +2453,27 @@ export const reg_tbPastePrevent = async (event)=>{
 * 설명 : 루트 안의 분수, 분수 없을 때 컴파일 클래스 제거
 */
 export const reg_nbComplie = async (event) => {
-	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbCompile.nbRootInFrac");
+	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbCompile.nbFracInRoot");
 	for(let i=0; i<nbRootBoxes.length; i++){
 		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
 			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbCompile");
-			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbRootInFrac");
+			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbFracInRoot");
 			nbRootBoxes[i].classList.remove("nbCompile");
-			nbRootBoxes[i].classList.remove("nbRootInFrac");
+			nbRootBoxes[i].classList.remove("nbFracInRoot");
+		}
+	}
+
+	let nbFracInFracBoxes = document.querySelectorAll(".nbFracBox.nbCompile");
+	for(let i=0; i<nbFracInFracBoxes.length; i++){
+		if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length === 0 
+		&& nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length === 0){
+			nbFracInFracBoxes[i].classList.remove("nbCompile");
+		}
+		if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length === 0) {
+			nbFracInFracBoxes[i].classList.remove("nbFracInDenom");
+		}
+		if(nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length === 0) {
+			nbFracInFracBoxes[i].classList.remove("nbFracInNumer");
 		}
 	}
 }

@@ -160,23 +160,41 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 tmpNode.className = "tmpReGenerBugFix";
                 strtContainer.prepend(tmpNode);
             }
-			document.execCommand("insertHTML", false ,nbGrammer);
-            
+
+			//nb문법 삽입 전 커서 위치 요소 파악(nbCompile)
+            let strtElement = window.getSelection().getRangeAt(0).startContainer;
+            let endElement = window.getSelection().getRangeAt(0).endContainer;
+            if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+            if(endElement.classList === undefined) endElement = endElement.parentElement;
+
+            //nb문법 삽입
+            document.execCommand("insertHTML", false , nbGrammer);
 
             //nbCompile 루트 안의 분수 컴파일
             if(nbGrammer.indexOf("nbFracBox") > -1){
-                let strtElement = window.getSelection().getRangeAt(0).startContainer;
-                let endElement = window.getSelection().getRangeAt(0).endContainer;
-                if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
-                if(endElement.classList === undefined) endElement = endElement.parentElement;
-                strtElement = strtElement.closest(".nbRootBox");
-                endElement = endElement.closest(".nbRootBox");
-                if(strtElement !== null && endElement !== null){
+                let nbRootBoxStrt = strtElement.closest(".nbRootBox");
+                let nbRootBoxEnd = endElement.closest(".nbRootBox");
+                if(nbRootBoxStrt !== null && nbRootBoxEnd !== null){
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-                        strtElement.querySelector(".nbRootBase").classList.add("nbCompile");
-                        strtElement.querySelector(".nbRootBase").classList.add("nbRootInFrac");
-                        strtElement.classList.add("nbCompile");
-                        strtElement.classList.add("nbRootInFrac");
+                        nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbCompile");
+                        nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
+                        nbRootBoxStrt.classList.add("nbCompile");
+                        nbRootBoxStrt.classList.add("nbFracInRoot");
+                    }
+                }
+
+                let nbFracBoxStrt = strtElement.closest(".nbFracBox");
+                let nbFracBoxEnd = endElement.closest(".nbFracBox");
+                if(nbFracBoxStrt !== null && nbFracBoxEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
+                            nbFracBoxStrt.classList.add("nbCompile");
+                            nbFracBoxStrt.classList.add("nbFracInDenom");
+                        }
+                        if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
+                            nbFracBoxStrt.classList.add("nbCompile");
+                            nbFracBoxStrt.classList.add("nbFracInNumer");
+                        }
                     }
                 }
             }

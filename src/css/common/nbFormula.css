@@ -807,17 +807,17 @@
 }
 
 
-.nbRootBox.nbCompile.nbRootInFrac{
+.nbRootBox.nbCompile.nbFracInRoot{
     vertical-align: middle;
     margin: 0 1px 0 1.4em;
 }
 
-.nbRootBase.nbCompile.nbRootInFrac {
+.nbRootBase.nbCompile.nbFracInRoot {
     padding: 0px 1px 0px 2px;
     line-height:unset
 }
 
-.nbRootBase.nbCompile.nbRootInFrac::before{
+.nbRootBase.nbCompile.nbFracInRoot::before{
     content: '\221A';
     position: absolute;
     font-family: 'rootFracFont';
@@ -827,9 +827,25 @@
     left: -0.51em;
 }
 
-.nbRootBox.nbCompile.nbRootInFrac .nbNumer{
+.nbRootBox.nbCompile.nbFracInRoot .nbNumer{
     padding: 0 2px;
 }
 
 
+.nbFracBox .nbRootBase.nbCompile.nbFracInRoot::before {
+    top: 0.35em;
+}
 
+
+.nbFracBox.nbCompile.nbFracInNumer{
+    vertical-align: -0.8em;
+}
+
+.nbFracBox.nbCompile.nbFracInDenom{
+    vertical-align: -2.3em;
+}
+
+
+.nbFracBox.nbCompile.nbFracInNumer.nbFracInDenom{
+    vertical-align: middle;
+}
