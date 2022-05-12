@@ -379,6 +379,7 @@
     border-spacing: 0px;
 }
 
+
 .nbRootBase{
     font-size:1em;
     padding: 0px 2px;
@@ -804,3 +805,31 @@
 .test{
     background-color: dimgray;
 }
+
+
+.nbRootBox.nbCompile.nbRootInFrac{
+    vertical-align: middle;
+    margin: 0 1px 0 1.4em;
+}
+
+.nbRootBox.nbCompile.nbRootInFrac .nbRootBase {
+    padding: 0px 1px 0px 2px;
+    line-height:unset
+}
+
+.nbCompile.nbRootInFrac .nbRootBase::before{
+    content: '\221A';
+    position: absolute;
+    font-family: 'rootFracFont';
+    font-size: 2.2em;
+    font-weight: 100;
+    top: 0.25em;
+    left: -0.51em;
+}
+
+.nbRootBox.nbCompile.nbRootInFrac .nbNumer{
+    padding: 0 2px;
+}
+
+
+

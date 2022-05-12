@@ -543,6 +543,7 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
+
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.getElementById(document.activeElement.id).innerHTML === "" || document.getElementById(document.activeElement.id).innerHTML === "<br>"){
 			document.getElementById(document.activeElement.id).innerHTML = "<div><br></div>"
@@ -1219,7 +1220,26 @@ export const reg_preventKeyEvent = async (event) => {
 						strtContainer.prepend(tmpNode);
 					}
 				}
+
 				document.execCommand("insertHTML", false , nbGrammer);
+
+				//nbCompile 루트 안의 분수 컴파일
+				if(nbGrammer.indexOf("nbFracBox") > -1){
+					let strtElement = window.getSelection().getRangeAt(0).startContainer;
+					let endElement = window.getSelection().getRangeAt(0).endContainer;
+					if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+					if(endElement.classList === undefined) endElement = endElement.parentElement;
+					strtElement = strtElement.closest(".nbRootBox");
+					endElement = endElement.closest(".nbRootBox");
+					if(strtElement !== null && endElement !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							strtElement.classList.add("nbCompile");
+							strtElement.classList.add("nbRootInFrac");
+						}
+					}
+				}
+				
+
 				//아래 명령어 사용하면 위에 명령어 필요 없음. 단, 포커스 다시 잡아줘야함, 깜빡임도 심함
 				//document.execCommand("insertHTML", false , "<span class='tmpReGenerBugFix'>.</span>"+nbGrammer+"<span class='tmpReGenerBugFix2'>.</span>");
 
@@ -2404,5 +2424,20 @@ export const reg_tbPastePrevent = async (event)=>{
 
 	if(tbEle !== null){
 		event.preventDefault();
+	}
+}
+
+
+/*
+* 정의 : 수식 컴파일 방식 구현
+* 설명 : 루트 안의 분수, 분수 없을 때 컴파일 클래스 제거
+*/
+export const reg_nbComplie = async (event) => {
+	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbCompile.nbRootInFrac");
+	for(let i=0; i<nbRootBoxes.length; i++){
+		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbRootBoxes[i].classList.remove("nbCompile");
+			nbRootBoxes[i].classList.remove("nbRootInFrac");
+		}
 	}
 }

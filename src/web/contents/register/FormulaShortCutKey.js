@@ -162,6 +162,23 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
             }
 			document.execCommand("insertHTML", false ,nbGrammer);
             
+
+            //nbCompile 루트 안의 분수 컴파일
+            if(nbGrammer.indexOf("nbFracBox") > -1){
+                let strtElement = window.getSelection().getRangeAt(0).startContainer;
+                let endElement = window.getSelection().getRangeAt(0).endContainer;
+                if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+                if(endElement.classList === undefined) endElement = endElement.parentElement;
+                strtElement = strtElement.closest(".nbRootBox");
+                endElement = endElement.closest(".nbRootBox");
+                if(strtElement !== null && endElement !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        strtElement.classList.add("nbCompile");
+                        strtElement.classList.add("nbRootInFrac");
+                    }
+                }
+            }
+
             let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 			for(let i=0; i<tmpReGenerBugFix.length; i++){
 				tmpReGenerBugFix[i].remove();
