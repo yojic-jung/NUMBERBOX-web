@@ -185,6 +185,7 @@ const FormulaEditorLatex = () => {
 						<option>--선택--</option>
 						<option>쎈수학</option>
 						<option>RPM</option>
+						<option>수학의 힘(베타)</option>
 					</select>
 					<div className="mini-title">원본 문제 번호</div>
 					<input id="originNo" name ="originNo" type="number" />

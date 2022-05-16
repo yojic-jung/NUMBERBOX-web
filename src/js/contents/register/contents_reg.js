@@ -1639,7 +1639,8 @@ export const reg_selectFormulaElement = async (event) => {
 	let focusNbBox = document.getSelection().focusNode;
 	if(focusNbBox.classList === undefined) focusNbBox = focusNbBox.parentElement.closest('.nbBox');
 	else focusNbBox = focusNbBox.closest('.nbBox');
-
+	console.log(anchorNbBox);
+	console.log(focusNbBox);
 	
 	//셀렉션의 앵커와 포커스에 수식요소 있는 경우
 	if(anchorNbBox !== null && focusNbBox !== null){

@@ -217,6 +217,7 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 						<option value="0">원본교재</option>
 						<option value="쎈수학">쎈수학</option>
 						<option value="RPM">RPM</option>
+						<option value="수학의 힘(베타)">수학의 힘(베타)</option>
 					</select>
 
 					<select id="quesLevel" name="quesLevel" className="hide">

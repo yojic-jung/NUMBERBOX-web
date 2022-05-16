@@ -802,10 +802,6 @@
     padding:0 2.5px
 }
 
-.test{
-    background-color: dimgray;
-}
-
 
 .nbRootBox.nbCompile.nbFracInRoot{
     vertical-align: middle;
@@ -837,15 +833,52 @@
 }
 
 
+
+
+/* nbCompile 방식 */
+
+/* 루트 안의 분수 */
+.nbRootBox.nbCompile.nbFracInRoot{
+    vertical-align: middle;
+    margin: 0 1px 0 1.4em;
+}
+
+.nbRootBase.nbCompile.nbFracInRoot {
+    padding: 0px 1px 0px 2px;
+    line-height:unset
+}
+
+.nbRootBase.nbCompile.nbFracInRoot::before{
+    content: '\221A';
+    position: absolute;
+    font-family: 'rootFracFont';
+    font-size: 2.2em;
+    font-weight: 100;
+    top: 0.25em;
+    left: -0.51em;
+}
+
+.nbRootBox.nbCompile.nbFracInRoot .nbNumer{
+    padding: 0 2px;
+}
+
+
+.nbFracBox .nbRootBase.nbCompile.nbFracInRoot::before {
+    top: 0.35em;
+}
+
+
+
+/* 분자 안의 분수 */
 .nbFracBox.nbCompile.nbFracInNumer{
     vertical-align: -0.8em;
 }
-
+/* 분모 안의 분수 */
 .nbFracBox.nbCompile.nbFracInDenom{
     vertical-align: -2.3em;
 }
 
-
+/* 분모, 분자 안의 분수 */
 .nbFracBox.nbCompile.nbFracInNumer.nbFracInDenom{
     vertical-align: middle;
 }
