@@ -443,3 +443,25 @@ export const nb_modalScrollEnd = (scrollY) =>{
   document.getElementById("root").style.overflow = "unset"
   window.scrollTo(0, scrollY)
 }
+
+/*
+* 하위 요소 너비 우선 특정클래스 탐색방식 (BFS)
+*/
+export const nb_querySelctorBFS = async (element, className) =>{
+  let childEle= null;
+  let childrenByBFS = element.children;
+  Loop1:
+  while(childrenByBFS.length !== 0){
+      let arr=[]
+      Loop2:
+      for(let i=0; i<childrenByBFS.length; i++){
+          if(childrenByBFS[i].classList.contains(className)){
+            childEle= childrenByBFS[i];
+              break Loop1;
+          } 
+          arr.push.apply(arr, childrenByBFS[i].children);
+      }
+      childrenByBFS = arr;
+  }
+  return childEle;
+}

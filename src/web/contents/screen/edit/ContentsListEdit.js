@@ -25,7 +25,9 @@ const ContentsListEdit = ()=>{
     const [contentsNo, setContentsNo] = useState("");
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
 
-
+    const removeAddedEvent = () => {
+        window.removeEventListener('scroll', detectScrollToTop);
+    }
     const modalPopupOpen = async (event)  =>{
         subjectVal = document.getElementById("subject").value;
         firUnitVal = document.getElementById("firUnit").value;
@@ -75,9 +77,13 @@ const ContentsListEdit = ()=>{
         document.getElementById("cusSelThrUnitTitle").innerHTML =document.getElementById("thrUnit")[document.getElementById("thrUnit").selectedIndex].innerText;
         document.getElementById("cusSelThrUnitDiv").classList.add("nbCustomSelected");
         
-        //모달창에서 저장하기 버튼을 누른 경우에만 검색, event.isTrusted객체는 사용자 액션, 자바스크립트 강제 이벤트 발생 구분 객체
-        if(!event.isTrusted) await searchMyWorkList(true);
-        else if(document.getElementById("imgUpdt").value === "Y"){
+        //모달창에서 저장하기 버튼을 누른 경우에만 검색
+        //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
+        if(!event.isTrusted) {  //사용자가 문제 등록 한 경우
+            await searchMyWorkList(true);
+            document.getElementById("imgUpdt").value = "N";
+        }
+        else if(document.getElementById("imgUpdt").value === "Y"){  //사용자 액션(모달창 닫기 버튼 직접 클릭 한 경우)
             await searchMyWorkList(true);
             document.getElementById("imgUpdt").value = "N";
         } 
@@ -132,9 +138,26 @@ const ContentsListEdit = ()=>{
             }
             fExecuteWidth = false;
         }
-
+        window.addEventListener('scroll', detectScrollToTop);
+        return () => removeAddedEvent();
         }, [contentsList]);
 
+        const detectScrollToTop = async function(){
+            if(window.innerHeight*2 < document.body.scrollHeight){
+                if(window.innerHeight < window.scrollY){
+                    document.getElementById("workListScrollToTop").classList.remove("hide");
+                }else{
+                    document.getElementById("workListScrollToTop").classList.add("hide");
+                }
+            }
+        }
+        
+        const moveToScrollTop = async function(){
+            let interval = setInterval(function(){
+                if(window.scrollY==0){clearInterval(interval);}
+                window.scrollTo(window.scrollX, window.scrollY-window.scrollY/20)
+            }, 1)
+        }
 
         const searchMyWorkList = async function(hasNotiPhrases){
             let customSubject = document.getElementById("cusSelSubTitle");
@@ -315,6 +338,7 @@ const ContentsListEdit = ()=>{
 
 
   return ( <>
+            <div id='workListScrollToTop' className='workListScrollToTop hide' tooltip="맨 위로" onClick={()=>{moveToScrollTop();}}></div>
             <TopMenuBar isMain={false}/>
   		    <div id="notifyBox" className='notifyBox'></div>
                 { !modalState &&

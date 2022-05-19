@@ -1,3 +1,6 @@
+import {nb_querySelctorBFS} from 'js/common/common_nb';
+
+
 /*
  * 정의 : contetns/register 패키지에서 사용하는 함수
  */
@@ -1221,7 +1224,7 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 				}
 
-				//nb문법 삽입 전 커서 위치 요소 파악(nbCompile)
+				//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
 				let strtElement = window.getSelection().getRangeAt(0).startContainer;
 				let endElement = window.getSelection().getRangeAt(0).endContainer;
 				if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
@@ -1230,35 +1233,67 @@ export const reg_preventKeyEvent = async (event) => {
 				//nb문법 삽입
 				document.execCommand("insertHTML", false , nbGrammer);
 
-				//nbCompile 루트 안의 분수 컴파일
+				//nbConvert 루트 안의 분수 컴파일
 				if(nbGrammer.indexOf("nbFracBox") > -1){
 					let nbRootBoxStrt = strtElement.closest(".nbRootBox");
 					let nbRootBoxEnd = endElement.closest(".nbRootBox");
 					if(nbRootBoxStrt !== null && nbRootBoxEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbCompile");
+							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
 							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
-							nbRootBoxStrt.classList.add("nbCompile");
+							nbRootBoxStrt.classList.add("nbConvert");
 							nbRootBoxStrt.classList.add("nbFracInRoot");
+							while(nbRootBoxStrt.parentElement.closest(".nbRootBox")!==null){
+								nbRootBoxStrt=nbRootBoxStrt.parentElement.closest(".nbRootBox");
+								nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
+								nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
+								nbRootBoxStrt.classList.add("nbConvert");
+								nbRootBoxStrt.classList.add("nbFracInRoot");
+							}
 						}
 					}
-
+					//분모 안의 분수 또는 분자 안의 분수 컴파일
 					let nbFracBoxStrt = strtElement.closest(".nbFracBox");
 					let nbFracBoxEnd = endElement.closest(".nbFracBox");
 					if(nbFracBoxStrt !== null && nbFracBoxEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 							if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
-								nbFracBoxStrt.classList.add("nbCompile");
+								nbFracBoxStrt.classList.add("nbConvert");
 								nbFracBoxStrt.classList.add("nbFracInDenom");
 							}
 							if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
-								nbFracBoxStrt.classList.add("nbCompile");
+								nbFracBoxStrt.classList.add("nbConvert");
 								nbFracBoxStrt.classList.add("nbFracInNumer");
 							}
 						}
 					}
 				}
-				
+
+				//nbConvert 분모 안에 루트, 순환소수, 악센트 들어가는 경우(분모, 분자에 padding:2)
+				if(nbGrammer.indexOf("nbRootBox") > -1 || nbGrammer.indexOf("nbOverDotBox") > -1 || nbGrammer.indexOf("nbAccentBox") > -1 ){
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert");
+						}
+					}
+				}
+
+				//nbConvert 분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
+				if(nbGrammer.indexOf("nbArrowBox") > -1 || nbGrammer.indexOf("nbOverlineBox") > -1){
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
+						}
+					}
+				}
+
+				//nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
+				//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
+				 //사용성이 낮아보여 구현 안함, 현재 줄맞춤 안맞는 에러 존재
 
 				//아래 명령어 사용하면 위에 명령어 필요 없음. 단, 포커스 다시 잡아줘야함, 깜빡임도 심함
 				//document.execCommand("insertHTML", false , "<span class='tmpReGenerBugFix'>.</span>"+nbGrammer+"<span class='tmpReGenerBugFix2'>.</span>");
@@ -2452,29 +2487,107 @@ export const reg_tbPastePrevent = async (event)=>{
 /*
 * 정의 : 수식 컴파일 방식 구현
 * 설명 : 루트 안의 분수, 분수 없을 때 컴파일 클래스 제거
+*		 분수 안의 분수, 루트, 순환소수, 악센트, 직선, 선분
 */
 export const reg_nbComplie = async (event) => {
-	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbCompile.nbFracInRoot");
-	for(let i=0; i<nbRootBoxes.length; i++){
-		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
-			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbCompile");
-			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbFracInRoot");
-			nbRootBoxes[i].classList.remove("nbCompile");
-			nbRootBoxes[i].classList.remove("nbFracInRoot");
+	//ctrl+v로 들어 오는 경우 컴파일
+	if(event.ctrlKey && event.keyCode === 86){
+		//루트 안 분수
+		let nbRootBoxes = [];
+		document.querySelectorAll(".nbRootBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInRoot"))) nbRootBoxes.push(item);
+		});
+		for(let i=0; i<nbRootBoxes.length; i++){
+			if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbRootBoxes[i].querySelector(".nbRootBase").classList.add("nbConvert");
+				nbRootBoxes[i].querySelector(".nbRootBase").classList.add("nbFracInRoot");
+				nbRootBoxes[i].classList.add("nbConvert");
+				nbRootBoxes[i].classList.add("nbFracInRoot");
+			}
+		}
+
+		//분수 안 분수
+		let nbFracInFracBoxes = [];
+		//루트, 순환소수, 악센트
+		let nbFracLineConvert = [];
+		//직선, 선분
+		let nbFracLineConvert2 = [];
+		document.querySelectorAll(".nbFracBox").forEach((item, index, arr)=>{
+			if(!item.classList.contains("nbFracInDenom") || !item.classList.contains("nbFracInNumer")) nbFracInFracBoxes.push(item);
+			if(!item.classList.contains("nbFracLineConvert")) nbFracLineConvert.push(item);
+			if(!item.classList.contains("nbFracLineConvert2")) nbFracLineConvert2.push(item);
+		});
+		for(let i=0; i<nbFracInFracBoxes.length; i++){
+			if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length !== 0) {
+				nbFracInFracBoxes[i].classList.add("nbFracInDenom");
+				nbFracInFracBoxes[i].classList.add("nbConvert");
+			}
+			if(nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length !== 0) {
+				nbFracInFracBoxes[i].classList.add("nbFracInNumer");
+				nbFracInFracBoxes[i].classList.add("nbConvert");
+			}
+		}
+
+		//분모 밑에 직계자식으로 루트, 순환소수, 악센트 있는 경우
+		for(let i=0; i<nbFracLineConvert.length; i++){
+			let children = await nb_querySelctorBFS(nbFracLineConvert[i], "nbDenom");
+			if(children!==null){
+				children = Array.from(children).filter(ele => ele.classList.contains("nbRootBox") || ele.classList.contains("nbOverDotBox") || ele.classList.contains("nbAccentBox"));
+				if(children.length !==0) nbFracLineConvert[i].classList.add("nbFracLineConvert");
+			}
+		}
+
+		///분모 밑에 직계자식으로 직선, 선분 있는 경우
+		for(let i=0; i<nbFracLineConvert2.length; i++){
+			let children = await nb_querySelctorBFS(nbFracLineConvert2[i], "nbDenom");
+			if(children!==null){
+				children = Array.from(children).filter(ele => ele.classList.contains("nbOverlineBox") || ele.classList.contains("nbArrowBox"));
+				if(children.length !==0) nbFracLineConvert2[i].classList.add("nbFracLineConvert2");
+			}
 		}
 	}
 
-	let nbFracInFracBoxes = document.querySelectorAll(".nbFracBox.nbCompile");
+	//루트 안 분수
+	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbConvert.nbFracInRoot");
+	for(let i=0; i<nbRootBoxes.length; i++){
+		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbConvert");
+			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbFracInRoot");
+			nbRootBoxes[i].classList.remove("nbConvert");
+			nbRootBoxes[i].classList.remove("nbFracInRoot");
+		}
+	}
+	//분수 안 분수
+	let nbFracInFracBoxes = document.querySelectorAll(".nbFracBox.nbConvert");
 	for(let i=0; i<nbFracInFracBoxes.length; i++){
 		if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length === 0 
 		&& nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length === 0){
-			nbFracInFracBoxes[i].classList.remove("nbCompile");
+			nbFracInFracBoxes[i].classList.remove("nbConvert");
 		}
 		if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length === 0) {
 			nbFracInFracBoxes[i].classList.remove("nbFracInDenom");
 		}
 		if(nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length === 0) {
 			nbFracInFracBoxes[i].classList.remove("nbFracInNumer");
+		}
+	}
+
+	//루트, 순환소수, 악센트
+	let nbFracLineConvert = document.querySelectorAll(".nbFracBox.nbFracLineConvert");
+	for(let i=0; i<nbFracLineConvert.length; i++){
+		if(nbFracLineConvert[i].querySelectorAll(".nbDenom .nbRootBox").length === 0 
+		&& nbFracLineConvert[i].querySelectorAll(".nbDenom .nbOverDotBox").length === 0
+		&& nbFracLineConvert[i].querySelectorAll(".nbDenom .nbAccentBox").length === 0){
+			nbFracLineConvert[i].classList.remove("nbFracLineConvert");
+		}
+	}
+
+	//직선, 선분
+	let nbFracLineConvert2 = document.querySelectorAll(".nbFracBox.nbFracLineConvert2");
+	for(let i=0; i<nbFracLineConvert2.length; i++){
+		if(nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbOverlineBox").length === 0 
+		&& nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbArrowBox").length === 0){
+			nbFracLineConvert2[i].classList.remove("nbFracLineConvert2");
 		}
 	}
 }

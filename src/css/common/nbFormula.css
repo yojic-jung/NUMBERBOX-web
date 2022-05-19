@@ -62,6 +62,13 @@
 }
 
 @font-face {
+    font-family: 'STIXTwoText-Medium';
+    src:url("font/STIXTwoText-Medium.ttf")
+    format('truetype');
+    letter-spacing: 2px;
+}
+
+@font-face {
     font-family: 'nbFormulaFont';
     src:url("font/STIXTwoText-SemiBold.ttf")
     format('truetype');
@@ -148,7 +155,6 @@
 /** 지수 표현 **/
 .nbExpBox{
     border-spacing: 0px;
-    margin-right: 0.2em;
     position: relative;
 }
 
@@ -262,7 +268,6 @@
 .nbNumer{
     padding: 4px 2px 0 2px;
     font-size:1em;
-    border-bottom:0.5px solid black;
     min-width:1em;
     line-height: 110%;
     text-align: center;
@@ -270,11 +275,23 @@
 .nbDenom{
     font-size:1em;
     padding: 0 2px 0 2px;
-    border-top:0.5px solid black;
     min-width:1em;
     line-height: 110%;
     text-align: center;
 }
+
+.nbNumer:after {
+    content: "";
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid black;
+  }
+.nbDenom:before {
+    content: "";
+    display: block;
+    width: 100%;
+    border-top: 1px solid black;
+  }
 
 /** 분수 안 지수 **/
 .nbNumer .nbExpTmp{
@@ -291,23 +308,23 @@
 }
 
 /** 분수 안 루트 안 지수 **/
-.nbNumer  .nbRootBox .nbExpTmp{
+.nbNumer .nbRootBox .nbExpTmp{
     bottom:0.2em;
 }
-.nbDenom  .nbRootBox .nbExpTmp{
+.nbDenom .nbRootBox .nbExpTmp{
     bottom:0.2em;
 }
 
 /** 삼각함수, 삼각함수는 글꼴이 달라 line-heigth가 다른 수식 요소와 다름 **/
 .nbTrigonBox{
-    line-height: 120%;
+    line-height: 110%; 
     vertical-align:text-bottom;
     border-spacing: 0px;
     padding: 0;
 }
 .nbTrigon{
     padding:0px;
-    font-family: "JejuGothic";
+    font-family: "STIXTwoText-Medium";
 }
 
 
@@ -330,6 +347,10 @@
     left:0.15em;
 }
 
+.nbDenom .nbOverDotBase::before{
+    top:-0.5em;
+}
+
 /** 악센트 표현 **/
 .nbAccentBox{
     vertical-align:text-bottom;
@@ -348,6 +369,11 @@
     top:-0.2em;
     left:0.14em;
 }
+
+.nbDenom .nbAccentBase::before{
+    top:-0.12em;
+}
+
 
 /** 지수에 지수 **/
 /**
@@ -383,8 +409,8 @@
 .nbRootBase{
     font-size:1em;
     padding: 0px 2px;
-    border-top: 2px solid black;
-    min-width: 1em;
+    box-shadow: 0px -0.5px black, inset 0px 0.5px black;
+    min-width: 1em; 
     text-align: center;
     line-height: 110%;
 }
@@ -393,8 +419,18 @@
     content:'\221A';
     position: absolute;
     font-size:1.4em;
-    top:0.15em;
+    top:0.1em;
     left:-0.5em;
+}
+.nbRootBox .nbRootBox{
+    vertical-align:middle !important;
+    position: relative;
+    top:2.3px;
+}
+.nbRootBox .nbRootBox .nbRootBox{
+    vertical-align: middle !important;
+    position: relative;
+    top:2.5px !important;
 }
 
 /** 루트 안 순환소수 **/
@@ -408,7 +444,7 @@
     content: '\2219';
     text-align: center;
     position: absolute;
-    top:-0.6em;
+    top:-0.55em;
     left:0.15em;
 }
 /** 루트 안 악센트 **/
@@ -421,13 +457,13 @@
     content: '\02C6';
     text-align: center;
     position: absolute;
-    top:-0.2em;
+    top:-0.15em;
     left:0.14em;
 }
 
 /** 루트 안 지수 **/
 .nbRootBase .nbExpTmp{
-    bottom:0.35em;
+    bottom:0.2em;
     right: 0;
 }
 
@@ -469,13 +505,10 @@
     padding:0 2px;
 }
 
-.nbDenom .nbRootBox{
-    margin-top:2px;
-}
 
-/** 분모에 있는 선분, 직선 겹쳐보이는 문제 해결**/
-.nbDenom .nbOverlineBox, .nbDenom .nbArrowBox{
-    margin:2px 2px 0 2px;
+
+.nbDenom .nbArcBase::before{
+    top:-0.45em;
 }
 
 /** 선분, 직선**/
@@ -490,26 +523,23 @@
 .nbOverlineBase, .nbRightArrowBase, .nbArcBase, .nbBiDirArrowBase{
     min-width: 0.8em;
     text-align: center;
-    padding: 0px;
+    padding: 0px 1px;
     vertical-align: bottom;
-    height: 1.2em;
-    border-top:1px solid black;
-
+    box-shadow: 0px -1px black;
 }
 .nbArcBase{
     min-width: 0.8em;
     text-align: center;
-    padding: 2px 0 0 0;
+    padding: 0;
     vertical-align: bottom;
-    height: 1.2em;
-    border: unset;
+    box-shadow: unset;
 }
 
 .nbRightArrowBase::after{
     content:'\276F';
     font-size: 0.5em;;
     position:absolute;
-    top:-0.9em;
+    top:-1em;
     right: -0.2em;
 }
 
@@ -518,7 +548,7 @@
     font-family: 'GowunDodum-Regular';
     font-size: 20px;
     position: absolute;
-    top:-0.35em;
+    top:-0.5em;
     left:50%;
     transform:translateX(-50%) rotate(270deg);
 }
@@ -527,7 +557,7 @@
     content:'\276F';
     font-size: 0.5em;;
     position:absolute;
-    top:-0.9em;
+    top:-1em;
     right:-0.2em;
 }
 
@@ -535,10 +565,14 @@
     content:'\276E';
     font-size: 0.5em;;
     position:absolute;
-    top:-0.9em;
+    top:-1em;
     left: -0.2em;
 }
 
+/* 루트 안에 직선, 선분이 들어갈 경우는 거의 없지만 ui오류 해결 */
+.nbRootBase .nbOverlineBox, .nbRootBase .nbArrowBox{
+    margin-top: 4px;
+}
 
 /** 큰 괄호(분수용) **/
 .nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox, .nbAbsValBox{
@@ -689,14 +723,17 @@
 
 .onlyEdit:focus .borderBox{
     border:1px dashed gray;
+    box-shadow: unset;
 }
 
 .onlyEdit:focus .yellowBorderBox{
     border :2px dashed rgb(255, 196, 1) !important;
+    box-shadow: unset;
 }
 
 .onlyEdit:focus .grayBorderBox{
     border :2px dashed gray !important;
+    box-shadow: unset;
 }
 
 
@@ -803,82 +840,163 @@
 }
 
 
-.nbRootBox.nbCompile.nbFracInRoot{
-    vertical-align: middle;
-    margin: 0 1px 0 1.4em;
-}
-
-.nbRootBase.nbCompile.nbFracInRoot {
-    padding: 0px 1px 0px 2px;
-    line-height:unset
-}
-
-.nbRootBase.nbCompile.nbFracInRoot::before{
-    content: '\221A';
-    position: absolute;
-    font-family: 'rootFracFont';
-    font-size: 2.2em;
-    font-weight: 100;
-    top: 0.25em;
-    left: -0.51em;
-}
-
-.nbRootBox.nbCompile.nbFracInRoot .nbNumer{
-    padding: 0 2px;
-}
-
-
-.nbFracBox .nbRootBase.nbCompile.nbFracInRoot::before {
-    top: 0.35em;
-}
-
-
-
-
-/* nbCompile 방식 */
+/* nbConvert 방식 */
 
 /* 루트 안의 분수 */
-.nbRootBox.nbCompile.nbFracInRoot{
+.nbRootBox.nbConvert.nbFracInRoot{
     vertical-align: middle;
     margin: 0 1px 0 1.4em;
 }
 
-.nbRootBase.nbCompile.nbFracInRoot {
+.nbRootBase.nbConvert.nbFracInRoot {
     padding: 0px 1px 0px 2px;
     line-height:unset
 }
 
-.nbRootBase.nbCompile.nbFracInRoot::before{
+.nbRootBase.nbConvert.nbFracInRoot::before{
     content: '\221A';
     position: absolute;
     font-family: 'rootFracFont';
     font-size: 2.2em;
     font-weight: 100;
-    top: 0.25em;
+    top: 0.18em;
     left: -0.51em;
 }
 
-.nbRootBox.nbCompile.nbFracInRoot .nbNumer{
-    padding: 0 2px;
+.nbRootBox.nbConvert.nbFracInRoot .nbNumer{
+    padding: 4px 2px 0 2px;
 }
 
-
-.nbFracBox .nbRootBase.nbCompile.nbFracInRoot::before {
-    top: 0.35em;
+.nbFracBox .nbRootBase.nbConvert.nbFracInRoot::before {
+    top: 0.3em;
 }
-
 
 
 /* 분자 안의 분수 */
-.nbFracBox.nbCompile.nbFracInNumer{
-    vertical-align: -0.8em;
+.nbFracBox.nbConvert.nbFracInNumer{
+    vertical-align: -0.9em;
 }
 /* 분모 안의 분수 */
-.nbFracBox.nbCompile.nbFracInDenom{
+.nbFracBox.nbConvert.nbFracInDenom{
     vertical-align: -2.3em;
 }
 
+
 /* 분모, 분자 안의 분수 */
-.nbFracBox.nbCompile.nbFracInNumer.nbFracInDenom{
+.nbFracBox.nbConvert.nbFracInNumer.nbFracInDenom{
     vertical-align: middle;
 }
+
+/*nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
+* 루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
+* 사용성이 낮아보여 구현 안함, 현재 줄맞춤 안맞는 에러 존재*/
+
+/*
+* 분수 안에 루트, 직선, 순환소수, 악센트 들어가는 경우
+* 분수 줄 간격 안 맞는 버그 컴파일 해결
+*/
+.nbFracBox.nbFracLineConvert .nbNumer{
+    position: relative;
+    bottom:2px;
+}
+
+.nbFracBox.nbFracLineConvert .nbDenom{
+    position: relative;
+    top:2px;
+}
+
+.nbFracBox.nbFracLineConvert2 .nbNumer{
+    position: relative;
+    bottom:3px;
+}
+.nbFracBox.nbFracLineConvert2 .nbDenom{
+    position: relative;
+    top:3px;
+}
+
+.nbFracBox.nbFracLineConvert .nbNumer:after, .nbFracBox.nbFracLineConvert2 .nbNumer:after {
+    content: "";
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid black;
+    position: relative;
+    bottom:-2px;
+  }
+.nbFracBox.nbFracLineConvert2 .nbNumer:after{
+    bottom:-3px;
+}
+
+.nbFracBox.nbFracLineConvert .nbDenom:before, .nbFracBox.nbFracLineConvert2 .nbDenom:before{
+    content: "";
+    display: block;
+    width: 100%;
+    border-top: 1px solid black;
+    position: relative;
+    top:-2px;
+  }
+.nbFracBox.nbFracLineConvert2 .nbDenom:before{
+    top:-3px;
+}
+
+/*에딧 모드에서는 borderbox 보여지므로 포지션 borderbox 두께 만큼 추가*/
+.onlyEdit:focus .nbNumer:after{
+    position: relative;
+    bottom:-1px;
+}
+.onlyEdit:focus .nbDenom:before{
+    position: relative;
+    top:-1px;
+}
+
+.onlyEdit:focus .nbFracBox.nbFracLineConvert .nbNumer:after{
+    position: relative;
+    bottom:-3px;
+}
+.onlyEdit:focus .nbFracBox.nbFracLineConvert .nbDenom:before{
+    position: relative;
+    top:-3px;
+}
+
+.onlyEdit:focus .nbFracBox.nbFracLineConvert2 .nbDenom:before{
+    position: relative;
+    top:-4px;
+}
+.onlyEdit:focus .nbFracBox.nbFracLineConvert2 .nbNumer:after{
+    position: relative;
+    bottom:-4px;
+}
+
+/*에딧 모드 yellowBorderBox에서 yellowBorderBox 두께 만큼 추가*/
+.onlyEdit:focus .yellowBorderBox.nbNumer, .onlyEdit:focus .yellowBorderBox{
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+.onlyEdit:focus .yellowBorderBox.nbNumer:after{
+    position: relative;
+    bottom:-3px;
+}
+
+.onlyEdit:focus .yellowBorderBox.nbDenom:before{
+    position: relative;
+    top:-3px;
+}
+
+.onlyEdit:focus .nbFracBox.nbFracLineConvert .yellowBorderBox.nbNumer:after{
+    position: relative;
+    bottom:-4px;
+}
+.onlyEdit:focus .nbFracBox.nbFracLineConvert .yellowBorderBox.nbDenom:before{
+    position: relative;
+    top:-4px;
+}
+
+.onlyEdit:focus .nbFracBox.nbFracLineConvert2 .yellowBorderBox.nbDenom:before{
+    position: relative;
+    top:-5px;
+}
+.onlyEdit:focus .nbFracBox.nbFracLineConvert2 .yellowBorderBox.nbNumer:after{
+    position: relative;
+    bottom:-5px;
+}
+
