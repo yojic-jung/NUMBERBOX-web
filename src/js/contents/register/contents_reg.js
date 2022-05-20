@@ -289,6 +289,14 @@ export const reg_writeDisableDom = async (event) =>{
 		return true;
 	}
 
+	//tab, ctrl+z, esc, F1-F12, Insert, Home, Caps Lock, 윈도우 키 등 상관 없는 키는 가능
+	if(isDisableBox && (event.keyCode === 9 || (event.ctrlKey && event.keyCode===90)
+		|| event.keyCode ===19 || event.keyCode ===20 || event.keyCode ===27 || event.keyCode ===45
+		|| event.keyCode ===145 || (event.keyCode >=33 && event.keyCode <=36)
+		|| (event.keyCode >= 91 && event.keyCode <= 93) || (event.keyCode >=112 && event.keyCode <=123)) ) {
+		return false;
+	}
+	
 	if(isDisableBox && !(event.keyCode>=37 && event.keyCode<=40)) return true;
 	else return false;
 	
@@ -546,12 +554,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 */
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
-		if(document.getElementById(document.activeElement.id).innerHTML === "" || document.getElementById(document.activeElement.id).innerHTML === "<br>"){
-			document.getElementById(document.activeElement.id).innerHTML = "<div><br></div>"
-		}
-	}
 
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
@@ -1133,7 +1135,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	//띄어쓰기 다섯칸 shift+space bar
-	if(event.shiftKey && userKeyCode === 32){
+	if(event.shiftKey && userKeyCode === 32 && !await reg_writeDisableDom){
 		/*
 		const selection = document.getSelection();
 		const newRange = selection.getRangeAt(0);
@@ -1151,6 +1153,72 @@ export const reg_preventKeyEvent = async (event) => {
 		document.execCommand("insertHTML", false ,"&nbsp; &nbsp; &nbsp;");
 		event.preventDefault();
 	}
+
+
+	//DIV 태그 안들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
+	//객관식은 아직 결함 남아있음
+	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
+		//ALT, ENTER, SPACE 입력시에 DIV에 넣어주기	(키는 버그 발생하는 ALT와 자주 사용하는 ENTER, SPACE, 화살표로 설정)
+		if(window.getSelection().isCollapsed && (event.altKey || userKeyCode===13 || userKeyCode===32 || (userKeyCode>=37 && userKeyCode<=40))){
+			let activeChildNodes = document.activeElement.childNodes;
+			let newDiv = document.createElement('div');
+			let isExecuted = false;
+			
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpDivBugCaret";
+			tmpNode.innerHTML = ".";
+			const newRange = window.getSelection().getRangeAt(0);
+			newRange.insertNode(tmpNode)
+			let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
+			document.getElementsByClassName("tmpDivBugCaret")[0].remove();
+			for(let i=0; i<activeChildNodes.length; i++){
+				if(activeChildNodes[i].tagName === "BR"){
+					let copyEle=null;
+					if(newDiv.innerHTML===''){
+						newDiv.append(document.createElement('br'));
+						copyEle=newDiv.cloneNode(true);
+					}else{
+						copyEle= newDiv.cloneNode(true);
+					}
+					activeChildNodes[i].after(copyEle);
+					newDiv.innerHTML='';
+					isExecuted = true;
+				}else if(activeChildNodes[i].tagName === "DIV"){
+					if(newDiv.innerHTML==='') continue;
+					let copyEle= newDiv.cloneNode(true);
+					activeChildNodes[i].before(copyEle);
+					newDiv.innerHTML='';
+					isExecuted = true;
+				}else{
+					let copyEle= activeChildNodes[i].cloneNode(true);
+					newDiv.append(copyEle);
+					if(i === activeChildNodes.length-1){	//마지막이 DIV나 BR이 아닌 경우에 여기서 추가
+						let copyEle2= newDiv.cloneNode(true);
+						activeChildNodes[i].after(copyEle2);
+						newDiv.innerHTML='';
+						isExecuted = true;
+					}
+				}
+			}
+			
+			if(isExecuted){
+				activeChildNodes = document.activeElement.childNodes;
+				for(let i=activeChildNodes.length-1; i>=0; i--){
+					if(activeChildNodes[i].tagName !== "DIV" ){
+						activeChildNodes[i].remove();
+					}
+				}
+			
+				let newRange = window.getSelection();
+				newRange.removeAllRanges();
+				let moveRange = document.caretRangeFromPoint(position.x, position.y);
+				newRange.setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+			}
+		  
+		}
+		
+	}
+	
 
 	//alt 단축키 제어
 	if(event.altKey){
@@ -1664,9 +1732,10 @@ export const reg_dressSelectionBackColor = async () => {
 	
 }
 /*
-* 정의 : 수식요소셀렉트(드래그)시 걸쳐서 셀렉트 안되고 table 요소 전체 셀렉트 되게끔 구현(마우스up 이벤트에 적용)
+* 정의 : 수식요소 셀렉트(드래그)시 걸쳐서 셀렉트 안되고 table 요소 전체 셀렉트 되게끔 구현(마우스up 이벤트에 적용)
 */
 export const reg_selectFormulaElement = async (event) => {
+	if(!document.activeElement.classList.contains("contentEditClass")) return;
 	let anchorNbBox = document.getSelection().anchorNode
 	if(anchorNbBox.classList === undefined) anchorNbBox = anchorNbBox.parentElement.closest('.nbBox');
 	else anchorNbBox = anchorNbBox.closest('.nbBox');
@@ -1674,8 +1743,6 @@ export const reg_selectFormulaElement = async (event) => {
 	let focusNbBox = document.getSelection().focusNode;
 	if(focusNbBox.classList === undefined) focusNbBox = focusNbBox.parentElement.closest('.nbBox');
 	else focusNbBox = focusNbBox.closest('.nbBox');
-	console.log(anchorNbBox);
-	console.log(focusNbBox);
 	
 	//셀렉션의 앵커와 포커스에 수식요소 있는 경우
 	if(anchorNbBox !== null && focusNbBox !== null){
@@ -2492,6 +2559,17 @@ export const reg_tbPastePrevent = async (event)=>{
 export const reg_nbComplie = async (event) => {
 	//ctrl+v로 들어 오는 경우 컴파일
 	if(event.ctrlKey && event.keyCode === 86){
+		//복붙시 수식요소에 style 속성 입혀지는 버그 해결
+		let borderBox = document.querySelectorAll(".borderBox");
+		for(let i=0; i<borderBox.length; i++){
+			borderBox[i].style={};
+		}
+
+		let nbBox = document.querySelectorAll(".nbBox");
+		for(let i=0; i<nbBox.length; i++){
+			nbBox[i].style={};
+		}
+
 		//루트 안 분수
 		let nbRootBoxes = [];
 		document.querySelectorAll(".nbRootBox").forEach((item, index, arr)=>{
