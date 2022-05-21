@@ -416,7 +416,6 @@ const FormulaEditor = ({contentsNo}) => {
 		}
 
 		asyncUseEffect();
-
 		return () => removeAddedEvent();
       },[contentsNo]);
 

@@ -555,6 +555,58 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
 
+	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
+	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
+	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식 대체 <br>태그가 수식 뒤에 있으면 재생성 안됨
+	//but DIV태그 하위에 table있는경우 해결해야함 
+	let activeChildNodes = document.activeElement.childNodes
+	for(let i=0; i<activeChildNodes.length; i++){
+		if(activeChildNodes[i].tagName === "DIV"){
+			let divChildNodes = activeChildNodes[i].childNodes;
+			let lastChild = null;
+			for(let i=divChildNodes.length-1; i>=0; i--){
+				if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
+					
+				}else{
+					lastChild = divChildNodes[i];
+					if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")) lastChild.after(document.createElement("br"));
+					break;
+				}
+			}
+		}
+	}
+
+	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
+		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+			document.execCommand("insertHTML", false ,"<div><br></div>");
+		}
+	}
+
+	//DIV 태그 안 들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
+	//한줄은 무조건 div로 구분
+	//객관식은 아직 결함 남아있음
+	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
+		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
+		if(window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
+			let willExecute = false;
+			if(window.getSelection().anchorNode.classList !== undefined){
+				if(window.getSelection().anchorNode.classList.contains("contentEditClass")){
+					willExecute=true;
+				}
+			}
+
+			if(willExecute){
+				let tmpNode= document.createElement('span');
+				tmpNode.className = "tmpFormBlockBugCaret";
+				tmpNode.innerHTML = ".";
+				let newRange = window.getSelection().getRangeAt(0);
+				newRange.insertNode(tmpNode)
+				document.execCommand('formatblock',false,'div');
+				document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
+			}
+		}
+	}
+
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -603,6 +655,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//삭제 또는 cut으로 라인 이동시 라인 마지막에 수식요소 있으면 재생성 되는 버그 해결 
 	//모든 div태그의 마지막 요소가 수식요소인지 체크하여 수식인 경우 뒤에 공백 추가
+	/*
 	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey) || (userKeyCode !== 18 && event.altKey)
 	|| (!document.getSelection().isCollapsed 
 		&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
@@ -674,6 +727,7 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 	}
+	*/
 	//[end]
 
 	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
@@ -1135,7 +1189,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	//띄어쓰기 다섯칸 shift+space bar
-	if(event.shiftKey && userKeyCode === 32 && !await reg_writeDisableDom){
+	if(event.shiftKey && userKeyCode === 32 && !await reg_writeDisableDom(event)){
 		/*
 		const selection = document.getSelection();
 		const newRange = selection.getRangeAt(0);
@@ -1154,71 +1208,30 @@ export const reg_preventKeyEvent = async (event) => {
 		event.preventDefault();
 	}
 
-
-	//DIV 태그 안들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
-	//객관식은 아직 결함 남아있음
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
-		//ALT, ENTER, SPACE 입력시에 DIV에 넣어주기	(키는 버그 발생하는 ALT와 자주 사용하는 ENTER, SPACE, 화살표로 설정)
-		if(window.getSelection().isCollapsed && (event.altKey || userKeyCode===13 || userKeyCode===32 || (userKeyCode>=37 && userKeyCode<=40))){
-			let activeChildNodes = document.activeElement.childNodes;
-			let newDiv = document.createElement('div');
-			let isExecuted = false;
-			
-			let tmpNode= document.createElement('span');
-			tmpNode.className = "tmpDivBugCaret";
-			tmpNode.innerHTML = ".";
-			const newRange = window.getSelection().getRangeAt(0);
-			newRange.insertNode(tmpNode)
-			let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
-			document.getElementsByClassName("tmpDivBugCaret")[0].remove();
-			for(let i=0; i<activeChildNodes.length; i++){
-				if(activeChildNodes[i].tagName === "BR"){
-					let copyEle=null;
-					if(newDiv.innerHTML===''){
-						newDiv.append(document.createElement('br'));
-						copyEle=newDiv.cloneNode(true);
-					}else{
-						copyEle= newDiv.cloneNode(true);
-					}
-					activeChildNodes[i].after(copyEle);
-					newDiv.innerHTML='';
-					isExecuted = true;
-				}else if(activeChildNodes[i].tagName === "DIV"){
-					if(newDiv.innerHTML==='') continue;
-					let copyEle= newDiv.cloneNode(true);
-					activeChildNodes[i].before(copyEle);
-					newDiv.innerHTML='';
-					isExecuted = true;
-				}else{
-					let copyEle= activeChildNodes[i].cloneNode(true);
-					newDiv.append(copyEle);
-					if(i === activeChildNodes.length-1){	//마지막이 DIV나 BR이 아닌 경우에 여기서 추가
-						let copyEle2= newDiv.cloneNode(true);
-						activeChildNodes[i].after(copyEle2);
-						newDiv.innerHTML='';
-						isExecuted = true;
-					}
-				}
-			}
-			
-			if(isExecuted){
-				activeChildNodes = document.activeElement.childNodes;
-				for(let i=activeChildNodes.length-1; i>=0; i--){
-					if(activeChildNodes[i].tagName !== "DIV" ){
-						activeChildNodes[i].remove();
-					}
-				}
-			
-				let newRange = window.getSelection();
-				newRange.removeAllRanges();
-				let moveRange = document.caretRangeFromPoint(position.x, position.y);
-				newRange.setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
-			}
-		  
-		}
-		
-	}
 	
+
+	let willExecuteFormBlock = false;
+	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결
+	if(userKeyCode===13){
+		let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
+		if(position.x===0 && position.y===0){	
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpPositionDetectCaret";
+			tmpNode.innerHTML = "&nbsp;";
+			const selection = document.getSelection();
+			const newRange = selection.getRangeAt(0);
+			newRange.insertNode(tmpNode);
+			//왼쪽 또는 오른쪽이 수식 인지 파악해야함
+			if((document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling !== null && document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling.classList !== undefined && document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling.classList.contains("nbBox"))
+			|| (document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling !== null && document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling.classList !== undefined && document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling.classList.contains("nbBox"))){
+				document.getElementsByClassName("tmpPositionDetectCaret")[0].remove();
+				document.execCommand("insertHTML", false ,"<img class='tmpEnterBugCaret' >");
+				willExecuteFormBlock = true;
+			}else{
+				document.getElementsByClassName("tmpPositionDetectCaret")[0].remove();
+			}
+		}
+	}
 
 	//alt 단축키 제어
 	if(event.altKey){
@@ -1403,6 +1416,47 @@ export const reg_preventKeyEvent = async (event) => {
 		let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
 		while (tmpReGenerBugFix2.length > 0) {
 			tmpReGenerBugFix2[0].remove();
+		}
+
+		if(userKeyCode ===13 && willExecuteFormBlock){
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpPositionDetectCaret";
+			tmpNode.innerHTML = "&nbsp;";
+			const selection = document.getSelection();
+			const newRange = selection.getRangeAt(0);
+			newRange.insertNode(tmpNode);
+			let position = tmpNode.getBoundingClientRect();
+			tmpNode.remove();
+
+			let tmpEnterBugCaret = document.activeElement.querySelector(".tmpEnterBugCaret");
+			window.getSelection().getRangeAt(0).selectNode(tmpEnterBugCaret);
+			document.execCommand("delete", false, null);
+			let moveRange = document.caretRangeFromPoint(position.x, position.y);
+			window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+			//contents-show화면에 캐럿 제거
+			let tmpEnterBugCaretInShow = document.querySelector(".contents-show").querySelectorAll(".tmpEnterBugCaret");
+			while (tmpEnterBugCaretInShow.length > 0) {
+				tmpEnterBugCaretInShow[0].remove();
+			}
+		}
+
+		//ctrl+z에서 tmpFormBlockBugCaret제거
+		if(userKeyCode===90 && event.ctrlKey ){
+			let tmpFormBlockBugCaret = document.getElementsByClassName("tmpFormBlockBugCaret");
+			while (tmpFormBlockBugCaret.length > 0) {
+				tmpFormBlockBugCaret[0].remove();
+			}
+
+			//엔터 버그에서 document.execCommand가 총 세 번 실행되므로 브라우저의 ctrl+z 동작 방식에 따라 최대 두번 tmpEnterBugCaret가 남아 있을 수 있음
+			//따라서 최대 두번 체크 후 undo 실행
+			let tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
+			if(tmpEnterBugCaret.length > 0){
+				document.execCommand('undo', false, null);
+				tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
+				if(tmpEnterBugCaret.length > 0){
+					document.execCommand('undo', false, null);
+				}
+			}
 		}
 
 		if( userKeyCode === 86 && event.ctrlKey){
