@@ -559,7 +559,7 @@ export const reg_preventKeyEvent = async (event) => {
 	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
 	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식 대체 <br>태그가 수식 뒤에 있으면 재생성 안됨
 	//but DIV태그 하위에 table있는경우 해결해야함 
-	if(!(userKeyCode === 90 && event.ctrlKey)){
+	if(!(userKeyCode === 90 && event.ctrlKey) && window.getSelection().isCollapsed){
 		let activeChildNodes = document.activeElement.childNodes
 		for(let i=0; i<activeChildNodes.length; i++){
 			if(activeChildNodes[i].tagName === "DIV"){
@@ -589,7 +589,7 @@ export const reg_preventKeyEvent = async (event) => {
 	//객관식은 아직 결함 남아있음
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
-		if(window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
+		if(!event.shiftKey && window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockBugCaret";
 			tmpNode.innerHTML = ".";
@@ -1258,7 +1258,6 @@ export const reg_preventKeyEvent = async (event) => {
 					//현재 라인의 마지막 요소가 현재 포커스인지 판별
 					if(lastChild === tmpNode){
 						//다음 라인의 첫번째 요소가 수식인지 판별
-						console.log(currentLine.nextSibling.firstChild );
 						if(currentLine.nextSibling !=null &&  currentLine.nextSibling.firstChild !=null ){
 							let nextLineChildNodes = currentLine.nextSibling.childNodes;
 							let firstChild = null;
@@ -1270,9 +1269,7 @@ export const reg_preventKeyEvent = async (event) => {
 									break;
 								}
 							}
-							console.log(firstChild);
 							if(firstChild !== null && firstChild.classList !== undefined && firstChild.classList.contains("nbBox")){
-								console.log("실행");
 								//다음 라인의 첫번째 요소에 img태그 추가 후 제자리로 복귀
 								tmpNode.remove();
 								window.getSelection().getRangeAt(0).selectNode(firstChild);
