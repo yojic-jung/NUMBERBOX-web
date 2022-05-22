@@ -552,25 +552,27 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 *	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
 *			alt키 제어(단축키 사용용도)
 */
+let korCharBugBox = null;
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-
 	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
 	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
 	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식 대체 <br>태그가 수식 뒤에 있으면 재생성 안됨
 	//but DIV태그 하위에 table있는경우 해결해야함 
-	let activeChildNodes = document.activeElement.childNodes
-	for(let i=0; i<activeChildNodes.length; i++){
-		if(activeChildNodes[i].tagName === "DIV"){
-			let divChildNodes = activeChildNodes[i].childNodes;
-			let lastChild = null;
-			for(let i=divChildNodes.length-1; i>=0; i--){
-				if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-					
-				}else{
-					lastChild = divChildNodes[i];
-					if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")) lastChild.after(document.createElement("br"));
-					break;
+	if(!(userKeyCode === 90 && event.ctrlKey)){
+		let activeChildNodes = document.activeElement.childNodes
+		for(let i=0; i<activeChildNodes.length; i++){
+			if(activeChildNodes[i].tagName === "DIV"){
+				let divChildNodes = activeChildNodes[i].childNodes;
+				let lastChild = null;
+				for(let i=divChildNodes.length-1; i>=0; i--){
+					if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
+						
+					}else{
+						lastChild = divChildNodes[i];
+						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")) lastChild.after(document.createElement("br"));
+						break;
+					}
 				}
 			}
 		}
@@ -588,21 +590,19 @@ export const reg_preventKeyEvent = async (event) => {
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
 		if(window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpFormBlockBugCaret";
+			tmpNode.innerHTML = ".";
+			let newRange = window.getSelection().getRangeAt(0);
+			newRange.insertNode(tmpNode);
+			let closestDiv = tmpNode.closest("div");
+			document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
 			let willExecute = false;
-			if(window.getSelection().anchorNode.classList !== undefined){
-				if(window.getSelection().anchorNode.classList.contains("contentEditClass")){
-					willExecute=true;
-				}
+			if(closestDiv.classList.contains("contentEditClass")){
+				willExecute=true;
 			}
-
 			if(willExecute){
-				let tmpNode= document.createElement('span');
-				tmpNode.className = "tmpFormBlockBugCaret";
-				tmpNode.innerHTML = ".";
-				let newRange = window.getSelection().getRangeAt(0);
-				newRange.insertNode(tmpNode)
 				document.execCommand('formatblock',false,'div');
-				document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
 			}
 		}
 	}
@@ -620,14 +620,7 @@ export const reg_preventKeyEvent = async (event) => {
 		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
 		if(window.getSelection().getRangeAt(0).startOffset === 1 && previousEle !== null && previousEle.classList !== undefined){
 			if(previousEle.classList.contains("nbBox")){
-				const newRange = window.getSelection().getRangeAt(0)
-				window.getSelection().removeAllRanges();
-				window.getSelection().addRange(newRange);
-				let tmpNode= document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
-				tmpNode.className = "tmpFocusHideBugFix"		//onKeyup에서 제거해주어야함(reg_keyEvSelectFormulaElement 메서드)
-				newRange.insertNode(tmpNode);
-				return;
+				korCharBugBox= previousEle;
 			}
 		}
 		
@@ -1211,7 +1204,7 @@ export const reg_preventKeyEvent = async (event) => {
 	
 
 	let willExecuteFormBlock = false;
-	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결
+	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결 및 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현
 	if(userKeyCode===13){
 		let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
 		if(position.x===0 && position.y===0){	
@@ -1232,6 +1225,80 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 	}
+
+	let isDelLineBugExecuted = false;
+	//라인의 마지막에서 del 버튼 눌렀을 때 아랫줄의 첫번째가 수식인 경우 정상적으로 아랫줄이 윗줄로 올라오지 않는 버그 해결
+	if(userKeyCode === 46){
+		if(window.getSelection().isCollapsed){
+			let endContainer = document.getSelection().getRangeAt(0).endContainer;
+			let nbBoxDom;
+			if(endContainer.classList !== undefined) nbBoxDom=endContainer.closest('.nbBox');
+			else nbBoxDom=endContainer.parentElement.closest('.nbBox');
+			if(nbBoxDom===null){//수식요소가 아닌 경우
+				//노드 추가하여 현재 라인의 마지막 요소인지 파악
+				let tmpNode= document.createElement('span');
+				tmpNode.className = "tmpDelLineBugCaret";
+				tmpNode.innerHTML = "&nbsp;";
+				const selection = document.getSelection();
+				const newRange = selection.getRangeAt(0);
+				newRange.insertNode(tmpNode);
+				let currentLine = tmpNode.closest("div");
+				if(!currentLine.classList.contains("contentEditClass")){
+					let divChildNodes = currentLine.childNodes;
+					let lastChild = null;
+					for(let i=divChildNodes.length-1; i>=0; i--){
+						if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
+						}else if(divChildNodes[i].nodeName === "BR"){
+						}else{
+							lastChild = divChildNodes[i];
+							break;
+						}
+					}
+					let originLastChild = lastChild.previousSibling;
+					//현재 라인의 마지막 요소가 현재 포커스인지 판별
+					if(lastChild === tmpNode){
+						//다음 라인의 첫번째 요소가 수식인지 판별
+						console.log(currentLine.nextSibling.firstChild );
+						if(currentLine.nextSibling !=null &&  currentLine.nextSibling.firstChild !=null ){
+							let nextLineChildNodes = currentLine.nextSibling.childNodes;
+							let firstChild = null;
+							for(let i=0; i<nextLineChildNodes.length; i++){
+								if(nextLineChildNodes[i].nodeName === "#text" && nextLineChildNodes[i].length ===0){
+								}
+								else{
+									firstChild = nextLineChildNodes[i];
+									break;
+								}
+							}
+							console.log(firstChild);
+							if(firstChild !== null && firstChild.classList !== undefined && firstChild.classList.contains("nbBox")){
+								console.log("실행");
+								//다음 라인의 첫번째 요소에 img태그 추가 후 제자리로 복귀
+								tmpNode.remove();
+								window.getSelection().getRangeAt(0).selectNode(firstChild);
+								window.getSelection().collapseToStart();
+								document.execCommand('insertHTML', false, "<img class='tmpDelLineBugFix'>")
+								window.getSelection().getRangeAt(0).selectNode(originLastChild);
+								window.getSelection().collapseToEnd();
+								isDelLineBugExecuted = true;
+							}else{
+								tmpNode.remove();
+							}
+						}else{
+							tmpNode.remove();
+						}
+					}else{
+						tmpNode.remove();
+					}
+				}else{
+					tmpNode.remove();
+				}
+			}
+		}
+		
+	}
+	
+
 
 	//alt 단축키 제어
 	if(event.altKey){
@@ -1418,6 +1485,19 @@ export const reg_preventKeyEvent = async (event) => {
 			tmpReGenerBugFix2[0].remove();
 		}
 
+		//라인의 마지막에서 del 버튼 눌렀을 때 아랫줄의 첫번째가 수식인 경우 정상적으로 아랫줄이 윗줄로 올라오지 않는 버그 해결
+		if(userKeyCode ===46 && isDelLineBugExecuted){
+			let tmpDelLineBugFix = document.activeElement.querySelector(".tmpDelLineBugFix");
+			window.getSelection().getRangeAt(0).selectNode(tmpDelLineBugFix);
+			document.execCommand("delete", false, null);
+			//contents-show화면에 캐럿 제거
+			let tmpDelLineBugFixInShow = document.querySelector(".contents-show").querySelectorAll(".tmpDelLineBugFix");
+			while (tmpDelLineBugFixInShow.length > 0) {
+				tmpDelLineBugFixInShow[0].remove();
+			}
+		}
+
+		//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결 및 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현
 		if(userKeyCode ===13 && willExecuteFormBlock){
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpPositionDetectCaret";
@@ -1425,14 +1505,13 @@ export const reg_preventKeyEvent = async (event) => {
 			const selection = document.getSelection();
 			const newRange = selection.getRangeAt(0);
 			newRange.insertNode(tmpNode);
-			let position = tmpNode.getBoundingClientRect();
+			let originNextSibling = tmpNode.nextSibling;
 			tmpNode.remove();
-
 			let tmpEnterBugCaret = document.activeElement.querySelector(".tmpEnterBugCaret");
 			window.getSelection().getRangeAt(0).selectNode(tmpEnterBugCaret);
 			document.execCommand("delete", false, null);
-			let moveRange = document.caretRangeFromPoint(position.x, position.y);
-			window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+			window.getSelection().getRangeAt(0).selectNode(originNextSibling);
+			window.getSelection().collapseToStart();
 			//contents-show화면에 캐럿 제거
 			let tmpEnterBugCaretInShow = document.querySelector(".contents-show").querySelectorAll(".tmpEnterBugCaret");
 			while (tmpEnterBugCaretInShow.length > 0) {
@@ -1457,6 +1536,16 @@ export const reg_preventKeyEvent = async (event) => {
 					document.execCommand('undo', false, null);
 				}
 			}
+			
+			let tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
+			if(tmpDelLineBugFix.length > 0){
+				document.execCommand('undo', false, null);
+				tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
+				if(tmpDelLineBugFix.length > 0){
+					document.execCommand('undo', false, null);
+				}
+			}
+
 		}
 
 		if( userKeyCode === 86 && event.ctrlKey){
@@ -2124,10 +2213,10 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
 
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
-	if(event.keyCode === 229 && event.code === "Backspace"){
-		if(document.getElementsByClassName("tmpFocusHideBugFix")[0] !== undefined){
-			document.getElementsByClassName("tmpFocusHideBugFix")[0].remove()
-		}
+	if(korCharBugBox!==null){
+		window.getSelection().getRangeAt(0).selectNode(korCharBugBox);
+		window.getSelection().collapseToEnd();
+		korCharBugBox=null;
 	}
 	
 	
