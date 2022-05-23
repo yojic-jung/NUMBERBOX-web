@@ -555,11 +555,11 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 let korCharBugBox = null;
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
+	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식을 수식 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
 	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
 	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
-	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식 대체 <br>태그가 수식 뒤에 있으면 재생성 안됨
 	//but DIV태그 하위에 table있는경우 해결해야함 
-	if(!(userKeyCode === 90 && event.ctrlKey) && window.getSelection().isCollapsed){
+	if(!event.ctrlKey && window.getSelection().isCollapsed){
 		let activeChildNodes = document.activeElement.childNodes
 		for(let i=0; i<activeChildNodes.length; i++){
 			if(activeChildNodes[i].tagName === "DIV"){
@@ -570,7 +570,42 @@ export const reg_preventKeyEvent = async (event) => {
 						
 					}else{
 						lastChild = divChildNodes[i];
-						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")) lastChild.after(document.createElement("br"));
+						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
+							let tmpNode= document.createElement('span');
+							tmpNode.className = "tmpPositionDetectCaret";
+							tmpNode.innerHTML = "&nbsp;";
+							const selection = document.getSelection();
+							const newRange = selection.getRangeAt(0);
+							newRange.insertNode(tmpNode);
+							let whichDir = null;
+							let position = null;
+							let targetNode = null;
+							if(tmpNode.nextSibling !== null){
+								targetNode = tmpNode.nextSibling;
+								whichDir = "next";
+							}else if(tmpNode.previousSibling !== null){
+								targetNode = tmpNode.previousSibling;
+								whichDir = "previous";
+							}else{
+								position = tmpNode.getBoundingClientRect();
+							}
+							tmpNode.remove();
+							window.getSelection().getRangeAt(0).selectNode(lastChild);
+							window.getSelection().collapseToEnd();
+							//br태그 추가
+							document.execCommand("insertParagraph", false, null);
+
+							if(whichDir === "next"){
+								window.getSelection().getRangeAt(0).selectNode(targetNode);
+								window.getSelection().collapseToStart();
+							}else if(whichDir === "previous"){
+								window.getSelection().getRangeAt(0).selectNode(targetNode);
+								window.getSelection().collapseToEnd();
+							}else{
+								let moveRange = document.caretRangeFromPoint(position.x, position.y);
+								window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+							}
+						} 
 						break;
 					}
 				}
@@ -596,13 +631,40 @@ export const reg_preventKeyEvent = async (event) => {
 			let newRange = window.getSelection().getRangeAt(0);
 			newRange.insertNode(tmpNode);
 			let closestDiv = tmpNode.closest("div");
+			let whichDir = null;
+			let position = null;
+			let targetNode = null;
+			if(tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName !== "BR" && tmpNode.previousSibling.nodeName !== "#text"){
+				targetNode = tmpNode.previousSibling;
+				whichDir = "previous";
+			}else if(tmpNode.nextSibling !== null && tmpNode.nextSibling.nodeName !== "BR" && tmpNode.nextSibling.nodeName !== "#text"){
+				targetNode = tmpNode.nextSibling;
+				whichDir = "next";
+			}else{
+				position = tmpNode.getBoundingClientRect();
+			}
 			document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
+			window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
 			let willExecute = false;
 			if(closestDiv.classList.contains("contentEditClass")){
 				willExecute=true;
+				if(targetNode !== null) targetNode.id="tmpFormBlockBugCaret"
 			}
 			if(willExecute){
-				document.execCommand('formatblock',false,'div');
+				//formatblock 명령어 수식 앞, 뒤에서 사용하는 경우 포커스 잃어버림
+				document.execCommand('formatblock', false, 'div'); //formatblock 명령어 이후 undo 명령어 정상 작동 안됨, 포커스 찾아줘야함
+				if(whichDir === "next"){
+					window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+					document.getElementById("tmpFormBlockBugCaret").id="";
+					window.getSelection().collapseToStart();
+				}else if(whichDir === "previous"){
+					window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+					document.getElementById("tmpFormBlockBugCaret").id="";
+					window.getSelection().collapseToEnd();
+				}else{
+					let moveRange = document.caretRangeFromPoint(position.x, position.y);
+					window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+				}
 			}
 		}
 	}
@@ -1202,7 +1264,6 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	
-
 	let willExecuteFormBlock = false;
 	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결 및 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현
 	if(userKeyCode===13){
@@ -1280,15 +1341,19 @@ export const reg_preventKeyEvent = async (event) => {
 								isDelLineBugExecuted = true;
 							}else{
 								tmpNode.remove();
+								window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
 							}
 						}else{
 							tmpNode.remove();
+							window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
 						}
 					}else{
 						tmpNode.remove();
+						window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
 					}
 				}else{
 					tmpNode.remove();
+					window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
 				}
 			}
 		}
@@ -1319,7 +1384,6 @@ export const reg_preventKeyEvent = async (event) => {
 			*/
 			//위 방식도 정상작동
 			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
-			
 			if(nbGrammer.length !== 0){
 				//document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
 				if(window.getSelection().isCollapsed){
@@ -1472,6 +1536,13 @@ export const reg_preventKeyEvent = async (event) => {
 		event.preventDefault();
 	}
 
+	let previousHTML = null;
+	let previousChildEle = null;
+	if(userKeyCode===90 && event.ctrlKey ){
+		previousHTML = document.activeElement.innerHTML;
+		previousChildEle = document.activeElement.querySelectorAll("*");
+	}
+	
 	setTimeout(function(){
 		let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 		while (tmpReGenerBugFix.length > 0) {
@@ -1516,13 +1587,40 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 
-		//ctrl+z에서 tmpFormBlockBugCaret제거
 		if(userKeyCode===90 && event.ctrlKey ){
-			let tmpFormBlockBugCaret = document.getElementsByClassName("tmpFormBlockBugCaret");
-			while (tmpFormBlockBugCaret.length > 0) {
-				tmpFormBlockBugCaret[0].remove();
+			//엔터버그 로직에 의해 아래 엔터버그 ctrl+z로직의 tmpEnterBugCaret 가 남아있는 경우 undo 두 번 더 실행되어(img 태그 제거 위해)
+			//ctrl+z 이후 html이 같게 나타나는 경우 있음 사용자는 ctrl+z가 동작하지 않았다고 느껴짐
+			if(previousHTML === document.activeElement.innerHTML && window.getSelection().isCollapsed){
+				document.execCommand('undo', false, null);
+				if(previousHTML === document.activeElement.innerHTML){
+					document.execCommand('undo', false, null);
+				}
 			}
-
+			
+			//DIV태그의 마지막 요소가 수식요소인 경우 br태그 집어넣는 로직에서
+			//br태그만 변화 된 경우 ctrl+z 사용하면 사용자 입장에서는 태그만 변해 변화된 것이 없어 사용자는 ctrl+z가 동작하지 않았다고 느껴짐  undo 한번 더 실행
+			let currentChildEle = document.activeElement.querySelectorAll("*");
+			if(previousChildEle.length-1 === currentChildEle.length){
+				let diffElement = [];
+				let j=0;
+				for(let i=0; i<previousChildEle.length; i++){
+					let isEqual = false;
+					for(j; j<currentChildEle.length; j++){
+						if(previousChildEle[i]===currentChildEle[j]){
+							isEqual = true;
+							break;
+						} 
+					}
+					if(!isEqual){
+						j=0;
+						diffElement.push(previousChildEle[i]);
+					}
+				}
+				if(diffElement.length===1){
+					if(diffElement[0].tagName==="BR") document.execCommand('undo', false, null);
+				}
+			}
+	
 			//엔터 버그에서 document.execCommand가 총 세 번 실행되므로 브라우저의 ctrl+z 동작 방식에 따라 최대 두번 tmpEnterBugCaret가 남아 있을 수 있음
 			//따라서 최대 두번 체크 후 undo 실행
 			let tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
