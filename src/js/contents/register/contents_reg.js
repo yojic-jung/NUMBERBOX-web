@@ -559,7 +559,7 @@ export const reg_preventKeyEvent = async (event) => {
 	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
 	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
 	//but DIV태그 하위에 table있는경우 해결해야함 
-	if(!event.ctrlKey && window.getSelection().isCollapsed){
+	if(!event.ctrlKey && userKeyCode !== 229 && window.getSelection().isCollapsed){
 		let activeChildNodes = document.activeElement.childNodes
 		for(let i=0; i<activeChildNodes.length; i++){
 			if(activeChildNodes[i].tagName === "DIV"){
@@ -571,6 +571,7 @@ export const reg_preventKeyEvent = async (event) => {
 					}else{
 						lastChild = divChildNodes[i];
 						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
+							console.log("574");
 							let tmpNode= document.createElement('span');
 							tmpNode.className = "tmpPositionDetectCaret";
 							tmpNode.innerHTML = "&nbsp;";
@@ -622,50 +623,66 @@ export const reg_preventKeyEvent = async (event) => {
 	//DIV 태그 안 들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
 	//한줄은 무조건 div로 구분
 	//객관식은 아직 결함 남아있음
+	/*
+	* div 깨지는 경우
+	* 1. 윗줄에서 수식이 마지막이고 아래줄에 텍스트 입력하고 backspace로 텍스트 다 지우고 윗줄까지 올려오면 div가 깨짐)
+	* 2. iv 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
+	*/
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
-		if(!event.shiftKey && window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
+		if(!event.shiftKey && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockBugCaret";
 			tmpNode.innerHTML = ".";
 			let newRange = window.getSelection().getRangeAt(0);
 			newRange.insertNode(tmpNode);
 			let closestDiv = tmpNode.closest("div");
-			let whichDir = null;
-			let position = null;
-			let targetNode = null;
-			if(tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName !== "BR" && tmpNode.previousSibling.nodeName !== "#text"){
-				targetNode = tmpNode.previousSibling;
-				whichDir = "previous";
-			}else if(tmpNode.nextSibling !== null && tmpNode.nextSibling.nodeName !== "BR" && tmpNode.nextSibling.nodeName !== "#text"){
-				targetNode = tmpNode.nextSibling;
-				whichDir = "next";
-			}else{
-				position = tmpNode.getBoundingClientRect();
-			}
-			document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
-			window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
-			let willExecute = false;
-			if(closestDiv.classList.contains("contentEditClass")){
-				willExecute=true;
-				if(targetNode !== null) targetNode.id="tmpFormBlockBugCaret"
-			}
-			if(willExecute){
-				//formatblock 명령어 수식 앞, 뒤에서 사용하는 경우 포커스 잃어버림
-				document.execCommand('formatblock', false, 'div'); //formatblock 명령어 이후 undo 명령어 정상 작동 안됨, 포커스 찾아줘야함
-				if(whichDir === "next"){
-					window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-					document.getElementById("tmpFormBlockBugCaret").id="";
-					window.getSelection().collapseToStart();
-				}else if(whichDir === "previous"){
-					window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-					document.getElementById("tmpFormBlockBugCaret").id="";
-					window.getSelection().collapseToEnd();
+			/* div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
+				=>테이블 태그 안에서 document.execCommand('formatblock', false, 'div'); 실행하면 테이블 좌우로 라인 분리됨*/
+			if(tmpNode.closest(".nbBox")===null){	//수식 밖에서만 document.execCommand('formatblock', false, 'div'); 실행되야함
+				let whichDir = null;
+				let position = null;
+				let targetNode = null;
+				console.log("638");
+				if(tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName !== "BR" && tmpNode.previousSibling.nodeName !== "#text"){
+					targetNode = tmpNode.previousSibling;
+					whichDir = "previous";
+				}else if(tmpNode.nextSibling !== null && tmpNode.nextSibling.nodeName !== "BR" && tmpNode.nextSibling.nodeName !== "#text"){
+					targetNode = tmpNode.nextSibling;
+					whichDir = "next";
 				}else{
-					let moveRange = document.caretRangeFromPoint(position.x, position.y);
-					window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+					position = tmpNode.getBoundingClientRect();
 				}
+				document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
+				window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
+				let willExecute = false;
+				if(closestDiv.classList.contains("contentEditClass")){
+					willExecute=true;
+					if(targetNode !== null) targetNode.id="tmpFormBlockBugCaret"
+				}
+				console.log(willExecute);
+				
+				if(willExecute){
+					//formatblock 명령어 수식 앞, 뒤에서 사용하는 경우 포커스 잃어버림
+					document.execCommand('formatblock', false, 'div'); //formatblock 명령어 이후 undo 명령어 정상 작동 안됨, 포커스 찾아줘야함
+					if(whichDir === "next"){
+						window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+						document.getElementById("tmpFormBlockBugCaret").id="";
+						window.getSelection().collapseToStart();
+					}else if(whichDir === "previous"){
+						window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+						document.getElementById("tmpFormBlockBugCaret").id="";
+						window.getSelection().collapseToEnd();
+					}else{
+						let moveRange = document.caretRangeFromPoint(position.x, position.y);
+						window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+					}
+				}
+			}else{
+				tmpNode.remove();
+				window.getSelection().collapseToStart();
 			}
+			
 		}
 	}
 
@@ -677,16 +694,21 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 
+	/*
+	korCharBugBox=null;
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
+		console.log(userKeyCode);
 		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
 		if(window.getSelection().getRangeAt(0).startOffset === 1 && previousEle !== null && previousEle.classList !== undefined){
 			if(previousEle.classList.contains("nbBox")){
-				korCharBugBox= previousEle;
+				//korCharBugBox= previousEle.nextSibling;
+				console.log(korCharBugBox);
 			}
 		}
 		
 	}
+	*/
 
 	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
 	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
@@ -1269,6 +1291,7 @@ export const reg_preventKeyEvent = async (event) => {
 	if(userKeyCode===13){
 		let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
 		if(position.x===0 && position.y===0){	
+			console.log("1279");
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpPositionDetectCaret";
 			tmpNode.innerHTML = "&nbsp;";
@@ -1297,6 +1320,7 @@ export const reg_preventKeyEvent = async (event) => {
 			else nbBoxDom=endContainer.parentElement.closest('.nbBox');
 			if(nbBoxDom===null){//수식요소가 아닌 경우
 				//노드 추가하여 현재 라인의 마지막 요소인지 파악
+				console.log("1308");
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpDelLineBugCaret";
 				tmpNode.innerHTML = "&nbsp;";
@@ -2306,13 +2330,16 @@ export const reg_selectFormulaElement = async (event) => {
 */
 export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
-
+	/*
+	console.log(korCharBugBox);
+	console.log(korCharBugBox !== "");
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
-	if(korCharBugBox!==null){
+	if(korCharBugBox!==null && korCharBugBox !== ""){
 		window.getSelection().getRangeAt(0).selectNode(korCharBugBox);
 		window.getSelection().collapseToEnd();
 		korCharBugBox=null;
 	}
+	*/
 	
 	
 	//키보드 좌우 화살표 누른 경우(셀렉트)
