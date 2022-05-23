@@ -1593,7 +1593,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 	let previousHTML = null;
 	let previousChildEle = null;
-	if(userKeyCode===90 && event.ctrlKey ){
+	if((userKeyCode===90 && event.ctrlKey) || (userKeyCode===89 && event.ctrlKey)){
 		previousHTML = document.activeElement.innerHTML;
 		previousChildEle = document.activeElement.querySelectorAll("*");
 	}
@@ -1607,8 +1607,6 @@ export const reg_preventKeyEvent = async (event) => {
 		while (tmpReGenerBugFix2.length > 0) {
 			tmpReGenerBugFix2[0].remove();
 		}
-
-
 
 
 		//라인의 마지막에서 del 버튼 눌렀을 때 아랫줄의 첫번째가 수식인 경우 정상적으로 아랫줄이 윗줄로 올라오지 않는 버그 해결
@@ -1645,6 +1643,7 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 
+		//ctrl+z
 		if(userKeyCode===90 && event.ctrlKey ){
 			//엔터버그 로직에 의해 아래 엔터버그 ctrl+z로직의 tmpEnterBugCaret 가 남아있는 경우 undo 두 번 더 실행되어(img 태그 제거 위해)
 			//ctrl+z 이후 html이 같게 나타나는 경우 있음 사용자는 ctrl+z가 동작하지 않았다고 느껴짐
@@ -1714,9 +1713,80 @@ export const reg_preventKeyEvent = async (event) => {
 					document.execCommand('undo', false, null);
 				}
 			}
-			
-
 		}
+
+		//ctrl+y
+		if(userKeyCode===89 && event.ctrlKey ){
+			//엔터버그 로직에 의해 아래 엔터버그 ctrl+y로직의 tmpEnterBugCaret 가 남아있는 경우 redo 두 번 더 실행되어(img 태그 제거 위해)
+			//ctrl+y 이후 html이 같게 나타나는 경우 있음 사용자는 ctrl+z가 동작하지 않았다고 느껴짐
+			if(previousHTML === document.activeElement.innerHTML && window.getSelection().isCollapsed){
+				document.execCommand('redo', false, null);
+				if(previousHTML === document.activeElement.innerHTML){
+					document.execCommand('redo', false, null);
+				}
+			}
+			
+			
+			//DIV태그의 마지막 요소가 수식요소인 경우 br태그 집어넣는 로직에서
+			//br태그만 변화 된 경우 ctrl+y 사용하면 사용자 입장에서는 태그만 변해 변화된 것이 없어 사용자는 ctrl+z가 동작하지 않았다고 느껴짐  redo 한번 더 실행
+			let currentChildEle = document.activeElement.querySelectorAll("*");
+			if(previousChildEle.length-1 === currentChildEle.length){
+				let diffElement = [];
+				let j=0;
+				for(let i=0; i<previousChildEle.length; i++){
+					let isEqual = false;
+					for(j; j<currentChildEle.length; j++){
+						if(previousChildEle[i]===currentChildEle[j]){
+							isEqual = true;
+							break;
+						} 
+					}
+					if(!isEqual){
+						j=0;
+						diffElement.push(previousChildEle[i]);
+					}
+				}
+				if(diffElement.length===1){
+					if(diffElement[0].tagName==="BR") document.execCommand('redo', false, null);
+				}
+			}
+	
+			//엔터 버그에서 document.execCommand가 총 세 번 실행되므로 브라우저의 ctrl+z 동작 방식에 따라 최대 두번 tmpEnterBugCaret가 남아 있을 수 있음
+			//따라서 최대 두번 체크 후 redo 실행
+			let tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
+			if(tmpEnterBugCaret.length > 0){
+				document.execCommand('redo', false, null);
+				tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
+				if(tmpEnterBugCaret.length > 0){
+					document.execCommand('redo', false, null);
+				}
+			}
+			let tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
+			if(tmpDelLineBugFix.length > 0){
+				document.execCommand('redo', false, null);
+				tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
+				if(tmpDelLineBugFix.length > 0){
+					document.execCommand('redo', false, null);
+				}
+			}
+			
+			let tmpFormBlockBugCaret = document.activeElement.querySelectorAll("#tmpFormBlockBugCaret");
+			if(tmpFormBlockBugCaret.length > 0){
+				console.log("redo")
+				tmpFormBlockBugCaret[0].id="";
+				document.execCommand('redo', false, null);
+			}
+
+			let tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
+			if(tmpFormBlockReGenerBug.length > 0){
+				document.execCommand('redo', false, null);
+				tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
+				if(tmpFormBlockReGenerBug.length > 0){
+					document.execCommand('redo', false, null);
+				}
+			}
+		}
+
 
 		if( userKeyCode === 86 && event.ctrlKey){
 			let copiedEditInnerTable = document.getElementById(document.activeElement.id).querySelector(".copiedEditInnerTable");
