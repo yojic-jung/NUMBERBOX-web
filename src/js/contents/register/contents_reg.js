@@ -567,11 +567,9 @@ export const reg_preventKeyEvent = async (event) => {
 				let lastChild = null;
 				for(let i=divChildNodes.length-1; i>=0; i--){
 					if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-						
 					}else{
 						lastChild = divChildNodes[i];
 						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
-							console.log("574");
 							let tmpNode= document.createElement('span');
 							tmpNode.className = "tmpPositionDetectCaret";
 							tmpNode.innerHTML = "&nbsp;";
@@ -633,7 +631,7 @@ export const reg_preventKeyEvent = async (event) => {
 		if(!event.shiftKey && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockBugCaret";
-			tmpNode.innerHTML = ".";
+			tmpNode.innerHTML = "&nbsp;";
 			let newRange = window.getSelection().getRangeAt(0);
 			newRange.insertNode(tmpNode);
 			let closestDiv = tmpNode.closest("div");
@@ -643,7 +641,6 @@ export const reg_preventKeyEvent = async (event) => {
 				let whichDir = null;
 				let position = null;
 				let targetNode = null;
-				console.log("638");
 				if(tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName !== "BR" && tmpNode.previousSibling.nodeName !== "#text"){
 					targetNode = tmpNode.previousSibling;
 					whichDir = "previous";
@@ -660,11 +657,49 @@ export const reg_preventKeyEvent = async (event) => {
 					willExecute=true;
 					if(targetNode !== null) targetNode.id="tmpFormBlockBugCaret"
 				}
-				console.log(willExecute);
 				
 				if(willExecute){
+					//formatblock 수식 재생성 버그 해결, 수식이 마지막 요소인 경우 formatblockt실행하며 수식 재생성 됨
+					//뒤에 공백 추가
+					let hasReGenerBug = false;
+					let activeChildren = document.activeElement.children;
+					for(let i=0; i<activeChildren.length; i++){
+						if(activeChildren[i].tagName === "TABLE"){
+							if(activeChildren[i+1] === undefined || (activeChildren[i+1] !== undefined && activeChildren[i+1].tagName !== "BR")){
+								let tmpNode= document.createElement('span');
+								tmpNode.className = "tmpFormBlockReGenerBug";
+								tmpNode.innerHTML = "&nbsp;";
+								window.getSelection().getRangeAt(0).selectNode(activeChildren[i]);
+								window.getSelection().collapseToEnd();
+								document.execCommand('insertHTML', false, tmpNode.outerHTML);
+								hasReGenerBug = true;
+							}
+						}
+					}
+					//다시 제자리 복귀
+					if(hasReGenerBug){
+						if(whichDir === "next"){
+							window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+							window.getSelection().collapseToStart();
+						}else if(whichDir === "previous"){
+							window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
+							window.getSelection().collapseToEnd();
+						}else{
+							let moveRange = document.caretRangeFromPoint(position.x, position.y);
+							window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+						}
+					}
+
 					//formatblock 명령어 수식 앞, 뒤에서 사용하는 경우 포커스 잃어버림
 					document.execCommand('formatblock', false, 'div'); //formatblock 명령어 이후 undo 명령어 정상 작동 안됨, 포커스 찾아줘야함
+					
+					if(hasReGenerBug){	//직접 제거하여도 ctrl+z 잘 돌아감
+						let tmpFormBlockReGenerBug = document.getElementsByClassName("tmpFormBlockReGenerBug");
+						while (tmpFormBlockReGenerBug.length > 0) {
+							tmpFormBlockReGenerBug[0].remove();
+						}
+					}
+					
 					if(whichDir === "next"){
 						window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
 						document.getElementById("tmpFormBlockBugCaret").id="";
@@ -698,12 +733,10 @@ export const reg_preventKeyEvent = async (event) => {
 	korCharBugBox=null;
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(userKeyCode === 229 && event.code === "Backspace"){
-		console.log(userKeyCode);
 		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
 		if(window.getSelection().getRangeAt(0).startOffset === 1 && previousEle !== null && previousEle.classList !== undefined){
 			if(previousEle.classList.contains("nbBox")){
 				//korCharBugBox= previousEle.nextSibling;
-				console.log(korCharBugBox);
 			}
 		}
 		
@@ -1291,7 +1324,6 @@ export const reg_preventKeyEvent = async (event) => {
 	if(userKeyCode===13){
 		let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
 		if(position.x===0 && position.y===0){	
-			console.log("1279");
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpPositionDetectCaret";
 			tmpNode.innerHTML = "&nbsp;";
@@ -1320,7 +1352,6 @@ export const reg_preventKeyEvent = async (event) => {
 			else nbBoxDom=endContainer.parentElement.closest('.nbBox');
 			if(nbBoxDom===null){//수식요소가 아닌 경우
 				//노드 추가하여 현재 라인의 마지막 요소인지 파악
-				console.log("1308");
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpDelLineBugCaret";
 				tmpNode.innerHTML = "&nbsp;";
@@ -1577,6 +1608,9 @@ export const reg_preventKeyEvent = async (event) => {
 			tmpReGenerBugFix2[0].remove();
 		}
 
+
+
+
 		//라인의 마지막에서 del 버튼 눌렀을 때 아랫줄의 첫번째가 수식인 경우 정상적으로 아랫줄이 윗줄로 올라오지 않는 버그 해결
 		if(userKeyCode ===46 && isDelLineBugExecuted){
 			let tmpDelLineBugFix = document.activeElement.querySelector(".tmpDelLineBugFix");
@@ -1664,6 +1698,23 @@ export const reg_preventKeyEvent = async (event) => {
 					document.execCommand('undo', false, null);
 				}
 			}
+			
+			let tmpFormBlockBugCaret = document.activeElement.querySelectorAll("#tmpFormBlockBugCaret");
+			if(tmpFormBlockBugCaret.length > 0){
+				tmpFormBlockBugCaret[0].id="";
+				document.execCommand('undo', false, null);
+			}
+
+
+			let tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
+			if(tmpFormBlockReGenerBug.length > 0){
+				document.execCommand('undo', false, null);
+				tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
+				if(tmpFormBlockReGenerBug.length > 0){
+					document.execCommand('undo', false, null);
+				}
+			}
+			
 
 		}
 
@@ -2331,8 +2382,6 @@ export const reg_selectFormulaElement = async (event) => {
 export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
 	/*
-	console.log(korCharBugBox);
-	console.log(korCharBugBox !== "");
 	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
 	if(korCharBugBox!==null && korCharBugBox !== ""){
 		window.getSelection().getRangeAt(0).selectNode(korCharBugBox);
