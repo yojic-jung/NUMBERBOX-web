@@ -390,7 +390,9 @@ export const reg_lineMoveBugFixEnd = async () =>{
 		}
 }
 
-
+/*
+* 정의 : 셀렉트 상태에서 글자 입력, 삭제, cut, 수식키 입력, ctrl+v 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
+*/
 export const reg_reGenerFormulBugFix = async (event) =>{
 		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
@@ -404,46 +406,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 		if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
 			isLeftDir =false
 		}
-		/*
-		let endContainer = range.endContainer;
-		let endOffset = range.endOffset;
-		let commonContainer = range.commonAncestorContainer;
-
-		//하나의 수식요소 안에서는 적용안함, 수식요소 셀렉트 적용규칙은 reg_keyEvSelectFormulaElement에서 정의
-		let strtNbBox = strtContainer;
-		if(strtNbBox.classList !== undefined && strtNbBox.closest(".nbBox") !== null){
-			strtNbBox = strtNbBox.closest(".nbBox")
-		}else{
-			strtNbBox = strtNbBox.parentElement.closest(".nbBox")
-		}
-		let endNbBox = endContainer;
-		if(endNbBox.classList !== undefined && endNbBox.closest(".nbBox") !== null){
-			endNbBox = endNbBox.closest(".nbBox")
-		}else{
-			endNbBox = endNbBox.parentElement.closest(".nbBox")
-		}
-		let rootStrtNbBox = null;
-		if(strtNbBox !== null){
-			while(strtNbBox.parentElement.closest('.nbBox')!==null){
-				strtNbBox = strtNbBox.parentElement.closest('.nbBox');
-			}
-			rootStrtNbBox = strtNbBox;
-		}
-		let rootEndNbBox =null;
-		if(endNbBox !== null){
-			while(endNbBox.parentElement.closest('.nbBox')!==null){
-				endNbBox = endNbBox.parentElement.closest('.nbBox');
-			}
-			rootEndNbBox = endNbBox;
-		}
-		//최상위 수식요소가 같고 현재 선택 요소가 최상위가 아닌 경우 적용하지 않음(선택한 요소가 최상위 요소이면 적용)
-		if(rootStrtNbBox !== null && rootStrtNbBox === rootEndNbBox 
-			&& rootStrtNbBox !== range.startContainer && rootEndNbBox !== range.endContainer){
-			if(isShorcutKey) return false;
-			else return true;
-		}
-		*/
-		
 
 		if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList !== undefined){
 			if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList.contains("nbBox")){
@@ -599,32 +561,8 @@ export const reg_preventKeyEvent = async (event) => {
 	*/
 	await reg_oneLineOneDiv(event.shiftKey, event.ctrlKey, userKeyCode);
 	
-
 	//DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
-	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
-	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
-	//but DIV태그 하위에 table있는경우 해결해야함 
-	//if(!event.ctrlKey && userKeyCode !== 229 && window.getSelection().isCollapsed){
-		if(window.getSelection().isCollapsed){
-			let activeChildNodes = document.activeElement.childNodes
-			for(let i=0; i<activeChildNodes.length; i++){
-				if(activeChildNodes[i].tagName === "DIV"){
-					let divChildNodes = activeChildNodes[i].childNodes;
-					let lastChild = null;
-					for(let i=divChildNodes.length-1; i>=0; i--){
-						if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-						}else{
-							lastChild = divChildNodes[i];
-							//div요소의 마지막 요소가 수식인지 파악
-							if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
-								lastChild.after(document.createElement('br'));
-							}
-							break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
-						}
-					}
-				}
-			}
-		}
+	await reg_addBrInLastPosition();
 		
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
@@ -711,82 +649,6 @@ export const reg_preventKeyEvent = async (event) => {
 			await reg_reGenerFormulBugFix(event);
 	}
 
-	//삭제 또는 cut으로 라인 이동시 라인 마지막에 수식요소 있으면 재생성 되는 버그 해결 
-	//모든 div태그의 마지막 요소가 수식요소인지 체크하여 수식인 경우 뒤에 공백 추가
-	/*
-	if(userKeyCode === 8 || userKeyCode === 46 || (userKeyCode === 88 && event.ctrlKey) || (userKeyCode === 86 && event.ctrlKey) || (userKeyCode !== 18 && event.altKey)
-	|| (!document.getSelection().isCollapsed 
-		&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
-	 	&& !event.shiftKey && !event.ctrlKey && !event.altKey)){
-		let childDiv = document.getElementById(document.activeElement.id).querySelectorAll("div");
-		for(let i=0; i<childDiv.length; i++){
-			//div태그의 마지막이 수식요소인 경우, 수식 재생성 오류 해결
-			//마지막요소가 br이고 br 이전이 수식요소인 경우 재생성 안됨, 오직 마지막 요소가 수식요소인 경우 또는 수식이 span에 감싸져있는 경우 재생성됨
-			if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.classList.contains("nbBox")){
-					if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
-						let lastNbBox = childDiv[i].lastElementChild;	//변수 지정 안 한채 사용하면 tmpNode가 lastElementChild로 잡힐 수 있음
-						let tmpNode = document.createElement('span');
-						tmpNode.innerHTML = "&#65279;"
-						tmpNode.className = "tmpReGenerBugFix";
-						if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
-							let tmpNode2 = document.createElement('span');
-							tmpNode2.innerHTML = "&#65279;"
-							tmpNode2.className = "tmpPosition";
-							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
-							if(lastNbBox !== tmpNode2.previousSibling){
-								childDiv[i].lastElementChild.after(tmpNode);
-							}
-							tmpNode2.remove();
-						}else{
-							childDiv[i].lastElementChild.after(tmpNode);
-						}
-					}
-			//수식이 span에 감싸져있는 경우 재생성 버그 해결
-			}else if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.tagName === "SPAN"){
-				let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
-				if(lastNbBox.length !== 0){
-					lastNbBox = lastNbBox[lastNbBox.length-1];
-					if(lastNbBox.parentElement !== undefined){
-						while(lastNbBox.parentElement.closest(".nbBox") !== null){
-							lastNbBox = lastNbBox.parentElement.closest(".nbBox");
-						}
-					}
-					
-					if(lastNbBox.nextSibling === null || lastNbBox.nextSibling.length===0){
-						let isLastDom = true;
-						let spanTag = lastNbBox
-						while(spanTag.parentElement.closest("span") !== null){
-							spanTag=spanTag.parentElement.closest("span") ;
-							if(spanTag.nextSibling !== null || (spanTag.nextSibling !== null && spanTag.nextSibling.length!==0)){
-								isLastDom = false;
-								break;
-							}
-						}
-						if(isLastDom){
-							let tmpNode = document.createElement('span');
-							tmpNode.innerHTML = "&#65279;"
-							tmpNode.className = "tmpReGenerBugFix";
-							if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
-								let tmpNode2 = document.createElement('span');
-								tmpNode2.innerHTML = "&#65279;"
-								tmpNode2.className = "tmpPosition";
-								window.getSelection().getRangeAt(0).insertNode(tmpNode2);
-								if(lastNbBox !== tmpNode2.previousSibling){
-									lastNbBox.after(tmpNode);
-								}
-								tmpNode2.remove();
-							}else{
-								lastNbBox.after(tmpNode);
-							}
-						}
-						
-					}
-				}
-			}
-		}
-	}
-	*/
-	//[end]
 
 	//2번 validation(순서 바뀌면 안됨, 백스페이스 및 del 오류남)
 	//입력 불가 수식 box요소 제어[start]
@@ -1320,7 +1182,6 @@ export const reg_preventKeyEvent = async (event) => {
 							break;
 						}
 					}
-					let originLastChild = lastChild.previousSibling;
 					//현재 라인의 마지막 요소가 현재 포커스인지 판별
 					if(lastChild === tmpNode){
 						//다음 라인의 첫번째 요소가 수식인지 판별
@@ -1371,81 +1232,41 @@ export const reg_preventKeyEvent = async (event) => {
 	if(event.altKey){
 		const mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyList);
 		const isWriteDisableDom = await reg_writeDisableDom(event)
+
+		//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
+		let strtElement = window.getSelection().getRangeAt(0).startContainer;
+		let endElement = window.getSelection().getRangeAt(0).endContainer;
+		if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+		if(endElement.classList === undefined) endElement = endElement.parentElement;
 		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
 			let nbGrammer = mappingKey[0]["nbGrammer"];
-			/*
 			//현재 포커스에 단축키 수식 추가
-			const selection = document.getSelection();
-			const newRange = selection.getRangeAt(0);
-			selection.removeAllRanges();
-			selection.addRange(newRange);
+			let selection = document.getSelection();
+			let newRange = selection.getRangeAt(0);
 			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
 			let tmpNode= document.createElement('span');
 			tmpNode.innerHTML = nbGrammer;
 			newRange.deleteContents();
 			newRange.insertNode(tmpNode);
-			newRange.innerHTML=nbGrammer;
-			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-			*/
+			if(tmpNode.querySelectorAll(".nbBox").length !== 0){
+				tmpNode.outerHTML = nbGrammer;
+				let focusElement = document.getElementsByClassName("nbBoxFocusElement")[0];
+				window.getSelection().setBaseAndExtent(focusElement, 0, focusElement, 0);
+				focusElement.remove();
+				window.getSelection().collapseToStart();
+			}else{
+				let positionDetect= document.createElement('span');
+				positionDetect.className ="fomulaPositionDetect"
+				tmpNode.after(positionDetect);
+				window.getSelection().getRangeAt(0).selectNode(positionDetect);
+				tmpNode.outerHTML = nbGrammer;
+				window.getSelection().collapseToEnd();
+				positionDetect.remove();
+			}
+			
+			
 			//위 방식도 정상작동
-			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
 			if(nbGrammer.length !== 0){
-				//document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
-				if(window.getSelection().isCollapsed){
-					//테이블 요소인 경우에만 셀렉트 된 상태에서 수식 들어감, 일반 수식요소 셀렉트 된 상태에서 들어가면 span(tmpReGenerBugFix)태그 안에 들어가서 입력 후 바로 삭제 됨 
-					if(nbGrammer.indexOf("nbBox")>-1){
-						const newRange = window.getSelection().getRangeAt(0)
-						window.getSelection().removeAllRanges();
-						window.getSelection().addRange(newRange);
-						let tmpNode= document.createElement('span');
-						tmpNode.innerHTML = "&#65279;"
-						tmpNode.className = "tmpReGenerBugFix"
-						let tmpNode2= document.createElement('span');
-						tmpNode2.innerHTML = "&#65279;"
-						tmpNode2.className = "tmpReGenerBugFix2"
-						if(newRange.commonAncestorContainer===document.activeElement && newRange.startOffset===0
-							&& newRange.endOffset===0 && document.activeElement.childNodes[0] !== undefined
-							&& document.activeElement.childNodes[0].tagName === "DIV"){
-								document.activeElement.childNodes[0].prepend(tmpNode2);
-								document.activeElement.childNodes[0].prepend(tmpNode);
-						}else if( window.getSelection().getRangeAt(0).startContainer.tagName === "TR" && window.getSelection().getRangeAt(0).endContainer.tagName === "TR"
-						&& window.getSelection().getRangeAt(0).startOffset === 0 && window.getSelection().getRangeAt(0).endOffset === 0
-						&& window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd") !== null ){
-							window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode2);
-							window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode);
-						}else{
-							newRange.insertNode(tmpNode2);
-							newRange.insertNode(tmpNode);
-						}
-						//div 마지막이 수식인 경우 tmpReGenerBugFix가 이미 추가되어 있어 수식이 tmpReGenerBugFix안으로 들어가 입력되지 않고 삭제되어버리는 버그 해결
-						if(tmpNode2.nextSibling !== null && tmpNode2.nextSibling.classList !== undefined){
-							if(tmpNode2.nextSibling.classList.contains("tmpReGenerBugFix")){
-								tmpNode2.nextSibling.remove();
-							}
-						}
-						newRange.selectNode(tmpNode2);
-					}
-				}else{
-					//div의 맨앞에 들어가면 줄바꿈 이루어져서 맨앞에 공백 추가
-					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-					if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
-					strtContainer = strtContainer.closest("div");
-					if(window.getSelection().getRangeAt(0).startOffset===0 && strtContainer !== null){
-						let tmpNode= document.createElement('span');
-						tmpNode.innerHTML = "&#65279;"
-						tmpNode.className = "tmpReGenerBugFix"
-						strtContainer.prepend(tmpNode);
-					}
-				}
-
-				//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
-				let strtElement = window.getSelection().getRangeAt(0).startContainer;
-				let endElement = window.getSelection().getRangeAt(0).endContainer;
-				if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
-				if(endElement.classList === undefined) endElement = endElement.parentElement;
-				//nb문법 삽입
-				document.execCommand("insertHTML", false , nbGrammer);
-
 				//nbConvert 루트 안의 분수 컴파일
 				if(nbGrammer.indexOf("nbFracBox") > -1){
 					let nbRootBoxStrt = strtElement.closest(".nbRootBox");
@@ -1507,34 +1328,6 @@ export const reg_preventKeyEvent = async (event) => {
 				//nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
 				//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
 				 //사용성이 낮아보여 구현 안함, 현재 줄맞춤 안맞는 에러 존재
-
-				//아래 명령어 사용하면 위에 명령어 필요 없음. 단, 포커스 다시 잡아줘야함, 깜빡임도 심함
-				//document.execCommand("insertHTML", false , "<span class='tmpReGenerBugFix'>.</span>"+nbGrammer+"<span class='tmpReGenerBugFix2'>.</span>");
-
-				//포커스 재설정 필요한 수식요소 포커스 설정
-				let focusNbBorderBox = window.getSelection().focusNode;
-				if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
-				focusNbBorderBox = focusNbBorderBox.closest(".borderBox");
-				
-				if(focusNbBorderBox !== null) {
-					//입력 불가 요소는 수식 오른쪽에 포커스
-					for(let i=0; i<writeDisabledDom.length; i++){
-						if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
-							window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox.closest(".nbBox"));
-							window.getSelection().collapseToEnd();
-						}
-					}
-	
-					//연립방정식은 제일 첫번째 borderBox에 포커스
-					if(focusNbBorderBox.classList.contains("nbThrCaseThr") && nbGrammer.indexOf("nbThrCaseThr") > -1){
-						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
-						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
-	
-					}else if(focusNbBorderBox.classList.contains("nbCaseSec") && nbGrammer.indexOf("nbCaseSec") > -1){
-						window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
-						window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
-					}
-				}
 			}
 		}
 		event.preventDefault();
@@ -2331,6 +2124,7 @@ export const reg_selectFormulaElement = async (event) => {
 */
 export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
+	await reg_addBrInLastPosition();    //div 태그 마지막이 수식인 경우 마지막 요소에 br 추가
 	//밑줄 효과 제어
 	if(window.getSelection().isCollapsed){
 		let cusUnderLineUnActive = document.activeElement.getElementsByClassName("cusUnderLineUnActive");
@@ -3106,6 +2900,33 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 			document.getElementsByClassName("tmpFormBlockPositionDetect")[0].remove();
 			window.getSelection().collapseToStart();
 			
+		}
+	}
+}
+
+/*
+* 정의 : DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
+* 	테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 또한 해결
+*/
+export const reg_addBrInLastPosition = () => {
+	if(window.getSelection().isCollapsed){
+		let activeChildNodes = document.activeElement.childNodes
+		for(let i=0; i<activeChildNodes.length; i++){
+			if(activeChildNodes[i].tagName === "DIV"){
+				let divChildNodes = activeChildNodes[i].childNodes;
+				let lastChild = null;
+				for(let i=divChildNodes.length-1; i>=0; i--){
+					if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
+					}else{
+						lastChild = divChildNodes[i];
+						//div요소의 마지막 요소가 수식인지 파악
+						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
+							lastChild.after(document.createElement('br'));
+						}
+						break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
+					}
+				}
+			}
 		}
 	}
 }

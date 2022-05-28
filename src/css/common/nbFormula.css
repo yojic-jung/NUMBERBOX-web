@@ -611,7 +611,29 @@
 .nbBinomCoBox {
     vertical-align: middle;
     border-spacing: 0px;
-    margin:0px 1px;
+    margin: 0;
+    padding: 0 0.4em;
+    position: relative;
+}
+
+.nbBinomCoBox tbody::before {
+    content: "(";
+    position: absolute;
+    left: 0em;
+    top: 0.4em;
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+
+.nbBinomCoBox tbody::after {
+    content: ")";
+    position: absolute;
+    right: 0em;
+    top: 0.4em;
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
 }
 
 .nbBinomCoFir {

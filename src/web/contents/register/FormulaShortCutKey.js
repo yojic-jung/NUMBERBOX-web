@@ -1,7 +1,6 @@
 import {React, useEffect, useState} from "react";
-import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix, reg_undoStackByClick, reg_undoArrPop} from 'js/contents/register/contents_reg';
-//입력불가 수식요소 (FormulaShorCutKey.js에도 똑같이 정의함)
-const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
+import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix, reg_undoStackByClick, 
+    reg_undoArrPop, reg_addBrInLastPosition} from 'js/contents/register/contents_reg';
 
 const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod}) => {
     const [shortCutKey, setShortCutKey] = useState(new Array());
@@ -32,145 +31,58 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
 		if(document.getSelection().focusNode==null) return;
 
         let targetId = event.currentTarget.id;
-        await reg_undoStackByClick(document.activeElement.id);
-
-        const selection = document.getSelection();
-        const newRange = selection.getRangeAt(0);
-        selection.removeAllRanges();
-        selection.addRange(newRange);
-        //셀렉트(드래그)한 부분이 없이 오로지 포커스가 하나인 경우
-        if(document.getSelection().isCollapsed) window.getSelection().collapseToEnd();	   //포커스 줘야 activeElement.id 정상적으로 뽑아옴
-        else{
-            let childDiv = document.getElementById(document.activeElement.id).querySelectorAll("div");
-            for(let i=0; i<childDiv.length; i++){
-                //div태그의 마지막이 수식요소인 경우, 수식 재생성 오류 해결
-                //마지막요소가 br이고 br 이전이 수식요소인 경우 재생성 안됨, 오직 마지막 요소가 수식요소인 경우 또는 수식이 span에 감싸져있는 경우 재생성됨
-                if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.classList.contains("nbBox")){
-                        if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
-                            let tmpNode = document.createElement('span');
-                            tmpNode.innerHTML = "&nbsp;"
-                            tmpNode.className = "tmpReGenerBugFix";
-                            childDiv[i].lastElementChild.after(tmpNode);
-                        }
-                //수식이 span에 감싸져있는 경우 재생성 버그 해결
-                }else if(childDiv[i].lastElementChild !== null && childDiv[i].lastElementChild.tagName === "SPAN"){
-                    let lastNbBox = childDiv[i].lastElementChild.querySelectorAll(".nbBox");
-                    if(lastNbBox.length !== 0){
-                        lastNbBox = lastNbBox[lastNbBox.length-1];
-                        if(lastNbBox.parentElement !== undefined){
-                            while(lastNbBox.parentElement.closest(".nbBox") !== null){
-                                lastNbBox = lastNbBox.parentElement.closest(".nbBox");
-                            }
-                        }
-                        
-                        if(lastNbBox.nextSibling === null || lastNbBox.nextSibling.length===0){
-                            let isLastDom = true;
-                            let spanTag = lastNbBox
-                            while(spanTag.parentElement.closest("span") !== null){
-                                spanTag=spanTag.parentElement.closest("span") ;
-                                if(spanTag.nextSibling !== null || (spanTag.nextSibling !== null && spanTag.nextSibling.length!==0)){
-                                    isLastDom = false;
-                                    break;
-                                }
-                            }
-                            if(isLastDom){
-                                let tmpNode = document.createElement('span');
-                                tmpNode.innerHTML = "&nbsp;"
-                                tmpNode.className = "tmpReGenerBugFix";
-                                lastNbBox.after(tmpNode);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        
-
         let focusId = document.activeElement.id;
         //문제입력, 해설입력, 객관식 보기, 주관식 정답에만 적용
         if( !(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"
         || focusId == "firNoFormulaEditor" || focusId == "secNoFormulaEditor"
         || focusId == "thrNoFormulaEditor" || focusId == "fourNoFormulaEditor"
         || focusId == "fifNoFormulaEditor" || focusId == "answerFormulaEditor") ){
-            await reg_undoArrPop();
             return;
         }
  
+        await reg_undoStackByClick(document.activeElement.id);      //ctrl+z undo 스택 메모리에 데이터 추가
+
+         //셀렉트 상태에서 수식 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
+         if( !document.getSelection().isCollapsed ){
+            await reg_reGenerFormulBugFix(true);
+        }
+
         let formulaId = document.getElementById(targetId).dataset.formulaId;
         const mappingKey = await reg_getMappingShortCutKeyClk(formulaId, parentKeyList);
-        const isWriteDisableDom = await reg_writeDisableDom(event)
+        const isWriteDisableDom = await reg_writeDisableDom(event);
+        
+        //nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
+        let strtElement = window.getSelection().getRangeAt(0).startContainer;
+		let endElement = window.getSelection().getRangeAt(0).endContainer;
+		if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
+		if(endElement.classList === undefined) endElement = endElement.parentElement;
 		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
 			let nbGrammer = mappingKey[0]["nbGrammer"];
-            /*
 			//현재 포커스에 단축키 수식 추가
-            const selection = document.getSelection();
-            const newRange = selection.getRangeAt(0);
-            selection.removeAllRanges();
-            selection.addRange(newRange);
-            let tmpNode= document.createElement('span');
-            tmpNode.innerHTML = nbGrammer;
-            newRange.deleteContents();
-            newRange.insertNode(tmpNode);
-			window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-            */
-			//위 방식도 정상작동
-			//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
-			nbGrammer = "<span>"+nbGrammer+"</span>";
-            if( !document.getSelection().isCollapsed ){
-                await reg_reGenerFormulBugFix(true);
-            }
-            //document.execCommand버그, 셀렉트 된 상태에서 수식 들어가야 다음 줄 줄바꿈 없음
-            if(window.getSelection().isCollapsed){
-                const newRange = window.getSelection().getRangeAt(0)
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(newRange);
-                let tmpNode= document.createElement('span');
-                tmpNode.innerHTML = "&nbsp;"
-                tmpNode.className = "tmpReGenerBugFix";
-                let tmpNode2= document.createElement('span');
-                tmpNode2.innerHTML = "&nbsp;"
-                tmpNode2.className = "tmpReGenerBugFix2"
+			let selection = document.getSelection();
+			let newRange = selection.getRangeAt(0);
+			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
+			let tmpNode= document.createElement('span');
+			tmpNode.innerHTML = nbGrammer;
+			newRange.deleteContents();
+			newRange.insertNode(tmpNode);
+			if(tmpNode.querySelectorAll(".nbBox").length !== 0){
+				tmpNode.outerHTML = nbGrammer;
+				let focusElement = document.getElementsByClassName("nbBoxFocusElement")[0];
+				window.getSelection().setBaseAndExtent(focusElement, 0, focusElement, 0);
+				focusElement.remove();
+				window.getSelection().collapseToStart();
+			}else{
+				let positionDetect= document.createElement('span');
+				positionDetect.className ="fomulaPositionDetect"
+				tmpNode.after(positionDetect);
+				window.getSelection().getRangeAt(0).selectNode(positionDetect);
+				tmpNode.outerHTML = nbGrammer;
+				window.getSelection().collapseToEnd();
+				positionDetect.remove();
+			}
+           
 
-                if(newRange.commonAncestorContainer===document.activeElement && newRange.startOffset===0
-                    && newRange.endOffset===0 && document.activeElement.childNodes[0] !== undefined
-                    && document.activeElement.childNodes[0].tagName === "DIV"){
-                        document.activeElement.childNodes[0].prepend(tmpNode2);
-                        document.activeElement.childNodes[0].prepend(tmpNode);
-                }else if( window.getSelection().getRangeAt(0).startContainer.tagName === "TR" && window.getSelection().getRangeAt(0).endContainer.tagName === "TR"
-                && window.getSelection().getRangeAt(0).startOffset === 0 && window.getSelection().getRangeAt(0).endOffset === 0
-                && window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd") !== null ){
-                    window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode2);
-                    window.getSelection().getRangeAt(0).endContainer.querySelector(".innerTbTd").prepend(tmpNode);
-                }else{
-                    newRange.insertNode(tmpNode2);
-                    newRange.insertNode(tmpNode);
-                }
-                //div 마지막이 수식인 경우 tmpReGenerBugFix가 이미 추가되어 있어 수식이 tmpReGenerBugFix안으로 들어가 입력되지 않고 삭제되어버리는 버그 해결
-                if(tmpNode2.nextSibling !== null && tmpNode2.nextSibling.classList !== undefined){
-                    if(tmpNode2.nextSibling.classList.contains("tmpReGenerBugFix")){
-                        tmpNode2.nextSibling.remove();
-                    }
-                }
-
-                newRange.selectNode(tmpNode2);
-            }else{
-                let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-                if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
-                strtContainer = strtContainer.closest("div");
-                let tmpNode= document.createElement('span');
-                tmpNode.innerHTML = "&nbsp;";
-                tmpNode.className = "tmpReGenerBugFix";
-                strtContainer.prepend(tmpNode);
-            }
-
-			//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
-            let strtElement = window.getSelection().getRangeAt(0).startContainer;
-            let endElement = window.getSelection().getRangeAt(0).endContainer;
-            if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
-            if(endElement.classList === undefined) endElement = endElement.parentElement;
-            //nb문법 삽입
-            document.execCommand("insertHTML", false , nbGrammer);
 
             //nbConvert 루트 안의 분수 컴파일
             if(nbGrammer.indexOf("nbFracBox") > -1){
@@ -222,64 +134,23 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                     }
                 }
             }
-
             //nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
 			//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
             //사용성이 낮아보여 구현 안함, 현재 줄맞춤 안맞는 에러 존재
 
             let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
-			for(let i=0; i<tmpReGenerBugFix.length; i++){
-				tmpReGenerBugFix[i].remove();
-			}
-			let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
-			for(let i=0; i<tmpReGenerBugFix2.length; i++){
-				tmpReGenerBugFix2[i].remove();
-			}
-
-            //포커스 재설정 필요한 수식요소 포커스 설정
-            let focusNbBorderBox = window.getSelection().focusNode;
-			if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement;
-			focusNbBorderBox = focusNbBorderBox.closest(".borderBox");
-
-            if(focusNbBorderBox !== null) {
-                //입력 불가 요소는 수식 오른쪽에 포커스
-                for(let i=0; i<writeDisabledDom.length; i++){
-                    if(focusNbBorderBox.classList.contains(writeDisabledDom[i])){
-                        window.getSelection().getRangeAt(0).selectNode(focusNbBorderBox.closest(".nbBox"));
-                        window.getSelection().collapseToEnd();
-
-                    }
-                }
-
-                //연립방정식은 제일 첫번째 borderBox에 포커스
-                if(focusNbBorderBox.classList.contains("nbThrCaseThr") && nbGrammer.indexOf("nbThrCaseThr") > -1){
-                    window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
-                    window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbThrCaseFir"), 0);
-
-                }else if(focusNbBorderBox.classList.contains("nbCaseSec") && nbGrammer.indexOf("nbCaseSec") > -1){
-                    window.getSelection().getRangeAt(0).setStart(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
-                    window.getSelection().getRangeAt(0).setEnd(focusNbBorderBox.closest(".nbBox").querySelector(".nbCaseFir"), 0);
-                }
+            while (tmpReGenerBugFix.length > 0) {
+                tmpReGenerBugFix[0].remove();
+            }
+            let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
+            while (tmpReGenerBugFix2.length > 0) {
+                tmpReGenerBugFix2[0].remove();
             }
 
+
+            await reg_addBrInLastPosition();    //div 태그 마지막이 수식인 경우 마지막 요소에 br 추가
             await reg_dressYellowBox();
 			event.preventDefault();
-            // borderBox 수식 요소인 경우 borderBox안의 caret에 포커스 주기
-            /*
-            if(document.getElementsByClassName("caret").length !== 0){
-                let range = document.createRange();
-                range.setStart(document.getElementsByClassName("caret")[0], 0);
-                range.setEnd(document.getElementsByClassName("caret")[0], 0);
-                const selection1 = document.getSelection();
-                selection1.removeAllRanges();
-                selection1.addRange(range);
-    
-                let caretList = document.getElementsByClassName("caret");
-                while(caretList.length>0){
-                    caretList[0].classList.remove('caret');
-                }
-            }
-            */
 		}else{
             await reg_undoArrPop();
         }
