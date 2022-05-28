@@ -1,6 +1,6 @@
 import React from 'react';
 import EditTableInnerUi from 'web/contents/register/EditTableInnerUi'
-
+import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/contents/register/contents_reg';
 
 const NbWebEditor = ({parentMethod})=>{
 
@@ -93,7 +93,113 @@ const NbWebEditor = ({parentMethod})=>{
 					nbBoxes[i].after(tmpNode);
 				}
 			}
-			document.execCommand(style);
+			await reg_oneLineOneDiv();
+			let strtContainer = window.getSelection().getRangeAt(0).startContainer;
+			if(strtContainer.classList === undefined){
+				strtContainer = strtContainer.parentElement.closest("div")
+			}else{
+				strtContainer = strtContainer.closest("div")
+			}
+			let endContainer = window.getSelection().getRangeAt(0).endContainer;
+			if(endContainer.classList === undefined){
+				endContainer = endContainer.parentElement.closest("div")
+			}else{
+				endContainer = endContainer.closest("div")
+			}
+			
+			await reg_undoStackByClick(document.activeElement.id);
+
+			if(style === "justifyLeft"){
+				strtContainer.style.textAlign = "left";
+				endContainer.style.textAlign = "left";
+				let childDiv = document.activeElement.childNodes
+				//셀렉트 안에 포함되는 div도 정렬
+				for(let i=0; i<childDiv.length; i++){
+					if(window.getSelection().containsNode(childDiv[i])){
+						childDiv[i].style.textAlign = "left";
+					}
+				}
+			}else if(style === "justifyCenter"){
+				strtContainer.style.textAlign = "center";
+				endContainer.style.textAlign = "center";
+				let childDiv = document.activeElement.childNodes
+				//셀렉트 안에 포함되는 div도 정렬
+				for(let i=0; i<childDiv.length; i++){
+					if(window.getSelection().containsNode(childDiv[i])){
+						childDiv[i].style.textAlign = "center";
+					}
+				}
+			}else if(style === "justifyRight"){
+				strtContainer.style.textAlign = "right";
+				endContainer.style.textAlign = "right";
+				let childDiv = document.activeElement.childNodes
+				//셀렉트 안에 포함되는 div도 정렬
+				for(let i=0; i<childDiv.length; i++){
+					if(window.getSelection().containsNode(childDiv[i])){
+						childDiv[i].style.textAlign = "right";
+					}
+				}
+			}else if(style === "underline"){
+				let uTag = document.createElement("u");
+				if(window.getSelection().isCollapsed){
+					let isActiveUnderLine = false;
+					let activeSpan = null;
+					if(window.getSelection().anchorNode.classList === undefined){
+						if(window.getSelection().anchorNode.parentElement.tagName === "U"){
+							isActiveUnderLine = true;
+							activeSpan = window.getSelection().anchorNode.parentElement;
+						}
+					}else if(window.getSelection().anchorNode.classList !== undefined && window.getSelection().anchorNode.tagName === "U"){
+						isActiveUnderLine = true;
+						activeSpan = window.getSelection().anchorNode;
+					}
+					//underLine 효과 입혀진 태그 안에 있는 경우
+					if(isActiveUnderLine){
+						let tmpPositionDetect = document.createElement("span");
+						tmpPositionDetect.className = "tmpPositionDetect"
+						window.getSelection().getRangeAt(0).insertNode(tmpPositionDetect);
+						let lastChild = null;
+						for(let i=activeSpan.childNodes.length-1; i>=0; i--){
+							if(!(activeSpan.childNodes[i].nodeName === "#text" && activeSpan.childNodes[i].length===0)) {
+								lastChild=activeSpan.childNodes[i];
+								break;
+							}
+						}
+						//요소의 중간이면 효과 없음
+						//요소의 마지막이면 효과 빠져나가기
+						if(lastChild === tmpPositionDetect) {
+							tmpPositionDetect.remove();
+							window.getSelection().getRangeAt(0).selectNode(activeSpan);
+							window.getSelection().collapseToEnd();
+							let span = document.createElement("span");
+							span.className = "cusUnderLineUnActive"
+							span.innerHTML = "&#65279;";
+							activeSpan.after(span);
+							window.getSelection().getRangeAt(0).selectNode(span);
+							window.getSelection().collapseToEnd();
+							//keyup 이벤트에서 cusUnderLineUnActive 안에 요소 span 밖으로 빼내기 (span 없도록)
+						}else{
+							await reg_undoArrPop();
+							tmpPositionDetect.remove();
+						}
+					//underLine 효과 안 입혀진 경우
+					}else {
+						uTag.innerHTML = "&#65279;";
+						window.getSelection().getRangeAt(0).insertNode(uTag);
+						window.getSelection().getRangeAt(0).selectNode(uTag);
+						window.getSelection().collapseToEnd();
+					}
+				}
+				else {
+					document.execCommand(style);
+					/*
+					uTag.appendChild(window.getSelection().getRangeAt(0).cloneContents());
+					window.getSelection().getRangeAt(0).deleteContents();
+					window.getSelection().getRangeAt(0).insertNode(uTag);
+					*/
+				}
+			}
+
 			//정렬버그 공백 다시 제거
 			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
 				let tmpReGenerBugFix = document.getElementById(focusId).querySelectorAll(".tmpReGenerBugFix");
@@ -105,24 +211,14 @@ const NbWebEditor = ({parentMethod})=>{
 		}else{
 			//밑줄은 객관식도 가능
 			if(style==="underline" ){
+				await reg_oneLineOneDiv();
+				await reg_undoStackByClick(document.activeElement.id);
 				document.execCommand(style);
 			}else{
 				event.stopPropagation();
 				return;
 			}
 		}
-		/*
-		if(style=="underline"){
-			let styleTag = document.createElement('u');
-			document.getSelection().getRangeAt(0).surroundContents(styleTag);
-		}else if(style=="justifyLeft"){
-			document.getSelection().getRangeAt(0).startContainer.parentElement.style.textAlign="left";
-		}else if(style=="justifyCenter"){
-			document.getSelection().getRangeAt(0).startContainer.parentElement.style.textAlign="center";
-		}else if(style=="justifyRight"){
-			document.getSelection().getRangeAt(0).startContainer.parentElement.style.textAlign="right";
-		}
-		*/
 		parentMethod(document.activeElement.id);
 		event.stopPropagation();
 	}

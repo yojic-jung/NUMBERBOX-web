@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {reg_eraseEditTbUI, reg_reGenerFormulBugFix, reg_tbCellMouseDown, reg_tbCellMouseMove} from 'js/contents/register/contents_reg';
+import {reg_eraseEditTbUI, reg_reGenerFormulBugFix, reg_tbCellMouseDown, reg_tbCellMouseMove, reg_undoStackByClick} from 'js/contents/register/contents_reg';
 
 const EditTableInnerUi = ({parentMethod})=>{
 
@@ -43,6 +43,8 @@ const EditTableInnerUi = ({parentMethod})=>{
         let tmpNode= document.createElement('table');
         tmpNode.className = "editInnerTable";
         tmpNode.id= "editInnerTable"+tableIdx;
+        let tBody = document.createElement('tbody')
+        tmpNode.append(tBody);
         for(let i=0;i<rowIdx;i++){
             let rowNode= document.createElement('tr');
             for(let j=0; j<cellIdx;j++){
@@ -56,7 +58,7 @@ const EditTableInnerUi = ({parentMethod})=>{
                 colNode.appendChild(brNode);
                 rowNode.appendChild(colNode);
             }
-            tmpNode.appendChild(rowNode);
+            tBody.appendChild(rowNode);
         }
 
         let targetDomId ;
@@ -65,16 +67,12 @@ const EditTableInnerUi = ({parentMethod})=>{
 
         //포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
         if(document.getSelection().focusNode==null){
-            //document.getElementById(targetDomId).appendChild(tmpNode);
-            //위 방식도 정상작동
-		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
-            document.getElementById(targetDomId).focus()
-            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
-            
+            await reg_undoStackByClick(targetDomId);
+            document.getElementById(targetDomId).appendChild(tmpNode);
             let range = document.createRange();
             range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
             range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
-            
+
             let innerTbTd = document.getElementById(tmpNode.id).querySelectorAll(".innerTbTd");
             for(let i=0; i<innerTbTd.length; i++){
                 innerTbTd[i].addEventListener('mousedown', reg_tbCellMouseDown);
@@ -126,30 +124,22 @@ const EditTableInnerUi = ({parentMethod})=>{
         let focusId =document.activeElement.id;
 
         if(focusId !== targetDomId){
-            //document.getElementById(targetDomId).appendChild(tmpNode);
-            //위 방식도 정상작동
-		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
             document.getElementById(targetDomId).focus()
             let tmpCaretPoint= document.createElement('span');
 		    tmpCaretPoint.className = "tmpCaretPoint";
 		    tmpCaretPoint.innerHTML = ".";
             document.getElementById(targetDomId).appendChild(tmpCaretPoint);
-            let range = document.createRange();
-            window.getSelection().removeAllRanges();
-            range.setStart(tmpCaretPoint, 0);
-            range.setEnd(tmpCaretPoint, 0);//
-            window.getSelection().addRange(range);
-            document.getElementsByClassName("tmpCaretPoint")[0].remove();
-            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
+            window.getSelection().getRangeAt(0).selectNode(tmpCaretPoint);
+            window.getSelection().collapseToStart();
+            tmpCaretPoint.remove();
+            await reg_undoStackByClick(targetDomId);
+            document.getElementById(targetDomId).appendChild(tmpNode);
         }else{ //포커스 있으면 그대로 진행
-            //newRange.deleteContents();
-            //newRange.insertNode(tmpNode);
-            //위 방식도 정상작동
-		    //ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
             if( !document.getSelection().isCollapsed ){
                 if(await reg_reGenerFormulBugFix(false)) return;
             }
-            document.execCommand("insertHTML", false ,tmpNode.outerHTML);
+            await reg_undoStackByClick(targetDomId);
+            window.getSelection().getRangeAt(0).insertNode(tmpNode);
             let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 			for(let i=0; i<tmpReGenerBugFix.length; i++){
 				tmpReGenerBugFix[i].remove();
@@ -158,12 +148,9 @@ const EditTableInnerUi = ({parentMethod})=>{
 			for(let i=0; i<tmpReGenerBugFix2.length; i++){
 				tmpReGenerBugFix2[i].remove();
 			}
-
         }
        
         let range = document.createRange();
-		//range.setStart(tmpNode.childNodes[0].childNodes[0], 0);
-		//range.setEnd(tmpNode.childNodes[0].childNodes[0], 0);
         range.setStart(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
         range.setEnd(document.getElementById(tmpNode.id).childNodes[0].childNodes[0], 0);
 		const selection1 = document.getSelection();

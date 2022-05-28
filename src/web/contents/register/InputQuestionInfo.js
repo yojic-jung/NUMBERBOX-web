@@ -2,7 +2,7 @@ import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
-import {reg_quesAnsTabClkEv} from 'js/contents/register/contents_reg';
+import {reg_quesAnsTabClkEv, reg_undoInitialize} from 'js/contents/register/contents_reg';
 
 const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
@@ -100,13 +100,16 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 			return false;
 		}
 
+		
 		 // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈, 띄어쓰기)
 		await trimRegisterContents();
 
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
-		
+		//undo 초기화
+		await reg_undoInitialize();
+
 		//수정모드로 들어온 경우
 		if(updateModeUniqNo!==""){
 			let contentsNo = updateModeUniqNo.split(",");

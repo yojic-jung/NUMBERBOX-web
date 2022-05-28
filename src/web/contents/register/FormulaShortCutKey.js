@@ -1,6 +1,5 @@
 import {React, useEffect, useState} from "react";
-import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix} from 'js/contents/register/contents_reg';
-
+import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix, reg_undoStackByClick, reg_undoArrPop} from 'js/contents/register/contents_reg';
 //입력불가 수식요소 (FormulaShorCutKey.js에도 똑같이 정의함)
 const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
 
@@ -31,6 +30,9 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
     const addFormulaKey = async (event)=>{
         //포커스를 한번도 주지 않은 경우
 		if(document.getSelection().focusNode==null) return;
+
+        let targetId = event.currentTarget.id;
+        await reg_undoStackByClick(document.activeElement.id);
 
         const selection = document.getSelection();
         const newRange = selection.getRangeAt(0);
@@ -91,10 +93,11 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         || focusId == "firNoFormulaEditor" || focusId == "secNoFormulaEditor"
         || focusId == "thrNoFormulaEditor" || focusId == "fourNoFormulaEditor"
         || focusId == "fifNoFormulaEditor" || focusId == "answerFormulaEditor") ){
+            await reg_undoArrPop();
             return;
         }
  
-        let formulaId = document.getElementById(event.currentTarget.id).dataset.formulaId;
+        let formulaId = document.getElementById(targetId).dataset.formulaId;
         const mappingKey = await reg_getMappingShortCutKeyClk(formulaId, parentKeyList);
         const isWriteDisableDom = await reg_writeDisableDom(event)
 		if(mappingKey!= null && !isWriteDisableDom){      //alt 단축키 사용한 경우
@@ -166,7 +169,6 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
             let endElement = window.getSelection().getRangeAt(0).endContainer;
             if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
             if(endElement.classList === undefined) endElement = endElement.parentElement;
-
             //nb문법 삽입
             document.execCommand("insertHTML", false , nbGrammer);
 
@@ -278,7 +280,9 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 }
             }
             */
-		}
+		}else{
+            await reg_undoArrPop();
+        }
         parentMethod(focusId);
     }
 

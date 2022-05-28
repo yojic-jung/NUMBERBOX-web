@@ -186,9 +186,18 @@ export const reg_threeDivGridChk = async () => {
 
 /*
 * 정의 : 에디터 모드 포커스 yellowBox 클래스 추가 함수(onKeyUp, onClick)
+*			+ activeElement 비어있는 경우 div 로직 추가 
 * 대상 : 문제, 해설, 객관식보기(5개), 주관식 정답
 */
 export const reg_dressYellowBox = async()=>{
+
+	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
+		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+			document.activeElement.innerHTML = "<div><br></div>";
+			window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
+		}
+	}
+
 	//드래그 없이 포커스만 하나 있는 경우
 	if(window.getSelection().isCollapsed && window.getSelection().rangeCount !== 0){
 		let yellowBorderBox = document.getElementsByClassName("yellowBorderBox");
@@ -439,7 +448,7 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 		if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList !== undefined){
 			if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList.contains("nbBox")){
 				let tmpNode = document.createElement('span');
-				tmpNode.innerHTML = "&nbsp;"
+				tmpNode.innerHTML = "&#65279;"
 				tmpNode.className = "tmpReGenerBugFix"
 				window.getSelection().getRangeAt(0).commonAncestorContainer.after(tmpNode);
 				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode, 1, strtContainer, strtOffset);
@@ -457,7 +466,7 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 						lastNbBox = lastNbBox.parentElement.closest(".nbBox");
 					}
 					let tmpNode = document.createElement('span');
-					tmpNode.innerHTML = "&nbsp;"
+					tmpNode.innerHTML = "&#65279;"
 					tmpNode.className = "tmpReGenerBugFix"
 					lastNbBox.after(tmpNode);
 					selection.removeAllRanges();
@@ -495,10 +504,10 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 		}
 		if(rangeBox.length !== 0){
 			let tmpNode = document.createElement('span');
-			tmpNode.innerHTML = "&nbsp;"
+			tmpNode.innerHTML = "&#65279;"
 			tmpNode.className = "tmpReGenerBugFix"
 			let tmpNode2 = document.createElement('span');
-			tmpNode2.innerHTML = "&nbsp;"
+			tmpNode2.innerHTML = "&#65279;"
 			tmpNode2.className = "tmpReGenerBugFix2"
 
 			
@@ -547,74 +556,36 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 	return false;
 }
 
+//undo 변수 초기화
+export const reg_undoInitialize = async () => {
+	undoArr= [];
+}
+
+export const reg_undoArrPop = async () => {
+	undoArr.pop();
+}
+
 /*
 *	정의 : 키값 입력 제어 이벤트
 *	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
 *			alt키 제어(단축키 사용용도)
 */
-let korCharBugBox = null;
+
+//undo 변수
+let undoArr = [];
+let undoHTML = null;
+let undoCollapsed = false;	//셀렉트 되어있는지 존재여부 파악 변수
+let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인지 구분하기 위해
 export const reg_preventKeyEvent = async (event) => {
 	let userKeyCode = event.keyCode;
-	//DIV태그의 마지막 요소가 수식요소인 경우 수식 재생성 방식 캐럿 집어넣어 해결 하던 방식을 수식 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
-	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
-	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
-	//but DIV태그 하위에 table있는경우 해결해야함 
-	if(!event.ctrlKey && userKeyCode !== 229 && window.getSelection().isCollapsed){
-		let activeChildNodes = document.activeElement.childNodes
-		for(let i=0; i<activeChildNodes.length; i++){
-			if(activeChildNodes[i].tagName === "DIV"){
-				let divChildNodes = activeChildNodes[i].childNodes;
-				let lastChild = null;
-				for(let i=divChildNodes.length-1; i>=0; i--){
-					if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-					}else{
-						lastChild = divChildNodes[i];
-						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
-							let tmpNode= document.createElement('span');
-							tmpNode.className = "tmpPositionDetectCaret";
-							tmpNode.innerHTML = "&nbsp;";
-							const selection = document.getSelection();
-							const newRange = selection.getRangeAt(0);
-							newRange.insertNode(tmpNode);
-							let whichDir = null;
-							let position = null;
-							let targetNode = null;
-							if(tmpNode.nextSibling !== null){
-								targetNode = tmpNode.nextSibling;
-								whichDir = "next";
-							}else if(tmpNode.previousSibling !== null){
-								targetNode = tmpNode.previousSibling;
-								whichDir = "previous";
-							}else{
-								position = tmpNode.getBoundingClientRect();
-							}
-							tmpNode.remove();
-							window.getSelection().getRangeAt(0).selectNode(lastChild);
-							window.getSelection().collapseToEnd();
-							//br태그 추가
-							document.execCommand("insertParagraph", false, null);
+	previouseKeyCode.push(userKeyCode);
 
-							if(whichDir === "next"){
-								window.getSelection().getRangeAt(0).selectNode(targetNode);
-								window.getSelection().collapseToStart();
-							}else if(whichDir === "previous"){
-								window.getSelection().getRangeAt(0).selectNode(targetNode);
-								window.getSelection().collapseToEnd();
-							}else{
-								let moveRange = document.caretRangeFromPoint(position.x, position.y);
-								window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
-							}
-						} 
-						break;
-					}
-				}
-			}
-		}
-	}
+
 
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
-			document.execCommand("insertHTML", false ,"<div><br></div>");
+			document.activeElement.innerHTML = "<div><br></div>";
+			window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
 		}
 	}
 
@@ -624,103 +595,37 @@ export const reg_preventKeyEvent = async (event) => {
 	/*
 	* div 깨지는 경우
 	* 1. 윗줄에서 수식이 마지막이고 아래줄에 텍스트 입력하고 backspace로 텍스트 다 지우고 윗줄까지 올려오면 div가 깨짐)
-	* 2. iv 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
+	* 2. div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
 	*/
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
-		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
-		if(!event.shiftKey && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && event.ctrlKey) ){
-			let tmpNode= document.createElement('span');
-			tmpNode.className = "tmpFormBlockBugCaret";
-			tmpNode.innerHTML = "&nbsp;";
-			let newRange = window.getSelection().getRangeAt(0);
-			newRange.insertNode(tmpNode);
-			let closestDiv = tmpNode.closest("div");
-			/* div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
-				=>테이블 태그 안에서 document.execCommand('formatblock', false, 'div'); 실행하면 테이블 좌우로 라인 분리됨*/
-			if(tmpNode.closest(".nbBox")===null){	//수식 밖에서만 document.execCommand('formatblock', false, 'div'); 실행되야함
-				let whichDir = null;
-				let position = null;
-				let targetNode = null;
-				if(tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName !== "BR" && tmpNode.previousSibling.nodeName !== "#text"){
-					targetNode = tmpNode.previousSibling;
-					whichDir = "previous";
-				}else if(tmpNode.nextSibling !== null && tmpNode.nextSibling.nodeName !== "BR" && tmpNode.nextSibling.nodeName !== "#text"){
-					targetNode = tmpNode.nextSibling;
-					whichDir = "next";
-				}else{
-					position = tmpNode.getBoundingClientRect();
-				}
-				document.getElementsByClassName("tmpFormBlockBugCaret")[0].remove();
-				window.getSelection().collapseToStart();	//collapseToStart 안하면 window.getSelection().isCollapsed 가 false 가 되어 있어 수식 입력시 버그 일어남
-				let willExecute = false;
-				if(closestDiv.classList.contains("contentEditClass")){
-					willExecute=true;
-					if(targetNode !== null) targetNode.id="tmpFormBlockBugCaret"
-				}
-				
-				if(willExecute){
-					//formatblock 수식 재생성 버그 해결, 수식이 마지막 요소인 경우 formatblockt실행하며 수식 재생성 됨
-					//뒤에 공백 추가
-					let hasReGenerBug = false;
-					let activeChildren = document.activeElement.children;
-					for(let i=0; i<activeChildren.length; i++){
-						if(activeChildren[i].tagName === "TABLE"){
-							if(activeChildren[i+1] === undefined || (activeChildren[i+1] !== undefined && activeChildren[i+1].tagName !== "BR")){
-								let tmpNode= document.createElement('span');
-								tmpNode.className = "tmpFormBlockReGenerBug";
-								tmpNode.innerHTML = "&nbsp;";
-								window.getSelection().getRangeAt(0).selectNode(activeChildren[i]);
-								window.getSelection().collapseToEnd();
-								document.execCommand('insertHTML', false, tmpNode.outerHTML);
-								hasReGenerBug = true;
-							}
-						}
-					}
-					//다시 제자리 복귀
-					if(hasReGenerBug){
-						if(whichDir === "next"){
-							window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-							window.getSelection().collapseToStart();
-						}else if(whichDir === "previous"){
-							window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-							window.getSelection().collapseToEnd();
+	await reg_oneLineOneDiv(event.shiftKey, event.ctrlKey, userKeyCode);
+	
+
+	//DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
+	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결(1단계)
+	//but 테이블 태그가 div로 분리되지 않고 br로 줄바꿈되면 수식이 라인의 맨 앞에 있고 이 수식 앞에 포커스 줄 때 해당 줄이 아닌 윗 줄 마지막에 포커스 잡히는 버그 존재
+	//but DIV태그 하위에 table있는경우 해결해야함 
+	//if(!event.ctrlKey && userKeyCode !== 229 && window.getSelection().isCollapsed){
+		if(window.getSelection().isCollapsed){
+			let activeChildNodes = document.activeElement.childNodes
+			for(let i=0; i<activeChildNodes.length; i++){
+				if(activeChildNodes[i].tagName === "DIV"){
+					let divChildNodes = activeChildNodes[i].childNodes;
+					let lastChild = null;
+					for(let i=divChildNodes.length-1; i>=0; i--){
+						if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
 						}else{
-							let moveRange = document.caretRangeFromPoint(position.x, position.y);
-							window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+							lastChild = divChildNodes[i];
+							//div요소의 마지막 요소가 수식인지 파악
+							if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
+								lastChild.after(document.createElement('br'));
+							}
+							break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
 						}
-					}
-
-					//formatblock 명령어 수식 앞, 뒤에서 사용하는 경우 포커스 잃어버림
-					document.execCommand('formatblock', false, 'div'); //formatblock 명령어 이후 undo 명령어 정상 작동 안됨, 포커스 찾아줘야함
-					
-					if(hasReGenerBug){	//직접 제거하여도 ctrl+z 잘 돌아감
-						let tmpFormBlockReGenerBug = document.getElementsByClassName("tmpFormBlockReGenerBug");
-						while (tmpFormBlockReGenerBug.length > 0) {
-							tmpFormBlockReGenerBug[0].remove();
-						}
-					}
-					
-					if(whichDir === "next"){
-						window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-						document.getElementById("tmpFormBlockBugCaret").id="";
-						window.getSelection().collapseToStart();
-					}else if(whichDir === "previous"){
-						window.getSelection().getRangeAt(0).selectNode(document.getElementById("tmpFormBlockBugCaret"));
-						document.getElementById("tmpFormBlockBugCaret").id="";
-						window.getSelection().collapseToEnd();
-					}else{
-						let moveRange = document.caretRangeFromPoint(position.x, position.y);
-						window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
 					}
 				}
-			}else{
-				tmpNode.remove();
-				window.getSelection().collapseToStart();
 			}
-			
 		}
-	}
-
+		
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -729,23 +634,66 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 
-	/*
-	korCharBugBox=null;
-	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
-	if(userKeyCode === 229 && event.code === "Backspace"){
-		let previousEle = window.getSelection().getRangeAt(0).startContainer.previousSibling;
-		if(window.getSelection().getRangeAt(0).startOffset === 1 && previousEle !== null && previousEle.classList !== undefined){
-			if(previousEle.classList.contains("nbBox")){
-				//korCharBugBox= previousEle.nextSibling;
-			}
-		}
-		
-	}
-	*/
+
 
 	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
 	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
 		await reg_removeSelectionBackColor();
+	}
+
+	//ctrl+z 구현
+	if(!(event.ctrlKey && userKeyCode === 90)){
+		let rangeDirection = "right";								//셀렉션 방향 파악
+		let undoCarot = document.createElement('span');				//strt 캐럿
+		undoCarot.className = "tmpUndoCarot";
+		undoCarot.innerHTML = "&#65279;";
+		let undoCarotEnd = document.createElement('span');			//end 캐럿
+		undoCarotEnd.className = "tmpUndoCarotEnd";
+		undoCarotEnd.innerHTML = "&#65279;";
+		if(window.getSelection().isCollapsed){						//캐럿 추가
+			undoCollapsed=true;
+			window.getSelection().getRangeAt(0).insertNode(undoCarot);
+			window.getSelection().collapseToStart();
+		}else{														//셀렉트 된 상태라면 캐럿 앞 뒤로 추가 후 원래의 셀렉트 상태로 원복
+			undoCollapsed=false;
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().focusNode
+			&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().focusOffset){
+				rangeDirection = "left";
+			}
+
+			//수식요소가 startContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 앞에 추가
+			if(window.getSelection().getRangeAt(0).startContainer !== null 
+				&& window.getSelection().getRangeAt(0).startContainer.classList !== undefined 
+				&& window.getSelection().getRangeAt(0).startContainer.classList.contains("nbBox")){		
+				window.getSelection().getRangeAt(0).startContainer.before(undoCarot);
+			}else{
+				window.getSelection().getRangeAt(0).insertNode(undoCarot);
+			}
+
+			//수식요소가 endContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 뒤에 추가
+			if(window.getSelection().getRangeAt(0).endContainer !== null 
+				&& window.getSelection().getRangeAt(0).endContainer.classList !== undefined 
+				&& window.getSelection().getRangeAt(0).endContainer.classList.contains("nbBox")){
+				window.getSelection().getRangeAt(0).endContainer.after(undoCarotEnd);
+			}else{
+				window.getSelection().collapseToEnd();
+				window.getSelection().getRangeAt(0).insertNode(undoCarotEnd);
+			}
+
+			//원래 셀렉트 상태로 원복
+			window.getSelection().removeAllRanges();
+			if(rangeDirection === "right") window.getSelection().setBaseAndExtent(undoCarot, 1, undoCarotEnd, 0);
+			else window.getSelection().setBaseAndExtent(undoCarotEnd, 0, undoCarot, 1);
+		}
+		//키 입력 되기 전 상태의 innerHTML을 undoHTML로 셋팅
+		//undoHTML에는 tmpUndoCarot 항상 존재 이 캐럿으로 포커스 위치 찾아감, ctrl+z가 실행되고나서 삭제되어야함
+		undoHTML = document.activeElement.innerHTML;
+
+		//캐럿 제거하여 키 입력 전 상태로 원복
+		undoCarot.remove();								
+		undoCarotEnd.remove();
+	}else{
+		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
 	}
 
 	//1번 validation
@@ -778,11 +726,11 @@ export const reg_preventKeyEvent = async (event) => {
 					if(childDiv[i].lastElementChild.nextSibling === null || childDiv[i].lastElementChild.nextSibling.length===0){
 						let lastNbBox = childDiv[i].lastElementChild;	//변수 지정 안 한채 사용하면 tmpNode가 lastElementChild로 잡힐 수 있음
 						let tmpNode = document.createElement('span');
-						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.innerHTML = "&#65279;"
 						tmpNode.className = "tmpReGenerBugFix";
 						if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
 							let tmpNode2 = document.createElement('span');
-							tmpNode2.innerHTML = "&nbsp;"
+							tmpNode2.innerHTML = "&#65279;"
 							tmpNode2.className = "tmpPosition";
 							window.getSelection().getRangeAt(0).insertNode(tmpNode2);
 							if(lastNbBox !== tmpNode2.previousSibling){
@@ -816,11 +764,11 @@ export const reg_preventKeyEvent = async (event) => {
 						}
 						if(isLastDom){
 							let tmpNode = document.createElement('span');
-							tmpNode.innerHTML = "&nbsp;"
+							tmpNode.innerHTML = "&#65279;"
 							tmpNode.className = "tmpReGenerBugFix";
 							if(userKeyCode === 46 && window.getSelection().getRangeAt(0).getBoundingClientRect().y===0 && window.getSelection().isCollapsed){
 								let tmpNode2 = document.createElement('span');
-								tmpNode2.innerHTML = "&nbsp;"
+								tmpNode2.innerHTML = "&#65279;"
 								tmpNode2.className = "tmpPosition";
 								window.getSelection().getRangeAt(0).insertNode(tmpNode2);
 								if(lastNbBox !== tmpNode2.previousSibling){
@@ -1300,33 +1248,30 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//띄어쓰기 다섯칸 shift+space bar
 	if(event.shiftKey && userKeyCode === 32 && !await reg_writeDisableDom(event)){
-		/*
 		const selection = document.getSelection();
 		const newRange = selection.getRangeAt(0);
 		selection.removeAllRanges();
 		selection.addRange(newRange);
 		//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
 		let tmpNode= document.createElement('span');
-		tmpNode.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
+		tmpNode.innerHTML = "&nbsp; &nbsp; &nbsp;";
 		newRange.deleteContents();
 		newRange.insertNode(tmpNode);
 		window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
-		*/
-		//위 방식도 정상작동
-		//ctrl+z 브라우저 자체 기능 사용위해 execCommand 방식으로 바꿈
-		document.execCommand("insertHTML", false ,"&nbsp; &nbsp; &nbsp;");
+		tmpNode.outerHTML = tmpNode.innerHTML;
 		event.preventDefault();
 	}
 
 	
 	let willExecuteFormBlock = false;
-	//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결 및 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현
+	//1. 테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 오류 해결 
+	//2. 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현(img 태그 테이블 뒤에 추가시 div로 구분됨)
 	if(userKeyCode===13){
 		let position = window.getSelection().getRangeAt(0).getBoundingClientRect();
 		if(position.x===0 && position.y===0){	
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpPositionDetectCaret";
-			tmpNode.innerHTML = "&nbsp;";
+			tmpNode.innerHTML = "&#65279;";
 			const selection = document.getSelection();
 			const newRange = selection.getRangeAt(0);
 			newRange.insertNode(tmpNode);
@@ -1334,7 +1279,11 @@ export const reg_preventKeyEvent = async (event) => {
 			if((document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling !== null && document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling.classList !== undefined && document.getElementsByClassName("tmpPositionDetectCaret")[0].previousSibling.classList.contains("nbBox"))
 			|| (document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling !== null && document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling.classList !== undefined && document.getElementsByClassName("tmpPositionDetectCaret")[0].nextSibling.classList.contains("nbBox"))){
 				document.getElementsByClassName("tmpPositionDetectCaret")[0].remove();
-				document.execCommand("insertHTML", false ,"<img class='tmpEnterBugCaret' >");
+				let tmpNode= document.createElement('img');
+				tmpNode.className = "tmpEnterBugCaret";
+				newRange.insertNode(tmpNode);
+				window.getSelection().getRangeAt(0).selectNode(tmpNode);
+				window.getSelection().collapseToEnd();
 				willExecuteFormBlock = true;
 			}else{
 				document.getElementsByClassName("tmpPositionDetectCaret")[0].remove();
@@ -1348,13 +1297,14 @@ export const reg_preventKeyEvent = async (event) => {
 		if(window.getSelection().isCollapsed){
 			let endContainer = document.getSelection().getRangeAt(0).endContainer;
 			let nbBoxDom;
+			//현재요소가 라인의 마지막 요소인지 파악 위한 변수 셋팅
 			if(endContainer.classList !== undefined) nbBoxDom=endContainer.closest('.nbBox');
 			else nbBoxDom=endContainer.parentElement.closest('.nbBox');
 			if(nbBoxDom===null){//수식요소가 아닌 경우
 				//노드 추가하여 현재 라인의 마지막 요소인지 파악
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpDelLineBugCaret";
-				tmpNode.innerHTML = "&nbsp;";
+				tmpNode.innerHTML = "&#65279;";
 				const selection = document.getSelection();
 				const newRange = selection.getRangeAt(0);
 				newRange.insertNode(tmpNode);
@@ -1385,14 +1335,14 @@ export const reg_preventKeyEvent = async (event) => {
 									break;
 								}
 							}
+							//다음 라인의 첫번째 요소가 수식이면 앞에 img 태그 추가하여 수식이 윗줄로 올라오게끔 구현
 							if(firstChild !== null && firstChild.classList !== undefined && firstChild.classList.contains("nbBox")){
 								//다음 라인의 첫번째 요소에 img태그 추가 후 제자리로 복귀
 								tmpNode.remove();
-								window.getSelection().getRangeAt(0).selectNode(firstChild);
 								window.getSelection().collapseToStart();
-								document.execCommand('insertHTML', false, "<img class='tmpDelLineBugFix'>")
-								window.getSelection().getRangeAt(0).selectNode(originLastChild);
-								window.getSelection().collapseToEnd();
+								let tmpDelLineBugFix = document.createElement("img")
+								tmpDelLineBugFix.className = "tmpDelLineBugFix";
+								firstChild.before(tmpDelLineBugFix);
 								isDelLineBugExecuted = true;
 							}else{
 								tmpNode.remove();
@@ -1448,10 +1398,10 @@ export const reg_preventKeyEvent = async (event) => {
 						window.getSelection().removeAllRanges();
 						window.getSelection().addRange(newRange);
 						let tmpNode= document.createElement('span');
-						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.innerHTML = "&#65279;"
 						tmpNode.className = "tmpReGenerBugFix"
 						let tmpNode2= document.createElement('span');
-						tmpNode2.innerHTML = "&nbsp;"
+						tmpNode2.innerHTML = "&#65279;"
 						tmpNode2.className = "tmpReGenerBugFix2"
 						if(newRange.commonAncestorContainer===document.activeElement && newRange.startOffset===0
 							&& newRange.endOffset===0 && document.activeElement.childNodes[0] !== undefined
@@ -1482,7 +1432,7 @@ export const reg_preventKeyEvent = async (event) => {
 					strtContainer = strtContainer.closest("div");
 					if(window.getSelection().getRangeAt(0).startOffset===0 && strtContainer !== null){
 						let tmpNode= document.createElement('span');
-						tmpNode.innerHTML = "&nbsp;"
+						tmpNode.innerHTML = "&#65279;"
 						tmpNode.className = "tmpReGenerBugFix"
 						strtContainer.prepend(tmpNode);
 					}
@@ -1493,7 +1443,6 @@ export const reg_preventKeyEvent = async (event) => {
 				let endElement = window.getSelection().getRangeAt(0).endContainer;
 				if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
 				if(endElement.classList === undefined) endElement = endElement.parentElement;
-
 				//nb문법 삽입
 				document.execCommand("insertHTML", false , nbGrammer);
 
@@ -1591,13 +1540,7 @@ export const reg_preventKeyEvent = async (event) => {
 		event.preventDefault();
 	}
 
-	let previousHTML = null;
-	let previousChildEle = null;
-	if((userKeyCode===90 && event.ctrlKey) || (userKeyCode===89 && event.ctrlKey)){
-		previousHTML = document.activeElement.innerHTML;
-		previousChildEle = document.activeElement.querySelectorAll("*");
-	}
-	
+
 	setTimeout(function(){
 		let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 		while (tmpReGenerBugFix.length > 0) {
@@ -1611,180 +1554,116 @@ export const reg_preventKeyEvent = async (event) => {
 
 		//라인의 마지막에서 del 버튼 눌렀을 때 아랫줄의 첫번째가 수식인 경우 정상적으로 아랫줄이 윗줄로 올라오지 않는 버그 해결
 		if(userKeyCode ===46 && isDelLineBugExecuted){
-			let tmpDelLineBugFix = document.activeElement.querySelector(".tmpDelLineBugFix");
-			window.getSelection().getRangeAt(0).selectNode(tmpDelLineBugFix);
-			document.execCommand("delete", false, null);
-			//contents-show화면에 캐럿 제거
-			let tmpDelLineBugFixInShow = document.querySelector(".contents-show").querySelectorAll(".tmpDelLineBugFix");
-			while (tmpDelLineBugFixInShow.length > 0) {
-				tmpDelLineBugFixInShow[0].remove();
+			let tmpDelLineBugFix = document.getElementsByClassName("tmpDelLineBugFix");
+			while (tmpDelLineBugFix.length > 0) {
+				tmpDelLineBugFix[0].remove();
 			}
 		}
 
 		//테이블 태그 뒤에서 엔터 치는 경우 엔터 두번 쳐야하는 버그 해결 및 수식 뒤에서 엔터쳤을 때 라인이 br이 아닌 div로 구분되게끔 구현
 		if(userKeyCode ===13 && willExecuteFormBlock){
-			let tmpNode= document.createElement('span');
-			tmpNode.className = "tmpPositionDetectCaret";
-			tmpNode.innerHTML = "&nbsp;";
-			const selection = document.getSelection();
-			const newRange = selection.getRangeAt(0);
-			newRange.insertNode(tmpNode);
-			let originNextSibling = tmpNode.nextSibling;
-			tmpNode.remove();
-			let tmpEnterBugCaret = document.activeElement.querySelector(".tmpEnterBugCaret");
-			window.getSelection().getRangeAt(0).selectNode(tmpEnterBugCaret);
-			document.execCommand("delete", false, null);
-			window.getSelection().getRangeAt(0).selectNode(originNextSibling);
-			window.getSelection().collapseToStart();
-			//contents-show화면에 캐럿 제거
-			let tmpEnterBugCaretInShow = document.querySelector(".contents-show").querySelectorAll(".tmpEnterBugCaret");
-			while (tmpEnterBugCaretInShow.length > 0) {
-				tmpEnterBugCaretInShow[0].remove();
+			let tmpEnterBugCaret = document.getElementsByClassName("tmpEnterBugCaret");
+			while (tmpEnterBugCaret.length > 0) {
+				tmpEnterBugCaret[0].remove();
 			}
 		}
 
-		//ctrl+z
-		if(userKeyCode===90 && event.ctrlKey ){
-			//엔터버그 로직에 의해 아래 엔터버그 ctrl+z로직의 tmpEnterBugCaret 가 남아있는 경우 undo 두 번 더 실행되어(img 태그 제거 위해)
-			//ctrl+z 이후 html이 같게 나타나는 경우 있음 사용자는 ctrl+z가 동작하지 않았다고 느껴짐
-			if(previousHTML === document.activeElement.innerHTML && window.getSelection().isCollapsed){
-				document.execCommand('undo', false, null);
-				if(previousHTML === document.activeElement.innerHTML){
-					document.execCommand('undo', false, null);
-				}
-			}
-			
-			//DIV태그의 마지막 요소가 수식요소인 경우 br태그 집어넣는 로직에서
-			//br태그만 변화 된 경우 ctrl+z 사용하면 사용자 입장에서는 태그만 변해 변화된 것이 없어 사용자는 ctrl+z가 동작하지 않았다고 느껴짐  undo 한번 더 실행
-			let currentChildEle = document.activeElement.querySelectorAll("*");
-			if(previousChildEle.length-1 === currentChildEle.length){
-				let diffElement = [];
-				let j=0;
-				for(let i=0; i<previousChildEle.length; i++){
-					let isEqual = false;
-					for(j; j<currentChildEle.length; j++){
-						if(previousChildEle[i]===currentChildEle[j]){
-							isEqual = true;
-							break;
+		//ctrl+z 자체 구현
+		if(!(userKeyCode === 90 && event.ctrlKey)){	//ctrl+z stack 메모리에 데이터 추가
+			let tmpUndoHtml = document.createElement('div');
+			tmpUndoHtml.innerHTML = undoHTML;
+			if(tmpUndoHtml.querySelector(".tmpUndoCarot") !== null) tmpUndoHtml.querySelector(".tmpUndoCarot").remove();
+			if(tmpUndoHtml.querySelector(".tmpUndoCarotEnd") !== null) tmpUndoHtml.querySelector(".tmpUndoCarotEnd").remove();
+			//캐럿을 제거한 undoHTML가 키입력 후 현재 innerHTML을 비교하여 달라졌으면 undo 스택에 추가
+			//한글의 경우 자모음 합쳐지는 순간 캐치 어려워 단어단위(띄어쓰기)로 메모리에 추가
+			//최초 한글 입력시에는 입력 전 data도 undo 스택에 추가
+			if((tmpUndoHtml.innerHTML !== document.activeElement.innerHTML && event.keyCode !== 229)
+			|| (event.keyCode === 229 && tmpUndoHtml.childNodes.length === 1 && tmpUndoHtml.childNodes[0].nodeName === "DIV"
+				&& tmpUndoHtml.childNodes[0].childNodes.length === 1 && tmpUndoHtml.childNodes[0].childNodes[0].nodeName === "BR") ){
+						let currentData = new Object();
+						let rangeDirection = "left";			//셀렉션 방향 파악 변수
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().anchorNode
+						&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().anchorOffset){
+							rangeDirection = "right";
+						}
+						currentData.activeId = document.activeElement.id;				//현재 입력창 id
+						currentData.innerHTML = undoHTML;	
+						if(previouseKeyCode[0] === 32 || previouseKeyCode[0] === 13) currentData.isSpaceOrEnter = true;	//space 또는 enter 여부
+						else currentData.isSpaceOrEnter = false;
+						currentData.isCollapsed=undoCollapsed;							//셀렉트 여부
+						currentData.rangeDirection = rangeDirection;					//셀렉션 방향 여부
+						let activeUndoLength=0;
+						undoArr.filter((element) => {
+							if(element.activeId === document.activeElement.id) {
+								activeUndoLength++;
+							}
+						});
+
+						//space 또는 엔터 계속 누르고 있는 상태이면 isSpaceOrEnter true로 데이터 쌓여서 undo stack 메모리 이전 데이터 제거 안됨
+						if(activeUndoLength >= 30){
+							activeUndoLength = 0;
+							let removeTarget = [];
+							undoArr.filter((element, idx) => {	
+								if(element.activeId === document.activeElement.id) {
+									if(activeUndoLength <= 10) removeTarget.push(idx);
+									activeUndoLength++;
+								}
+							});
+							for(let i=removeTarget.length-1; i>=0; i--){
+								undoArr.splice(removeTarget[i], 1);
+							}
+						}
+						//입력창 마다 최대 20개까지, 20개 넘는 경우 글자 단위 아닌 띄어쓰기 또는 엔터 단위로 설정
+						else if(activeUndoLength >= 20){		
+							activeUndoLength = 0;
+							let spaceOrEnterIdx = [];
+							undoArr.filter((element, idx) => {	
+								if(element.activeId === document.activeElement.id) {
+									if(activeUndoLength <= 7 && !element.isSpaceOrEnter) spaceOrEnterIdx.push(idx);
+									activeUndoLength++;
+								}
+							});
+							for(let i=spaceOrEnterIdx.length-1; i>=0; i--){
+								undoArr.splice(spaceOrEnterIdx[i], 1);
+							}
 						} 
+						//undo 스택 메모리에 키 입력 전 데이터 추가
+						undoArr.push(currentData);	
+			}
+		}else{	//ctrl+z 실행
+			if(undoArr.length > 0){							//데이터가 있는 경우에만 실행
+				for(let i=undoArr.length-1; i>=0; i--){
+					if(undoArr[i].activeId === document.activeElement.id) {			//현재 입력창의 마지막 undo 데이터 가져오기
+						document.activeElement.innerHTML = undoArr[i].innerHTML;
+						if(undoArr[i].isCollapsed){									//포커스 및 셀렉트 셋팅
+							window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 0,
+							document.getElementsByClassName("tmpUndoCarot")[0], 0);
+							window.getSelection().collapseToStart();
+							document.getElementsByClassName("tmpUndoCarot")[0].remove();
+						}else{
+							if(undoArr[i].rangeDirection === "right"){
+								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 1,
+									document.getElementsByClassName("tmpUndoCarotEnd")[0], 0);
+							}else{
+								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarotEnd")[0], 1,
+									document.getElementsByClassName("tmpUndoCarot")[0], 0);
+							}
+							//캐럿 제거, 캐럿 남아있으면 안됨.
+							document.getElementsByClassName("tmpUndoCarot")[0].remove();
+							document.getElementsByClassName("tmpUndoCarotEnd")[0].remove();
+						}
+						undoArr.splice(i, 1);				//현재 실행된 undo데이터 스택에서 제거
+						break;
 					}
-					if(!isEqual){
-						j=0;
-						diffElement.push(previousChildEle[i]);
-					}
 				}
-				if(diffElement.length===1){
-					if(diffElement[0].tagName==="BR") document.execCommand('undo', false, null);
-				}
-			}
-	
-			//엔터 버그에서 document.execCommand가 총 세 번 실행되므로 브라우저의 ctrl+z 동작 방식에 따라 최대 두번 tmpEnterBugCaret가 남아 있을 수 있음
-			//따라서 최대 두번 체크 후 undo 실행
-			let tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
-			if(tmpEnterBugCaret.length > 0){
-				document.execCommand('undo', false, null);
-				tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
-				if(tmpEnterBugCaret.length > 0){
-					document.execCommand('undo', false, null);
-				}
-			}
-			
-			let tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
-			if(tmpDelLineBugFix.length > 0){
-				document.execCommand('undo', false, null);
-				tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
-				if(tmpDelLineBugFix.length > 0){
-					document.execCommand('undo', false, null);
-				}
-			}
-			
-			let tmpFormBlockBugCaret = document.activeElement.querySelectorAll("#tmpFormBlockBugCaret");
-			if(tmpFormBlockBugCaret.length > 0){
-				tmpFormBlockBugCaret[0].id="";
-				document.execCommand('undo', false, null);
-			}
-
-
-			let tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
-			if(tmpFormBlockReGenerBug.length > 0){
-				document.execCommand('undo', false, null);
-				tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
-				if(tmpFormBlockReGenerBug.length > 0){
-					document.execCommand('undo', false, null);
-				}
+				
 			}
 		}
+		//previouseKeyCode는 이전 키코드와 현재 키코드만 가지고 있을 수 있도록 셋팅
+		if(previouseKeyCode.length > 1) previouseKeyCode.splice(0, previouseKeyCode.length-1);
 
 		//ctrl+y
 		if(userKeyCode===89 && event.ctrlKey ){
-			//엔터버그 로직에 의해 아래 엔터버그 ctrl+y로직의 tmpEnterBugCaret 가 남아있는 경우 redo 두 번 더 실행되어(img 태그 제거 위해)
-			//ctrl+y 이후 html이 같게 나타나는 경우 있음 사용자는 ctrl+z가 동작하지 않았다고 느껴짐
-			if(previousHTML === document.activeElement.innerHTML && window.getSelection().isCollapsed){
-				document.execCommand('redo', false, null);
-				if(previousHTML === document.activeElement.innerHTML){
-					document.execCommand('redo', false, null);
-				}
-			}
-			
-			
-			//DIV태그의 마지막 요소가 수식요소인 경우 br태그 집어넣는 로직에서
-			//br태그만 변화 된 경우 ctrl+y 사용하면 사용자 입장에서는 태그만 변해 변화된 것이 없어 사용자는 ctrl+z가 동작하지 않았다고 느껴짐  redo 한번 더 실행
-			let currentChildEle = document.activeElement.querySelectorAll("*");
-			if(previousChildEle.length-1 === currentChildEle.length){
-				let diffElement = [];
-				let j=0;
-				for(let i=0; i<previousChildEle.length; i++){
-					let isEqual = false;
-					for(j; j<currentChildEle.length; j++){
-						if(previousChildEle[i]===currentChildEle[j]){
-							isEqual = true;
-							break;
-						} 
-					}
-					if(!isEqual){
-						j=0;
-						diffElement.push(previousChildEle[i]);
-					}
-				}
-				if(diffElement.length===1){
-					if(diffElement[0].tagName==="BR") document.execCommand('redo', false, null);
-				}
-			}
-	
-			//엔터 버그에서 document.execCommand가 총 세 번 실행되므로 브라우저의 ctrl+z 동작 방식에 따라 최대 두번 tmpEnterBugCaret가 남아 있을 수 있음
-			//따라서 최대 두번 체크 후 redo 실행
-			let tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
-			if(tmpEnterBugCaret.length > 0){
-				document.execCommand('redo', false, null);
-				tmpEnterBugCaret = document.activeElement.querySelectorAll(".tmpEnterBugCaret");
-				if(tmpEnterBugCaret.length > 0){
-					document.execCommand('redo', false, null);
-				}
-			}
-			let tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
-			if(tmpDelLineBugFix.length > 0){
-				document.execCommand('redo', false, null);
-				tmpDelLineBugFix = document.activeElement.querySelectorAll(".tmpDelLineBugFix");
-				if(tmpDelLineBugFix.length > 0){
-					document.execCommand('redo', false, null);
-				}
-			}
-			
-			let tmpFormBlockBugCaret = document.activeElement.querySelectorAll("#tmpFormBlockBugCaret");
-			if(tmpFormBlockBugCaret.length > 0){
-				console.log("redo")
-				tmpFormBlockBugCaret[0].id="";
-				document.execCommand('redo', false, null);
-			}
-
-			let tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
-			if(tmpFormBlockReGenerBug.length > 0){
-				document.execCommand('redo', false, null);
-				tmpFormBlockReGenerBug = document.activeElement.querySelectorAll(".tmpFormBlockReGenerBug");
-				if(tmpFormBlockReGenerBug.length > 0){
-					document.execCommand('redo', false, null);
-				}
-			}
 		}
 
 
@@ -2448,18 +2327,40 @@ export const reg_selectFormulaElement = async (event) => {
 
 /*
 * 정의 : 수식요소셀렉트(드래그)시 걸쳐서 셀렉트 안되고 table 요소 전체 셀렉트 되게끔 구현(키보드up 이벤트에 적용)
+*		 + 밑줄 효과 제어 로직 추가
 */
 export const reg_keyEvSelectFormulaElement = async (event) => {
 	let userKeyCode = event.keyCode;
-	/*
-	//borderBox 뒤에 한글 쓴 후 지우면 포커스 사라지는 문제 해결
-	if(korCharBugBox!==null && korCharBugBox !== ""){
-		window.getSelection().getRangeAt(0).selectNode(korCharBugBox);
-		window.getSelection().collapseToEnd();
-		korCharBugBox=null;
+	//밑줄 효과 제어
+	if(window.getSelection().isCollapsed){
+		let cusUnderLineUnActive = document.activeElement.getElementsByClassName("cusUnderLineUnActive");
+		while(cusUnderLineUnActive.length>0){
+			let tmpPositionDetect = document.createElement("span");
+			tmpPositionDetect.className = "tmpPositionDetect"
+			window.getSelection().getRangeAt(0).insertNode(tmpPositionDetect);
+			cusUnderLineUnActive[0].outerHTML = cusUnderLineUnActive[0].innerHTML.substring(1);
+			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpPositionDetect")[0]);
+			window.getSelection().collapseToStart();
+			document.getElementsByClassName("tmpPositionDetect")[0].remove();
+		}
+
+		let cusUnderLine = document.activeElement.querySelectorAll("u");
+		for(let i=cusUnderLine.length-1; i>=0; i--){
+			if(cusUnderLine[i].innerHTML.charCodeAt(0) === 65279){	//밑줄 버튼 여러번 누르고 키 입력 안 한 경우  cusUnderLine태그 제거
+				if(cusUnderLine[i].innerHTML.length === 1){
+					cusUnderLine[i].remove();
+				}else{
+					let tmpPositionDetect = document.createElement("span");
+					tmpPositionDetect.className = "tmpPositionDetect"
+					window.getSelection().getRangeAt(0).insertNode(tmpPositionDetect);
+					cusUnderLine[i].innerHTML = cusUnderLine[i].innerHTML.substring(1);
+					window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpPositionDetect")[0]);
+					window.getSelection().collapseToStart();
+					document.getElementsByClassName("tmpPositionDetect")[0].remove();
+				}
+			}
+		}
 	}
-	*/
-	
 	
 	//키보드 좌우 화살표 누른 경우(셀렉트)
 	if(event.shiftKey && (userKeyCode===37 || userKeyCode===39)){
@@ -3050,6 +2951,161 @@ export const reg_nbComplie = async (event) => {
 		if(nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbOverlineBox").length === 0 
 		&& nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbArrowBox").length === 0){
 			nbFracLineConvert2[i].classList.remove("nbFracLineConvert2");
+		}
+	}
+}
+
+
+
+/*
+*  정의 : ctrl+z 구현
+*/
+export const reg_undoStackByClick = async (activeId) => {
+		let currentData = new Object();
+		let rangeDirection = "left";			//셀렉션 방향 파악 변수
+		let anchorDom = null;
+		if(window.getSelection().anchorNode !== null){	//표 추가의 경우 activeElement안에 포커스가 없는 상태일 수 있음
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().anchorNode
+			&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().anchorOffset){
+				rangeDirection = "right";
+			}
+			anchorDom= window.getSelection().anchorNode;
+			if(anchorDom.classList !== undefined) anchorDom = anchorDom.closest("#"+activeId);
+			else anchorDom = anchorDom.parentElement.closest("#"+activeId);
+		}
+
+		let undoCarot = document.createElement('span');				//strt 캐럿
+		undoCarot.className = "tmpUndoCarot";
+		undoCarot.innerHTML = "&#65279;";
+		let undoCarotEnd = document.createElement('span');			//end 캐럿
+		undoCarotEnd.className = "tmpUndoCarotEnd";
+		undoCarotEnd.innerHTML = "&#65279;";
+		//activeElement에 포커스 없는 경우 activeElement 마지막에 포커스 추가
+		if(anchorDom !== null){
+			if(window.getSelection().isCollapsed){						//캐럿 추가
+				undoCollapsed=true;
+				window.getSelection().getRangeAt(0).insertNode(undoCarot);
+				window.getSelection().collapseToStart();
+			}else{														//셀렉트 된 상태라면 캐럿 앞 뒤로 추가 후 원래의 셀렉트 상태로 원복
+				undoCollapsed=false;
+				if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().focusNode
+				&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().focusOffset){
+					rangeDirection = "left";
+				}
+	
+				//수식요소가 startContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 앞에 추가
+				if(window.getSelection().getRangeAt(0).startContainer !== null 
+					&& window.getSelection().getRangeAt(0).startContainer.classList !== undefined 
+					&& window.getSelection().getRangeAt(0).startContainer.classList.contains("nbBox")){		
+					window.getSelection().getRangeAt(0).startContainer.before(undoCarot);
+				}else{
+					window.getSelection().getRangeAt(0).insertNode(undoCarot);
+				}
+	
+				//수식요소가 endContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 뒤에 추가
+				if(window.getSelection().getRangeAt(0).endContainer !== null 
+					&& window.getSelection().getRangeAt(0).endContainer.classList !== undefined 
+					&& window.getSelection().getRangeAt(0).endContainer.classList.contains("nbBox")){
+					window.getSelection().getRangeAt(0).endContainer.after(undoCarotEnd);
+				}else{
+					window.getSelection().collapseToEnd();
+					window.getSelection().getRangeAt(0).insertNode(undoCarotEnd);
+				}
+	
+				//원래 셀렉트 상태로 원복
+				window.getSelection().removeAllRanges();
+				if(rangeDirection === "right") window.getSelection().setBaseAndExtent(undoCarot, 1, undoCarotEnd, 0);
+				else window.getSelection().setBaseAndExtent(undoCarotEnd, 0, undoCarot, 1);
+			}
+		}else{
+			document.getElementById(activeId).append(undoCarot);
+		}
+		
+
+		currentData.activeId = activeId;				//현재 입력창 id
+		currentData.innerHTML = document.getElementById(activeId).innerHTML;					//undo HTML 셋팅
+		undoCarot.remove();
+		undoCarotEnd.remove();
+		currentData.isSpaceOrEnter = false;
+		currentData.isCollapsed = window.getSelection().isCollapsed;							//셀렉트 여부
+		currentData.rangeDirection = rangeDirection;											//셀렉션 방향 여부
+		let activeUndoLength=0;
+		undoArr.filter((element) => {
+			if(element.activeId === activeId) {
+				activeUndoLength++;
+			}
+		});
+	
+		//입력창 마다 최대 20개까지, 20개 넘는 경우 글자 단위 아닌 띄어쓰기 또는 엔터 단위로 설정
+		if(activeUndoLength >= 20){		
+			activeUndoLength = 0;
+			let spaceOrEnterIdx = [];
+			undoArr.filter((element, idx) => {	
+				if(element.activeId === activeId) {
+					if(activeUndoLength <= 7 && !element.isSpaceOrEnter) spaceOrEnterIdx.push(idx);
+					activeUndoLength++;
+				}
+			});
+			for(let i=spaceOrEnterIdx.length-1; i>=0; i--){
+				undoArr.splice(spaceOrEnterIdx[i], 1);
+			}
+		} 
+		//undo 스택 메모리에 키 입력 전 데이터 추가
+		undoArr.push(currentData);	
+}
+
+export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
+	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
+		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
+		if(!isShift && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && isCtrlKey) ){
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpFormBlockPositionDetect";
+			tmpNode.innerHTML = "&#65279;";
+			let newRange = window.getSelection().getRangeAt(0);
+			newRange.insertNode(tmpNode);
+			let activeChildren = document.activeElement.childNodes;
+			//div 안에 없는 요소 모두 div에 넣어주기
+			let newDiv = document.createElement("div");
+			for(let i=0; i<activeChildren.length; i++){
+				//BR인 경우 BR뒤에 div 추가
+				if(activeChildren[i].nodeName === "BR"){
+					newDiv.appendChild(activeChildren[i].cloneNode(true));
+					activeChildren[i].after(newDiv);
+					newDiv = document.createElement("div");
+				}
+				//DIV와 텍스트 길이가 0 아닌 경우 새로운 newDiv에 추가
+				else if(activeChildren[i].nodeName !== "DIV" && !(activeChildren[i].nodeName === "#text" && activeChildren[i].length === 0)){
+					newDiv.appendChild(activeChildren[i].cloneNode(true));
+				} 
+				//div인 경우에는 newDiv에 요소 남아 있으면 추가
+				else if(activeChildren[i].nodeName === "DIV"){
+					if(newDiv.childNodes.length !== 0){
+						activeChildren[i].before(newDiv);
+						newDiv = document.createElement("div");
+					}
+				}
+				
+				//마지막 idx에서 newDiv에 요소 남아 있으면 추가
+				if(i===activeChildren.length-1){
+					if(newDiv.childNodes.length !== 0){
+						activeChildren[i].after(newDiv);
+						newDiv = document.createElement("div");
+					}
+				}
+			}
+			//div 안에 없는 요소 모두 div에 넣어줬다면 다시 div 안에 없는 요소 제거
+			activeChildren = document.activeElement.childNodes;
+			for(let i=activeChildren.length-1; i>=0; i--){
+				if(activeChildren[i].nodeName !== "DIV" ){
+					activeChildren[i].remove();
+				}
+			}
+
+			//다시 포커스 위치로 복귀
+			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpFormBlockPositionDetect")[0]);
+			document.getElementsByClassName("tmpFormBlockPositionDetect")[0].remove();
+			window.getSelection().collapseToStart();
+			
 		}
 	}
 }

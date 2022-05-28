@@ -938,6 +938,9 @@
     top:-3px;
 }
 
+.cusUnderLine{
+    text-decoration: underline;
+}
 /*에딧 모드에서는 borderbox 보여지므로 포지션 borderbox 두께 만큼 추가*/
 .onlyEdit:focus .nbNumer:after{
     position: relative;
@@ -998,8 +1001,4 @@
 .onlyEdit:focus .nbFracBox.nbFracLineConvert2 .yellowBorderBox.nbNumer:after{
     position: relative;
     bottom:-5px;
-}
-
-.tmpReGenerBugFix, .tmpReGenerBugFix2{
-    font-size: 0px;
 }
