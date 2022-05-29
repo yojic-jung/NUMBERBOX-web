@@ -2468,7 +2468,6 @@ export const reg_tbCellMouseDown = async () =>{
 	for(let i=0; i<nbSelectionTbTd.length; i++){
 		nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
 	}
-	console.log(isTbMouseDown);
 	isTbMouseDown=true;
 }
 
@@ -2476,7 +2475,6 @@ export const reg_tbCellMouseDown = async () =>{
 * 정의 : 테이블 셀렉트 색상 마우스 무브 이벤트
 */
 export const reg_tbCellMouseMove = async () =>{
-	console.log(isTbMouseDown);
 	if(!isTbMouseDown) return;
 	let anchorInnerTbTd = window.getSelection().anchorNode;
 	if(anchorInnerTbTd.classList === undefined) anchorInnerTbTd = anchorInnerTbTd.parentElement;
@@ -2484,7 +2482,6 @@ export const reg_tbCellMouseMove = async () =>{
 	let focusInnerTbTd = window.getSelection().focusNode;
 	if(focusInnerTbTd.classList === undefined) focusInnerTbTd = focusInnerTbTd.parentElement;
 	focusInnerTbTd = focusInnerTbTd.closest(".innerTbTd");
-	console.log(focusInnerTbTd);
 	if(focusInnerTbTd === null) return;
 	if(anchorInnerTbTd !== focusInnerTbTd){
 		let anchorRowCol = anchorInnerTbTd.id.substring(9);
@@ -2876,6 +2873,7 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
 		if(!isShift && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && isCtrlKey) ){
+			let isExcuted = false;
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockPositionDetect";
 			tmpNode.innerHTML = "&#65279;";
@@ -2887,6 +2885,7 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 			for(let i=0; i<activeChildren.length; i++){
 				//BR인 경우 BR뒤에 div 추가
 				if(activeChildren[i].nodeName === "BR"){
+					isExcuted =true;
 					newDiv.appendChild(activeChildren[i].cloneNode(true));
 					activeChildren[i].after(newDiv);
 					newDiv = document.createElement("div");
@@ -2898,6 +2897,7 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 				//div인 경우에는 newDiv에 요소 남아 있으면 추가
 				else if(activeChildren[i].nodeName === "DIV"){
 					if(newDiv.childNodes.length !== 0){
+						isExcuted =true;
 						activeChildren[i].before(newDiv);
 						newDiv = document.createElement("div");
 					}
@@ -2906,6 +2906,7 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 				//마지막 idx에서 newDiv에 요소 남아 있으면 추가
 				if(i===activeChildren.length-1){
 					if(newDiv.childNodes.length !== 0){
+						isExcuted =true;
 						activeChildren[i].after(newDiv);
 						newDiv = document.createElement("div");
 					}
@@ -2923,7 +2924,19 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpFormBlockPositionDetect")[0]);
 			document.getElementsByClassName("tmpFormBlockPositionDetect")[0].remove();
 			window.getSelection().collapseToStart();
-			
+
+			//div 안에 없던 div로 들어가며 새롭게 셋팅되어 이벤트 제거됨, 이벤트 다시 등록 
+			if(isExcuted){
+				let editInnerTable = document.getElementsByClassName("editInnerTable")
+				for(let i=0;i<editInnerTable.length; i++){
+					let innerTbTd = editInnerTable[i].querySelectorAll(".innerTbTd");
+					for(let j=0; j<innerTbTd.length; j++){
+						innerTbTd[j].addEventListener('mousedown', reg_tbCellMouseDown);
+						innerTbTd[j].addEventListener('mousemove', reg_tbCellMouseMove);
+					}
+				}
+			}
+
 		}
 	}
 }
