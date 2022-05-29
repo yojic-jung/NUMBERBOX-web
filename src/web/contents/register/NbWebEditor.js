@@ -96,15 +96,31 @@ const NbWebEditor = ({parentMethod})=>{
 			await reg_oneLineOneDiv();
 			let strtContainer = window.getSelection().getRangeAt(0).startContainer;
 			if(strtContainer.classList === undefined){
-				strtContainer = strtContainer.parentElement.closest("div")
+				if(strtContainer.parentElement.closest(".innerTbTd")!==null){
+					strtContainer =strtContainer.parentElement.closest(".innerTbTd")
+				}else{
+					strtContainer = strtContainer.parentElement.closest("div")
+				}
 			}else{
-				strtContainer = strtContainer.closest("div")
+				if(strtContainer.closest(".innerTbTd")!==null){
+					strtContainer =strtContainer.closest(".innerTbTd")
+				}else{
+					strtContainer = strtContainer.closest("div")
+				}
 			}
 			let endContainer = window.getSelection().getRangeAt(0).endContainer;
 			if(endContainer.classList === undefined){
-				endContainer = endContainer.parentElement.closest("div")
+				if(endContainer.parentElement.closest(".innerTbTd")!==null){
+					endContainer =endContainer.parentElement.closest(".innerTbTd")
+				}else{
+					endContainer = endContainer.parentElement.closest("div")
+				}
 			}else{
-				endContainer = endContainer.closest("div")
+				if(endContainer.closest(".innerTbTd")!==null){
+					endContainer =endContainer.closest(".innerTbTd")
+				}else{
+					endContainer = endContainer.closest("div")
+				}
 			}
 			
 			await reg_undoStackByClick(document.activeElement.id);
@@ -119,6 +135,11 @@ const NbWebEditor = ({parentMethod})=>{
 						childDiv[i].style.textAlign = "left";
 					}
 				}
+				//셀렉트 안에 포함되는 테이블 td도 정렬
+				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
+				for(let i=0; i<nbSelectionTbTd.length; i++){
+					nbSelectionTbTd[i].style.textAlign = "left";
+				}
 			}else if(style === "justifyCenter"){
 				strtContainer.style.textAlign = "center";
 				endContainer.style.textAlign = "center";
@@ -129,6 +150,11 @@ const NbWebEditor = ({parentMethod})=>{
 						childDiv[i].style.textAlign = "center";
 					}
 				}
+				//셀렉트 안에 포함되는 테이블 td도 정렬
+				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
+				for(let i=0; i<nbSelectionTbTd.length; i++){
+					nbSelectionTbTd[i].style.textAlign = "center";
+				}
 			}else if(style === "justifyRight"){
 				strtContainer.style.textAlign = "right";
 				endContainer.style.textAlign = "right";
@@ -138,6 +164,11 @@ const NbWebEditor = ({parentMethod})=>{
 					if(window.getSelection().containsNode(childDiv[i])){
 						childDiv[i].style.textAlign = "right";
 					}
+				}
+				//셀렉트 안에 포함되는 테이블 td도 정렬
+				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
+				for(let i=0; i<nbSelectionTbTd.length; i++){
+					nbSelectionTbTd[i].style.textAlign = "right";
 				}
 			}else if(style === "underline"){
 				let uTag = document.createElement("u");

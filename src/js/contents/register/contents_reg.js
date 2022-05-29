@@ -2444,7 +2444,9 @@ export const reg_selectCheck = () => {
 /*
 * 테이블 셀렉트 색상 제거
 */
-export const reg_tbSelBackgroundRemove = async () => {
+export const reg_tbSelBackgroundRemove = async (event) => {
+	//에디터 버튼의 경우 셀렉트한 td 효과 위해 nbSelectionTbTd 제거 안함
+	if(event.target.closest(".editorBtn") !== null) return;
 	//테이블 셀렉트 색상 제거
 	let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
 	for(let i=0; i<nbSelectionTbTd.length; i++){
@@ -2466,6 +2468,7 @@ export const reg_tbCellMouseDown = async () =>{
 	for(let i=0; i<nbSelectionTbTd.length; i++){
 		nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
 	}
+	console.log(isTbMouseDown);
 	isTbMouseDown=true;
 }
 
@@ -2473,6 +2476,7 @@ export const reg_tbCellMouseDown = async () =>{
 * 정의 : 테이블 셀렉트 색상 마우스 무브 이벤트
 */
 export const reg_tbCellMouseMove = async () =>{
+	console.log(isTbMouseDown);
 	if(!isTbMouseDown) return;
 	let anchorInnerTbTd = window.getSelection().anchorNode;
 	if(anchorInnerTbTd.classList === undefined) anchorInnerTbTd = anchorInnerTbTd.parentElement;
@@ -2480,6 +2484,7 @@ export const reg_tbCellMouseMove = async () =>{
 	let focusInnerTbTd = window.getSelection().focusNode;
 	if(focusInnerTbTd.classList === undefined) focusInnerTbTd = focusInnerTbTd.parentElement;
 	focusInnerTbTd = focusInnerTbTd.closest(".innerTbTd");
+	console.log(focusInnerTbTd);
 	if(focusInnerTbTd === null) return;
 	if(anchorInnerTbTd !== focusInnerTbTd){
 		let anchorRowCol = anchorInnerTbTd.id.substring(9);
