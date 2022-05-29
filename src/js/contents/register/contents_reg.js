@@ -1242,6 +1242,10 @@ export const reg_preventKeyEvent = async (event) => {
 			//현재 포커스에 단축키 수식 추가
 			let selection = document.getSelection();
 			let newRange = selection.getRangeAt(0);
+			//테이블 tr에 포커스 있으면 td 안의 br로 넣어주기(tr에 포커스 있으면 테이블 분리됨)
+			if(window.getSelection().isCollapsed && newRange.startContainer.nodeName === "TR"){
+				window.getSelection().getRangeAt(0).selectNode(newRange.startContainer.querySelector("br"));
+			}
 			//span 노드 추가 안하고 nbGrammer 추가시 백스페이스 및 del 오류 날 수 있음(reg_preventKeyEvent)
 			let tmpNode= document.createElement('span');
 			tmpNode.innerHTML = nbGrammer;
