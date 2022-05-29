@@ -8,8 +8,6 @@ import {nb_querySelctorBFS} from 'js/common/common_nb';
 
 //수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택되야하는데 안되는 요소 별도 처리
 const vacantDomAllSel = ["nbCaseBrckBox", "nbThrCasekBox"];
-//입력불가 수식요소 (FormulaShorCutKey.js에도 똑같이 정의함)
-const writeDisabledDom = ["nbTrigon", "nbL-R-Brck", "nbR-R-Brck" ,"nbL-C-Brck", "nbR-C-Brck", "nbL-S-Brck", "nbR-S-Brck", "nbAbsVal", "nbThrCaseBrck", "nbCaseBrck"];
 //위로 키보드 이벤트 미적용 대상
 const noApplyUpKeyList = ["nbDenom", "nbBinomCoSec", "nbCaseSec", "nbThrCaseSec", "nbThrCaseThr"];
 //아래로 키보드 이벤트 미적용 대상
@@ -215,20 +213,18 @@ export const reg_dressYellowBox = async()=>{
 		let focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement
 
 		//입력불가 요소는 옐로우박스 안 입힘
-		for(let i=0; i<writeDisabledDom.length; i++){
-			if(focusDom.classList!==undefined){
-				if(focusDom.classList.contains(writeDisabledDom[i])){
-					focusDom.classList.add("grayBorderBox");
-					return;
-				}
-			}else{
-				if(focusParDom.classList.contains(writeDisabledDom[i])){
-					focusParDom.classList.add("grayBorderBox");
-					return;
-				}
+		if(focusDom.classList!==undefined){
+			if(focusDom.classList.contains("writeDisable")){
+				focusDom.classList.add("grayBorderBox");
+				return;
 			}
-			
+		}else{
+			if(focusParDom.classList.contains("writeDisable")){
+				focusParDom.classList.add("grayBorderBox");
+				return;
+			}
 		}
+			
 
 		if(focusDom.classList!==undefined){
 			if(focusDom.classList.contains("borderBox")){
@@ -288,9 +284,7 @@ export const reg_writeDisableDom = async (event) =>{
 	let focusParDom = document.getSelection().getRangeAt(0).endContainer;
 	if(focusParDom.classList === undefined) focusParDom = focusParDom.parentElement;
 	let isDisableBox = false;
-	for(let i=0; i<writeDisabledDom.length; i++){
-		if(focusParDom.classList.contains(writeDisabledDom[i])) isDisableBox = true;
-	}
+	if(focusParDom.classList.contains("writeDisable")) isDisableBox = true;
 
 	if(isDisableBox && (event.keyCode == "8" || event.keyCode == "46" )) {
 		//입력 불가 수식요소 삭제시 부모요소 전체 선택
@@ -539,10 +533,9 @@ let undoHTML = null;
 let undoCollapsed = false;	//셀렉트 되어있는지 존재여부 파악 변수
 let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인지 구분하기 위해
 export const reg_preventKeyEvent = async (event) => {
+	let activeId = document.activeElement.id;
 	let userKeyCode = event.keyCode;
 	previouseKeyCode.push(userKeyCode);
-
-
 
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
@@ -654,6 +647,13 @@ export const reg_preventKeyEvent = async (event) => {
 	//입력 불가 수식 box요소 제어[start]
 	if(await reg_writeDisableDom(event)){
 		event.preventDefault();
+		//입력불가 요소 한글 입력시 포커스 제거 후 다시 포커스 찾아가게끔 구현(한글 입력 event.preventDefault()로 제어 안됨 )
+		if(userKeyCode === 229){
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "hangulWriteDiable";
+			window.getSelection().getRangeAt(0).insertNode(tmpNode);
+			window.getSelection().removeAllRanges();
+		}
 	} 
 	//[end]
 
@@ -1227,7 +1227,6 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 	
 
-
 	//alt 단축키 제어
 	if(event.altKey){
 		const mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyList);
@@ -1335,6 +1334,22 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	setTimeout(function(){
+		
+		//입력불가 요소 한글 입력시 제거한 포커스 다시 찾아주기
+		if(document.getElementById(activeId).querySelector(".hangulWriteDiable") !== null){
+			let position = document.getElementById(activeId).querySelector(".hangulWriteDiable").getBoundingClientRect();
+			let moveRange;
+			if (document.caretRangeFromPoint) {
+				moveRange = document.caretRangeFromPoint(position.x, position.y);
+			} else if (document.caretPositionFromPoint) {
+				moveRange = document.caretPositionFromPoint(position.x, position.y);
+			}
+			window.getSelection().setBaseAndExtent(moveRange.startContainer, moveRange.startOffset, moveRange.endContainer, moveRange.endOffset);
+			window.getSelection().collapseToStart();
+			document.getElementsByClassName("hangulWriteDiable")[0].remove();
+		}
+
+		//수식 재생성 버그 캐럿 제거
 		let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
 		while (tmpReGenerBugFix.length > 0) {
 			tmpReGenerBugFix[0].remove();

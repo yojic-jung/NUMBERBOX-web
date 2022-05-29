@@ -619,7 +619,7 @@
 .nbBinomCoBox tbody::before {
     content: "(";
     position: absolute;
-    left: 0em;
+    left: -0.1em;
     top: 0.4em;
     font-size: 16px;
     font-family: 'MJXc-TeX-size2-Rw';
@@ -629,7 +629,7 @@
 .nbBinomCoBox tbody::after {
     content: ")";
     position: absolute;
-    right: 0em;
+    right: -0.1em;
     top: 0.4em;
     font-size: 16px;
     font-family: 'MJXc-TeX-size2-Rw';
