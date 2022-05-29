@@ -6,15 +6,17 @@ const EditTableInnerUi = ({parentMethod})=>{
     useEffect(()=>{
         let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
 		for(let i=0; i<tdList.length; i++){
-			tdList[i].addEventListener('mouseover', function(){
-				let rowIdx = tdList[i].dataset.row
-				let colIdx = tdList[i].dataset.col;
-				addCellUiClass(rowIdx, colIdx)
-			});
-			tdList[i].addEventListener('click', (event)=>addEditTable(event));
+			tdList[i].addEventListener('mouseover', cellUIFunction);
+			tdList[i].addEventListener('click', addEditTable);
 		}
         document.body.addEventListener('click',reg_eraseEditTbUI);
     },[])
+
+    const cellUIFunction = function(event){
+        let rowIdx = event.target.dataset.row
+        let colIdx = event.target.dataset.col;
+        addCellUiClass(rowIdx, colIdx)
+    };
 
     const addCellUiClass = async (rowIdx, colIdx) => {
 		let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
@@ -106,6 +108,9 @@ const EditTableInnerUi = ({parentMethod})=>{
 
         //테이블 안에 테이블 생성 금지[start]
         let targetCell= document.getSelection().getRangeAt(0).endContainer; 
+        if(targetCell !== null && targetCell.nodeName === "TR"){
+            return;
+        }
 		if(targetCell.tagName !== undefined){ //수식 요소인 경우
 			targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
 		}else{

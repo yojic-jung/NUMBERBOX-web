@@ -9,7 +9,7 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownT
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
-		,reg_tbPastePrevent, reg_nbComplie, reg_undoInitialize} from 'js/contents/register/contents_reg';
+		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -59,7 +59,7 @@ const FormulaEditor = ({contentsNo}) => {
 		window.shortCutKeyList = null;
 
 		//undo 초기화
-		reg_undoInitialize();
+		reg_undoRedoInitialize();
 	}
 
 	let targetDomWidth=window.innerWidth/2;
@@ -295,7 +295,7 @@ const FormulaEditor = ({contentsNo}) => {
 			window.addEventListener('mouseup', await reg_selectFormulaElement);
 			
 			//undo 초기화
-			await reg_undoInitialize();
+			await reg_undoRedoInitialize();
 
 			let myContents;
 			//수정모드

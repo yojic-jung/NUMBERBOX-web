@@ -512,13 +512,88 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 	return false;
 }
 
-//undo 변수 초기화
-export const reg_undoInitialize = async () => {
-	undoArr= [];
+//undo, redo 변수 초기화
+export const reg_undoRedoInitialize = async () => {
+	undoArr = [];
+	redoArr = [];
 }
 
 export const reg_undoArrPop = async () => {
 	undoArr.pop();
+}
+
+/*
+*	정의 : undo, redo 데이터 셋팅
+*/
+export const reg_makeUndoRedoByCtrlKey = async (evType) =>{
+			let rangeDirection = "right";								//셀렉션 방향 파악
+			let undoCarot = document.createElement('span');				//strt 캐럿
+			undoCarot.className = "tmpUndoCarot";
+			undoCarot.innerHTML = "&#65279;";
+			let undoCarotEnd = document.createElement('span');			//end 캐럿
+			undoCarotEnd.className = "tmpUndoCarotEnd";
+			undoCarotEnd.innerHTML = "&#65279;";
+			if(window.getSelection().isCollapsed){					//캐럿 추가
+				undoCollapsed=true;
+				window.getSelection().getRangeAt(0).insertNode(undoCarot);
+				window.getSelection().collapseToStart();
+			}else{													//셀렉트 된 상태라면 캐럿 앞 뒤로 추가 후 원래의 셀렉트 상태로 원복
+				undoCollapsed=false;
+				if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().focusNode
+				&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().focusOffset){
+					rangeDirection = "left";
+				}
+
+				//수식요소가 startContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 앞에 추가
+				if(window.getSelection().getRangeAt(0).startContainer !== null 
+					&& window.getSelection().getRangeAt(0).startContainer.classList !== undefined 
+					&& window.getSelection().getRangeAt(0).startContainer.classList.contains("nbBox")){		
+					window.getSelection().getRangeAt(0).startContainer.before(undoCarot);
+				}else{
+					window.getSelection().getRangeAt(0).insertNode(undoCarot);
+				}
+
+				//수식요소가 endContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 뒤에 추가
+				if(window.getSelection().getRangeAt(0).endContainer !== null 
+					&& window.getSelection().getRangeAt(0).endContainer.classList !== undefined 
+					&& window.getSelection().getRangeAt(0).endContainer.classList.contains("nbBox")){
+					window.getSelection().getRangeAt(0).endContainer.after(undoCarotEnd);
+				}else{
+					window.getSelection().collapseToEnd();
+					window.getSelection().getRangeAt(0).insertNode(undoCarotEnd);
+				}
+
+				//원래 셀렉트 상태로 원복
+				window.getSelection().removeAllRanges();
+				if(rangeDirection === "right") window.getSelection().setBaseAndExtent(undoCarot, 1, undoCarotEnd, 0);
+				else window.getSelection().setBaseAndExtent(undoCarotEnd, 0, undoCarot, 1);
+			}
+
+			if(evType === "userKeyDown"){
+				//키 입력 되기 전 상태의 innerHTML을 undoHTML로 셋팅
+				//undoHTML에는 tmpUndoCarot 항상 존재 이 캐럿으로 포커스 위치 찾아감, ctrl+z가 실행되고나서 삭제되어야함
+				undoHTML = document.activeElement.innerHTML;
+			}else{
+				let currentData = new Object();
+				currentData.activeId = document.activeElement.id;				//현재 입력창 id
+				currentData.innerHTML = document.activeElement.innerHTML;	
+				currentData.isSpaceOrEnter = false;
+				currentData.isCollapsed=window.getSelection().isCollapsed;							//셀렉트 여부
+				currentData.rangeDirection = rangeDirection;					//셀렉션 방향 여부
+				//ctrl+z의 경우, redo 스택 메모리에 저장
+				if(evType === "ctrlZ"){
+					redoArr.push(currentData);
+				}
+				//ctrl+y의 경우, undo 스택 메모리에 저장
+				else{
+					undoArr.push(currentData);
+				}
+			}
+			//캐럿 제거하여 키 입력 전 상태로 원복
+			undoCarot.remove();								
+			undoCarotEnd.remove();
+
+			
 }
 
 /*
@@ -532,6 +607,8 @@ let undoArr = [];
 let undoHTML = null;
 let undoCollapsed = false;	//셀렉트 되어있는지 존재여부 파악 변수
 let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인지 구분하기 위해
+//redo 변수
+let redoArr = [];
 export const reg_preventKeyEvent = async (event) => {
 	let activeId = document.activeElement.id;
 	let userKeyCode = event.keyCode;
@@ -553,7 +630,6 @@ export const reg_preventKeyEvent = async (event) => {
 	* 2. div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
 	*/
 	await reg_oneLineOneDiv(event.shiftKey, event.ctrlKey, userKeyCode);
-	
 	//DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
 	await reg_addBrInLastPosition();
 		
@@ -574,57 +650,22 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//ctrl+z 구현
 	if(!(event.ctrlKey && userKeyCode === 90)){
-		let rangeDirection = "right";								//셀렉션 방향 파악
-		let undoCarot = document.createElement('span');				//strt 캐럿
-		undoCarot.className = "tmpUndoCarot";
-		undoCarot.innerHTML = "&#65279;";
-		let undoCarotEnd = document.createElement('span');			//end 캐럿
-		undoCarotEnd.className = "tmpUndoCarotEnd";
-		undoCarotEnd.innerHTML = "&#65279;";
-		if(window.getSelection().isCollapsed){						//캐럿 추가
-			undoCollapsed=true;
-			window.getSelection().getRangeAt(0).insertNode(undoCarot);
-			window.getSelection().collapseToStart();
-		}else{														//셀렉트 된 상태라면 캐럿 앞 뒤로 추가 후 원래의 셀렉트 상태로 원복
-			undoCollapsed=false;
-			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().focusNode
-			&& window.getSelection().getRangeAt(0).startOffset === window.getSelection().focusOffset){
-				rangeDirection = "left";
-			}
-
-			//수식요소가 startContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 앞에 추가
-			if(window.getSelection().getRangeAt(0).startContainer !== null 
-				&& window.getSelection().getRangeAt(0).startContainer.classList !== undefined 
-				&& window.getSelection().getRangeAt(0).startContainer.classList.contains("nbBox")){		
-				window.getSelection().getRangeAt(0).startContainer.before(undoCarot);
-			}else{
-				window.getSelection().getRangeAt(0).insertNode(undoCarot);
-			}
-
-			//수식요소가 endContainer인 경우 캐럿이 수식안으로 들어가 셀렉트 정상적으로 잡히지 않음, 수식 뒤에 추가
-			if(window.getSelection().getRangeAt(0).endContainer !== null 
-				&& window.getSelection().getRangeAt(0).endContainer.classList !== undefined 
-				&& window.getSelection().getRangeAt(0).endContainer.classList.contains("nbBox")){
-				window.getSelection().getRangeAt(0).endContainer.after(undoCarotEnd);
-			}else{
-				window.getSelection().collapseToEnd();
-				window.getSelection().getRangeAt(0).insertNode(undoCarotEnd);
-			}
-
-			//원래 셀렉트 상태로 원복
-			window.getSelection().removeAllRanges();
-			if(rangeDirection === "right") window.getSelection().setBaseAndExtent(undoCarot, 1, undoCarotEnd, 0);
-			else window.getSelection().setBaseAndExtent(undoCarotEnd, 0, undoCarot, 1);
-		}
-		//키 입력 되기 전 상태의 innerHTML을 undoHTML로 셋팅
-		//undoHTML에는 tmpUndoCarot 항상 존재 이 캐럿으로 포커스 위치 찾아감, ctrl+z가 실행되고나서 삭제되어야함
-		undoHTML = document.activeElement.innerHTML;
-
-		//캐럿 제거하여 키 입력 전 상태로 원복
-		undoCarot.remove();								
-		undoCarotEnd.remove();
+		await reg_makeUndoRedoByCtrlKey("userKeyDown")
 	}else{
 		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
+		//undoArr데이터 있는 경우 ctrl+y 스택 메모리에 저장
+		if(undoArr.length >0){
+			await reg_makeUndoRedoByCtrlKey("ctrlZ")
+		}
+	}
+
+	//ctrl+y구현
+	if(userKeyCode===89 && event.ctrlKey ){
+		event.preventDefault();
+		//ctrl+z에 ctrl+y 데이터 넣어주기
+		if(redoArr.length >0){
+			await reg_makeUndoRedoByCtrlKey("ctrlY")
+		}
 	}
 
 	//1번 validation
@@ -1225,7 +1266,36 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 		
 	}
-	
+
+	//테이블 좌우에서 이동 및 백스페이스 안되는 오류 해결
+	if((userKeyCode === 37 || userKeyCode === 39 || userKeyCode === 8) && document.activeElement.querySelectorAll(".editInnerTable").length !== 0 && window.getSelection().isCollapsed){
+		let tmpNode = document.createElement("span");
+		tmpNode.className = "tmpPositionDetect";
+		window.getSelection().getRangeAt(0).insertNode(tmpNode);
+		//표 오른쪽에서 왼쪽 화살표시 마지막 셀로 이동
+		if(userKeyCode === 37 && tmpNode.previousSibling !== null && tmpNode.previousSibling.nodeName === "TABLE" && tmpNode.previousSibling.classList.contains("editInnerTable")){
+			let lastTR = tmpNode.previousSibling.querySelectorAll("tr");
+			let lastTD = lastTR[lastTR.length-1].querySelectorAll("td");
+			lastTD = lastTD[lastTD.length-1];
+			window.getSelection().getRangeAt(0).selectNode(lastTD);
+			window.getSelection().collapseToStart();
+			event.preventDefault();
+		//표 왼쪽에서 오른쪽 화살표시 첫 셀로 이동
+		}else if(userKeyCode === 39 && tmpNode.nextSibling !== null &&tmpNode.nextSibling.nodeName === "TABLE" && tmpNode.nextSibling.classList.contains("editInnerTable")){
+			let firstTR = tmpNode.nextSibling.querySelectorAll("tr");
+			let firstTD = firstTR[0].querySelectorAll("td");
+			firstTD = firstTD[0];
+			window.getSelection().getRangeAt(0).selectNode(firstTD);
+			window.getSelection().collapseToStart();
+			event.preventDefault();
+		}
+		//표 오른쪽에서 백스페이스 시 표 전체 선택
+		else if(userKeyCode === 8 && tmpNode.previousSibling !== null &&tmpNode.previousSibling.nodeName === "TABLE" && tmpNode.previousSibling.classList.contains("editInnerTable")){
+			window.getSelection().getRangeAt(0).selectNode(tmpNode.previousSibling);
+			event.preventDefault();
+		}
+		tmpNode.remove();
+	}
 
 	//alt 단축키 제어
 	if(event.altKey){
@@ -1441,6 +1511,7 @@ export const reg_preventKeyEvent = async (event) => {
 						} 
 						//undo 스택 메모리에 키 입력 전 데이터 추가
 						undoArr.push(currentData);	
+						redoArr = [];
 			}
 		}else{	//ctrl+z 실행
 			if(undoArr.length > 0){							//데이터가 있는 경우에만 실행
@@ -1471,13 +1542,40 @@ export const reg_preventKeyEvent = async (event) => {
 				
 			}
 		}
+
 		//previouseKeyCode는 이전 키코드와 현재 키코드만 가지고 있을 수 있도록 셋팅
 		if(previouseKeyCode.length > 1) previouseKeyCode.splice(0, previouseKeyCode.length-1);
 
 		//ctrl+y
 		if(userKeyCode===89 && event.ctrlKey ){
+			if(redoArr.length > 0){							//데이터가 있는 경우에만 실행
+				for(let i=redoArr.length-1; i>=0; i--){
+					if(redoArr[i].activeId === document.activeElement.id) {			//현재 입력창의 마지막 undo 데이터 가져오기
+						document.activeElement.innerHTML = redoArr[i].innerHTML;
+						if(redoArr[i].isCollapsed){									//포커스 및 셀렉트 셋팅
+							window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 0,
+							document.getElementsByClassName("tmpUndoCarot")[0], 0);
+							window.getSelection().collapseToStart();
+							document.getElementsByClassName("tmpUndoCarot")[0].remove();
+						}else{
+							if(redoArr[i].rangeDirection === "right"){
+								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 1,
+									document.getElementsByClassName("tmpUndoCarotEnd")[0], 0);
+							}else{
+								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarotEnd")[0], 1,
+									document.getElementsByClassName("tmpUndoCarot")[0], 0);
+							}
+							//캐럿 제거, 캐럿 남아있으면 안됨.
+							document.getElementsByClassName("tmpUndoCarot")[0].remove();
+							document.getElementsByClassName("tmpUndoCarotEnd")[0].remove();
+						}
+						redoArr.splice(i, 1);				//현재 실행된 undo데이터 스택에서 제거
+						break;
+					}
+				}
+				
+			}
 		}
-
 
 		if( userKeyCode === 86 && event.ctrlKey){
 			let copiedEditInnerTable = document.getElementById(document.activeElement.id).querySelector(".copiedEditInnerTable");
@@ -2867,8 +2965,14 @@ export const reg_undoStackByClick = async (activeId) => {
 		} 
 		//undo 스택 메모리에 키 입력 전 데이터 추가
 		undoArr.push(currentData);	
+		redoArr = [];
 }
 
+
+
+/*
+*	정의 : 한 줄은 한 div로 구분
+*/
 export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
@@ -2940,6 +3044,7 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 		}
 	}
 }
+
 
 /*
 * 정의 : DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)

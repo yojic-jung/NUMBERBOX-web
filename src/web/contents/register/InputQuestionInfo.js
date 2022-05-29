@@ -2,7 +2,7 @@ import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
-import {reg_quesAnsTabClkEv, reg_undoInitialize} from 'js/contents/register/contents_reg';
+import {reg_quesAnsTabClkEv, reg_undoRedoInitialize} from 'js/contents/register/contents_reg';
 
 const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
@@ -29,7 +29,7 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 				}
 				if(document.getElementById(targetId[i]).innerText.substr(-2) === "\n\n"){
 					let brTag = document.getElementById(targetId[i]).querySelectorAll("br");
-					if(brTag!== null){
+					if(brTag.length !== 0){
 						if(brTag[brTag.length-1].closest(".nbBox") === null){
 							brTag[brTag.length-1].remove();
 							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
@@ -41,6 +41,25 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 					}
 				}
 			}
+
+			//수식요소 style 속성 없애기
+			let isExecuted = false;
+			let borderBox = document.getElementById(targetId[i]).querySelectorAll(".borderBox");
+			for(let i=0; i<borderBox.length; i++){
+				borderBox[i].style={};
+				isExecuted = true;
+			}
+			
+			let nbBox = document.getElementById(targetId[i]).querySelectorAll(".nbBox");
+			for(let i=0; i<nbBox.length; i++){
+				nbBox[i].style={};
+				isExecuted = true;
+			}
+
+			if(isExecuted){
+				document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
+			}
+
 		}
 	  }
 
@@ -108,7 +127,7 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
 		//undo 초기화
-		await reg_undoInitialize();
+		await reg_undoRedoInitialize();
 
 		//수정모드로 들어온 경우
 		if(updateModeUniqNo!==""){
