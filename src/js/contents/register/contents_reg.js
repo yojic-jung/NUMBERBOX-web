@@ -518,6 +518,25 @@ export const reg_undoRedoInitialize = async () => {
 	redoArr = [];
 }
 
+//undo, redo 최초 데이터 셋팅
+export const reg_undoRedoSetting = async () => {
+	let contentEditClass  = document.getElementsByClassName("contentEditClass");
+	for(let i=0; i<contentEditClass.length; i++){
+		let undoCarot = document.createElement('span');				//strt 캐럿
+		undoCarot.className = "tmpUndoCarot";
+		undoCarot.innerHTML = "&#65279;";
+		contentEditClass[i].prepend(undoCarot);
+		let currentData = new Object();
+		currentData.activeId = contentEditClass[i].id;				//현재 입력창 id
+		currentData.innerHTML = contentEditClass[i].innerHTML;	
+		currentData.isSpaceOrEnter = false;
+		currentData.isCollapsed=window.getSelection().isCollapsed;							//셀렉트 여부
+		currentData.rangeDirection = "right";					//셀렉션 방향 여부
+		undoArr.push(currentData);
+		undoCarot.remove();
+	}
+}
+
 export const reg_undoArrPop = async () => {
 	undoArr.pop();
 }
@@ -562,7 +581,6 @@ export const reg_makeUndoRedoByCtrlKey = async (evType) =>{
 					window.getSelection().collapseToEnd();
 					window.getSelection().getRangeAt(0).insertNode(undoCarotEnd);
 				}
-
 				//원래 셀렉트 상태로 원복
 				window.getSelection().removeAllRanges();
 				if(rangeDirection === "right") window.getSelection().setBaseAndExtent(undoCarot, 1, undoCarotEnd, 0);
@@ -648,19 +666,21 @@ export const reg_preventKeyEvent = async (event) => {
 		await reg_removeSelectionBackColor();
 	}
 
+
+
 	//ctrl+z 구현
-	if(!(event.ctrlKey && userKeyCode === 90)){
-		await reg_makeUndoRedoByCtrlKey("userKeyDown")
-	}else{
+	if(!(event.ctrlKey && userKeyCode === 90) && event.keyCode !== 229){
+		await reg_makeUndoRedoByCtrlKey("userKeyDown");
+	}else if(event.ctrlKey && userKeyCode === 90){
 		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
 		//undoArr데이터 있는 경우 ctrl+y 스택 메모리에 저장
 		if(undoArr.length >0){
-			await reg_makeUndoRedoByCtrlKey("ctrlZ")
+			await reg_makeUndoRedoByCtrlKey("ctrlZ");
 		}
 	}
 
 	//ctrl+y구현
-	if(userKeyCode===89 && event.ctrlKey ){
+	if(userKeyCode===89 && event.ctrlKey){
 		event.preventDefault();
 		//ctrl+z에 ctrl+y 데이터 넣어주기
 		if(redoArr.length >0){
@@ -1408,7 +1428,6 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	setTimeout(function(){
-		
 		//입력불가 요소 한글 입력시 제거한 포커스 다시 찾아주기
 		if(document.getElementById(activeId).querySelector(".hangulWriteDiable") !== null){
 			let position = document.getElementById(activeId).querySelector(".hangulWriteDiable").getBoundingClientRect();
@@ -1458,10 +1477,7 @@ export const reg_preventKeyEvent = async (event) => {
 			if(tmpUndoHtml.querySelector(".tmpUndoCarotEnd") !== null) tmpUndoHtml.querySelector(".tmpUndoCarotEnd").remove();
 			//캐럿을 제거한 undoHTML가 키입력 후 현재 innerHTML을 비교하여 달라졌으면 undo 스택에 추가
 			//한글의 경우 자모음 합쳐지는 순간 캐치 어려워 단어단위(띄어쓰기)로 메모리에 추가
-			//최초 한글 입력시에는 입력 전 data도 undo 스택에 추가
-			if((tmpUndoHtml.innerHTML !== document.activeElement.innerHTML && event.keyCode !== 229)
-			|| (event.keyCode === 229 && tmpUndoHtml.childNodes.length === 1 && tmpUndoHtml.childNodes[0].nodeName === "DIV"
-				&& tmpUndoHtml.childNodes[0].childNodes.length === 1 && tmpUndoHtml.childNodes[0].childNodes[0].nodeName === "BR") ){
+			if((tmpUndoHtml.innerHTML !== document.activeElement.innerHTML && event.keyCode !== 229)){
 						let currentData = new Object();
 						let rangeDirection = "left";			//셀렉션 방향 파악 변수
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().anchorNode

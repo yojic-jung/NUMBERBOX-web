@@ -2,7 +2,7 @@ import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
-import {reg_quesAnsTabClkEv, reg_undoRedoInitialize} from 'js/contents/register/contents_reg';
+import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting} from 'js/contents/register/contents_reg';
 
 const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
@@ -208,6 +208,7 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 			else{
 				await nb_fadeInOut("컨텐츠가 정상적으로 등록되었습니다.");
 				document.getElementById("contentsFormulaEditor").focus()
+				await reg_undoRedoSetting();
 			} 
 		}else{
 			//문제입력 탭 클릭상태

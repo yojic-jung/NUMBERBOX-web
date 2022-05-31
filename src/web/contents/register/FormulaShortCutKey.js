@@ -32,12 +32,17 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
 
         let targetId = event.currentTarget.id;
         let focusId = document.activeElement.id;
+        
         //문제입력, 해설입력, 객관식 보기, 주관식 정답에만 적용
-        if( !(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"
-        || focusId == "firNoFormulaEditor" || focusId == "secNoFormulaEditor"
-        || focusId == "thrNoFormulaEditor" || focusId == "fourNoFormulaEditor"
-        || focusId == "fifNoFormulaEditor" || focusId == "answerFormulaEditor") ){
-            return;
+        if( !(focusId === "contentsFormulaEditor" || focusId === "solutionFormulaEditor"
+        || focusId === "firNoFormulaEditor" || focusId === "secNoFormulaEditor"
+        || focusId === "thrNoFormulaEditor" || focusId === "fourNoFormulaEditor"
+        || focusId === "fifNoFormulaEditor" || focusId === "answerFormulaEditor") ){
+            //셀렉트 상태에서 수식 탭 버튼 클릭하면 activeElement가 버튼으로 셋팅되어 anchorNode의 부모요소 파악
+            if(!window.getSelection().isCollapsed && (window.getSelection().anchorNode.parentElement.closest(".contentEditClass") !== null)){
+            }else{
+                return;
+            }
         }
  
         await reg_undoStackByClick(document.activeElement.id);      //ctrl+z undo 스택 메모리에 데이터 추가
