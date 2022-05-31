@@ -9,7 +9,7 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownT
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
-		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize} from 'js/contents/register/contents_reg';
+		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -418,6 +418,7 @@ const FormulaEditor = ({contentsNo}) => {
 				//문제제작자
 				setUserNo(myContents["myContents"].userNo);
 			}
+			await reg_undoRedoSetting();
 		}
 
 		asyncUseEffect();
@@ -444,23 +445,38 @@ const FormulaEditor = ({contentsNo}) => {
 		setMultiAnswerText(chkVal);
 	}
 
+	let multiChoiceId = ["firNoFormulaEditor", "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor"];
 	const contentsValidation = async function(){
 		//객관식 br태그만 남아있는 경우 제거
+		for(let i=0; i<multiChoiceId.length; i++){
+			let childNodes = document.getElementById(multiChoiceId[i]).childNodes;
+			for(let j=0; j<childNodes.length; j++){
+				if(childNodes[j].nodeName === "#text" && childNodes[j].length === 0){
+					childNodes[j].remove();
+				}
+			}
+		}
 		if(document.getElementById("firNoFormulaEditor").childNodes.length===1 && document.getElementById("firNoFormulaEditor").childNodes[0].nodeName==="BR"){
 			document.getElementById("firNoFormulaEditor").childNodes[0].remove();
+			document.getElementById("firNo").innerHTML=document.getElementById("firNoFormulaEditor").innerHTML;
 		}
 		if(document.getElementById("secNoFormulaEditor").childNodes.length===1 && document.getElementById("secNoFormulaEditor").childNodes[0].nodeName==="BR"){
 			document.getElementById("secNoFormulaEditor").childNodes[0].remove();
+			document.getElementById("secNo").innerHTML=document.getElementById("secNoFormulaEditor").innerHTML;
 		}
 		if(document.getElementById("thrNoFormulaEditor").childNodes.length===1 && document.getElementById("thrNoFormulaEditor").childNodes[0].nodeName==="BR"){
 			document.getElementById("thrNoFormulaEditor").childNodes[0].remove();
+			document.getElementById("thrNo").innerHTML=document.getElementById("thrNoFormulaEditor").innerHTML;
 		}
 		if(document.getElementById("fourNoFormulaEditor").childNodes.length===1 && document.getElementById("fourNoFormulaEditor").childNodes[0].nodeName==="BR"){
 			document.getElementById("fourNoFormulaEditor").childNodes[0].remove();
+			document.getElementById("fourNo").innerHTML=document.getElementById("fourNoFormulaEditor").innerHTML;
 		}
 		if(document.getElementById("fifNoFormulaEditor").childNodes.length===1 && document.getElementById("fifNoFormulaEditor").childNodes[0].nodeName==="BR"){
 			document.getElementById("fifNoFormulaEditor").childNodes[0].remove();
+			document.getElementById("fifNo").innerHTML=document.getElementById("fifNoFormulaEditor").innerHTML;
 		}
+
 		let contentsDomLength = document.getElementById("contentsFormulaEditor").innerText.length;
 		let firNoDomLength = document.getElementById("firNoFormulaEditor").innerText.length;
 		let secNoDomLength = document.getElementById("secNoFormulaEditor").innerText.length;
