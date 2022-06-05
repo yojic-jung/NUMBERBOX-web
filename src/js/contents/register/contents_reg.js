@@ -667,9 +667,9 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 
-
 	//ctrl+z 구현
-	if(!(event.ctrlKey && userKeyCode === 90) && event.keyCode !== 229){
+	if(!(event.ctrlKey && userKeyCode === 90) && event.keyCode !== 229 
+	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
 		await reg_makeUndoRedoByCtrlKey("userKeyDown");
 	}else if(event.ctrlKey && userKeyCode === 90){
 		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
@@ -680,7 +680,8 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	//ctrl+y구현
-	if(userKeyCode===89 && event.ctrlKey){
+	if(userKeyCode===89 && event.ctrlKey 
+	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
 		event.preventDefault();
 		//ctrl+z에 ctrl+y 데이터 넣어주기
 		if(redoArr.length >0){
@@ -1180,8 +1181,12 @@ export const reg_preventKeyEvent = async (event) => {
 		tmpNode.innerHTML = "&nbsp; &nbsp; &nbsp;";
 		newRange.deleteContents();
 		newRange.insertNode(tmpNode);
+		let tmpNode2 =document.createElement('span');
+		tmpNode.after(tmpNode2);
+		newRange.selectNode(tmpNode2)
 		window.getSelection().collapseToEnd();		//셀렉션객체의 마지막 부분에 포커스 맞춤
 		tmpNode.outerHTML = tmpNode.innerHTML;
+		tmpNode2.remove();
 		event.preventDefault();
 	}
 
@@ -3068,21 +3073,19 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 */
 export const reg_addBrInLastPosition = () => {
 	if(window.getSelection().isCollapsed){
-		let activeChildNodes = document.activeElement.childNodes
-		for(let i=0; i<activeChildNodes.length; i++){
-			if(activeChildNodes[i].tagName === "DIV"){
-				let divChildNodes = activeChildNodes[i].childNodes;
-				let lastChild = null;
-				for(let i=divChildNodes.length-1; i>=0; i--){
-					if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-					}else{
-						lastChild = divChildNodes[i];
-						//div요소의 마지막 요소가 수식인지 파악
-						if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
-							lastChild.after(document.createElement('br'));
-						}
-						break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
+		let divdNodes = document.activeElement.querySelectorAll("div")
+		for(let i=0; i<divdNodes.length; i++){
+			let divChildNodes = divdNodes[i].childNodes;
+			let lastChild = null;
+			for(let i=divChildNodes.length-1; i>=0; i--){
+				if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
+				}else{
+					lastChild = divChildNodes[i];
+					//div요소의 마지막 요소가 수식인지 파악
+					if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
+						lastChild.after(document.createElement('br'));
 					}
+					break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
 				}
 			}
 		}
