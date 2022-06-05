@@ -297,3 +297,13 @@
 .pointer{
     cursor: pointer;
 }
+
+.alignCenter{
+    text-align: center;
+}
+.alignLeft{
+    text-align: left;
+}
+.alignRight{
+    text-align: right;
+}

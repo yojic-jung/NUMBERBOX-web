@@ -126,49 +126,73 @@ const NbWebEditor = ({parentMethod})=>{
 			await reg_undoStackByClick(document.activeElement.id);
 
 			if(style === "justifyLeft"){
-				strtContainer.style.textAlign = "left";
-				endContainer.style.textAlign = "left";
+				strtContainer.classList.remove("alignCenter");
+				strtContainer.classList.remove("alignRight");
+				strtContainer.classList.add("alignLeft");
+				endContainer.classList.remove("alignCenter");
+				endContainer.classList.remove("alignRight");
+				endContainer.classList.add("alignLeft");
 				let childDiv = document.activeElement.childNodes
 				//셀렉트 안에 포함되는 div도 정렬
 				for(let i=0; i<childDiv.length; i++){
 					if(window.getSelection().containsNode(childDiv[i])){
-						childDiv[i].style.textAlign = "left";
+						childDiv[i].classList.remove("alignCenter");
+						childDiv[i].classList.remove("alignRight");
+						childDiv[i].classList.add("alignLeft");
 					}
 				}
 				//셀렉트 안에 포함되는 테이블 td도 정렬
 				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
 				for(let i=0; i<nbSelectionTbTd.length; i++){
-					nbSelectionTbTd[i].style.textAlign = "left";
+					nbSelectionTbTd[i].classList.remove("alignCenter");
+					nbSelectionTbTd[i].classList.remove("alignRight");
+					nbSelectionTbTd[i].classList.add("alignLeft");
 				}
 			}else if(style === "justifyCenter"){
-				strtContainer.style.textAlign = "center";
-				endContainer.style.textAlign = "center";
+				strtContainer.classList.remove("alignLeft");
+				strtContainer.classList.remove("alignRight");
+				strtContainer.classList.add("alignCenter");
+				endContainer.classList.remove("alignLeft");
+				endContainer.classList.remove("alignRight");
+				endContainer.classList.add("alignCenter");
 				let childDiv = document.activeElement.childNodes
 				//셀렉트 안에 포함되는 div도 정렬
 				for(let i=0; i<childDiv.length; i++){
 					if(window.getSelection().containsNode(childDiv[i])){
-						childDiv[i].style.textAlign = "center";
+						childDiv[i].classList.remove("alignLeft");
+						childDiv[i].classList.remove("alignRight");
+						childDiv[i].classList.add("alignCenter");
 					}
 				}
 				//셀렉트 안에 포함되는 테이블 td도 정렬
 				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
 				for(let i=0; i<nbSelectionTbTd.length; i++){
-					nbSelectionTbTd[i].style.textAlign = "center";
+					nbSelectionTbTd[i].classList.remove("alignLeft");
+					nbSelectionTbTd[i].classList.remove("alignRight");
+					nbSelectionTbTd[i].classList.add("alignCenter");
 				}
 			}else if(style === "justifyRight"){
-				strtContainer.style.textAlign = "right";
-				endContainer.style.textAlign = "right";
+				strtContainer.classList.remove("alignCenter");
+				strtContainer.classList.remove("alignLeft");
+				strtContainer.classList.add("alignRight");
+				endContainer.classList.remove("alignCenter");
+				endContainer.classList.remove("alignLeft");
+				endContainer.classList.add("alignRight");
 				let childDiv = document.activeElement.childNodes
 				//셀렉트 안에 포함되는 div도 정렬
 				for(let i=0; i<childDiv.length; i++){
 					if(window.getSelection().containsNode(childDiv[i])){
-						childDiv[i].style.textAlign = "right";
+						childDiv[i].classList.remove("alignCenter");
+						childDiv[i].classList.remove("alignLeft");
+						childDiv[i].classList.add("alignRight");
 					}
 				}
 				//셀렉트 안에 포함되는 테이블 td도 정렬
 				let nbSelectionTbTd = document.activeElement.querySelectorAll(".nbSelectionTbTd");
 				for(let i=0; i<nbSelectionTbTd.length; i++){
-					nbSelectionTbTd[i].style.textAlign = "right";
+					nbSelectionTbTd[i].classList.remove("alignCenter");
+					nbSelectionTbTd[i].classList.remove("alignLeft");
+					nbSelectionTbTd[i].classList.add("alignRight");
 				}
 			}else if(style === "underline"){
 				let uTag = document.createElement("u");

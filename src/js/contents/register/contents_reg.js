@@ -648,9 +648,15 @@ export const reg_preventKeyEvent = async (event) => {
 	* 2. div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
 	*/
 	await reg_oneLineOneDiv(event.shiftKey, event.ctrlKey, userKeyCode);
+	
 	//DIV태그의 마지막 요소가 수식요소인 경우 뒤에 br태그 집어넣음(<br>태그가 수식 뒤에 있으면 재생성 안됨)
 	await reg_addBrInLastPosition();
-		
+
+	// span 구조 제거
+	// span 태그 남아있는 경우 아랫줄 수식일때 del시 위로 안 딸려옴
+	// 수식 셀렉트 한 상태에서 글자 입력하면 해당 div 밑이 모두 span으로 바뀜
+	await reg_convertSpanToNoTag()
+
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -1598,6 +1604,7 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 
+		// ctrl+v
 		if( userKeyCode === 86 && event.ctrlKey){
 			let copiedEditInnerTable = document.getElementById(document.activeElement.id).querySelector(".copiedEditInnerTable");
 			if(copiedEditInnerTable !== null){
@@ -1636,8 +1643,11 @@ export const reg_preventKeyEvent = async (event) => {
 			if(!window.getSelection().isCollapsed){
 				window.getSelection().collapseToStart();
 			}
-			
+
 		}
+	
+		reg_removeStyleAttribute(); //스타일 속성 적용된 경우 제거
+	
 	}, 0);
 }
 
@@ -3089,5 +3099,71 @@ export const reg_addBrInLastPosition = () => {
 				}
 			}
 		}
+	}
+}
+
+
+/*
+* 정의 : 수식 에디터에서 span태그 허용 안함(html 구조 더러워지면 각종 버그 및 에러 관리하기 어려움)
+* 		 수식 셀렉트 한 상태에서 글자 입력하면 해당 div 밑이 모두 span으로 바뀜
+*/
+export const reg_convertSpanToNoTag = (targetId) => {
+	if(window.getSelection().isCollapsed && targetId === undefined){
+		let spanTag = document.activeElement.querySelectorAll("span")
+		if(spanTag.length>0){
+			let tmpNode = document.createElement("img");
+			tmpNode.className = "tmpPositionDetect";
+			window.getSelection().getRangeAt(0).insertNode(tmpNode);
+			window.getSelection().collapseToStart();
+			for(let i=spanTag.length-1; i>=0; i--){
+				if(spanTag[i].classList.length === 0){
+					spanTag[i].outerHTML = spanTag[i].innerHTML
+				}
+				
+			}
+			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpPositionDetect")[0]);
+			window.getSelection().collapseToStart();
+			document.getElementsByClassName("tmpPositionDetect")[0].remove();
+		}
+	}
+
+	//컨텐츠 등록시 span태그 없애고 등록
+	if(targetId !== undefined){
+		let spanTag = document.getElementById(targetId).querySelectorAll("span")
+		for(let i=spanTag.length-1; i>=0; i--){
+			if(spanTag[i].classList.length === 0){
+				spanTag[i].outerHTML = spanTag[i].innerHTML
+			}
+		}
+	}
+}
+
+/*
+*       정의 : 수식 및 div 태그 style 속성 없애기
+*  적용 대상 : 키다운, 문제등록
+*/
+export const reg_removeStyleAttribute = (targetId) => {
+	//수식 및 div 요소 style 속성 없애기
+	let divTag;
+	let borderBox;
+	let nbBox;
+	if(targetId !== undefined){
+		divTag = document.getElementById(targetId).querySelectorAll("div");
+		borderBox = document.getElementById(targetId).querySelectorAll(".borderBox");
+		nbBox = document.getElementById(targetId).querySelectorAll(".nbBox");
+	}else{
+		divTag = document.activeElement.querySelectorAll("div");
+		borderBox = document.activeElement.querySelectorAll(".borderBox");
+		nbBox = document.activeElement.querySelectorAll(".nbBox");
+	}
+
+	for(let i=0; i<divTag.length; i++){
+		divTag[i].style={};
+	}
+	for(let i=0; i<borderBox.length; i++){
+		borderBox[i].style={};
+	}
+	for(let i=0; i<nbBox.length; i++){
+		nbBox[i].style={};
 	}
 }

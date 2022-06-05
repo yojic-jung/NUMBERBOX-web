@@ -2,7 +2,7 @@ import {React, useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import CustomSelBoxUp from 'web/common/CustomSelBoxUp'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
-import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting} from 'js/contents/register/contents_reg';
+import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
 
 const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
@@ -42,23 +42,13 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 				}
 			}
 
-			//수식요소 style 속성 없애기
-			let isExecuted = false;
-			let borderBox = document.getElementById(targetId[i]).querySelectorAll(".borderBox");
-			for(let i=0; i<borderBox.length; i++){
-				borderBox[i].style={};
-				isExecuted = true;
-			}
-			
-			let nbBox = document.getElementById(targetId[i]).querySelectorAll(".nbBox");
-			for(let i=0; i<nbBox.length; i++){
-				nbBox[i].style={};
-				isExecuted = true;
-			}
+			//span 태그 없애기
+			await reg_convertSpanToNoTag(targetId[i]);
 
-			if(isExecuted){
-				document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-			}
+			//수식요소 및 div 태그 스타일 직접 적용된 경우 제거
+			await reg_removeStyleAttribute(targetId[i]);
+
+			document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
 
 		}
 	  }
@@ -121,7 +111,10 @@ const InputQuestionInfo = ({parentMethod, updateModeUniqNo, userNo})=>{
 
 		
 		 // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈, 띄어쓰기)
+		 // style 속성 제거
+		 // span 태그 제거
 		await trimRegisterContents();
+
 
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
