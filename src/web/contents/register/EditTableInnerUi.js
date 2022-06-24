@@ -9,7 +9,7 @@ const EditTableInnerUi = ({parentMethod})=>{
 			tdList[i].addEventListener('mouseover', cellUIFunction);
 			tdList[i].addEventListener('click', addEditTable);
 		}
-        document.body.addEventListener('click',reg_eraseEditTbUI);
+        window.addEventListener('click',reg_eraseEditTbUI);
     },[])
 
     const cellUIFunction = function(event){

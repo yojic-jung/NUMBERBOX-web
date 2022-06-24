@@ -1,15 +1,17 @@
 import {React, useState, useEffect} from "react";
+import { useLocation } from 'react-router-dom';
 import FormulaShortCutKey from './FormulaShortCutKey';
 import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
-import InputQuestionInfo from 'web/contents/register/InputQuestionInfo';
-import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, nb_imgFileDel} from 'js/common/common_nb.js';
+import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
+import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, 
+	nb_licenseUiCheck, nb_imgFileDel, nb_contentsSrcVal, nb_multiChoiceGridSet} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownTdWidthChange, reg_mUpTdWidthChange, 
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
-		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting} from 'js/contents/register/contents_reg';
+		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting, reg_enableImageResizeInDiv, reg_removeResizeFrame, reg_imageCopy} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -18,12 +20,13 @@ let shortCutKeyList;
 
 let conImgName="N";	//컨텐츠 이미지 존재 여부
 let solImgName="N";	//해설 이미지 존재 여부
-const FormulaEditor = ({contentsNo}) => {
+const FormulaEditor = ({contentsNo, contentsClassify}) => {
+	let urlPath = useLocation().pathname;
+	
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
 	const [solutionText, setSolutionText] = useState("");	// 사용자 입력 해설
 	const [answerText, setAnswerText] = useState("");		// 사용자 입력 정답
 	const [multiAnswerText, setMultiAnswerText] = useState("");		// 사용자 입력 객관식 정답
-
 	const [firNo, setFirNo] = useState("");
 	const [secNo, setSecNo] = useState("");
 	const [thrNo, setThrNo] = useState("");
@@ -35,7 +38,6 @@ const FormulaEditor = ({contentsNo}) => {
 
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
 
-	const[userNo, setUserNo] = useState("");
 
 	const removeAddedEvent = () => {
 		window.removeEventListener('mousedown', reg_mDownTdWidthChange);
@@ -49,11 +51,14 @@ const FormulaEditor = ({contentsNo}) => {
 		document.removeEventListener('copy', reg_tbCellCopy);
 		window.removeEventListener('mousedown', reg_tbSelBackgroundRemove);
 		window.removeEventListener('mouseup', reg_selectFormulaElement);
-        document.body.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
-    	//이미지 및 파일 복붙 금지
+        window.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
+		window.removeEventListener('scroll',reg_removeResizeFrame);
+		//이미지 및 파일 복붙 금지
 		let contentEditDiv = document.querySelectorAll('[contenteditable]');
 		for(let i=0; i<contentEditDiv.length; i++){
-			contentEditDiv[i].removeEventListener('paste', pastePreventFile);
+			if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
+				contentEditDiv[i].removeEventListener('paste', pastePreventFile);
+			}
 		}
 
 		window.shortCutKeyList = null;
@@ -100,24 +105,6 @@ const FormulaEditor = ({contentsNo}) => {
 		}
 	}
 
-	const multiChoiceGridSet = () => {
-		let multiGrid = document.getElementById("multi-show");
-		multiGrid.classList.remove("oneDivGrid");
-		multiGrid.classList.remove("twoDivGrid");
-		multiGrid.classList.remove("threeDivGrid");
-
-		let maxWidth = document.getElementsByClassName("firDiv")[0].offsetWidth;
-		if(maxWidth < document.getElementsByClassName("secDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("secDiv")[0].offsetWidth
-		if(maxWidth <document.getElementsByClassName("thrDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("thrDiv")[0].offsetWidth
-		if(maxWidth < document.getElementsByClassName("fourDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("fourDiv")[0].offsetWidth
-		if(maxWidth < document.getElementsByClassName("fifDiv")[0].offsetWidth) maxWidth = document.getElementsByClassName("fifDiv")[0].offsetWidth
-
-		if(maxWidth<170 && maxWidth>90)  document.getElementById("multi-show").classList.add("twoDivGrid");
-		else if(maxWidth<=90) multiGrid.classList.add("threeDivGrid");
-		else multiGrid.classList.add("oneDivGrid");
-	}
-
-
 	const customImgUpld = async (targetId) =>{
 		let updtImg = false;
 		if((targetId === "contentsImg" && conImgName!=="N" ) 
@@ -125,11 +112,10 @@ const FormulaEditor = ({contentsNo}) => {
 			updtImg = await window.confirm("등록된 이미지를 삭제하고 새로운 이미지를 등록하시겠습니까?");
 			if(updtImg){
 				let formData = new FormData();
-				formData.append("userNo",userNo);
-				formData.append("contentsNo",contentsNo)
+				formData.append("contentsNo", contentsNo)
 				formData.append("conOrSol",targetId)
 				let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
-
+				window.mathContents = returnObj.mathContents;	//윈도우 전역변수로 객체 전달
 				if(returnObj.updateCond === -1) {
 					return false;
 				}
@@ -161,10 +147,10 @@ const FormulaEditor = ({contentsNo}) => {
 				
 				if(outputId === "contentsImgOutput"){
 					let formData = new FormData();
-					formData.append("userNo",userNo);
-					formData.append("contentsNo",contentsNo)
+					formData.append("contentsNo", contentsNo)
 					formData.append("conOrSol","contentsImg")
 					let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
+					window.mathContents = returnObj.mathContents;	//윈도우 전역변수로 객체 전달
 					if(returnObj.updateCond === -1) {
 						return false;
 					 }
@@ -179,10 +165,10 @@ const FormulaEditor = ({contentsNo}) => {
 				} 
 				else{
 					let formData = new FormData();
-					formData.append("userNo", userNo);
-					formData.append("contentsNo",contentsNo)
+					formData.append("contentsNo", contentsNo)
 					formData.append("conOrSol","solutionImg")
 					let returnObj = await nb_formDataFetch("/mathInfo/delConOrSolImg",formData, true);
+					window.mathContents = returnObj.mathContents;	//윈도우 전역변수로 객체 전달
 					if(returnObj.updateCond === -1) {
 						return false;
 					 }
@@ -217,11 +203,12 @@ const FormulaEditor = ({contentsNo}) => {
 	
 		if(contentsNo!== undefined){
 		  let targetId = event.target.id
+		  let targetName = event.target.name
 		  let formData = new FormData();
-		  formData.append("userNo",userNo);
 		  formData.append("contentsNo",contentsNo);
-		  formData.append(targetId, event.target.files[0])
+		  formData.append(targetName, event.target.files[0])
 		  let returnObj = await nb_formDataFetch("/mathInfo/changeConOrSolImg",formData, true);
+		  window.mathContents = returnObj.mathContents;	//윈도우 전역변수로 객체 전달
 		  document.getElementById("imgUpdt").value = "Y";
 		  reader.readAsDataURL(event.target.files[0]);
 		  output.classList.remove('hide');
@@ -252,6 +239,9 @@ const FormulaEditor = ({contentsNo}) => {
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
+			reg_enableImageResizeInDiv('contentsFormulaEditor');
+			reg_enableImageResizeInDiv('solutionFormulaEditor');
+			
 			let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
 			setIsFetchShotCutKey(true);
@@ -260,11 +250,13 @@ const FormulaEditor = ({contentsNo}) => {
 			if(contentsNo!==undefined) document.getElementById("outerFormulaEditor").addEventListener('scroll', topMenuFixed);
 			else window.addEventListener('scroll', topMenuFixed);
 			window.addEventListener('resize', topMenuWidth);
-
+			window.addEventListener('scroll', reg_removeResizeFrame);
 			//이미지 및 파일 복붙 금지
 			let contentEditDiv = document.querySelectorAll('[contenteditable]');
 			for(let i=0; i<contentEditDiv.length; i++){
-				contentEditDiv[i].addEventListener('paste', (event) => pastePreventFile(event));
+				if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
+					contentEditDiv[i].addEventListener('paste', (event) => pastePreventFile(event));
+				}
 			}
 
 			document.getElementById("contents-show").addEventListener("contextmenu",(e)=>{
@@ -300,7 +292,12 @@ const FormulaEditor = ({contentsNo}) => {
 			let myContents;
 			//수정모드
 			if(contentsNo!==undefined){
-				myContents = await nb_dataFetch('/mathInfo/takeMyContents?contentsno='+contentsNo, true);
+				if(urlPath === "/contentsList" || urlPath === "/myRepository"){		//문제검색 페이지에서는 다른 사용자의 제작문제 접근 가능
+					myContents = await nb_dataFetch('/mathInfo/takeContentsByContentsNo?contentsno='+contentsNo, true);
+				}else{
+					myContents = await nb_dataFetch('/mathInfo/takeMyWorkContents?contentsno='+contentsNo, true);
+				}
+				
 				if(myContents.existMsg){
 					document.getElementById("saveBtn").remove();
 					return;
@@ -352,7 +349,7 @@ const FormulaEditor = ({contentsNo}) => {
 				setFifNo(myContents["myContents"].fifNo);
 				document.getElementById("fifNoFormulaEditor").innerHTML = myContents["myContents"].fifNo;
 
-				await multiChoiceGridSet();
+				await nb_multiChoiceGridSet("multi-show");
 
 				//이미지 file 셋팅 필요(문제 및 정답)
 				if(myContents["myContents"].contentsImg !== null){
@@ -369,23 +366,68 @@ const FormulaEditor = ({contentsNo}) => {
 				}else{
 					solImgName="N"
 				}
-
 				// 주관식 객관식 마지막 validation에서 처리 필요(X)
+				if(contentsClassify===0){	//넘버링크만 셋팅
+					//유사 교재
+					document.getElementById("orgSrcRef").value = myContents["myContents"].mathContentsComp[0].orgSrcRef;
+					document.getElementById("cusOrgRefSelTitle").innerHTML =document.getElementById("orgSrcRef")[document.getElementById("orgSrcRef").selectedIndex].innerText;
+					document.getElementById("cusOrgRefSelDiv").classList.add("nbCustomSelected");
 
-				//원본 책
-				document.getElementById("originRef").value = myContents["myContents"].originRef;
-				document.getElementById("cusOrgRefSelTitle").innerHTML =document.getElementById("originRef")[document.getElementById("originRef").selectedIndex].innerText;
-				document.getElementById("cusOrgRefSelDiv").classList.add("nbCustomSelected");
+					//유사 문제 번호
+					document.getElementById("orgSrcNo").value = myContents["myContents"].mathContentsComp[0].orgSrcNo;
+					document.getElementById("orgSrcNo").classList.add("customBlueBoxComplete");
 
-				//원본 문제 번호
-				document.getElementById("originNo").value = myContents["myContents"].originNo;
-				document.getElementById("originNo").classList.add("customBlueBoxComplete");
+					//유사 문제 페이지
+					document.getElementById("orgSrcPage").value = myContents["myContents"].mathContentsComp[0].orgSrcPage;
+					document.getElementById("orgSrcPage").classList.add("customBlueBoxComplete");
 
-				//문제난이도
+					//유사 문제 출판연월
+					document.getElementById("copyrightYear").value = myContents["myContents"].mathContentsComp[0].copyrightYear;
+					document.getElementById("copyrightYear").classList.add("customBlueBoxComplete");
+
+					nb_contentsSrcVal(null, true);
+
+					//문제 구분
+					document.getElementById("mathTypeClassify").value = myContents["myContents"].mathContentsComp[0].mathTypeClassify;
+					document.getElementById("cusMathClassifySelTitle").innerHTML =document.getElementById("mathTypeClassify")[document.getElementById("mathTypeClassify").selectedIndex].innerText;
+					document.getElementById("cusMathClassifySelDiv").classList.add("nbCustomSelected");
+				
+				}else if(contentsClassify===1){
+					//공개, 비공개 여부 설정
+					if(myContents["myContents"].mathContentsLicense !== null){
+						if( myContents["myContents"].mathContentsLicense[0].shareStts === 1 ){
+							document.getElementById("shareSttsPublic").click();
+						}else if(myContents["myContents"].mathContentsLicense[0].shareStts === 0) {
+							document.getElementById("shareSttsPublic").checked = false;
+							document.getElementById("shareSttsPrivate").click();
+						}
+	
+						if( myContents["myContents"].mathContentsLicense[0].onlineLicStts === 1 ){
+							document.getElementById("onlineLicStts").checked = true;
+						}
+	
+						if( myContents["myContents"].mathContentsLicense[0].perLicStts === 1 ){
+							document.getElementById("perLicStts").checked = true;
+						}
+	
+						if( myContents["myContents"].mathContentsLicense[0].entLicStts === 1 ){
+							document.getElementById("entLicStts").checked = true;
+						}
+					}
+				}else if(contentsClassify===2){
+					//사용자 제작 문제
+					if(myContents["myContents"].mathContentsLicense !== null && myContents["myContents"].mathContentsLicense !== undefined){
+						await nb_licenseUiCheck(myContents["myContents"].mathContentsLicense[0]);
+					//넘버링크 문제
+					}else{		
+						await nb_licenseUiCheck();
+					}
+				}
+				
+				//문제 난이도
 				document.getElementById("quesLevel").value = myContents["myContents"].quesLevel;
 				document.getElementById("cusQuesSelTitle").innerHTML =document.getElementById("quesLevel")[document.getElementById("quesLevel").selectedIndex].innerText;
 				document.getElementById("cusQuesSelDiv").classList.add("nbCustomSelected");
-				
 
 				//과목
 				document.getElementById("subject").value = myContents["myUnitInfo"].subject;
@@ -412,11 +454,10 @@ const FormulaEditor = ({contentsNo}) => {
 				await reg_selectUnitOrTypeData("thrUnit", "cusSelThrUnitTitle",  "cusSelThrUnitDiv", myContents["myContents"].unitUniqNo);
 				
 				//유형
-				setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo);
+				if(contentsClassify === 0) setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo+","+myContents["myContents"].mathContentsComp[0].seqNo);
+				else setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo);
 				//수정시간 서버에서 수정 필요
 
-				//문제제작자
-				setUserNo(myContents["myContents"].userNo);
 			}
 			await reg_undoRedoSetting();
 		}
@@ -544,7 +585,7 @@ const FormulaEditor = ({contentsNo}) => {
 
 
 
-	const formulaConvert = async (event, shortCutKeyList) => {
+	const formulaConvert = async (event) => {
 		let evIdName = event.target.id
 		event.stopPropagation();
 		await reg_dressYellowBox();
@@ -569,10 +610,14 @@ const FormulaEditor = ({contentsNo}) => {
 		if(userInnerText == '\n' )userInnerText="";
 
 		if(evIdName == "contentsFormulaEditor"){
-			setContentsText(userInputText);
+			//setContentsText(userInputText);
+			document.getElementById("contents").value = userInputText;
+			document.getElementById("ques-show-contents").innerHTML = userInputText;
 		}
 		else if(evIdName == "solutionFormulaEditor"){
-			setSolutionText(userInputText);
+			//setSolutionText(userInputText);
+			document.getElementById("solution").value = userInputText;
+			document.getElementById("ques-solution-contents").innerHTML = userInputText;
 		}
 		else if(evIdName == "answerFormulaEditor"){
 			setAnswerText(userInputText);
@@ -631,11 +676,11 @@ const FormulaEditor = ({contentsNo}) => {
 				<div id="contents-show" className="contents-show">
 					<div className="mini-title4">문제</div>
 					<div id="ques-show">
-						<div dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
+						<div id="ques-show-contents" dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
 						<div id="quesImg-show" className="quesImg-show">
 							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", {contentsNo});}} alt="" />
 						</div>
-						<div id="multi-show">
+						<div id="multi-show" className="multi-show">
 							<div id="firDiv" className="firDiv hide"><span id="firNoShow" dangerouslySetInnerHTML={{__html:firNo}}></span></div>
 							<div id="secDiv" className="secDiv hide"><span id="secNoShow" dangerouslySetInnerHTML={{__html:secNo}}></span></div>
 							<div id="thrDiv" className="thrDiv hide"><span id="thrNoShow" dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
@@ -656,7 +701,7 @@ const FormulaEditor = ({contentsNo}) => {
 							<div id="solImg-show" className="solImg-show">
 								<img src="" id="solutionImgOutput" className="hide" onDoubleClick={() => imgFileDel("solutionImgOutput", "solutionImg", {contentsNo})} alt="" />
 							</div>
-							<div className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
+							<div  id="ques-solution-contents" className="paddingLFive" dangerouslySetInnerHTML={{__html:solutionText}}></div> 
 
 						</div>
 					</div>
@@ -673,8 +718,8 @@ const FormulaEditor = ({contentsNo}) => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={()=>{reg_dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={(event)=>{reg_dressYellowBox();}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => reg_preventKeyEvent(event)}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -683,15 +728,15 @@ const FormulaEditor = ({contentsNo}) => {
 					<div className="mini-title marginBox">
 						<span id="cusConUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("contentsImg")}}>문제 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
-						<input id="contentsImg" name="contentsImg" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput", contentsNo); loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
+						<input id="contentsImg" name="contentsImgFile" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput", contentsNo); loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
 					</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);multiChoiceGridSet();reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
@@ -706,7 +751,7 @@ const FormulaEditor = ({contentsNo}) => {
 					<div className="mini-title marginBox">
 						<span id="cusSolUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("solutionImg")}}>해설 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
-						<input id="solutionImg" name="solutionImg" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput", contentsNo); loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
+						<input id="solutionImg" name="solutionImgFile" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput", contentsNo); loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
 					</div>
 					<div className="mini-title">정답</div>
 					<div>
@@ -738,7 +783,7 @@ const FormulaEditor = ({contentsNo}) => {
 			</div>
 		</div>
 		<div className="scrollFixBugMargin"></div>
-		<InputQuestionInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} userNo={userNo}/>
+		<RegisterContentsInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} contentsClassify={contentsClassify} />
 		</form>
 	</>
   );

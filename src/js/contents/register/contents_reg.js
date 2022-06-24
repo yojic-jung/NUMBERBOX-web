@@ -628,6 +628,23 @@ let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인
 //redo 변수
 let redoArr = [];
 export const reg_preventKeyEvent = async (event) => {
+	//이미지 사이즈 변경 틀 제거
+	if(window.getSelection().anchorNode.classList !== undefined && window.getSelection().anchorNode.classList.contains("imgWidthHeightDiv") ){
+		if(event.keyCode === 13){
+			event.preventDefault();
+			document.activeElement.closest(".imgWidthHeightDiv").querySelector(".imgWidthHeightSetBtn").click();
+			return;
+		}else{
+			return;
+		}
+		
+	}else{
+		if(!event.ctrlKey){
+			reg_removeResizeFrame();	
+		}
+	 }
+	
+
 	let activeId = document.activeElement.id;
 	let userKeyCode = event.keyCode;
 	previouseKeyCode.push(userKeyCode);
@@ -3158,7 +3175,9 @@ export const reg_removeStyleAttribute = (targetId) => {
 	}
 
 	for(let i=0; i<divTag.length; i++){
-		divTag[i].style={};
+		if(divTag[i].className!=="imgWrap"){
+			divTag[i].style={};
+		}
 	}
 	for(let i=0; i<borderBox.length; i++){
 		borderBox[i].style={};
@@ -3167,3 +3186,506 @@ export const reg_removeStyleAttribute = (targetId) => {
 		nbBox[i].style={};
 	}
 }
+
+export const reg_imageCopy = async (event, isCopy) =>{
+	if(currentImage !== null){
+		event.clipboardData.setData('text/html', currentImage.outerHTML);
+		if(isCopy){
+			event.preventDefault();
+		}else{
+			currentImage.remove();
+			reg_removeResizeFrame();
+			event.preventDefault();
+		}
+	}
+}
+
+export const reg_removeResizeFrame = function () {
+	if(	document.querySelectorAll(".resize-frame,.resizer") !== null){
+	  document.querySelectorAll(".resize-frame,.resizer").forEach((item) => item.parentNode.removeChild(item));
+	}
+	
+	let imgAlignDiv = document.querySelectorAll(".imgAlignDiv");
+	for(let i=0; i<imgAlignDiv.length; i++){
+	  imgAlignDiv[i].remove();
+	}
+
+	let imgWidthHeightDiv = document.querySelectorAll(".imgWidthHeightDiv");
+	for(let i=0; i<imgWidthHeightDiv.length; i++){
+		imgWidthHeightDiv[i].remove();
+	}
+	
+  };
+
+  let currentImage;
+  export const reg_enableImageResizeInDiv = (id) => {
+	  if (!(/chrome/i.test(navigator.userAgent) && /google/i.test(window.navigator.vendor))) {
+		  return;
+	  }
+	  var editor = document.getElementById(id);
+	  var resizing = false;
+	  
+	  var createDOM = function (elementType, className, styles) {
+		  let ele = document.createElement(elementType);
+		  ele.className = className;
+		  setStyle(ele, styles);
+		  return ele;
+	  };
+	  var setStyle = function (ele, styles) {
+		  for (let key in styles) {
+			  ele.style[key] = styles[key];
+		  }
+		  return ele;
+	  };
+	  
+	  var offset = function offset(el) {
+		  const rect = el.getBoundingClientRect(),
+		  scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+		  scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		  return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+	  };
+	  var clickImage = function (img) {
+          window.getSelection().setBaseAndExtent(img, 0, img, 0);
+		  img.classList.add("imgSelection");
+		  window.getSelection().getRangeAt(0).selectNode(img);
+		  reg_removeResizeFrame();
+		  currentImage = img;
+		  const imgHeight = img.offsetHeight;
+		  const imgWidth = img.offsetWidth;
+		  const imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+		  const editorScrollTop = editor.scrollTop;
+		  const editorScrollLeft = editor.scrollLeft;
+		  const top = imgPosition.top - editorScrollTop - 1;
+		  const left = imgPosition.left - editorScrollLeft - 1;
+  
+		let imgWidthHeight = createDOM('span', 'imgWidthHeight', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+		let imgWidthHeightDiv = createDOM('div', 'imgWidthHeightDiv', {
+			width: '220px',
+			margin: '0 2px',
+			});
+		imgWidthHeightDiv.contentEditable = false;
+		imgWidthHeightDiv.classList.add("hide");
+
+		let imgWidthTitle = createDOM('span', '', {
+			margin: '0 2px',
+			});
+		imgWidthTitle.innerHTML = "너비";
+
+		let imgWidthInput = createDOM('input', '', {
+			margin: '0 2px',
+			});
+		imgWidthInput.type="number";
+		imgWidthInput.id="imgWidthSet";
+		imgWidthInput.className = 'imgWidthSet';
+
+		let imgHeighTitle = createDOM('span', '', {
+			margin: '0 2px',
+			});
+		imgHeighTitle.innerHTML = "높이";
+
+		let imgHeightInput = createDOM('input', '', {
+			margin: '0 2px',
+			});
+		imgHeightInput.type="number";
+		imgHeightInput.id="imgHeightSet";
+		imgHeightInput.className = 'imgHeightSet';
+
+		let imgWidthHeightSetBtn = createDOM('span', 'imgWidthHeightSetBtn', {
+			width:"20px",
+			height:"20px",
+			margin: '0 2px',
+			});
+		imgWidthHeightDiv.append(imgWidthTitle);
+		imgWidthHeightDiv.append(imgWidthInput);
+		imgWidthHeightDiv.append(imgHeighTitle);
+		imgWidthHeightDiv.append(imgHeightInput);
+		imgWidthHeightDiv.append(imgWidthHeightSetBtn);
+
+		let imgCenterAlign = createDOM('span', 'imgCenterAlign', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+	
+		let imgLeftAlign = createDOM('span', 'imgLeftAlign', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+	
+		let imgRightAlign = createDOM('span', 'imgRightAlign', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+	
+		let imgFloatLeft = createDOM('span', 'imgFloatLeft', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+	
+		let imgFloatRight = createDOM('span', 'imgFloatRight', {
+				width: '30px',
+			height: '30px',
+			margin: '0 2px',
+			});
+	
+		let imgAlignDiv = createDOM('p', 'imgAlignDiv', {
+				position: 'absolute',
+				top: (top)-35 + 'px',
+				left: (left) + 'px',
+				width: '220px',
+			textAlign:"center",
+			height: '30px',
+			border:"1px solid gray",
+			backgroundColor:"white",
+			contenteditable:"false",
+				zIndex: 3
+			});
+		imgAlignDiv.contentEditable  = false;
+
+		imgAlignDiv.append(imgWidthHeight);
+		imgAlignDiv.append(imgFloatLeft);
+		imgAlignDiv.append(imgFloatRight);
+		imgAlignDiv.append(imgLeftAlign);
+		imgAlignDiv.append(imgCenterAlign);
+		imgAlignDiv.append(imgRightAlign);
+		imgAlignDiv.append(imgWidthHeightDiv);
+
+
+		imgWidthHeight.addEventListener('click', function(){
+			imgWidthHeightDiv.classList.remove("hide");
+			imgWidthInput.value= currentImage.clientWidth;
+			imgHeightInput.value= currentImage.clientHeight;
+		})
+
+		imgWidthHeightSetBtn.addEventListener('click', function(){
+			currentImage.style.width=imgWidthInput.value+"px";
+			currentImage.style.height=imgHeightInput.value+"px";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+
+		imgCenterAlign.addEventListener('click', function(){
+			currentImage.style.display="block";
+			currentImage.style.float="unset";
+			currentImage.style.margin="auto";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+  
+		imgRightAlign.addEventListener('click', function(){
+			currentImage.style.display="block";
+			currentImage.style.float="unset";
+			currentImage.style.margin="10px 10px 10px auto";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+	
+		imgLeftAlign.addEventListener('click', function(){
+			currentImage.style.display="block";
+			currentImage.style.float="unset";
+			currentImage.style.margin="10px auto 10px 10px";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+	
+		imgFloatLeft.addEventListener('click', function(){
+			currentImage.style.display="inline";
+			currentImage.style.float="left";
+			currentImage.style.margin="10px";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+	
+		imgFloatRight.addEventListener('click', function(){
+			currentImage.style.display="inline";
+			currentImage.style.float="right";
+			currentImage.style.margin="10px";
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.classList.contains("contentsFormulaEditor")){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}
+			}
+			reset();
+		})
+		editor.append(imgAlignDiv);
+  
+		  editor.append(createDOM('span', 'resize-frame', {
+			  margin: '10px',
+			  position: 'absolute',
+			  top: (top + imgHeight - 10) + 'px',
+			  left: (left + imgWidth - 10) + 'px',
+			  border: 'solid 2px black',
+			  width: '6px',
+			  height: '6px',
+			borderRadius:'50%',
+			  cursor: 'se-resize',
+			  zIndex: 1
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer top-border', {
+			  position: 'absolute',
+			  top: (top) + 'px',
+			  left: (left) + 'px',
+			border: 'solid 0.5px black',
+			  width: imgWidth + 'px',
+			  height: '0px'
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer left-border', {
+			  position: 'absolute',
+			  top: (top) + 'px',
+			  left: (left) + 'px',
+			  border: 'solid 0.5px black',
+			  width: '0px',
+			  height: imgHeight + 'px'
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer right-border', {
+			  position: 'absolute',
+			  top: (top) + 'px',
+			  left: (left + imgWidth) + 'px',
+			  border: 'solid 0.5px black',
+			  width: '0px',
+			  height: imgHeight + 'px'
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer bottom-border', {
+			  position: 'absolute',
+			  top: (top + imgHeight) + 'px',
+			  left: (left) + 'px',
+			  border: 'solid 0.5px black',
+			  width: imgWidth + 'px',
+			  height: '0px'
+		  }));
+  
+		  document.querySelector('.resize-frame').onmousedown = () => {
+			  resizing = true;
+			  return false;
+		  };
+  
+  
+		  editor.onmouseup = () => {
+			  if (resizing) {
+				if(document.querySelector('.top-border') !== null && document.querySelector('.left-border') !== null){
+					currentImage.style.width = document.querySelector('.top-border').offsetWidth + 'px';
+					currentImage.style.height = document.querySelector('.left-border').offsetHeight + 'px';
+					let contentEditClass = currentImage.closest(".contentEditClass");
+					if(contentEditClass !== null){
+						if(contentEditClass.classList.contains("contentsFormulaEditor")){
+							document.getElementById("contents").value = contentEditClass.innerHTML;
+							document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+						}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
+							document.getElementById("solution").value = contentEditClass.innerHTML;
+							document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+						}
+					}
+					refresh();
+					currentImage.click();
+					resizing = false;
+				}
+			  }
+		  };
+  
+		  editor.onmousemove = (e) => {
+			  if (currentImage && resizing) {
+				  let height = e.pageY - offset(currentImage).top;
+				  let width = e.pageX - offset(currentImage).left;
+				  height = height < 1 ? 1 : height;
+				  width = width < 1 ? 1 : width;
+				  const top = imgPosition.top - editorScrollTop - 1;
+				  const left = imgPosition.left - editorScrollLeft - 1;
+				  setStyle(document.querySelector('.resize-frame'), {
+					  top: (top + height - 10) + 'px',
+					  left: (left + width - 10) + "px"
+				  });
+  
+				  setStyle(document.querySelector('.top-border'), { width: width + "px" });
+				  setStyle(document.querySelector('.left-border'), { height: height + "px" });
+				  setStyle(document.querySelector('.right-border'), {
+					  left: (left + width) + 'px',
+					  height: height + "px"
+				  });
+				  setStyle(document.querySelector('.bottom-border'), {
+					  top: (top + height) + 'px',
+					  width: width + "px"
+				  });
+			  }
+			  //return false;
+		  };
+	  };
+	  var bindClickListener = function () {
+		  editor.querySelectorAll('img').forEach((img, i) => {
+			  img.onclick = (e) => {
+				  if (e.target === img) {
+					  clickImage(img);
+				  }
+			  };
+		  });
+	  };
+	  var refresh = function () {
+		  bindClickListener();
+		  reg_removeResizeFrame();
+		  if (!currentImage) {
+			  return;
+		  }
+		  var img = currentImage;
+		  var imgHeight = img.offsetHeight;
+		  var imgWidth = img.offsetWidth;
+		  var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+		  var editorScrollTop = editor.scrollTop;
+		  var editorScrollLeft = editor.scrollLeft;
+		  const top = imgPosition.top - editorScrollTop - 1;
+		  const left = imgPosition.left - editorScrollLeft - 1;
+  
+	 
+  
+		  editor.append(createDOM('span', 'resize-frame', {
+			  position: 'absolute',
+			  top: (top + imgHeight) + 'px',
+			  left: (left + imgWidth) + 'px',
+			  width: '6px',
+			  height: '6px',
+			  cursor: 'se-resize',
+			  zIndex: 1
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer', {
+			  position: 'absolute',
+			  top: (top) + 'px',
+			  left: (left) + 'px',
+			  width: imgWidth + 'px',
+			  height: '0px'
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer', {
+			  position: 'absolute',
+			  top: (top) + 'px',
+			  left: (left + imgWidth) + 'px',
+			  width: '0px',
+			  height: imgHeight + 'px'
+		  }));
+  
+		  editor.append(createDOM('span', 'resizer', {
+			  position: 'absolute',
+			  top: (top + imgHeight) + 'px',
+			  left: (left) + 'px',
+			  width: imgWidth + 'px',
+			  height: '0px'
+		  }));
+
+	  };
+	  var reset = function () {
+		  if (currentImage != null) {
+			  currentImage = null;
+			  resizing = false;
+			  reg_removeResizeFrame();
+		  }
+		  bindClickListener();
+	  };
+  
+	  editor.addEventListener('scroll', function () {
+		  reset();
+	  }, false);
+	  
+	  editor.addEventListener('mousedown', function (e) {
+		if(e.target.classList !== undefined && e.target.closest(".imgWidthHeightDiv") !== null){
+			return;
+		}
+
+		if(!(e.target.classList.contains("resize-frame") || e.target.classList.contains("imgWidthHeight") || e.target.classList.contains("imgLeftAlign") || e.target.classList.contains("imgCenterAlign")
+		|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight"))){
+			reset();
+			let imgSelection = document.getElementsByClassName("imgSelection"); 
+			for(let i=0; i<imgSelection.length; i++){
+				imgSelection[i].classList.remove("imgSelection");
+			}
+		}
+	  })
+	  editor.addEventListener('mouseup', function (e) {
+		  if (!resizing) {
+			  const x = (e.x) ? e.x : e.clientX;
+			  const y = (e.y) ? e.y : e.clientY;
+			  let mouseUpElement = document.elementFromPoint(x, y);
+			  if (mouseUpElement) {
+				  let matchingElement = null;
+				  if (mouseUpElement.tagName === 'IMG') {
+					  matchingElement = mouseUpElement;
+				  }
+				  if (!matchingElement) {
+
+					if(e.target.classList !== undefined && e.target.closest(".imgWidthHeightDiv") !== null){
+						return;
+					}
+					
+					if(!(e.target.classList.contains("resize-frame") || e.target.classList.contains("imgWidthHeight") || e.target.classList.contains("imgLeftAlign") || e.target.classList.contains("imgCenterAlign")
+					|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight"))){
+						//reset();
+						let imgSelection = document.getElementsByClassName("imgSelection"); 
+						for(let i=0; i<imgSelection.length; i++){
+							imgSelection[i].classList.remove("imgSelection");
+						}
+					}
+					} else {
+					  clickImage(matchingElement);
+				  }
+			  }
+		  }
+	  });
+  }

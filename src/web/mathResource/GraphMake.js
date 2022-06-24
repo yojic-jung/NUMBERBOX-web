@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import TopMenuBar from 'web/common/TopMenuBar';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import Geogebra from 'react-geogebra';
 import "css/main/main.css";
@@ -367,7 +366,6 @@ const GraphMake = ()=>{
     }
 return (
     <>    
-        <TopMenuBar />
         <ResourceMenuBar/>
         <div className='ggb-custom-menu'>
             <button id="ggb-cus-dot" className="ggb-cus-btn" type='button' onClick={(event)=>{ggbCustomEffect(event)}}>점</button>

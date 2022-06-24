@@ -1,7 +1,7 @@
 import React from 'react';
 import EditTableInnerUi from 'web/contents/register/EditTableInnerUi'
 import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/contents/register/contents_reg';
-
+import {nb_extensionCheck2, nb_module_handleImageUpload} from 'js/common/common_nb.js';
 const NbWebEditor = ({parentMethod})=>{
 
 	const tableUiShow = async function(event){
@@ -42,6 +42,49 @@ const NbWebEditor = ({parentMethod})=>{
 
 	const textEditor = async function(event, style){
 		event.preventDefault();
+
+		if(style === "insertImage"){
+			let file =await nb_module_handleImageUpload(event)
+			if(file !== undefined){
+				let img=document.createElement("img");
+				let reader  = new FileReader();
+				//포커스가 문제입력창 또는 해설 입력창에 있으면 포커스 위치에 이미지 삽입
+				if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
+				&& (window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") || window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")) ){
+					let selection = document.getSelection();
+					let newRange = selection.getRangeAt(0);
+					newRange.insertNode(img);
+					window.getSelection().collapseToEnd();
+				}else{
+					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+						document.getElementById("contentsFormulaEditor").append(img);
+					}else{
+						document.getElementById("solutionFormulaEditor").append(img);
+					}
+				}
+				
+				reader.onload = async () => {
+				   img.src=reader.result;
+				}; 
+				if (file) reader.readAsDataURL(file);
+				event.target.value= "";
+				
+				setTimeout(function(){
+					let contentEditClass;
+					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+						contentEditClass = document.getElementById("contentsFormulaEditor");
+						document.getElementById("contents").value = contentEditClass.innerHTML;
+						document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
+					}else{
+						contentEditClass = document.getElementById("solutionFormulaEditor");
+						document.getElementById("solution").value = contentEditClass.innerHTML;
+						document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+					}
+				}, 1000);
+				return;
+			}
+			
+		}
 
 		//포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
 		if(document.getSelection().focusNode==null){
@@ -280,6 +323,8 @@ const NbWebEditor = ({parentMethod})=>{
 
   return (
     <div className="editorToolBar">
+		<button className="editInsertImage editorBtn" title="이미지 추가" onClick={(event)=>{event.preventDefault();document.getElementById("webEditImageFile").click()}}></button>	
+
         <button className="editUnderLine editorBtn" title="밑줄" onClick={(event) => textEditor(event, 'underline')}>U</button>
         
         <button className="editLeftAlign editorBtn" title="왼쪽 정렬" onClick={(event) => textEditor(event, 'justifyLeft')}>
@@ -313,6 +358,8 @@ const NbWebEditor = ({parentMethod})=>{
             </table>
             <span className="editTableArrow">&#129171;</span>
         </button>
+
+		<input id="webEditImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);textEditor(event, 'insertImage');}} />
 
         <div id="editTableUi" className="editTableUi hide">
                 <EditTableInnerUi parentMethod={parentMethod}></EditTableInnerUi>

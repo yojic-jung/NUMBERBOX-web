@@ -49,3 +49,138 @@
 .solContents{
     padding-left: 2px;
 }
+
+.compContentsBtn{
+    text-align: center;
+    cursor: pointer;
+    width:120px;
+    float: right;
+    display: inline-block;
+    border-radius: 3px;
+    color: rgb(127, 127, 127);
+    background: linear-gradient(#f5f5f5, #e5e5e5);
+    box-shadow: 0 0 2px rgb(0,0,0, 0.3);
+    font-size: 13px;
+}
+.compContentsBtn:hover{
+    background: linear-gradient(to bottom, #dcdcdc, #d3d3d3, #cacaca, #c1c1c1, #bcbcbc);
+    color:white;
+}
+.circleUI{
+    display: inline-block;
+    background:rgb(171, 171, 171);
+    color:white;
+    width:15px;
+    height:15px;
+    border-radius: 50%;
+    font-size: 12px;
+    text-align: center;
+    line-height: 17px;
+}
+
+.circleUI.simpleType{
+    background:rgb(84, 114, 190);
+}
+
+
+.svcPosbBtn, .svcImPosbBtn, .svcInspectBtn, .svcErrBtn{
+    font-family: Roboto;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    color:rgb(176, 174, 174);
+    background: linear-gradient(#f5f5f5, #e5e5e5);
+    cursor: pointer;
+    font-size: 13px;
+    padding:5px 0;
+    margin:10px 0;
+    line-height: 130%;
+    border-collapse: collapse;
+    width:100%;
+    text-align: center;
+}
+
+.svcPosbBtn:hover, .svcImPosbBtn:hover, .svcInspectBtn:hover, .svcErrBtn:hover{
+    background: linear-gradient(to bottom, #dcdcdc, #d3d3d3, #cacaca, #c1c1c1, #bcbcbc);
+    color:white;
+}
+
+.svcImPosbBtn.active{
+    color:white;
+    background: linear-gradient(to right top, #ffa723, #ffbc58, #f9cb87, #ffbc58, #ffa723);
+}
+
+
+.svcPosbBtn.active{
+    color:white;
+    background: linear-gradient(to bottom left,#73ce31,#13a800);
+}
+
+.svcErrBtn.active{
+    color:white;
+    background: linear-gradient(135deg, #e81216 0%,#f45355 50%,#f6290c 51%,#ed0e11 71%,#fc1b21 100%);
+}
+
+.svcInspectBtn.active{
+    color:white;
+    background: linear-gradient(to top right,#5170d6,#5153d6);
+    border: medium none;
+}
+
+.detailedConDiv{
+    max-height: 75%;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow-x:hidden;
+    overflow-y: auto;
+    padding: 15px 20px;
+    font-size: 16px;
+    line-height: 160%;
+    font-family: 'nbFormulaFont';
+    border: 1px solid rgb(168, 168, 168);
+    border-radius: 20px;
+    background-color: white;;
+    color: black;
+    text-align: left;
+    word-break: break-all;
+    box-shadow: 0 0 10px 10px rgb(199, 198, 198);
+}
+.detailedLicense{
+    font-size: 14px;
+}
+
+
+
+.detailedLicenseWrap{
+    color:rgb(31, 55, 83);
+    margin:5px 0 10px 20px;
+    width:850px;
+    display: grid;
+    grid-gap: 0;
+    grid-template-columns: 1.1fr 1.5fr;
+    align-items: center;
+}
+
+.detailedLicenseWrap>div{
+    padding:4px 5px;
+    border:1px solid rgb(210, 210, 210);
+    border-collapse: collapse;
+}
+.detailedLicenseWrap>div:nth-child(3), .detailedLicenseWrap>div:nth-child(4){
+    position: relative;
+    top:-1px;
+}
+.detailedLicenseWrap>div:nth-child(2), .detailedLicenseWrap>div:nth-child(4){
+    position: relative;
+    left:-1px;
+}
+
+
+.contents-show img, .workQuesShow img{
+    cursor: pointer;
+    margin:10px;
+    width: 25%;
+    vertical-align: text-top;
+}

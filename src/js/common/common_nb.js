@@ -1,4 +1,7 @@
-export const nb_isLogin = () => {
+import { toBePartiallyChecked } from "@testing-library/jest-dom/dist/matchers";
+import imageCompression from 'browser-image-compression';
+
+export const nb_isLogin =  () => {
   let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
   return isLogin;
 }
@@ -62,7 +65,7 @@ export const nb_dataFetch = async (url, transitEffect) => {
     if(data !== ""){
       returnVal = JSON.parse(data);
       if(returnVal.existMsg){
-        alert(returnVal.serverMsg);
+        nb_fadeInOutC(returnVal.serverMsg, 3000);
       }
     }
   });
@@ -175,13 +178,57 @@ export const fadeOut = async (targetId) => {
   }, 30);
 }
 
-export const nb_fadeInOut = async (message) => {
+/*
+* custom alert (최상위에 위치)
+*/
+export const nb_fadeInOut = async (message, duringTime) => {
   document.getElementById("notifyBox").innerText = message;
 			fadeIn("notifyBox")
 			setTimeout(function(){
 				fadeOut("notifyBox");
-			}, 2000);
+			}, duringTime);
 }
+
+/*
+* custom alert (정중앙 위치)
+*/
+export const nb_fadeInOutA = async (message, duringTime) => {
+  document.getElementById("notifyBoxA").innerText = message;
+			fadeIn("notifyBoxA")
+			setTimeout(function(){
+				fadeOut("notifyBoxA");
+			}, duringTime);
+}
+
+/*
+* custom alert (정중앙 위치, 흔들림)
+*/
+export const nb_fadeInOutB = async (message, duringTime) => {
+  document.getElementById("notifyBoxB").innerText = message;
+			fadeIn("notifyBoxB")
+			setTimeout(function(){
+				fadeOut("notifyBoxB");
+			}, duringTime);
+}
+
+/*
+* custom alert (정중앙 위치, 흔들림, 확인 버튼)
+*/
+export const nb_fadeInOutC = async (message, duringTime) => {
+  document.getElementById("notifyBoxC-desc").innerText = message;
+			fadeIn("notifyBoxC")
+}
+
+/*
+* custom prompt (정중앙 위치)
+*/
+export const nb_promptBox = async (message, placeholderMsg) => {
+  document.getElementById("promptBoxScreen").classList.remove("hide");
+  document.getElementById("promptMsg").innerText = message;
+  document.getElementById("promptInput").focus();
+  document.getElementById("promptInput").placeholder = placeholderMsg;
+}
+
 
 /*
  * 정의 : 클래스 추가 함수
@@ -276,6 +323,57 @@ export const nb_extensionCheck = async (event, outputTarget, updtMode) => {
       await nb_imgFileDel(outputTarget,targetId)
       return false;
     }
+}
+
+
+/*
+* 정의 : 이미지 파일 확장자 체크 함수
+* 설명 : 아웃풋 이미지 변경없이 확장자만 체크
+*/
+export const nb_extensionCheck2 = async (event) => {
+  let targetId = event.target.id;
+  let obj = document.getElementById(targetId);
+  let file =	document.getElementById(targetId).files[0];
+  if(file== undefined){     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
+        return false;
+  }
+  // file[0].size 는 파일 용량 정보입니다.
+  if(file.size > 1024*1024*2){
+    // 용량 초과시 경고후 해당 파일의 용량도 보여줌
+      alert("첨부파일 사이즈는 2MB 이내로 등록 가능합니다. ");
+      document.getElementById(targetId).value= "";
+      return false;
+  }
+  
+  let pathpoint = obj.value.lastIndexOf('.');
+  let filepoint = obj.value.substring(pathpoint+1,event.length);
+  let filetype = filepoint.toLowerCase();
+  // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
+  if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
+  }else{
+    alert('이미지 파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
+    document.getElementById(targetId).value= "";
+    return false;
+  }
+}
+
+
+export const nb_module_handleImageUpload = async (event) => {
+
+  let imageFile = event.target.files[0];
+  //1MB 보다 큰 이미지에 대해서만 압축 진행
+  if(imageFile.size/1024/1024 < 1) return imageFile;
+  let options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true
+  }
+  try {
+    let compressedFile = await imageCompression(imageFile, options);
+    return compressedFile;
+  } catch (error) {
+  }
+
 }
 
 /*
@@ -405,12 +503,24 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
   if(parentDomId==null){
     if(targetDom.offsetTop<window.pageYOffset){
       targetDom.classList.add("fixedTopMenu");
+      if(targetDom.nextElementSibling.className !== "fakeDiv"){
+        let div = document.createElement("div");
+        div.className = "fakeDiv";
+        targetDom.after(div)
+      }
+      
       if(targetDomWidth <620)targetDomWidth =620;
       targetDom.style.width =targetDomWidth+"px";
       targetDom.style.left = document.getElementsByClassName("right")[0].getBoundingClientRect().left+"px";
-    }else{
-      targetDom.classList.remove("fixedTopMenu");
     }
+
+    if(document.getElementsByClassName("fakeDiv")[0] !== undefined){
+      if(document.getElementsByClassName("fakeDiv")[0].getBoundingClientRect().bottom> 250){
+        targetDom.classList.remove("fixedTopMenu");
+        if(document.getElementsByClassName("fakeDiv")[0] !== undefined) document.getElementsByClassName("fakeDiv")[0].remove();
+      }
+    }
+    
   }else{
     //모달팝업인 경우
     let parentDomScrollTop= document.getElementById(parentDomId).scrollTop
@@ -424,6 +534,26 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
 
   }
 
+}
+
+export const nb_topMenuFixed2 = async function(targetId){
+        let targetDom = document.getElementById(targetId);
+        if(targetDom.offsetTop<window.pageYOffset){
+          targetDom.classList.add("fixedTopMenu");
+          targetDom.style.left=50+"%";
+          if(targetDom.nextElementSibling.className !== "fakeDiv2"){
+            let div = document.createElement("div");
+            div.className = "fakeDiv2";
+            targetDom.after(div)
+          }
+        }
+
+        if(document.getElementsByClassName("fakeDiv2")[0] !== undefined){
+          if(document.getElementsByClassName("fakeDiv2")[0].getBoundingClientRect().bottom> 110){
+            targetDom.classList.remove("fixedTopMenu");
+            if(document.getElementsByClassName("fakeDiv2")[0] !== undefined) document.getElementsByClassName("fakeDiv2")[0].remove();
+          }
+        }
 }
 
   
@@ -465,3 +595,147 @@ export const nb_querySelctorBFS = async (element, className) =>{
   }
   return childEle;
 }
+
+export const nb_contentsSrcVal = async function(event, isUpdtMode) {
+  let srcRef ;
+  if(event === null) srcRef = document.getElementById("orgSrcRef").value;
+  else srcRef = event.target.dataset.value;
+  
+  if(srcRef === "수학의 힘(베타)" || srcRef === "쎈수학" || srcRef === "RPM"){
+    //참고서인 경우 문제번호, 출판연도, 문제 유형
+      document.getElementById("orgSrcNo").classList.remove("hide");
+      document.getElementById("copyrightYear").classList.remove("hide");
+      document.getElementById("orgSrcPage").value = "";
+      document.getElementById("orgSrcPage").classList.remove("customBlueBoxComplete");
+      document.getElementById("orgSrcPage").classList.add("hide");
+  }
+  else if(srcRef === "교과서"){
+      // 교과서인 경우 문제번호, 페이지수, 출판연도, 문제 유형
+      document.getElementById("orgSrcNo").classList.remove("hide");
+      document.getElementById("orgSrcPage").classList.remove("hide");
+      document.getElementById("copyrightYear").classList.remove("hide");
+  }
+  else if(srcRef === "창작"){
+     // 창작인 경우 문제 구분 유형만 노출, 나머지는 초기화
+      document.getElementById("orgSrcNo").value = null;
+      document.getElementById("orgSrcNo").classList.remove("customBlueBoxComplete");
+      document.getElementById("orgSrcNo").classList.add("hide");
+      document.getElementById("orgSrcPage").value = "";
+      document.getElementById("orgSrcPage").classList.remove("customBlueBoxComplete");
+      document.getElementById("orgSrcPage").classList.add("hide");
+      document.getElementById("copyrightYear").value = "";
+      document.getElementById("copyrightYear").classList.remove("customBlueBoxComplete");
+      document.getElementById("copyrightYear").classList.add("hide");
+  }
+}
+
+export const  nb_multiChoiceGridSet = async (className) => {
+  let multiShowDiv = document.getElementsByClassName(className);
+  let maxWidth;
+  
+  for(let i=0; i<multiShowDiv.length; i++){
+      multiShowDiv[i].classList.remove("oneDivGrid");
+      multiShowDiv[i].classList.remove("twoDivGrid");
+      multiShowDiv[i].classList.remove("threeDivGrid");
+
+      maxWidth = multiShowDiv[i].querySelector(".firDiv").offsetWidth;
+      if(maxWidth < multiShowDiv[i].querySelector(".secDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".secDiv").offsetWidth;
+      if(maxWidth < multiShowDiv[i].querySelector(".thrDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".thrDiv").offsetWidth;
+      if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
+      if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
+
+      if(maxWidth<170 && maxWidth>90)  multiShowDiv[i].classList.add("twoDivGrid");
+      else if(maxWidth<=90) multiShowDiv[i].classList.add("threeDivGrid");
+      else multiShowDiv[i].classList.add("oneDivGrid");
+  }
+}
+
+export const  nb_licenseUiCheck = async (licenseObj) => {
+      if(licenseObj !== null && licenseObj !== undefined){
+        if( licenseObj.shareStts === 1 ){ //공개문제
+          document.getElementById("platformShareSttsUi").classList.remove("inactiveCircle");
+          document.getElementById("platformShareSttsUi").classList.add("activeCircle");
+          if(licenseObj.onlineLicStts === 1){
+            document.getElementById("onlineLicSttsUi").classList.remove("inactiveCircle");
+            document.getElementById("onlineLicSttsUi").classList.add("activeCircle");
+          }else{
+            document.getElementById("onlineLicSttsUi").classList.remove("activeCircle");
+            document.getElementById("onlineLicSttsUi").classList.add("inactiveCircle");
+          }
+      
+          if(licenseObj.perLicStts === 1){
+            document.getElementById("perLicSttsUi").classList.remove("inactiveCircle");
+            document.getElementById("perLicSttsUi").classList.add("activeCircle");
+          }else{
+            document.getElementById("perLicSttsUi").classList.remove("activeCircle");
+            document.getElementById("perLicSttsUi").classList.add("inactiveCircle");
+          }
+      
+          if(licenseObj.entLicStts === 1){
+            document.getElementById("entLicSttsUi").classList.remove("inactiveCircle");
+            document.getElementById("entLicSttsUi").classList.add("activeCircle");
+          }else{
+            document.getElementById("entLicSttsUi").classList.remove("activeCircle");
+            document.getElementById("entLicSttsUi").classList.add("inactiveCircle");
+          }
+        }else{// 비공개 문제
+          document.getElementById("platformShareSttsUi").classList.remove("activeCircle");
+          document.getElementById("platformShareSttsUi").classList.add("inactiveCircle");
+          document.getElementById("onlineLicSttsUi").classList.remove("activeCircle");
+          document.getElementById("onlineLicSttsUi").classList.add("inactiveCircle");
+          document.getElementById("perLicSttsUi").classList.remove("activeCircle");
+          document.getElementById("perLicSttsUi").classList.add("inactiveCircle");
+          document.getElementById("entLicSttsUi").classList.remove("activeCircle");
+          document.getElementById("entLicSttsUi").classList.add("inactiveCircle");
+        }
+      }else{  //넘버링크 문제의 경우
+        document.getElementById("platformShareSttsUi").classList.remove("inactiveCircle");
+        document.getElementById("platformShareSttsUi").classList.add("activeCircle");
+
+        document.getElementById("onlineLicSttsUi").classList.remove("inactiveCircle");
+        document.getElementById("onlineLicSttsUi").classList.add("activeCircle");
+
+        document.getElementById("perLicSttsUi").classList.remove("activeCircle");
+        document.getElementById("perLicSttsUi").classList.add("inactiveCircle");
+
+        document.getElementById("entLicSttsUi").classList.remove("activeCircle");
+        document.getElementById("entLicSttsUi").classList.add("inactiveCircle");
+      }
+}
+
+export const nb_getParameterByName = function (name) {
+  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      results = regex.exec(window.location.search);
+  return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+export const nb_detectScrollPosition = async function(){
+  if(window.innerHeight*2 < document.body.scrollHeight){
+      if(window.innerHeight < window.scrollY){
+          document.getElementById("scrollMoveBtn").classList.remove("hide");
+      }else{
+          document.getElementById("scrollMoveBtn").classList.add("hide");
+      }
+  }
+}
+
+export const nb_moveToScroll = async function(isToTop){
+  if(isToTop){
+      let interval = setInterval(function(){
+          if(window.scrollY===0){clearInterval(interval);}
+          window.scrollTo(window.scrollX, window.scrollY-window.scrollY/20)
+      }, 1)
+  }else{
+      document.getElementById("bottom-div").classList.add("hide");
+      let interval = setInterval(function(){
+          if(Math.abs(window.scrollY-(document.documentElement.scrollHeight-document.body.offsetHeight)) <10 ){
+            document.getElementById("bottom-div").classList.remove("hide");
+            clearInterval(interval);
+            //window.scrollTo(window.scrollX, window.scrollY-300);
+          }else{
+            window.scrollTo(window.scrollX, window.scrollY+window.scrollY/20)
+          }
+      }, 1)
+  }
+}
+

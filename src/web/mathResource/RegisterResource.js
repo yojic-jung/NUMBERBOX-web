@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import image from 'img/image.png';
 import addImg from 'img/add.png';
-import TopMenuBar from 'web/common/TopMenuBar';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import CustomSelectBox from 'web/common/CustomSelectBox';
-import {nb_dataFetch, nb_formDataFetch, nb_loadFile} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOut} from 'js/common/common_nb.js';
 import "css/resourceFile/registerResource.css";
 
 const RegisterResource = () => {
@@ -188,7 +187,7 @@ const RegisterResource = () => {
 
 		let returnVal = await nb_formDataFetch("/mathInfo/registerResource", formData, true);
         if(returnVal.isSuccess === true){
-            alert("컨텐츠가 정상적으로 등록되었습니다.");
+            await nb_fadeInOut("컨텐츠가 정상적으로 등록 되었습니다.", 2000);
             document.forms[0].reset();
             document.getElementById("representImg").src=image;
             document.getElementById("pptFileCustomDesc").innerText="choose File...";
@@ -200,7 +199,6 @@ const RegisterResource = () => {
 
     return (
         <>
-        <TopMenuBar />
         <ResourceMenuBar/>
         <div className='bage-ground'>
         <form method="post" id="resourceForm" encType="multipart/form-data">

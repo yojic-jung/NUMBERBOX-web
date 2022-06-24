@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import TopMenuBar from 'web/common/TopMenuBar';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import RoundButtonList from 'web/common/RoundButtonList';
 import {nb_dataFetch} from 'js/common/common_nb.js';
@@ -24,7 +23,7 @@ const ShareResource = ()=>{
                 }else{
                     uniqueArr.push(element);
                 }
-            });
+            },[]);
             setMainCate(uniqueArr);
 
             document.getElementById("shareResource").classList.add("active")
@@ -53,12 +52,11 @@ const ShareResource = ()=>{
         let returnVal = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
         const initResoureList = returnVal["resourceList"].map( (contentsMap, idx) => {
             let hasPpt = false;
-            contentsMap = contentsMap["mathResource"]
             if(contentsMap.pptName !== null){
                 hasPpt = true;
             }
             if(hasPpt){
-                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
+                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt} key={contentsMap.resourceNo}>
                             <div className='res-over-lay'>
                                 <span className='down-btn'></span>
                                 <span className='down-ppt-btn'></span>
@@ -67,7 +65,7 @@ const ShareResource = ()=>{
                             <img id={"res-img-"+contentsMap.seqNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
                         </div>);
             }else{
-                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt}>
+                return (<div id={"res-div-"+contentsMap.seqNo} className="res-div" data-uniq-id={contentsMap.seqNo} data-has-ppt={hasPpt} key={contentsMap.resourceNo}>
                             <div className='res-over-lay'>
                                 <span className='down-btn'></span>
                             </div>
@@ -82,7 +80,6 @@ const ShareResource = ()=>{
     
 return (
     <>    
-     <TopMenuBar />
      <ResourceMenuBar></ResourceMenuBar>
      <div className='cateDiv'>
         <RoundButtonList id="category" className="cateMenu" tabList={mainCate} dataId="mainCateNo" mainKey="mainCateName" clickEv={(event)=>{takeResource(event)}} ></RoundButtonList>

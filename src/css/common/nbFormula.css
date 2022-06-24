@@ -128,6 +128,18 @@
     format('truetype');
 }
 
+@font-face {
+    font-family: 'SCDream4';
+    src:url('font/SCDream4.otf')
+    format('truetype');
+}
+
+@font-face {
+    font-family: 'TmoneyRoundWindExtraBold';
+    src:url('font/TmoneyRoundWindExtraBold.ttf')
+    format('truetype');
+}
+
 .nbFomularEditor { 
     border: 1px solid gray; 
     padding:10px;
@@ -150,7 +162,12 @@
     display:inline-block;
 }
 
-
+.nbIntegralBox {
+    border-spacing: 0px;
+    position: relative;
+    vertical-align: -0.9em;
+    margin: 5px 0;
+}
 
 /** 지수 표현 **/
 .nbExpBox{

@@ -1,12 +1,30 @@
-import React, {useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import {Link} from "react-router-dom";
-import {nb_isLogin, nb_isManger, nb_isAdmin} from 'js/common/common_nb.js';
+import {nb_isLogin, nb_isManger, nb_isAdmin, nb_dataFetch} from 'js/common/common_nb.js';
+import defaultProfileImg from 'img/defaultProfile.png';
+import { Outlet } from "react-router";
 
 const TopMenuBar = (isMain)=>{
-    
-    useEffect((event) => {
+    const [imgPath, setImgPath] = useState(null);
+    let isLogin = nb_isLogin();
+    //매니저 권한 임시 구현
+    let isManger = nb_isManger();
+    let isAdmin = nb_isAdmin();
+
+    useEffect(() => {
         window.addEventListener("click", closeMyServiceTap);
-    });
+        if(isLogin){
+            const asyncUseEffect = async function(){
+                let jsonObj = await nb_dataFetch('/takeProfile', true);
+                if(jsonObj.isSuccess){
+                    if(jsonObj.profile.profileImgPath !== null && jsonObj.profile.profileImgName !== null){
+                        setImgPath(jsonObj.profile.profileImgPath+"/"+jsonObj.profile.profileImgName);
+                    }
+                }
+            }
+            asyncUseEffect();
+        }
+    },[]);
 
     let titleClass = "menu-title";
     let listClass = "menu-list";
@@ -25,7 +43,7 @@ const TopMenuBar = (isMain)=>{
     }
 
     const closeMyServiceTap = async(event) => {
-        if(event.target.id === "myService-wrap") return;
+        if(event.target.id === "myService-wrap" || event.target.id === "topMenuProfileImg") return;
         let myServiceTap = document.getElementsByClassName("myService-list")[0];
         if(myServiceTap !== undefined){
             myServiceTap.classList.add("hide");;
@@ -42,13 +60,10 @@ const TopMenuBar = (isMain)=>{
         }
     }
 
-    let isLogin = nb_isLogin();
-    //매니저 권한 임시 구현
-    let isManger = nb_isManger();
-    let isAdmin = nb_isAdmin();
+   
 return (
     <>
-    <div className='top-div'>
+    <div  id="topMenuBar" className='top-div'>
         <div className='bi-jutify-align'>
             <div className={titleClass}><Link className='linkNoneCss' to="/">넘버링크</Link></div>
             <div className={listClass}>
@@ -59,15 +74,19 @@ return (
                         </tr>}
                         {isLogin && <tr>
                             <td>학습지생성</td>
-                            <td>문제검색</td>
-                            <td>문제만들기</td>
+                            <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
+                            <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
                             <td><Link className='linkNoneCss' to="/shareResource">컨텐츠</Link></td>
                             <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
-                                <span id="myService" className="myService" ></span>
+                                {imgPath === null ?
+                                    <img id="topMenuProfileImg" alt="." src={defaultProfileImg} className="topMenuProfileImg"/> 
+                                    : <img id="topMenuProfileImg" alt="." src={imgPath} className="topMenuProfileImg"/> 
+                                }
+                                
                                 <ul className="myService-list hide">
                                     <li>프로필</li>
-                                    <li>나의 저장소</li>
-                                    <li>나의 제작문제</li>
+                                    <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
+                                    <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
                                     <li>나의 학습지</li>
                                     <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
                                 </ul>
@@ -94,6 +113,7 @@ return (
             </div>
         </div>
     </div>}
+    <Outlet />
     </>
     )
 }

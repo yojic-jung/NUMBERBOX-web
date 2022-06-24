@@ -1,13 +1,11 @@
 import React from 'react';
 import { useNavigate  } from 'react-router-dom';
-import TopMenuBar from 'web/common/TopMenuBar';
 import "css/page/etcPage.css";
 
 const NotFound = ()=>{
     const navigate = useNavigate();
 return (
     <>    
-     <TopMenuBar />
     <div className='errorCircle'>
         <div className="errorCircleContents">404</div>
     </div>

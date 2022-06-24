@@ -180,15 +180,17 @@ const FormulaEditorLatex = () => {
 				<input id="workMem"  name="workMem" type="text" placeholder="이름을 적어주세요..."/>
 				<UnitTypeCombo />
 				<div>
-					<div className="mini-title">원본책</div>
-					<select id="originRef" name="originRef">
+					<div className="mini-title">유사 교재</div>
+					<select id="orgSrcRef" name="orgSrcRef">
 						<option>--선택--</option>
 						<option>쎈수학</option>
 						<option>RPM</option>
 						<option>수학의 힘(베타)</option>
+						<option>교과서</option>
+						<option>창작</option>
 					</select>
-					<div className="mini-title">원본 문제 번호</div>
-					<input id="originNo" name ="originNo" type="number" />
+					<div className="mini-title">유사 문제 번호</div>
+					<input id="orgSrcNo" name ="orgSrcNo" type="number" />
 					<div className="mini-title">문제 난이도</div>
 					<select id="quesLevel" name="quesLevel">
 						<option>--선택--</option>
