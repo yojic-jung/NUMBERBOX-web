@@ -57,7 +57,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		let contentEditDiv = document.querySelectorAll('[contenteditable]');
 		for(let i=0; i<contentEditDiv.length; i++){
 			if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
-				contentEditDiv[i].removeEventListener('paste', pastePreventFile);
+				//contentEditDiv[i].removeEventListener('paste', pastePreventFile);
 			}
 		}
 
@@ -239,8 +239,12 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
-			reg_enableImageResizeInDiv('contentsFormulaEditor');
-			reg_enableImageResizeInDiv('solutionFormulaEditor');
+			let contentEditClass = document.querySelectorAll('[contenteditable]');
+			for(let i=0; i<contentEditClass.length; i++){
+				reg_enableImageResizeInDiv(contentEditClass[i].id);
+			}
+			//reg_enableImageResizeInDiv('contentsFormulaEditor');
+			//reg_enableImageResizeInDiv('solutionFormulaEditor');
 			
 			let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
@@ -255,7 +259,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			let contentEditDiv = document.querySelectorAll('[contenteditable]');
 			for(let i=0; i<contentEditDiv.length; i++){
 				if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
-					contentEditDiv[i].addEventListener('paste', (event) => pastePreventFile(event));
+					//contentEditDiv[i].addEventListener('paste', pastePreventFile);
 				}
 			}
 
@@ -725,7 +729,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
 				
                 <div id="contentsOptBox" className="contentsOptBox marginTen">
-					<div className="mini-title marginBox">
+					<div className="mini-title marginBox hide">
 						<span id="cusConUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("contentsImg")}}>문제 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
 						<input id="contentsImg" name="contentsImgFile" type="file" accept="image/*" className="hide" onChange={(event)=>{nb_extensionCheck(event, "contentsImgOutput", contentsNo); loadFile(event, "contentsImgOutput", contentsNo);nb_addClass("contentsImgOutput","marginTopTenAuto")}} />
@@ -748,7 +752,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				</div>
 
 				<div id="ansSolOptBox" className="ansSolOptBox marginTen hide">
-					<div className="mini-title marginBox">
+					<div className="mini-title marginBox hide">
 						<span id="cusSolUpldBtn" className="uploadBtn" onClick={()=>{customImgUpld("solutionImg")}}>해설 이미지 첨부</span> 
 						<span className="descBox">이미지 삭제를 원하는 경우 이미지를 더블 클릭해주세요.</span>
 						<input id="solutionImg" name="solutionImgFile" accept="image/*" type="file" className="hide" onChange={(event)=>{nb_extensionCheck(event, "solutionImgOutput", contentsNo); loadFile(event, "solutionImgOutput", contentsNo);nb_addClass("solutionImgOutput","marginTopTenAuto")}} />
