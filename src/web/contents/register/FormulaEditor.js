@@ -5,8 +5,8 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
-import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_getCheckedVal, 
-	nb_licenseUiCheck, nb_imgFileDel, nb_contentsSrcVal, nb_multiChoiceGridSet} from 'js/common/common_nb.js';
+import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_extensionCheck2, nb_getCheckedVal, 
+	nb_licenseUiCheck, nb_imgFileDel, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownTdWidthChange, reg_mUpTdWidthChange, 
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
@@ -17,6 +17,8 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownT
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
 const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
 let shortCutKeyList;
+
+let multiImgTargetId;
 
 let conImgName="N";	//컨텐츠 이미지 존재 여부
 let solImgName="N";	//해설 이미지 존재 여부
@@ -51,15 +53,16 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		document.removeEventListener('copy', reg_tbCellCopy);
 		window.removeEventListener('mousedown', reg_tbSelBackgroundRemove);
 		window.removeEventListener('mouseup', reg_selectFormulaElement);
-        window.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
 		window.removeEventListener('scroll',reg_removeResizeFrame);
-		//이미지 및 파일 복붙 금지
-		let contentEditDiv = document.querySelectorAll('[contenteditable]');
-		for(let i=0; i<contentEditDiv.length; i++){
-			if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
-				//contentEditDiv[i].removeEventListener('paste', pastePreventFile);
-			}
-		}
+		/*
+		document.getElementById("firNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
+		document.getElementById("secNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
+		document.getElementById("thrNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
+		document.getElementById("fourNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
+		document.getElementById("fifNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
+		*/
+		//이미지 및 파일 복붙 
+		//document.getElementById('answerFormulaEditor').removeEventListener('paste', pastePreventFile);
 
 		window.shortCutKeyList = null;
 
@@ -83,6 +86,15 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 
 	//이미지 파일 및 각종 파일 붙여넣기 금지
 	const pastePreventFile = (event) => {
+		let pasteHtml = event.clipboardData.getData('text/html')
+		let template = document.createElement('template');
+		template.innerHTML = pasteHtml;
+		if(template.content.querySelector("img") !== null){
+			alert("정답 입력창에는 이미지 첨부가 불가합니다.");
+			event.preventDefault();
+			return;
+		}
+
 		let isFileExist = false;
 		for(let i=0; i<event.clipboardData.items.length; i++){
 			let file = event.clipboardData.items[i].getAsFile();
@@ -91,7 +103,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				let fileExtension = fileName[1].toUpperCase()
 				if(fileExtension === "PNG" || fileExtension === "JPG" || fileExtension === "JPEG" || fileExtension === "GIF" ||
 					fileExtension === "BMP"){
-					alert("이미지 파일의 경우 이미지 첨부 버튼을 클릭하여 이미지를 첨부 해주시기 바랍니다.(외부 프로그램의 텍스트 또한 첨부가 불가합니다.)");
+					alert("정답 입력창에는 이미지 첨부가 불가합니다.");
 					event.preventDefault();
 					return
 				}
@@ -236,12 +248,72 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		
 	  };
 
+	  const multiChoiceImageFile = async (event) =>{
+		let file = await nb_module_handleImageUpload(event)
+		if(file !== undefined){
+			let img=document.createElement("img");
+			img.style.width=100+"px";
+			let reader  = new FileReader();
+			let contentEditClass;
+			document.getElementById(multiImgTargetId).append(img);
+			reader.onload = async () => {
+			   img.src=reader.result;
+			   if(multiImgTargetId === "firNoFormulaEditor" ){
+					contentEditClass = document.getElementById("firNoFormulaEditor");
+					document.getElementById("firNo").value = contentEditClass.innerHTML;
+					document.getElementById("firNoShow").innerHTML = contentEditClass.innerHTML;
+					document.getElementById("firDiv").classList.remove("hide")
+					nb_multiChoiceGridSet("multi-show");
+
+				}else if(multiImgTargetId === "secNoFormulaEditor"){
+					contentEditClass = document.getElementById("secNoFormulaEditor");
+					document.getElementById("secNo").value = contentEditClass.innerHTML;
+					document.getElementById("secNoShow").innerHTML = contentEditClass.innerHTML;
+					document.getElementById("secDiv").classList.remove("hide")
+					nb_multiChoiceGridSet("multi-show");
+
+				}else if(multiImgTargetId === "thrNoFormulaEditor"){
+					contentEditClass = document.getElementById("thrNoFormulaEditor");
+					document.getElementById("thrNo").value = contentEditClass.innerHTML;
+					document.getElementById("thrNoShow").innerHTML = contentEditClass.innerHTML;
+					document.getElementById("thrDiv").classList.remove("hide")
+					nb_multiChoiceGridSet("multi-show");
+
+				}else if(multiImgTargetId === "fourNoFormulaEditor"){
+					contentEditClass = document.getElementById("fourNoFormulaEditor");
+					document.getElementById("fourNo").value = contentEditClass.innerHTML;
+					document.getElementById("fourNoShow").innerHTML = contentEditClass.innerHTML;
+					document.getElementById("fourDiv").classList.remove("hide")
+					nb_multiChoiceGridSet("multi-show");
+
+				}else if(multiImgTargetId === "fifNoFormulaEditor"){
+					contentEditClass = document.getElementById("fifNoFormulaEditor");
+					document.getElementById("fifNo").value = contentEditClass.innerHTML;
+					document.getElementById("fifNoShow").innerHTML = contentEditClass.innerHTML;
+					document.getElementById("fifDiv").classList.remove("hide")
+					nb_multiChoiceGridSet("multi-show");
+				}
+			}; 
+			if (file) reader.readAsDataURL(file);
+			event.target.value= "";
+			return;
+		}
+	  }
+
+	const multiChoiceImgAdd = (event) =>{
+		if(event.offsetX > event.target.offsetWidth && event.offsetX < event.target.offsetWidth+35){
+			multiImgTargetId = event.target.id;
+			document.getElementById("multiChoiceImageFile").click();
+		}
+	}
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
 			let contentEditClass = document.querySelectorAll('[contenteditable]');
 			for(let i=0; i<contentEditClass.length; i++){
-				reg_enableImageResizeInDiv(contentEditClass[i].id);
+				if(contentEditClass[i].id !== "answerFormulaEditor"){
+					reg_enableImageResizeInDiv(contentEditClass[i].id);
+				}
 			}
 			//reg_enableImageResizeInDiv('contentsFormulaEditor');
 			//reg_enableImageResizeInDiv('solutionFormulaEditor');
@@ -255,13 +327,15 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			else window.addEventListener('scroll', topMenuFixed);
 			window.addEventListener('resize', topMenuWidth);
 			window.addEventListener('scroll', reg_removeResizeFrame);
+			document.getElementById("firNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
+			document.getElementById("secNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
+			document.getElementById("thrNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
+			document.getElementById("fourNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
+			document.getElementById("fifNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
 			//이미지 및 파일 복붙 금지
-			let contentEditDiv = document.querySelectorAll('[contenteditable]');
-			for(let i=0; i<contentEditDiv.length; i++){
-				if(contentEditDiv[i].id !== "contentsFormulaEditor" && contentEditDiv[i].id !== "solutionFormulaEditor"){
-					//contentEditDiv[i].addEventListener('paste', pastePreventFile);
-				}
-			}
+			let answerFormulaEditor = document.getElementById('answerFormulaEditor');
+			answerFormulaEditor.addEventListener('paste', pastePreventFile);
+			
 
 			document.getElementById("contents-show").addEventListener("contextmenu",(e)=>{
 				e.preventDefault();
@@ -523,11 +597,12 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		}
 
 		let contentsDomLength = document.getElementById("contentsFormulaEditor").innerText.length;
-		let firNoDomLength = document.getElementById("firNoFormulaEditor").innerText.length;
-		let secNoDomLength = document.getElementById("secNoFormulaEditor").innerText.length;
-		let thrNoDomLength = document.getElementById("thrNoFormulaEditor").innerText.length;
-		let fourNoDomLength = document.getElementById("fourNoFormulaEditor").innerText.length;
-		let fifNoDomLength = document.getElementById("fifNoFormulaEditor").innerText.length;
+		let isFirNoExist = (document.getElementById("firNoFormulaEditor").innerText.length > 0 || document.getElementById("firNoFormulaEditor").querySelector("img") !== null);
+		let isSecNoExist = (document.getElementById("secNoFormulaEditor").innerText.length > 0 || document.getElementById("secNoFormulaEditor").querySelector("img") !== null);
+		let isThrNoExist = (document.getElementById("thrNoFormulaEditor").innerText.length > 0 || document.getElementById("thrNoFormulaEditor").querySelector("img") !== null);
+		let isFourNoExist = (document.getElementById("fourNoFormulaEditor").innerText.length > 0 || document.getElementById("fourNoFormulaEditor").querySelector("img") !== null);
+		let isFifNoExist = (document.getElementById("fifNoFormulaEditor").innerText.length > 0 || document.getElementById("fifNoFormulaEditor").querySelector("img") !== null);
+	
 		
 		//문제 validation [start]
 		if(contentsDomLength<10){
@@ -536,16 +611,16 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		} 
 
 		//객관식 하나라도 입력되어 있는지 체크
-		let multiChoiceOrCheck = (firNoDomLength>0 || secNoDomLength>0 || thrNoDomLength>0 || fourNoDomLength>0 || fifNoDomLength>0);
+		let multiChoiceOrCheck = (isFirNoExist || isSecNoExist || isThrNoExist || isFourNoExist || isFifNoExist)
 		//객관식 전부 다 입력되어 있는지 체크
-		let multiChoiceAllCheck = (firNoDomLength>0 && secNoDomLength>0 && thrNoDomLength>0 && fourNoDomLength>0 && fifNoDomLength>0);
+		let multiChoiceAllCheck = (isFirNoExist && isSecNoExist && isThrNoExist && isFourNoExist && isFifNoExist);
 		//객관식이 하나라도 입력되어있는데 전부 다 입력되지 않은 경우 
 		if(multiChoiceOrCheck && !multiChoiceAllCheck){
 			alert("객관식 문제인 경우 객관식 보기를 모두 입력해주세요.\n객관식 문제가 아닌 경우 객관식 보기를 모두 지워주세요.");
 			return false;
 		}
 		//문제 validation [end]
-		
+
 		document.getElementsByClassName("blindBox")[0].classList.remove("hide");
 		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
 	}
@@ -614,14 +689,10 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		if(userInnerText == '\n' )userInnerText="";
 
 		if(evIdName == "contentsFormulaEditor"){
-			//setContentsText(userInputText);
-			document.getElementById("contents").value = userInputText;
-			document.getElementById("ques-show-contents").innerHTML = userInputText;
+			setContentsText(userInputText);
 		}
 		else if(evIdName == "solutionFormulaEditor"){
-			//setSolutionText(userInputText);
-			document.getElementById("solution").value = userInputText;
-			document.getElementById("ques-solution-contents").innerHTML = userInputText;
+			setSolutionText(userInputText);
 		}
 		else if(evIdName == "answerFormulaEditor"){
 			setAnswerText(userInputText);
@@ -630,7 +701,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(userInnerText.length!=0){
 				document.getElementById("firDiv").classList.remove("hide");
 			}else{
-				document.getElementById("firDiv").classList.add("hide");
+				if(document.getElementById(evIdName).querySelector("img") === null){
+					document.getElementById("firDiv").classList.add("hide");
+				}else{
+					document.getElementById("firDiv").classList.remove("hide");
+				}
 			}
 			setFirNo(userInputText);
 		}
@@ -638,7 +713,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(userInnerText.length!=0){
 				document.getElementById("secDiv").classList.remove("hide");
 			}else{
-				document.getElementById("secDiv").classList.add("hide");
+				if(document.getElementById(evIdName).querySelector("img") === null){
+					document.getElementById("secDiv").classList.add("hide");
+				}else{
+					document.getElementById("secDiv").classList.remove("hide");
+				}
 			}
 			setSecNo(userInputText);
 		}
@@ -646,7 +725,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(userInnerText.length!=0){
 				document.getElementById("thrDiv").classList.remove("hide");
 			}else{
-				document.getElementById("thrDiv").classList.add("hide");
+				if(document.getElementById(evIdName).querySelector("img") === null){
+					document.getElementById("thrDiv").classList.add("hide");
+				}else{
+					document.getElementById("thrDiv").classList.remove("hide");
+				}
 			}
 			setThrNo( userInputText);
 		}
@@ -654,7 +737,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(userInnerText.length!=0){
 				document.getElementById("fourDiv").classList.remove("hide");
 			}else{
-				document.getElementById("fourDiv").classList.add("hide");
+				if(document.getElementById(evIdName).querySelector("img") === null){
+					document.getElementById("fourDiv").classList.add("hide");
+				}else{
+					document.getElementById("fourDiv").classList.remove("hide");
+				}
 			}
 			setFourNo(userInputText);
 		}
@@ -662,7 +749,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(userInnerText.length!=0){
 				document.getElementById("fifDiv").classList.remove("hide");
 			}else{
-				document.getElementById("fifDiv").classList.add("hide");
+				if(document.getElementById(evIdName).querySelector("img") === null){
+					document.getElementById("fifDiv").classList.add("hide");
+				}else{
+					document.getElementById("fifDiv").classList.remove("hide");
+				}
 			}
 			setFifNo(userInputText);
 		}
@@ -736,6 +827,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					</div>
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
+						<input id="multiChoiceImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);multiChoiceImageFile(event);}} />
 						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
