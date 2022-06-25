@@ -175,7 +175,6 @@ const ContentsList = ()=>{
         }else{
             if(contentsList.length!==0){
                 nb_multiChoiceGridSet("quesConMultiShow");
-                console.log("좋아요 저장 초기화");
                 setMyLikeInfo();
                 setMyRepoInfo();
             }

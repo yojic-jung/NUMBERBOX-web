@@ -48,6 +48,7 @@ const NbWebEditor = ({parentMethod})=>{
 			if(file !== undefined){
 				let img=document.createElement("img");
 				let reader  = new FileReader();
+				img.style.width=100+"px";
 				//포커스가 문제입력창 또는 해설 입력창에 있으면 포커스 위치에 이미지 삽입
 				if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
 				&& (window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") || window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")) ){
@@ -65,13 +66,8 @@ const NbWebEditor = ({parentMethod})=>{
 				
 				reader.onload = async () => {
 				   img.src=reader.result;
-				}; 
-				if (file) reader.readAsDataURL(file);
-				event.target.value= "";
-				
-				setTimeout(function(){
-					let contentEditClass;
-					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+				   let contentEditClass;
+				   if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
 						contentEditClass = document.getElementById("contentsFormulaEditor");
 						document.getElementById("contents").value = contentEditClass.innerHTML;
 						document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
@@ -80,7 +76,9 @@ const NbWebEditor = ({parentMethod})=>{
 						document.getElementById("solution").value = contentEditClass.innerHTML;
 						document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
 					}
-				}, 1000);
+				}; 
+				if (file) reader.readAsDataURL(file);
+				event.target.value= "";
 				return;
 			}
 			

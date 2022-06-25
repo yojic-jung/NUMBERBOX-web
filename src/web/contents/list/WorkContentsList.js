@@ -172,7 +172,6 @@ const WorkContentsList = ()=>{
             let param = nb_getParameterByName("unitUniqId")
             //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
             if(param !== ""){
-                console.log("뒤로가기에서 실행")
                 historyBackSearchCondSetting(param)
             }
         }
@@ -191,7 +190,6 @@ const WorkContentsList = ()=>{
         }, [contentsList, location]);
 
         const historyBackSearchCondSetting = async (param)=> {
-            console.log("검색함")
             let formData = new FormData(document.getElementById("workSearchForm"));
             formData.append("unitUniqNo",param);
             let returnObj = await nb_formDataFetch("/mathInfo/takeWorkContentsList",formData, true);

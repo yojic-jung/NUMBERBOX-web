@@ -181,6 +181,5 @@
 .contents-show img, .workQuesShow img{
     cursor: pointer;
     margin:10px;
-    width: 25%;
     vertical-align: text-top;
 }

@@ -3,6 +3,10 @@ import {reg_eraseEditTbUI, reg_reGenerFormulBugFix, reg_tbCellMouseDown, reg_tbC
 
 const EditTableInnerUi = ({parentMethod})=>{
 
+    const removeAddedEvent = () => {
+        window.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
+    };
+    
     useEffect(()=>{
         let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
 		for(let i=0; i<tdList.length; i++){
@@ -10,6 +14,7 @@ const EditTableInnerUi = ({parentMethod})=>{
 			tdList[i].addEventListener('click', addEditTable);
 		}
         window.addEventListener('click',reg_eraseEditTbUI);
+        return () => removeAddedEvent();
     },[])
 
     const cellUIFunction = function(event){

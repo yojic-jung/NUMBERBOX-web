@@ -107,12 +107,12 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 
 
 		 document.getElementById("contentsFormulaEditor")
-		 if(getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML) > 7000000){
-			alert("등록하신 문제 입력란의 용량이 너무 큽니다.\n문제 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 7MB를 넘는 경우 입력이 불가합니다.");
+		 if(getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML) > 65000){
+			alert("등록하신 문제 입력란의 용량이 너무 큽니다.\n문제 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
 			return false;
 		 }
-		 if(getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML) > 7000000){
-			alert("등록하신 해설 입력란의 용량이 너무 큽니다.\n해설 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 7MB바이트를 넘는 경우 입력이 불가합니다.");
+		 if(getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML) > 65000){
+			alert("등록하신 해설 입력란의 용량이 너무 큽니다.\n해설 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
 			return false;
 		 }
 

@@ -1,5 +1,4 @@
-import {nb_querySelctorBFS} from 'js/common/common_nb';
-
+import {nb_querySelctorBFS, nb_multiChoiceGridSet} from 'js/common/common_nb';
 
 /*
  * 정의 : contetns/register 패키지에서 사용하는 함수
@@ -1830,7 +1829,7 @@ export const reg_eraseEditTbUI = async (event ) =>{
 		return;
 	}
 	let targetId = tagetDom.id;
-	if (targetId != "editTableBtn" || targetId !="editTableBtn" ){
+	if (targetId !== "editTableBtn" || targetId !=="editTableBtn" ){
 		document.getElementById("editTableUi").classList.add("hide");
 	} 
 }
@@ -3188,7 +3187,7 @@ export const reg_removeStyleAttribute = (targetId) => {
 }
 
 export const reg_imageCopy = async (event, isCopy) =>{
-	if(currentImage !== null){
+	if(currentImage !== null && currentImage !== undefined){
 		event.clipboardData.setData('text/html', currentImage.outerHTML);
 		if(isCopy){
 			event.preventDefault();
@@ -3367,33 +3366,15 @@ export const reg_removeResizeFrame = function () {
 		imgWidthHeightSetBtn.addEventListener('click', function(){
 			currentImage.style.width=imgWidthInput.value+"px";
 			currentImage.style.height=imgHeightInput.value+"px";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			imgAttributeChageShow();
 			reset();
 		})
 
 		imgCenterAlign.addEventListener('click', function(){
 			currentImage.style.display="block";
 			currentImage.style.float="unset";
-			currentImage.style.margin="auto";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			currentImage.style.margin="10px auto";
+			imgAttributeChageShow();
 			reset();
 		})
   
@@ -3401,33 +3382,15 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="block";
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px 10px 10px auto";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			imgAttributeChageShow();
 			reset();
 		})
 	
 		imgLeftAlign.addEventListener('click', function(){
-			currentImage.style.display="block";
+			currentImage.style.display="inline";
 			currentImage.style.float="unset";
-			currentImage.style.margin="10px auto 10px 10px";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			currentImage.style.margin="10px 10px 10px 10px";
+			imgAttributeChageShow();
 			reset();
 		})
 	
@@ -3435,16 +3398,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="inline";
 			currentImage.style.float="left";
 			currentImage.style.margin="10px";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			imgAttributeChageShow();
 			reset();
 		})
 	
@@ -3452,16 +3406,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="inline";
 			currentImage.style.float="right";
 			currentImage.style.margin="10px";
-			let contentEditClass = currentImage.closest(".contentEditClass");
-			if(contentEditClass !== null){
-				if(contentEditClass.classList.contains("contentsFormulaEditor")){
-					document.getElementById("contents").value = contentEditClass.innerHTML;
-					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-				}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-					document.getElementById("solution").value = contentEditClass.innerHTML;
-					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				}
-			}
+			imgAttributeChageShow();
 			reset();
 		})
 		editor.append(imgAlignDiv);
@@ -3474,7 +3419,7 @@ export const reg_removeResizeFrame = function () {
 			  border: 'solid 2px black',
 			  width: '6px',
 			  height: '6px',
-			borderRadius:'50%',
+			  borderRadius:'50%',
 			  cursor: 'se-resize',
 			  zIndex: 1
 		  }));
@@ -3526,16 +3471,7 @@ export const reg_removeResizeFrame = function () {
 				if(document.querySelector('.top-border') !== null && document.querySelector('.left-border') !== null){
 					currentImage.style.width = document.querySelector('.top-border').offsetWidth + 'px';
 					currentImage.style.height = document.querySelector('.left-border').offsetHeight + 'px';
-					let contentEditClass = currentImage.closest(".contentEditClass");
-					if(contentEditClass !== null){
-						if(contentEditClass.classList.contains("contentsFormulaEditor")){
-							document.getElementById("contents").value = contentEditClass.innerHTML;
-							document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
-						}else if(contentEditClass.classList.contains("solutionFormulaEditor")){
-							document.getElementById("solution").value = contentEditClass.innerHTML;
-							document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-						}
-					}
+					imgAttributeChageShow();
 					refresh();
 					currentImage.click();
 					resizing = false;
@@ -3688,4 +3624,48 @@ export const reg_removeResizeFrame = function () {
 			  }
 		  }
 	  });
+  }
+
+  const imgAttributeChageShow = () =>{
+			let imgAlignDiv = document.querySelectorAll(".imgAlignDiv");
+			for(let i=0; i<imgAlignDiv.length; i++){
+			imgAlignDiv[i].remove();
+			}
+
+			let imgWidthHeightDiv = document.querySelectorAll(".imgWidthHeightDiv");
+			for(let i=0; i<imgWidthHeightDiv.length; i++){
+				imgWidthHeightDiv[i].remove();
+			}
+			
+			let contentEditClass = currentImage.closest(".contentEditClass");
+			if(contentEditClass !== null){
+				if(contentEditClass.id === "contentsFormulaEditor"){
+					document.getElementById("contents").value = contentEditClass.innerHTML;
+					document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML;
+				}else if(contentEditClass.id === "solutionFormulaEditor"){
+					document.getElementById("solution").value = contentEditClass.innerHTML;
+					document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				}else if( contentEditClass.id === "firNoFormulaEditor"){
+					document.getElementById("firNo").value = contentEditClass.innerHTML;
+					document.getElementById("firNoShow").innerHTML = contentEditClass.innerHTML;
+					nb_multiChoiceGridSet("multi-show");
+				}else if(contentEditClass.id === "secNoFormulaEditor"){
+					document.getElementById("secNo").value = contentEditClass.innerHTML;
+					document.getElementById("secNoShow").innerHTML = contentEditClass.innerHTML;
+					nb_multiChoiceGridSet("multi-show");
+				}else if(contentEditClass.id === "thrNoFormulaEditor"){
+					document.getElementById("thrNo").value = contentEditClass.innerHTML;
+					document.getElementById("thrNoShow").innerHTML = contentEditClass.innerHTML;
+					nb_multiChoiceGridSet("multi-show");
+				}else if(contentEditClass.id === "fourNoFormulaEditor"){
+					document.getElementById("fourNo").value = contentEditClass.innerHTML;
+					document.getElementById("fourNoShow").innerHTML = contentEditClass.innerHTML;
+					nb_multiChoiceGridSet("multi-show");
+				}else if(contentEditClass.id === "fifNoFormulaEditor"){
+					document.getElementById("fifNo").value = contentEditClass.innerHTML;
+					document.getElementById("fifNoShow").innerHTML = contentEditClass.innerHTML;
+					nb_multiChoiceGridSet("multi-show");
+				}
+			}
+			
   }

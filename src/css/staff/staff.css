@@ -374,11 +374,11 @@
     background: white;
     color:black;
     border:2px solid rgba(8, 32, 80, 0.5);
-    margin:10px 5px 10px 24px;
+    margin:10px 0px 10px 24px;
     padding:5px;
     position: relative;
     line-height: 160%;
-   
+    display: inline-block;
 }
 .multiChoiceView::before{
     display: flex;
@@ -395,6 +395,24 @@
     color:white;
 }
 
+.multiChoiceView::after{
+    cursor: pointer;
+    content: '';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:35px;
+    height: 100%;
+    border-top:2px solid rgba(8, 32, 80, 0);
+    border-bottom:2px solid rgba(8, 32, 80, 0);
+    background: rgba(8, 32, 80, 0.5);
+    position: absolute;
+    top:-2px;
+    right:-37px;
+    color:white;
+    background:rgba(8, 32, 80, 0.5) url("img/imageBlackPlus.png") no-repeat center ;
+    background-size: 20px;
+}
 
 #firNoFormulaEditor::before{
     content: '\2460';
@@ -560,6 +578,8 @@ height: 1.6em;
     background:rgb(224, 224, 224) url("img/imageBlack.png") no-repeat center ;
     background-size: 15px;
 }
+
+
 
 .editUnderLine{
     font-family:'Times New Roman';
@@ -1493,7 +1513,6 @@ height: 1.6em;
 
 .contentEditClass img{
     cursor: pointer;
-    width:20%;
     margin:10px;
     vertical-align: text-top;
 }
@@ -1521,6 +1540,8 @@ height: 1.6em;
     padding:2px 0;
     text-indent: 5px;
     text-align: left;
+    position: relative;
+    top: -8px;
 }
 
 .imgWidthHeightDiv input{
