@@ -197,6 +197,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="0" data-col="4"></button>
                                         <button data-row="0" data-col="5"></button>
                                         <button data-row="0" data-col="6"></button>
+                                        <button data-row="0" data-col="7"></button>
+                                        <button data-row="0" data-col="8"></button>
+                                        <button data-row="0" data-col="9"></button>
                                     </div>
 									<div className='editTbDivRow'>
                                         <button data-row="1" data-col="0"></button>
@@ -206,6 +209,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="1" data-col="4"></button>
                                         <button data-row="1" data-col="5"></button>
                                         <button data-row="1" data-col="6"></button>
+                                        <button data-row="1" data-col="7"></button>
+                                        <button data-row="1" data-col="8"></button>
+                                        <button data-row="1" data-col="9"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="2" data-col="0"></button>
@@ -215,6 +221,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="2" data-col="4"></button>
                                         <button data-row="2" data-col="5"></button>
                                         <button data-row="2" data-col="6"></button>
+                                        <button data-row="2" data-col="7"></button>
+                                        <button data-row="2" data-col="8"></button>
+                                        <button data-row="2" data-col="9"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="3" data-col="0"></button>
@@ -224,6 +233,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="3" data-col="4"></button>
                                         <button data-row="3" data-col="5"></button>
                                         <button data-row="3" data-col="6"></button>
+                                        <button data-row="3" data-col="7"></button>
+                                        <button data-row="3" data-col="8"></button>
+                                        <button data-row="3" data-col="9"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="4" data-col="0"></button>
@@ -233,6 +245,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="4" data-col="4"></button>
                                         <button data-row="4" data-col="5"></button>
                                         <button data-row="4" data-col="6"></button>
+                                        <button data-row="4" data-col="7"></button>
+                                        <button data-row="4" data-col="8"></button>
+                                        <button data-row="4" data-col="9"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="5" data-col="0"></button>
@@ -242,6 +257,9 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="5" data-col="4"></button>
                                         <button data-row="5" data-col="5"></button>
                                         <button data-row="5" data-col="6"></button>
+                                        <button data-row="5" data-col="7"></button>
+                                        <button data-row="5" data-col="8"></button>
+                                        <button data-row="5" data-col="9"></button>
                                     </div>
                                     <div className='editTbDivRow'>
                                         <button data-row="6" data-col="0"></button>
@@ -251,6 +269,45 @@ const EditTableInnerUi = ({parentMethod})=>{
                                         <button data-row="6" data-col="4"></button>
                                         <button data-row="6" data-col="5"></button>
                                         <button data-row="6" data-col="6"></button>
+                                        <button data-row="6" data-col="7"></button>
+                                        <button data-row="6" data-col="8"></button>
+                                        <button data-row="6" data-col="9"></button>
+                                    </div>
+                                    <div className='editTbDivRow'>
+                                        <button data-row="7" data-col="0"></button>
+                                        <button data-row="7" data-col="1"></button>
+                                        <button data-row="7" data-col="2"></button>
+                                        <button data-row="7" data-col="3"></button>
+                                        <button data-row="7" data-col="4"></button>
+                                        <button data-row="7" data-col="5"></button>
+                                        <button data-row="7" data-col="6"></button>
+                                        <button data-row="7" data-col="7"></button>
+                                        <button data-row="7" data-col="8"></button>
+                                        <button data-row="7" data-col="9"></button>
+                                    </div>
+                                    <div className='editTbDivRow'>
+                                        <button data-row="8" data-col="0"></button>
+                                        <button data-row="8" data-col="1"></button>
+                                        <button data-row="8" data-col="2"></button>
+                                        <button data-row="8" data-col="3"></button>
+                                        <button data-row="8" data-col="4"></button>
+                                        <button data-row="8" data-col="5"></button>
+                                        <button data-row="8" data-col="6"></button>
+                                        <button data-row="8" data-col="7"></button>
+                                        <button data-row="8" data-col="8"></button>
+                                        <button data-row="8" data-col="9"></button>
+                                    </div>
+                                    <div className='editTbDivRow'>
+                                        <button data-row="9" data-col="0"></button>
+                                        <button data-row="9" data-col="1"></button>
+                                        <button data-row="9" data-col="2"></button>
+                                        <button data-row="9" data-col="3"></button>
+                                        <button data-row="9" data-col="4"></button>
+                                        <button data-row="9" data-col="5"></button>
+                                        <button data-row="9" data-col="6"></button>
+                                        <button data-row="9" data-col="7"></button>
+                                        <button data-row="9" data-col="8"></button>
+                                        <button data-row="9" data-col="9"></button>
                                     </div>
 							</div>
                             <div id="nByNtag" className="nByNtag">1&#9747;1</div>
