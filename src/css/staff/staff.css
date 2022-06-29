@@ -686,6 +686,16 @@ height: 1.6em;
   
 }
 
+.editInnerTable .innerTbTd.alignLeft{
+    text-align: left;
+}
+.editInnerTable .innerTbTd.alignRight{
+    text-align: right;
+}
+.editInnerTable .innerTbTd.alignCenter{
+    text-align: center;
+}
+
 .tbBorderDesc{
     display: inline-block;
     font-family: 'jejuGothic';
