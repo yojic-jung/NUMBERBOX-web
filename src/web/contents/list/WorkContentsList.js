@@ -371,6 +371,7 @@ const WorkContentsList = ()=>{
                 setWorkListChanged(true);
 
                 await compContentsPopUpClose();
+                await nb_multiChoiceGridSet("quesConMultiShow");
                 await nb_fadeInOut("유사문제가 정상적으로 등록 되었습니다.", 2000);
 
             }
