@@ -349,6 +349,7 @@
  #multi-show{
     margin-top: 10px;
     margin-bottom:20px;
+    clear: both;
 }
 #sol-show, #ans-show{
     padding:10px 0;
@@ -668,6 +669,7 @@ height: 1.6em;
     table-layout: fixed;
     margin:15px auto 15px auto;
     border:0.5px solid gray;
+    clear: both;
 }
 .editInnerTable tr{
     border-collapse: collapse;
