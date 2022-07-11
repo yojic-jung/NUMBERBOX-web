@@ -10,7 +10,7 @@ let i=0;    //useState 리렌더링 문제 해결
 
 export const UnitTypeCombo = (updateModeUniqNo) => {
   const [subjectBox, setSubjectBox] = useState(new Array());
-  const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
+  //const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
   const [secUnitSelBox, setSecUnitSelBox] = useState(new Array());
   const [thrUnitSelBox, setThrUnitSelBox] = useState(new Array());
   const [quesTypeBox, setQuesTypeBox] = useState(new Array());
@@ -19,7 +19,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   async function fetchUnitInfo () {
     let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
     setSubjectBox(jsonObj["mathSubjectInfo"]);
-    setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
+    //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
     setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
     setThrUnitSelBox(jsonObj["mathThrUnitInfo"]);
     //setQuesTypeBox(jsonObj["mathTypeInfo"]);
@@ -29,7 +29,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
     let sub    = new Object();
     trigEv.target= sub;
     trigEv.target.id= "subject";
-    await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+    await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
   }
   
   
@@ -68,16 +68,16 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
  
   return (
     <div>
-        <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
-        <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelFirUnit" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-        
+        <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelSecUnit" childId="secUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
+        <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelSecUnit" childId="secUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+        {/*}
         <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
         <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-        
-        <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="중단원"></CustomUnitSelBox>
+        */}
+        <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
         <UnitSelBox value={secUnitSelBox} myId="secUnit" cusChildId="cusSelThrUnit" childId="thrUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
         
-        <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={fetchTypeInfo} title="소단원"></CustomUnitSelBox>
+        <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={fetchTypeInfo} title="중단원"></CustomUnitSelBox>
         <UnitSelBox value={thrUnitSelBox} myId="thrUnit" cusChildId="cusSelQuesType" childId="quesType" isUnitBubbleEv={false}  parentMethod={fetchTypeInfo}></UnitSelBox>
             
         <CustomTypeSelBox value={quesTypeBox} key={quesTypeKey+"00"} cusSelId="cusSelQuesType" originSel="quesType" ></CustomTypeSelBox>

@@ -334,7 +334,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                                 </span>
                                                             </>
                                                             }
-                                                            [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.firUnit}
+                                                            [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
                                                             {isMine &&
                                                                 <>
                                                                     {hasLicense  &&

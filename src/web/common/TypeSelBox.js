@@ -1,5 +1,4 @@
 import React from 'react';
-import {MathJaxContext, MathJax} from "better-react-mathjax";
 
 const config = {
 	tex2jax: {
@@ -14,14 +13,10 @@ const TypeSelBox = ({value, myId}) => {
     );
     return (
         <div className='hide'>
-            <MathJaxContext config={config} version={2} >
-                <MathJax>
                     <select id={myId} >
                         <option>--선택--</option>
                         {quesTypeItem}
                     </select>
-                </MathJax> 
-            </MathJaxContext>
         </div>
     );
 }

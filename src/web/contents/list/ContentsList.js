@@ -16,7 +16,7 @@ import defaultProfile from 'img/defaultProfileWhite.png';
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
 let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
 let subjectVal;
-let firUnitVal;
+//let firUnitVal;
 let secUnitVal;
 let thrUnitVal;
 let currentPath = "";
@@ -25,7 +25,7 @@ const ContentsList = ()=>{
 
     const [contentsList, setContentsList] = useState(new Array());
     const [subjectBox, setSubjectBox] = useState(new Array());
-    const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
+    //const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
     const [secUnitSelBox, setSecUnitSelBox] = useState(new Array());
     const [thrUnitSelBox, setThrUnitSelBox] = useState(new Array());
     const [contentsNo, setContentsNo] = useState("");
@@ -46,7 +46,7 @@ const ContentsList = ()=>{
 
     const modalPopupOpen = async (event)  =>{
         subjectVal = document.getElementById("subject").value;
-        firUnitVal = document.getElementById("firUnit").value;
+        //firUnitVal = document.getElementById("firUnit").value;
         secUnitVal = document.getElementById("secUnit").value;
         thrUnitVal = document.getElementById("thrUnit").value;
         scrollY=nb_modalScrollStrt();
@@ -71,19 +71,22 @@ const ContentsList = ()=>{
         trigEv.target= sub;
         trigEv.target.id= "subject";
         document.getElementById("subject").value = subjectVal;
-        await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+        await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
         document.getElementById("subject").value = subjectVal;
         document.getElementById("cusSelSubTitle").innerHTML =document.getElementById("subject")[document.getElementById("subject").selectedIndex].innerText;
         document.getElementById("cusSelSubDiv").classList.add("nbCustomSelected");
+        await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
+        /*
         //두번 실행해야함, 자식 콤보의 첫번째 인덱스를 display:none 패스 후 자식 콤보의 대단원, 중단원, 소단원 등의 콤보 제목정보가 추가되는데
         //과목 이벤트 한번만 실행되면  대단원에는 display:none 패스 후 대단원 option태그 추가되므로 콤보제목 태그가 아닌 다른 태그가 들어오게됨
-        await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+        await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
 
         document.getElementById("firUnit").value = firUnitVal;
         document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
         document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
         trigEv.target.id= "firUnit";
         await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
+        */
 
         document.getElementById("secUnit").value = secUnitVal;
         document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
@@ -154,7 +157,7 @@ const ContentsList = ()=>{
         const asyncUseEffect = async function(){
             let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectBox(jsonObj["mathSubjectInfo"]);
-            setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
+            //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
             setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);
             setThrUnitSelBox(jsonObj["mathThrUnitInfo"]);
              //초기 단원 및 유형정보 셋팅
@@ -162,7 +165,7 @@ const ContentsList = ()=>{
             let sub    = new Object();
             trigEv.target= sub;
             trigEv.target.id= "subject";
-            await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+            await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
             
             //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
             if(param !== ""){
@@ -227,12 +230,13 @@ const ContentsList = ()=>{
             }
             subject.selectedIndex = selectedIdx;
             subjectVal = subject.value;
-            await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+            await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
             document.getElementById("subject").value = subjectVal;
             document.getElementById("cusSelSubTitle").innerHTML =document.getElementById("subject")[document.getElementById("subject").selectedIndex].innerText;
             document.getElementById("cusSelSubDiv").classList.add("nbCustomSelected");
             
 
+            /*
             let firUnit = document.getElementById("firUnit");
             selectedIdx = 0;
             let firUnitOptList = firUnit.childNodes
@@ -253,6 +257,7 @@ const ContentsList = ()=>{
             document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
             document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
             trigEv.target.id= "firUnit";
+            */
 
             let secUnit = document.getElementById("secUnit");
             selectedIdx = 0;
@@ -410,8 +415,8 @@ const ContentsList = ()=>{
         const searchMyWorkList = async function(hasNotiPhrases){
             let customSubject = document.getElementById("cusSelSubTitle");
             let subject = document.getElementById("subject");
-            let customFirUnit = document.getElementById("cusSelFirUnitTitle");
-            let firUnit = document.getElementById("firUnit");
+            //let customFirUnit = document.getElementById("cusSelFirUnitTitle");
+            //let firUnit = document.getElementById("firUnit");
             let customSecUnit = document.getElementById("cusSelSecUnitTitle");
             let secUnit = document.getElementById("secUnit");
             let customThrUnit = document.getElementById("cusSelThrUnitTitle");
@@ -421,10 +426,12 @@ const ContentsList = ()=>{
                 alert("과목을 선택해주세요.");
                 return false;
             }
+            /*
             if(customFirUnit.innerText=="대단원" || firUnit.selectedIndex==0){
                     alert("대단원을 선택해주세요.");
                     return false;
             }
+            */
             if(customSecUnit.innerText=="중단원" || secUnit.selectedIndex==0){
                 alert("중단원을 선택해주세요.");
                 return false;
@@ -658,16 +665,16 @@ const ContentsList = ()=>{
                                 <div className='mini-title5'>
                                     &nbsp; 넘버링크에서 원하는 문제를 찾아보세요.
                                 </div>
-                                <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelFirUnit" childId="firUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
-                                <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelFirUnit" childId="firUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-                                
+                                <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelSecUnit" childId="secUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
+                                <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelSecUnit" childId="secUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+                                {/*
                                 <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
                                 <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
-                                
-                                <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="중단원"></CustomUnitSelBox>
+                                */}
+                                <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
                                 <UnitSelBox value={secUnitSelBox} myId="secUnit" cusChildId="cusSelThrUnit" childId="thrUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
                                 
-                                <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={()=>{}} title="소단원"></CustomUnitSelBox>
+                                <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={()=>{}} title="중단원"></CustomUnitSelBox>
                                 <UnitSelBox value={thrUnitSelBox} myId="thrUnit" cusChildId="cusSelQuesType" childId="quesType" isUnitBubbleEv={false}  parentMethod={()=>{}}></UnitSelBox>
                                 
                                 <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>

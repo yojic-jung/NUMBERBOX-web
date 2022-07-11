@@ -515,14 +515,16 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				let sub    = new Object();
 				trigEv.target= sub;
 				trigEv.target.id= "subject";
-				await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
+				await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
 
+				/*
 				document.getElementById("firUnit").value = myContents["myUnitInfo"].firUnit;
 				document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
 				document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
 				trigEv.target.id= "firUnit";
 				await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
-
+				*/
+				
 				document.getElementById("secUnit").value = myContents["myUnitInfo"].secUnit;
 				document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
 				document.getElementById("cusSelSecUnitDiv").classList.add("nbCustomSelected");

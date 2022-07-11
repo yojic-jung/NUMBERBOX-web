@@ -1796,7 +1796,7 @@ export const reg_selectUnitOrTypeData = async (targetId, titleTag, divTag, compa
 	for(let i=0; i<subjects.length; i++){
 		if(subjects[i].dataset.uniqNo == compareStr){	//삼항식 쓰면 오류남
 			subjects[i].selected = true;
-			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerHTML;
+			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerText;
 			document.getElementById(divTag).classList.add("nbCustomSelected");
 		}
 	}
@@ -1807,7 +1807,7 @@ export const reg_selectTypeData = async (targetId, titleTag, divTag, compareStr 
 	for(let i=0; i<subjects.length; i++){
 		if(subjects[i].dataset.typeNo == compareStr){	//삼항식 쓰면 오류남
 			subjects[i].selected = true;
-			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerHTML;
+			document.getElementById(titleTag).innerHTML =document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerText;
 			document.getElementById(divTag).classList.add("nbCustomSelected");
 			
 		}

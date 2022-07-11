@@ -19,7 +19,7 @@ const CustomSelBoxDown = ({value, cusSelId, originSel, title}) => {
         <div className="nbWrapSelBox">
             <div id={cusSelDiv} className="nbCustomSel nbCustom4" onClick={(event)=>{nb_fCustomSelDivClk(event);}}>
                 <span id={cusSelUlTitle} className="nbCustomSelVal">{title}</span>
-                <ul id={cusSelId} className="nbCustomOptList">
+                <ul id={cusSelId} className="nbCustomOptList unit">
                     <li id={firLiId} key="00" className="nbOptItem" data-value="0">{title}</li>
                    {subjectItem}
                 </ul>

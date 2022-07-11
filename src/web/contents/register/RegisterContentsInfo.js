@@ -87,8 +87,8 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 	  const contentsFinalValidation = async function(){
 		 let customSubject = document.getElementById("cusSelSubTitle");
 		 let subject = document.getElementById("subject");
-		 let customFirUnit = document.getElementById("cusSelFirUnitTitle");
-		 let firUnit = document.getElementById("firUnit");
+		 //let customFirUnit = document.getElementById("cusSelFirUnitTitle");
+		 //let firUnit = document.getElementById("firUnit");
 		 let customSecUnit = document.getElementById("cusSelSecUnitTitle");
 		 let secUnit = document.getElementById("secUnit");
 		 let customThrUnit = document.getElementById("cusSelThrUnitTitle");
@@ -120,16 +120,19 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 			 alert("과목을 선택해주세요.");
 			 return false;
 		 }
+		 /*
 		if(customFirUnit.innerText=="대단원" || firUnit.selectedIndex==0){
 			 alert("대단원을 선택해주세요.");
 			 return false;
 		 }
-		if(customSecUnit.innerText=="중단원" || secUnit.selectedIndex==0){
-			alert("중단원을 선택해주세요.");
+		 */
+
+		if(customSecUnit.innerText=="대단원" || secUnit.selectedIndex==0){
+			alert("대단원을 선택해주세요.");
 			return false;
 		}
-		if(customThrUnit.innerText=="소단원" || thrUnit.selectedIndex==0){
-			alert("소단원을 선택해주세요.");
+		if(customThrUnit.innerText=="중단원" || thrUnit.selectedIndex==0){
+			alert("중단원을 선택해주세요.");
 			return false;
 		}
 		if(customQuesType.innerText == "유형정보" || quesType.selectedIndex==0){

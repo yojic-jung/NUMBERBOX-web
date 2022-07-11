@@ -1,7 +1,6 @@
 import React from 'react';
 import { nb_fCustomSelDivClk, nb_fCustomSelSpanClk, nb_fCustomOptClk} from 'js/common/common_nb.js';
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
-import {MathJaxContext, MathJax} from "better-react-mathjax";
 
 const config = {
 	tex2jax: {
@@ -24,25 +23,21 @@ const CustomUnitSelBox = ({value, cusSelId, originSel, cusChildId, childId, pare
                 reg_unitTypeChange(trigEv, cusChildId, childId, true);
                 parentMethod(event);
             }
-            }>{opt.mainVal}</li>
+            } dangerouslySetInnerHTML={{__html:opt.mainVal}}></li>
 
         }
     );
     
     return (
         
-        <MathJaxContext config={config} version={2} >
-            <MathJax>
                 <div className="nbWrapSelBox">
                     <div id={cusSelDiv} className="nbCustomSel nbCustom2" data-title={title} onClick={event=>nb_fCustomSelDivClk(event)}>
                         <span id={cusSelUlTitle} className="nbCustomSelVal">{title}</span>
-                        <ul id={cusSelId} className="nbCustomOptList">
+                        <ul id={cusSelId} className="nbCustomOptList unit">
                         {subjectItem}
                         </ul>
                     </div>
                 </div>    
-            </MathJax> 
-        </MathJaxContext>
     );
 
 }

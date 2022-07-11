@@ -104,6 +104,7 @@
     border-radius:3px;
 }
 
+
 .contents-show{
     font-size:16px;
     line-height: 160%;
@@ -750,9 +751,9 @@ height: 1.6em;
 /** 에디터 끝 **/
 /** nbCustomSel 박스 시작 **/
 .nbCustomSel * { 
-    box-sizing: border-box; 
-    font-family: 'jejuGothic';
-    
+    font-size:14px;
+    line-height: 160%;
+    font-family: 'nbFormulaFont';
 }
 .nbCustomSel {
     font-size: 15px;
@@ -769,18 +770,18 @@ height: 1.6em;
 }
 
 .nbCustomSel.nbCustom2{
-    width: 320px;
-    margin:12px 0;
+    width: 290px;
+    margin: 12px 0;
 }
 
 .nbCustomSel.nbCustom3{
     width: 500px;
-    margin:12px 0;
+    margin: 12px 0;
 }
 
 .nbCustomSel.nbCustom4{
     width: 150px;
-    margin:12px 0;
+    margin: 12px 0;
 }
 
 .nbCustomSel:after {
@@ -805,12 +806,17 @@ height: 1.6em;
   cursor: pointer;
 }
 
+
+
+.nbCustomOptList.unit, .backBox{
+    background: rgb(240, 246, 255);
+}
+
 .nbCustomSel .nbCustomOptList {
   position: absolute; 
-  top: 16px;
+  top: 19px;
   left: -3px;
   width: calc(100% + 6px);
-  background: rgb(240, 246, 255);
   color: rgb(113, 139, 180);
   list-style-type: none;
   padding: 0;
@@ -826,9 +832,12 @@ height: 1.6em;
     bottom:28px;
 }
 
+.workListUnitType #cusSelSecUnitDiv{
+    width:220px;
+}
 
 .workListUnitType .nbCustomSel .nbCustomOptList {
-    top: 25px;
+    top: 28px;
 }
 /*
 .nbCustomSel .nbCustomOptList.nbCustomOptList3{
@@ -837,7 +846,7 @@ height: 1.6em;
 }
 */
 .nbCustomSel.active .nbCustomOptList.nbCustomOptList3{
-    max-height: 255px;
+    max-height: 250px;
     overflow-y: scroll;
 }
 
@@ -1088,11 +1097,7 @@ height: 1.6em;
     width: 200px;
     font-size: 14px;
 }
-.workListUnitType .nbCustomSel.nbCustom2{
-    width: 250px;
-    font-size: 14px;
-    margin:10px 10px 10px 0;
-}
+
 .workListUnitTypeRoot{
     background: white;
 }
@@ -1108,11 +1113,10 @@ height: 1.6em;
 }
 .workListUnitType .nbCustomSel.nbCustom2{
     padding:8px 0;
-    width: 250px;
+    width: 290px;
     font-size: 14px;
-    margin:10px 10px 10px 0;
+    margin:10px 18px 10px 0;
 }
-
 
 .workListUnitType .customBlueBox{
     margin:10px 0;
@@ -1138,6 +1142,9 @@ height: 1.6em;
     margin: 10px auto;
 }
 
+.workListUnitType .nbWrapSelBox{
+    display: inline-block;
+}
 .orangeBtn{
     font-family: 'jejuGothic';
     background-color: rgb(255, 187, 0);
@@ -1146,8 +1153,6 @@ height: 1.6em;
     border-radius: 10px;
     border: 3px solid rgb(255, 174, 0);
     cursor: pointer;
-    position: relative;
-    top:10px;
 }
 
 
@@ -1627,4 +1632,36 @@ height: 1.6em;
 .imgRightAlign:hover{
     background: url('img/imgAlignRightGray.png') center no-repeat;
     background-size: 40px;
+}
+
+.nbOptItem .nbDenom:before{
+    border-top: 1px solid rgb(113, 139, 180);
+}
+
+.nbOptItem .nbNumer:after{
+    border-bottom: 1px solid rgb(113, 139, 180);
+}
+
+.nbCustomSelVal .nbDenom:before, .nbOptItem:hover .nbDenom:before{
+    border-top: 1px solid white;
+}
+
+.nbCustomSelVal .nbNumer:after,  .nbOptItem:hover .nbNumer:after{
+    border-bottom: 1px solid white;
+}
+
+.nbOptItem .nbRootBase{
+    line-height: 120%;
+    box-shadow: 0px -0.5px rgb(113, 139, 180), inset 0px 0.5px rgb(113, 139, 180);
+}
+.nbCustomSelVal .nbRootBase{
+    line-height: 120%;
+}
+
+.nbOptItem:hover .nbRootBase{
+    box-shadow: 0px -0.5px white, inset 0px 0.5px white;
+}
+
+.nbCustomSelVal .nbRootBase{
+    box-shadow: 0px -0.5px white, inset 0px 0.5px white;
 }
