@@ -6,8 +6,8 @@
 
 @font-face {
     font-family: 'MJXc-TeX-size2-Rw'; 
-    src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/fonts/HTML-CSS/TeX/eot/MathJax_Size2-Regular.eot');
-    src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff')
+    src /*1*/: url('font/MathJax_Size2-Regular.eot');
+    src /*2*/: url('font/MathJax_Size2-Regular.woff')
     format('woff')
 }
 
