@@ -1,0 +1,223 @@
+.pageTitle{
+    width: 1000px;
+    margin:30px auto;
+}
+
+.mathDocsSubjectInfoDiv{
+    width: 1000px;
+    margin:30px auto 0 auto;
+    border: 0.5px solid rgb(206, 206, 206);
+    padding:10px;
+}
+
+.noSelect{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.mathDocsSubjectListDiv{
+    width: 1000px;
+    margin:0 auto 0 auto;
+    padding:10px;
+    border: 0.5px solid rgb(206, 206, 206);
+    min-height: 300px;
+    line-height: 160%;
+    font-family: 'jejuGothic';
+    color:gray;
+    
+}
+
+.mathDocsLevelDiv{
+    position: relative;
+    width: 1000px;
+    margin:0 auto 60px auto;
+    padding:20px 10px;
+    border: 0.5px solid rgb(206, 206, 206);
+    vertical-align: middle;
+}
+
+.mathDocsGrade{
+    font-family:'jejuGothic';
+    margin:5px 20px 5px 0px;
+    color: rgb(23, 104, 196);
+}
+
+.mathDocsUnitBtn{
+    font-family:'jejuGothic';
+    padding:5px;
+    margin:5px;
+    color: rgb(109, 166, 231);
+    border:2px solid rgb(173, 209, 250);
+    border-radius:4px;
+    cursor: pointer;
+}
+
+.mathDocsUnitBtn:hover{
+    color: rgb(23, 104, 196);
+    border:2px solid rgb(23, 104, 196);
+}
+
+.levelSelTd:hover, .conCntSelTd:hover{
+    color: rgb(23, 104, 196);
+    border:2px solid rgb(23, 104, 196);
+}
+
+.mathDocsUnitBtn.active{
+    color:white;
+    background-color: rgb(23, 104, 196);
+    border:2px solid rgb(173, 209, 250);
+}
+
+.subjectFoldBtn, .secUnitFoldBtn, .thrUnitFoldBtn{
+    color:rgb(184, 184, 184);
+    cursor: pointer;
+    
+}
+
+.subjectFoldBtn{
+    margin:0 8px 0 3px;
+}
+
+.secUnitFoldBtn{
+    margin: 0 8px 0 35px;
+}
+
+.thrUnitFoldBtn{
+    margin: 0 8px 0 70px;
+}
+
+.subjectFoldBtn.active, .secUnitFoldBtn.active, .thrUnitFoldBtn.active{
+    color:rgb(82, 82, 82);
+    transform: rotate( 90deg );
+    display: inline-block;
+}
+
+
+.subjectBtn, .secUnitBtn, .thrUnitBtn, .typeBtn{
+    font-family: 'nbFormulaFont';
+    display: inline-block;
+    padding:3px 6px 3px 0px;
+    cursor: pointer;
+    position: relative;
+    margin-left: 20px;
+}
+
+.typeBtn{
+    margin-left: 140px;
+}
+
+.subjectBtn::before, .secUnitBtn::before, .thrUnitBtn::before, .typeBtn::before{
+    font-family: 'malgunGothic';
+    font-size: 10px;
+    margin:0 6px 0 6px;
+    content:'';
+    width: 15px;
+    height: 15px;
+    border:1px solid gray;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 6px;
+    left: -26px;
+}
+
+.subjectBtn.active::before, .secUnitBtn.active::before, .thrUnitBtn.active::before, .typeBtn.active::before{
+    content:'\2714';
+    background-color: rgb(0, 16, 55);
+    border: 1px solid rgb(173, 209, 250);
+    color: white;
+}
+
+.subjectBtn.active, .secUnitBtn.active, .thrUnitBtn.active, .typeBtn.active{
+    color: rgb(23, 104, 196);
+}
+
+
+.next-step-btn{
+    font-family:'jejuGothic';
+    padding:5px;
+    margin:5px;
+    color: rgb(23, 104, 196);
+    border:2px solid rgb(173, 209, 250);
+    border-radius:4px;
+    cursor: pointer;
+}
+
+.levelSelTb{
+    margin-right: 15px;
+    border-spacing: 4px 0;
+}
+
+.levelSelTb td:first-child{
+    color: rgb(23, 104, 196);
+    border:unset;
+    width:unset;
+    cursor:unset;
+    background:unset;
+    width:60px;
+}
+
+
+.levelSelTb td{
+    font-family:'jejuGothic';
+    text-align: center;
+    padding:4px;
+    min-width:30px;
+    cursor: pointer;
+    color: rgb(109, 166, 231);
+    border:2px solid rgb(173, 209, 250);
+    border-radius: 4px;
+}
+
+.nextStep{
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    right:30px;
+}
+
+.conCnt{
+    text-align: center;
+    font-size: 16px;
+    width:40px;
+    color: rgb(77, 77, 77);
+}
+
+.levelSelTd.active, .conCntSelTd.active{
+    color: white;
+    background-color: rgb(23, 104, 196);
+}
+
+
+/* 수식 */
+
+.mathDocsSubjectListDiv .nbRootBase{
+    box-shadow: 0px -0.5px gray, inset 0px 0.5px gray;
+}
+
+.mathDocsSubjectListDiv .active .nbRootBase{
+    box-shadow: 0px -0.5px rgb(23, 104, 196), inset 0px 0.5px rgb(23, 104, 196);
+}
+
+
+.mathDocsSubjectListDiv .nbNumer:after {
+    border-bottom: 1px solid gray;
+}
+
+.mathDocsSubjectListDiv .nbDenom:before {
+    border-top: 1px solid gray;
+}
+
+.mathDocsSubjectListDiv .active .nbNumer:after {
+    border-bottom: 1px solid rgb(23, 104, 196);
+}
+
+.mathDocsSubjectListDiv .active .nbDenom:before {
+    border-top: 1px solid rgb(23, 104, 196);
+}
