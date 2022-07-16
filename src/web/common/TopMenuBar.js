@@ -73,7 +73,7 @@ return (
                             <td><Link className='linkNoneCss signLoginBtn' to="/login">로그인/회원가입</Link></td>
                         </tr>}
                         {isLogin && <tr>
-                            <td>학습지생성</td>
+                            <td><Link className='linkNoneCss' to="/makeMathDocs">학습지생성</Link></td>
                             <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
                             <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
                             <td><Link className='linkNoneCss' to="/shareResource">컨텐츠</Link></td>

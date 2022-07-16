@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Main from 'web/page/Main'
 import Login from 'web/page/Login'
 import SignUp from 'web/page/SignUp'
+import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker'
 import RegisterQuestion from 'web/contents/register/RegisterQuestion'
 import RegisterContents from 'web/contents/register/RegisterContents'
 import RegisterResource from 'web/mathResource/RegisterResource'
@@ -35,8 +36,10 @@ const App = ()=>{
             <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>
+              <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
               <Route element={<BottomMenuBar/>}>
                 <Route exact path="/" element={<Main />} />
+                <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login" />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login" />} />
                 <Route exact path="/makeContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={1} /> : <Navigate to="/login" />} />
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
@@ -45,7 +48,6 @@ const App = ()=>{
                 <Route exact path="/myRepository" element={nb_isLogin()  ? <MyRepositoryWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login" />} />
-                <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
                 <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login" />} />
                 <Route exact path="/shareResource" element={<ShareResource />} />
                 <Route exact path={"*"} element={<NotFound />} />
