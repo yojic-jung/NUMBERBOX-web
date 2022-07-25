@@ -141,7 +141,10 @@ return (
             <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
             <div id="resDetailedTitle" className='resDetailedTitle'></div>
             <div id="resDetailedCate" className='resDetailedCate'></div>
-            <div className='resDetailedDesc'>※ 미리보기 이미지는 실제 파일과 다소 차이가 있으며 화질이 실제보다 낮게 보입니다.</div>
+            <div className='resDetailedDesc'>
+                ※ 미리보기 슬라이드는 실제보다 화질이 낮게 보이며 실제 슬라이드에 적용된 효과가
+                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미리보기 슬라이드에는 적용이 안되어 나타날 수 있습니다.
+            </div>
             <div id="customImgSliderErrBtn" className='errBtn customImgSliderErrBtn' onClick={(event)=>{errorReportOpen(event.target.dataset.resourceNo)}}></div>
             <div className='overflowHidden'>
                 <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
