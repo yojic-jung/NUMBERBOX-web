@@ -60,6 +60,7 @@
 .res-div{
     position: relative;
     border: 0.5px dashed gray;
+    padding:15px 0;
 }
 .resWrap{
     display: grid;
@@ -70,34 +71,54 @@
     .resWrap{
         grid-template-columns: repeat(5, 1fr);
     }
+    .resWrap.contentsDiv{
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 @media screen and (min-width: 1120px) and (max-width: 1400px){
     .resWrap{
         grid-template-columns: repeat(4, 1fr);
+    }
+    .resWrap.contentsDiv{
+        width:100%;
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 @media screen and (min-width: 840px) and (max-width: 1120px){
     .resWrap{
         grid-template-columns: repeat(3, 1fr);
     }
+    .resWrap.contentsDiv{
+        width:100%;
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 @media screen and (min-width: 560px) and (max-width: 840px){
     .resWrap{
         grid-template-columns: repeat(2, 1fr);
+    }
+    .resWrap.contentsDiv{
+        width:100%;
+        grid-template-columns: repeat(1, 1fr);
     }
 }
 @media screen and (max-width: 560px){
     .resWrap{
         grid-template-columns: repeat(1, 1fr);
     }
+    .resWrap.contentsDiv{
+        width:100%;
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 
 .res-img{
     cursor: pointer;
-    width:100%;
+    width: calc(100% - 33px);
     position: relative;
     top:50%;
     transform: translateY(-50%);
+    margin-top:10px;
 }
 
 .res-over-lay{
@@ -110,46 +131,70 @@
     z-index: 3;
 }
 .res-over-lay:hover{
-    background: rgba(196, 195, 195, 0.3);
+    background: rgba(106, 119, 157, 0.1);
 }
 
-.res-over-lay:hover .down-btn{
+.pptPageCnt{
     position: absolute;
     top:5px;
     right: 5px;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    background: rgb(0, 175, 128) url("img/down-load.png") no-repeat;
+    color:white;
+    background: rgb(18, 49, 141);
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.pptPageCnt:hover{
+    cursor: default;
+}
+
+.pptPageCnt::after{
+    font-family: 'jejuGothic';
+    content: '+';
+    font-size: 13px;
+    position: relative;
+    top: -8px;
+}
+
+.res-over-lay:hover .down-btn{
+    position: absolute;
+    top:45px;
+    right: 5px;
+    display: inline-block;
+    width: 32px;
+    height: 30px;
+    background:  rgb(0, 175, 128, 0.7) url("img/down-load.png") no-repeat;
     background-position: center;
-    background-size: 15px;
-    border-radius: 3px;
+    background-size: 18px;
+    border-radius: 10px;
 }
 
 .res-over-lay:hover .down-btn:hover{
-    background: rgb(0, 175, 128, 0.5) url("img/down-load.png") no-repeat;
+    background: rgba(2, 139, 103, 0.8) url("img/down-load.png") no-repeat;
     background-position: center;
-    background-size: 15px;
+    background-size: 18px;
 }
 
 
 .res-over-lay:hover  .down-ppt-btn{
     position: absolute;
-    top:32px;
-    right: 5px;
+    top:45px;
+    right: 8px;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    background: url("img/powerpoint.png") no-repeat;
-    background-position: center;
-    background-size: 20px;
-    border-radius: 3px;
+    width: 26px;
+    height: 22px;
+    background: url("img/down-load.png") no-repeat center rgb(255, 0, 0, 0.7);
+    background-size: 16px;
+    border-radius: 5px;
 }
 
 .res-over-lay:hover .down-ppt-btn:hover{
-    background: url("img/powerpoint-2.png") no-repeat;
-    background-position: center;
-    background-size: 20px;
+    background: url("img/down-load.png") no-repeat center red;
+    background-size: 16px;
 }
 
 .img-title{
@@ -161,3 +206,226 @@
     color:dimgray;
     font-family: 'jejuGothic';
 }
+
+.downAnchorBtn{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+.resDetailedDiv{
+    text-align: left;
+    width: 600px;
+    min-height: 200px;
+    max-height: 90%;
+    margin: auto;
+    background: white;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    padding: 15px 10px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 7%);
+    box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+.resDetailedDiv::-webkit-scrollbar {width: 6px;}
+.resDetailedDiv::-webkit-scrollbar-track {background: transparent; }
+.resDetailedDiv::-webkit-scrollbar-thumb {background: #aeaeaf; border-radius: 45px;}
+.resDetailedDiv::-webkit-scrollbar-thumb:hover {background: #504f4f;}
+
+.resDetailedImg{
+    width : 100%;
+    max-height: 70%;
+}
+
+.resDetailedTitle {
+    font-size: 18px;
+    font-family: 'jejuGothic';
+    padding: 0 10px 5px 10px;
+}
+
+.resDetailedDesc{
+    font-family: 'jejuGothic';
+    color:#7ea6f8;
+    font-size: 14px;
+    padding: 0 0 10px 10px;
+}
+
+.resDetailedPPtDownBtn{
+    cursor: pointer;
+    font-family: 'jejuGothic';
+    font-size: 14px;
+    width: 130px;
+    padding: 10px;
+    text-align: center;
+    color:white;
+    margin:15px auto;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 10px 5px;
+    background: rgb(247, 55, 55);
+}
+
+.resDetailedPPtDownBtn::before{
+    display: inline-block;
+    content: '';
+    width: 16px;
+    height: 16px;
+    background: url("img/powerpointWhite.png") no-repeat;
+    vertical-align: text-top;
+    background-size: 16px;
+    margin-right: 5px;
+}
+
+.resDowwBtnWrap{
+    text-align: center;
+}
+
+
+
+
+.overflowHidden{
+    position: relative;
+    overflow: hidden;
+}
+
+
+.customImgSliderContainerDiv{
+    width: 100%;
+    transition: all 0.8s;
+  }
+  
+  .customSliderBox{
+    width: 580px;
+    float: left;
+  }
+
+  .customSliderImg{
+    width: 580px;
+  }
+  
+  .customImgSliderBtnDiv{
+    margin : 0 auto 10px auto;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .customSliderBtn{
+    cursor: pointer;
+    margin: 4px;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    width: 22px;
+    height: 22px;
+    background-color: rgba(93, 113, 143, 0.5);
+    padding: 0;
+  }
+  
+  .customSliderBtn.active{
+    background-color: rgba(93, 113, 143, 1);
+  }
+
+
+  .resDetailedTimeDesc{
+    text-align: center;
+    font-size: 20px;
+    font-family: 'jejuGothic';
+    line-height: 180%;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    background-color: rgb(251, 251, 251);
+    color: rgb(23, 104, 196);;
+    padding: 40px 20px;
+    border-radius: 10px;
+  }
+
+  .res-over-lay:hover .errBtn{
+    display:block;
+    top:80px;
+    background:  url("img/siren.png") no-repeat center;
+    background-size: 20px;
+    border-radius: 5px;
+  }
+
+  .res-over-lay .errBtn:hover{
+    width: 20px;
+    height: 20px;
+    background:  url("img/sirenOrg.png") no-repeat center;
+    background-size: 20px;
+}
+
+  .res-over-lay .errBtn{
+    display: none;
+  }
+  
+  .customImgSliderErrBtn{
+    z-index: 1;
+    top:80px;
+    right: 18px;
+    background-size:22px ;
+  }
+
+  .customImgSliderErrBtn:hover{
+    background:  url("img/sirenOrg.png") no-repeat center;
+    background-size:22px ;
+  }
+  
+  .resourceCateDesc{
+    display: inline-block;
+    font-family: 'jejuGothic';
+    font-size: 12px;
+    color:white;
+    background: #0b2c6c;
+    padding:5px;
+    border-radius: 5px;
+    margin:0 0px 10px 10px;
+  }
+
+  .res-div .delBtn{
+    top:80px;
+  }
+
+  .res-div .delBtn:hover{
+    width: 20px;
+    height: 20px;
+    background-size: 20px;
+    top:80px;
+  }
+
+  .updateResCenterDiv{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 95%;
+    overflow-y: scroll;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 30%);
+    box-sizing: border-box;
+  }
+
+.updateResCenterDiv::-webkit-scrollbar {width: 6px;}
+.updateResCenterDiv::-webkit-scrollbar-track {background: transparent; }
+.updateResCenterDiv::-webkit-scrollbar-thumb {background: #aeaeaf; border-radius: 45px;}
+.updateResCenterDiv::-webkit-scrollbar-thumb:hover {background: #504f4f;}
+
+
+  .updateResouceDiv{
+    display: inline-block;
+  }
+
+  .regResUpdtTitle{
+    text-align: center;
+    font-weight: normal;
+    font-family: 'jejuGothic';
+    padding-top:10px;
+    color:black;
+    font-size:20px;
+  }

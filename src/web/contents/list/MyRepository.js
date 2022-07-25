@@ -25,16 +25,23 @@ const MyRepository = ()=>{
     
     useEffect(()=>{
         const asyncUseEffect = async function(){
+            document.getElementById("myResource").classList.remove("active");
             document.getElementById("myPageProd").classList.remove("active");
             document.getElementById("myPageRepo").classList.add("active");
-            document.getElementById("myPageTestPaper").classList.remove("active");
+            document.getElementById("myMathDocs").classList.remove("active");
             let returnObj= await nb_dataFetch("/mathInfo/takeMyRepo", true);
+            console.log(returnObj);
             let contentsNodeList = returnObj.mathContents;
             var contentsArray = [].slice.call(contentsNodeList, 0);
             contentsArray.sort(function(a, b)  {
                 return Number(b.sysCreateDate) - Number(a.sysCreateDate);       //내림차순, 날짜 큰것 부터 작 순으로
               });
             setContentsList(contentsArray);
+            if(contentsArray.length === 0){
+                document.getElementById("mySubFilterTitle").classList.add("hide");
+                document.getElementById("mySortFilterTitle").classList.add("hide");
+                document.getElementById("filetedEmptyMsg").classList.add("hide");
+            }
             fExecuteWidth=true;
         }
         if(!fExecuteWidth){
@@ -106,7 +113,8 @@ const MyRepository = ()=>{
             setModalState(true);
         }
         
-        const showDetailConInfo = async (contentsNo, userNo)=>{
+        const showDetailConInfo = async (contentsNo, userNo, event)=>{
+            if(event.target.classList.contains("delBtn")) return;
             document.getElementById("detailedConDiv").classList.remove("hide");
             document.getElementById("likeRepoWrap").classList.add("hide");
             
@@ -194,6 +202,11 @@ const MyRepository = ()=>{
                     }
                 });
                 setContentsList(contentsListTmp);
+                if(contentsListTmp.length === 0){
+                    document.getElementById("mySubFilterTitle").classList.add("hide");
+                    document.getElementById("mySortFilterTitle").classList.add("hide");
+                    document.getElementById("filetedEmptyMsg").classList.add("hide");
+                }
                 let contentsDiv = document.getElementsByClassName("contentsDiv");
                 for(let i=0; i<contentsDiv.length; i++){
                     if(Number(contentsDiv[i].dataset.contentsNo) === contentsNo){
@@ -231,7 +244,7 @@ const MyRepository = ()=>{
             if(contentsMap.membersProfile.profileImgPath !== null && contentsMap.membersProfile.profileImgName !== null){
                 //profileImgPath=contentsMap.membersProfile.profileImgPath+contentsMap.membersProfile.profileImgName;
             }
-            return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter userSearchPage" key={idx}  data-contents-no={contentsMap.contentsNo} data-unit-uniq-no={contentsMap.unitUniqNo} data-sys-create-date={sysDateStr}> 
+            return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter userSearchPage" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
                             <table className='workListTable userSearchPage'>
                                 <thead>
                                     <tr className='workListTBHead2'>
@@ -250,7 +263,6 @@ const MyRepository = ()=>{
                                                         {contentsMap.transConCnt !==0 &&
                                                             <span className='transConCntCircle hide'>{contentsMap.transConCnt}</span>}
                                                     </button>
-                                                    <span className='contentsDelBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}>삭제</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -258,7 +270,7 @@ const MyRepository = ()=>{
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td className='td1 userSearchPage' onClick={()=>{showDetailConInfo(contentsMap.contentsNo, contentsMap.membersProfile.userNo)}} >
+                                        <td className='td1 userSearchPage backHover' onClick={(event)=>{showDetailConInfo(contentsMap.contentsNo, contentsMap.membersProfile.userNo, event)}} >
                                             <div className='userSearchCon'>
                                                 <div id="workQuesShow" className='workQuesShow quesRootDiv'>
                                                     <div className='quesDiv'>
@@ -276,6 +288,7 @@ const MyRepository = ()=>{
                                                     </div>
                                                 </div>
                                             </div>
+                                            <span className='delBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}></span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -296,7 +309,7 @@ const MyRepository = ()=>{
                     <div className='workList'>
                         {workContentsList.length !==0 ? 
                                 <div>
-                                    <div className="contents-show userSearchPage" id="contents-show">{workContentsList}</div>
+                                    <div className="contents-show userSearchPage filterContents" id="contents-show">{workContentsList}</div>
                                 </div>
                             : <EmptyList msg={emptyListMsg} imgName="myRepoEmpty" addImgClass="miniSize" /> 
                         }

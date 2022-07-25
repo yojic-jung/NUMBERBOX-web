@@ -13,6 +13,12 @@
     padding-left: 5px;
 }
 
+.paddingLTen{
+    padding-left: 10px;
+}
+.marginZero{
+    margin:0 !important;
+}
 .marginFive{
     margin:5px;
 }
@@ -166,6 +172,14 @@
     color:rgb(148, 148, 148);
     padding:10px 0 10px 20px;
 }
+.mini-title8{
+    border-bottom: 0.5px solid rgb(211, 211, 211);
+    font-size: 14px;
+    font-family: 'jejuGothic';
+    color:rgb(117, 156, 228);
+    padding:10px 0 10px 20px;
+}
+
 .maginLTwoZero{
     margin-left: 20px;
 }
@@ -224,6 +238,18 @@
     color:rgb(179, 179, 179);
 }
 
+.closeBtn2{
+    font-weight: normal;
+    position: absolute;
+    top:5px;
+    right:5px;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 5px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    color: rgb(179, 179, 179);
+}
 
 .mini-closeBtn{
     position: absolute;
@@ -298,6 +324,10 @@
 
 .mjx-chtml{
     font-size: 100% !important;
+}
+
+.borderBottom{
+    border-bottom: 0.5px solid lightgray;
 }
 
 .notifyBox, .notifyBoxA {
@@ -383,7 +413,7 @@
 
 
 
-.promptBoxScreen{
+.promptBoxScreen, .confirmBoxScreen{
     position: fixed;
     top: 0;
     left: 0;
@@ -393,7 +423,7 @@
     background: rgb(0, 0, 0, 0.3);
 }
 
-.promptBox{
+.promptBox, .confirmBox{
     z-index: 103;
     opacity: 1;
 	position: relative;
@@ -411,14 +441,14 @@
     box-shadow:0 0 10px 10px rgb(0, 0, 0, 0.1);
     padding-bottom: 15px;
 }
-.promptBoxTop{
+.promptBoxTop, .confirmBoxTop{
     text-align: right;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     padding: 5px 10px;
     background: #a998c7;
 }
-.promptMsg{
+.promptMsg, .confirmMsg{
     padding: 25px 20px 25px 20px;
     line-height: 160%;
 }
@@ -452,11 +482,11 @@
     box-shadow:0 0 2px 2px #ff7171;
 }
 
-.promptBoxClose{
+.promptBoxClose, .confirmBoxClose{
     cursor: pointer;
     color: white;
 }
-.promptBoxBtn{
+.promptBoxBtn, .confirmBoxBtn{
     display: inline-block;
     font-size: 14px;
     cursor: pointer;
@@ -464,11 +494,28 @@
     padding: 5px 10px;
     width: 40%;
     background: #a998c7;
+    outline: 2px solid #a998c7;
 }
-.promptBoxBtn:hover{
+.promptBoxBtn:hover, .confirmBoxBtn:hover{
     color:white;
     background: #8b76ae;
 }
+
+.confirmBoxCnclBtn{
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    color:rgb(255, 255, 255);
+    padding: 5px 10px;
+    width: 40%;
+    color: #a998c7;
+    outline: 2px solid #a998c7;
+}
+
+.confirmBoxCnclBtn:hover{
+    background:#f9f7ff;
+}
+
 @keyframes shake {
     0% { transform: translate(1px, 1px) rotate(0deg); }
     10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -615,7 +662,7 @@
     border-radius: 5px;
 }
 
-.myProd::before, .myRepo::before, .myWorkSheet::before{
+.myProd::before, .myRepo::before, .myWorkSheet::before, .myResource::before{
     vertical-align: middle;
     margin-right: 3px;
     display: inline-block;
@@ -641,7 +688,13 @@
     background-size:15px;
 }
 
-.myPageMenu.active .myProd::before, .myPageMenu.active .myRepo::before, .myPageMenu.active .myWorkSheet::before{
+.myResource::before{
+    background:  url("img/geometric.png") no-repeat bottom;
+    background-size:15px;
+}
+
+.myPageMenu.active .myProd::before, .myPageMenu.active .myRepo::before, .myPageMenu.active .myWorkSheet::before
+, .myPageMenu.active .myResource::before{
     opacity: 1;
 }
 
@@ -747,9 +800,10 @@
     user-select: none;
 }
 
-.td1.userSearchPage:hover{
+.td1.backHover:hover{
     background: rgba(201, 202, 203, 0.2);
 }
+
 
 .myNickName{
     font-size: 20px;
@@ -1100,4 +1154,164 @@
     top:50%;
     left:50%;
     transform: translate(-50%, -50%);
+}
+
+.paddingFiveZero{
+    padding:50px;
+}
+
+.backLightGray{
+    background-color: rgb(239, 238, 238);
+}
+
+.delBtn{
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background:  url("img/trashBox.png") no-repeat center;
+    background-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top:10px;
+    right: 5px;
+    padding: 6px;
+}
+
+.delBtn:hover{
+    width: 20px;
+    height: 20px;
+    background:  url("img/trashBoxOrg.png") no-repeat center;
+    background-size: 20px;
+}
+
+
+.errBtn{
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background:  url("img/siren.png") no-repeat center;
+    background-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top:45px;
+    right: 5px;
+    padding: 6px;
+}
+
+.topErrBtn{
+    top:10px;
+}
+
+.errBtn:hover{
+    width: 22px;
+    height: 22px;
+    background:  url("img/sirenOrg.png") no-repeat center;
+    background-size: 21px;
+}
+
+.reviseBtn{
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background:url("img/pencil.png") no-repeat center;
+    background-size: 17px;
+    cursor: pointer;
+    position: absolute;
+    top: 45px;
+    right: 5px;
+    padding: 4px;
+}
+
+.reviseBtn:hover{
+    background:url("img/pencilOrg.png") no-repeat center;
+    background-size: 17px;
+}
+
+.errorReportRootDiv{
+    display: inline-block;
+    width: 400px;
+    min-height: 250px;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 7%);
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.errorReportRootTitle{
+    font-family: 'jejuGothic';
+    color:orange;
+    font-size: 20px;
+    margin-top:10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid lightgrey;
+}
+
+.errorReportRootTitle::before{
+    display: inline-block;
+    content: '';
+    width: 25px;
+    height: 25px;
+    background:  url("img/sirenOrg.png") no-repeat center;
+    background-size: 24px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.errorReportRootDesc{
+    font-family: 'jejuGothic';
+    font-size: 16px;
+    margin: 20px 10px 20px 10px;
+    text-align: left;
+    color:gray;
+}
+
+.errCloseBtn{
+    position: absolute;
+    top:0;
+    right:0;
+}
+
+.errorReportContents{
+    font-family: 'jejuGothic';
+    outline: none;;
+    padding:5px;
+    width: 90%;
+    height: 50px;
+    margin:auto;
+    resize: none; /* 사용자 임의 변경 불가 */
+    font-size:14px;
+    line-height: 150%;
+    border-radius: 5px;
+}
+
+.errorReportContents:focus{
+    outline: none;
+    border:1px solid rgb(237, 207, 150);
+    box-shadow:0 0 2px 2px rgb(255, 184, 52);
+}
+
+.errRegisterBtn{
+    cursor: pointer;
+    font-family: 'jejuGothic';
+    display: inline-block;
+    padding: 3px 7px;
+    background-color : rgb(255, 184, 52);
+    color:white;
+    border-radius: 5px;
+    margin:20px auto;
+}
+
+.hourglass{
+    display: inline-block;
+    width: 100px;
+    margin-bottom:20px;
 }

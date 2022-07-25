@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import contentsEmpty from 'img/contentsEmpty.gif';
 import paper from 'img/paper.gif';
 import myRepoEmpty from 'img/myRepoEmpty.gif';
-
+import squareAndCircle from 'img/squareAndCircle.gif';
 
 const EmptyList = ({msg, imgName, addImgClass})=>{
     const [imgPath, setImgPath] = useState(null);
@@ -14,6 +14,8 @@ const EmptyList = ({msg, imgName, addImgClass})=>{
             setImgPath(paper);
         }else if(imgName === "myRepoEmpty"){
             setImgPath(myRepoEmpty);
+        }else if(imgName === "myResourceEmpty"){
+            setImgPath(squareAndCircle);
         }
     },[])
    

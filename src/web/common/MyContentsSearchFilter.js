@@ -48,43 +48,45 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
     
 
     const myContentsSortFilter = async(event, sortBy) =>{
-        let contentsNodeList = document.getElementsByClassName("contents-show")[0].childNodes;
-        var contentsArray = [].slice.call(contentsNodeList, 0);
-        if(sortBy==="latest"){
-            contentsArray.sort(function(a, b)  {
-                return Number(b.dataset.sysCreateDate) - Number(a.dataset.sysCreateDate);       //내림차순, 날짜 큰것 부터 작 순으로
-              });
-        }else if(sortBy==="oldest"){
-            
-            contentsArray.sort(function(a, b)  {
-                return Number(a.dataset.sysCreateDate) - Number(b.dataset.sysCreateDate);       //오름차순, 날짜 작은것 부터 큰 순으로
-              });
+        let filterContents = document.getElementsByClassName("filterContents");
+        for(let j=0; j<filterContents.length; j++){
+            let contentsNodeList = filterContents[j].childNodes;
+            var contentsArray = [].slice.call(contentsNodeList, 0);
+            if(sortBy==="latest"){
+                contentsArray.sort(function(a, b)  {
+                    return Number(b.dataset.sysCreateDate) - Number(a.dataset.sysCreateDate);       //내림차순, 날짜 큰것 부터 작 순으로
+                  });
+            }else if(sortBy==="oldest"){
+                
+                contentsArray.sort(function(a, b)  {
+                    return Number(a.dataset.sysCreateDate) - Number(b.dataset.sysCreateDate);       //오름차순, 날짜 작은것 부터 큰 순으로
+                  });
+            }
+            for(let i=0;i<contentsNodeList.length; i++){
+                contentsNodeList[i].remove();
+            }
+            for(let i=0;i<contentsArray.length; i++){
+                document.getElementsByClassName("contents-show")[j].append(contentsArray[i]);
+            }
+            document.getElementById("mySortFilterTitle").innerText= event.target.innerText;
         }
-        for(let i=0;i<contentsNodeList.length; i++){
-            contentsNodeList[i].remove();
-        }
-        for(let i=0;i<contentsArray.length; i++){
-            document.getElementsByClassName("contents-show")[0].append(contentsArray[i]);
-        }
-        document.getElementById("mySortFilterTitle").innerText= event.target.innerText;
     }
 
 
     const myContentsSubFilter = async(event) =>{
         let target = event.target;
-        let targetUnitUniqno = target.dataset.unitUniqNo.substr(0,2);
-        if(targetUnitUniqno==="00"){ document.getElementById("mySubFilterTitle").innerText = "학년 및 과목";}
+        let targetSubject = target.innerHTML;
+        if(targetSubject==="전체"){ document.getElementById("mySubFilterTitle").innerText = "학년 및 과목";}
         else {document.getElementById("mySubFilterTitle").innerText= target.innerText;}
 
-       
         let contentsDiv = document.getElementsByClassName("contentsDivForFilter");
         for(let i=0; i<contentsDiv.length; i++){
-           if(targetUnitUniqno==="00"){
+           if(targetSubject==="전체"){
                 contentsDiv[i].classList.remove("hide");
                 continue;
            }
-           let unitUniqNo =  contentsDiv[i].dataset.unitUniqNo.substr(0,2);
-           if(targetUnitUniqno !==unitUniqNo){
+           let subject =  contentsDiv[i].dataset.subject;
+           if(targetSubject !==subject){
                 contentsDiv[i].classList.add("hide");
            }else{
                 contentsDiv[i].classList.remove("hide");

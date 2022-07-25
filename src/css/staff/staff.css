@@ -1029,6 +1029,7 @@ height: 1.6em;
 .workListTable.userSearchPage .td1,.workListTable .td2{
     border-left:1px solid lightgray;
     padding: 20px 0 10px 0;
+    position: relative;
 }
 
 .workListTable .td3{
@@ -1149,6 +1150,16 @@ height: 1.6em;
     font-family: 'jejuGothic';
     background-color: rgb(255, 187, 0);
     color:white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 3px solid rgb(255, 174, 0);
+    cursor: pointer;
+}
+
+.orangeBorderBtn{
+    font-family: 'jejuGothic';
+    background-color: white;
+    color:rgb(255, 187, 0);
     padding: 10px 20px;
     border-radius: 10px;
     border: 3px solid rgb(255, 174, 0);

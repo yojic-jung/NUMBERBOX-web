@@ -9,8 +9,7 @@ import RegisterContents from 'web/contents/register/RegisterContents'
 import RegisterResource from 'web/mathResource/RegisterResource'
 import ShareResource from 'web/mathResource/ShareResource'
 import ContentsList from 'web/contents/list/ContentsList'
-import MyContentListWrap from 'web/contents/list/MyContentListWrap'
-import MyRepositoryWrap from 'web/contents/list/MyRepositoryWrap'
+import MyPageWrap from 'web/contents/list/MyPageWrap'
 import UserProfileWrap from 'web/contents/list/UserProfileWrap'
 import WorkContentsList from 'web/contents/list/WorkContentsList'
 import NotFound from 'web/page/NotFound'
@@ -37,15 +36,16 @@ const App = ()=>{
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>
               <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
+              <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login" />} />
               <Route element={<BottomMenuBar/>}>
                 <Route exact path="/" element={<Main />} />
-                <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login" />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login" />} />
                 <Route exact path="/makeContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={1} /> : <Navigate to="/login" />} />
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
                 <Route exact path="/contentsList" element={nb_isLogin()  ? <ContentsList /> : <Navigate to="/login" />} />
-                <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyContentListWrap /> : <Navigate to="/login" />} />
-                <Route exact path="/myRepository" element={nb_isLogin()  ? <MyRepositoryWrap /> : <Navigate to="/login" />} />
+                <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
+                <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
+                <Route exact path="/myResource" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login" />} />
                 <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login" />} />

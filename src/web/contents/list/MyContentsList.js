@@ -87,7 +87,8 @@ const MyContentsList = ({isMine, userNo})=>{
             if(isMine){
                 document.getElementById("myPageProd").classList.add("active");
                 document.getElementById("myPageRepo").classList.remove("active");
-                document.getElementById("myPageTestPaper").classList.remove("active");
+                document.getElementById("myMathDocs").classList.remove("active");
+                document.getElementById("myResource").classList.remove("active");
                 setEmptyListMsg("나의 제작문제가 존재하지 않습니다. \n문제를 만들어 공유해 보세요.");
             }else{
                 setEmptyListMsg("사용자의 제작문제가 존재하지 않습니다.");
@@ -102,6 +103,11 @@ const MyContentsList = ({isMine, userNo})=>{
                 setConLikeInfoList(returnObj.mathConLikeInfo);
             }
             setContentsList(returnObj.myContentsList);
+            if(returnObj.myContentsList.length === 0){
+                document.getElementById("mySubFilterTitle").classList.add("hide");
+                document.getElementById("mySortFilterTitle").classList.add("hide");
+                document.getElementById("filetedEmptyMsg").classList.add("hide");
+            }
             fExecuteWidth=true;
         }
         if(!fExecuteWidth){
@@ -172,6 +178,11 @@ const MyContentsList = ({isMine, userNo})=>{
                     }
                 });
                 setContentsList(contentsListTmp);
+                if(contentsListTmp.length === 0){
+                    document.getElementById("mySubFilterTitle").classList.add("hide");
+                    document.getElementById("mySortFilterTitle").classList.add("hide");
+                    document.getElementById("filetedEmptyMsg").classList.add("hide");
+                }
                 let contentsDiv = document.getElementsByClassName("contentsDiv");
                 for(let i=0; i<contentsDiv.length; i++){
                     if(Number(contentsDiv[i].dataset.contentsNo) === contentsNo){
@@ -313,57 +324,53 @@ const MyContentsList = ({isMine, userNo})=>{
                         shareDesc ="비공개"
                     }
                 }
-                return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-unit-uniq-no={contentsMap.unitUniqNo} data-sys-create-date={sysDateStr}> 
+                return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
                                 <table className='workListTable'>
                                     <thead>
 
                                         <tr className='workListTBHead2'>
                                             <td>
-                                                <div className='twoFlexLayout'>
-                                                    <div className='twoFlexLayout'>
-                                                       
-                                                        <div>
-                                                            {!isMine && 
-                                                            <>
-                                                                <span className='userSearchBtn'>
-                                                                    <span id={"contentsRepo"+contentsMap.contentsNo} className="putRepoBtn"  onClick={(event)=>{putInMyRepo(event, contentsMap.contentsNo)}}></span>
-                                                                    <span className='putRepoToolTip'>나의 저장소에 저장되었습니다</span>
-                                                                </span>
-                                                                <span className='userSearchBtn'>
-                                                                    <span id={"contentsLike"+contentsMap.contentsNo} className="likeBtn" onClick={(event)=>{likeContents(event, contentsMap.contentsNo);}}></span>
-                                                                </span>
-                                                            </>
+                                                <div>
+                                                    {!isMine && 
+                                                    <>
+                                                        <span className='userSearchBtn'>
+                                                            <span id={"contentsRepo"+contentsMap.contentsNo} className="putRepoBtn"  onClick={(event)=>{putInMyRepo(event, contentsMap.contentsNo)}}></span>
+                                                            <span className='putRepoToolTip'>나의 저장소에 저장되었습니다</span>
+                                                        </span>
+                                                        <span className='userSearchBtn'>
+                                                            <span id={"contentsLike"+contentsMap.contentsNo} className="likeBtn" onClick={(event)=>{likeContents(event, contentsMap.contentsNo);}}></span>
+                                                        </span>
+                                                    </>
+                                                    }
+                                                    [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
+                                                    {isMine &&
+                                                        <>
+                                                            {hasLicense  &&
+                                                            <span className='miniCircle'>{shareDesc}</span>
                                                             }
-                                                            [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
-                                                            {isMine &&
-                                                                <>
-                                                                    {hasLicense  &&
-                                                                    <span className='miniCircle'>{shareDesc}</span>
-                                                                    }
-                                                                </>
-                                                            }
-                                                            
-                                                            {contentsMap.contentsClassify ===2 &&
-                                                            <>
-                                                                <span className='miniCircle'>변형문제</span>
-                                                                <span className="miniBtn" onClick={()=>showOrgContents(Number(contentsMap.orgContentsNo))}>원본문제 보기</span>
-                                                            </>
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                        </>
+                                                    }
+                                                    
+                                                    {contentsMap.contentsClassify ===2 &&
+                                                    <>
+                                                        <span className='miniCircle'>변형문제</span>
+                                                        <span className="miniBtn" onClick={()=>showOrgContents(Number(contentsMap.orgContentsNo))}>원본문제 보기</span>
+                                                    </>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className='bi-jutify-align'>
+                                                    <div>정답 및 해설</div>
                                                     <div>
                                                         {isMine && 
                                                         <>
                                                             <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} data-contents-classify={contentsMap.contentsClassify} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button>
-                                                            <span className='contentsDelBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}>삭제</span>
                                                             <span className='hide'>유형 : {contentsMap.mathTypeInfo.quesType}</span>
                                                         </>
                                                         }
-                                                        
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td>정답 및 해설
                                             </td>
                                         </tr>
                                     </thead>
@@ -410,6 +417,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <span className='delBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}></span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -431,7 +439,7 @@ const MyContentsList = ({isMine, userNo})=>{
                 { !modalState &&
                 <div>
                     <div className='workList myContentsList'>
-                        <div className="contents-show" id="contents-show">
+                        <div className="contents-show filterContents" id="contents-show">
                         {workContentsList.length !== 0 ? 
                         <>
                             {workContentsList}

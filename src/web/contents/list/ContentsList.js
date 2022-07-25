@@ -12,6 +12,7 @@ import {nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, n
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
 import defaultProfile from 'img/defaultProfileWhite.png';
+import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
 let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
@@ -34,6 +35,7 @@ const ContentsList = ()=>{
     const [emptyListMsg, setEmptyListMsg] = useState("단원 정보를 선택하여 원하는 문제를 찾아보세요.");
     const [conLikeInfoList, setConLikeInfoList] = useState(new Array());
     const [conRepoInfoList, setConRepoInfoList] = useState(new Array());
+    const [errContentsNo, setErrContentsNo] = useState(0);
 
     const removeAddedEvent = () => {
         window.removeEventListener('scroll', nb_detectScrollPosition);
@@ -296,7 +298,13 @@ const ContentsList = ()=>{
 
         
         
-        
+        const errorReportOpen = async (contentsNo) => {
+            setErrContentsNo(contentsNo);
+        }
+    
+        const errorReportClose = async (contentsNo) => {
+            setErrContentsNo(0);
+        }
 
         const modalBaseRepoChange = async (contentsno, isDel)=>{
             if(isDel){
@@ -486,7 +494,8 @@ const ContentsList = ()=>{
 
         }
 
-        const showDetailConInfo = async (contentsNo, userNo)=>{
+        const showDetailConInfo = async (event, contentsNo, userNo)=>{
+            if(event.target.classList.contains("errBtn")) return;
             document.getElementById("detailedContentsLike").dataset.contentsNo = contentsNo;
             if(document.getElementById("contentsLike"+contentsNo).classList.contains("active") || document.getElementById("contentsLike"+contentsNo).classList.contains("active2")){
                 document.getElementById("detailedContentsLike").classList.remove('active');
@@ -624,7 +633,7 @@ const ContentsList = ()=>{
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className='td1 userSearchPage' onClick={()=>{showDetailConInfo(contentsMap.contentsNo, contentsMap.membersProfile.userNo)}} >
+                                            <td className='td1 userSearchPage backHover' onClick={(event)=>{showDetailConInfo(event, contentsMap.contentsNo, contentsMap.membersProfile.userNo)}} >
                                                 <div className='userSearchCon'>
                                                     <div id="workQuesShow" className='workQuesShow quesRootDiv'>
                                                         <div className='quesDiv'>
@@ -642,6 +651,7 @@ const ContentsList = ()=>{
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className='errBtn topErrBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo)}}onMouseOver={(event)=>{event.target.closest(".td1").classList.remove("backHover")}} onMouseOut={(event)=>{event.target.closest(".td1").classList.add("backHover")}}></div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -697,8 +707,10 @@ const ContentsList = ()=>{
                 { modalState  && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2}/>}
             </div>
             <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
-
-           
+            
+            {errContentsNo !== 0 &&
+            <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} />
+            }
             </>
 
   );

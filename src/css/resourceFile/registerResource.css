@@ -150,10 +150,10 @@
     line-height: 120%;
     width: 80px;
     padding: 3px 0 3px 10px;
-    background:rgb(217, 83, 79) url("img/folder-icon.png") no-repeat;
+    background:rgb(102, 158, 242) url("img/folder-icon.png") no-repeat;
     background-size: 15px;
     background-position: 2px center;
-    border:1px solid rgb(217, 83, 79);
+    border:1px solid rgb(102, 158, 242);
     color:white;
     border-radius: 2px;
     font-size: 14px;
@@ -162,12 +162,21 @@
 #imgDiv, #pptDiv{
     display: inline-block;
     line-height: 100%;
+    position: relative;
 }
 
 
 .representImg{
     cursor: pointer;
-    width:280px;
+    width:250px;
+}
+
+.regImgDesc{
+    width: 330px;
+    color:rgb(88, 115, 213);
+    margin:auto;
+    font-size: 13px;
+    line-height: 160%;
 }
 
 .regRepImg{
@@ -179,11 +188,12 @@
     opacity: 0.5;
 }
 
-.pptDesc{
+.regResourceDesc{
     font-family: 'jejuGothic';
-    font-weight: bold;
     font-size: 12px;
-    color:rgb(230, 154, 164)
+    color:rgb(114, 154, 219);
+    line-height: 150%;
+    margin-top:5px;
 }
 
 .userCateDiv{
@@ -197,7 +207,7 @@
 .userCateBtn{
     display: inline-block;
     cursor: default;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     color:rgb(56, 68, 109);
     padding: 0 5px;
@@ -215,12 +225,6 @@
 
 }
 
-.cateDesc{
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    color: rgb(148, 149, 151);
-}
 
 .paddingZero{
     padding: 0 0 15px 0 !important;

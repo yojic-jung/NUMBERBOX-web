@@ -118,6 +118,33 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     return returnVal;
   }
 
+
+ export const nb_dataFileFetch = async (url, fileName) => {
+      
+  await fetch(url, {
+        method: 'get',	// 방식은 get
+        headers: {
+          'access-token':window.localStorage.getItem("access-token")
+        },
+    }).then((res) => {
+            return res.blob();
+      }).then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout((_) => {
+                window.URL.revokeObjectURL(url);
+            }, 60000);
+            a.remove();
+
+        })
+        .catch((err) => {
+            console.error('err: ', err);
+        });
+};
   
   /*
   * 로그인 요청
@@ -229,7 +256,13 @@ export const nb_promptBox = async (message, placeholderMsg) => {
   document.getElementById("promptInput").placeholder = placeholderMsg;
 }
 
-
+/*
+* custom prompt (정중앙 위치)
+*/
+export const nb_confirmBox = async (message) => {
+  document.getElementById("confirmBoxScreen").classList.remove("hide");
+  document.getElementById("confirmMsg").innerText = message;
+}
 /*
  * 정의 : 클래스 추가 함수
  */
@@ -344,10 +377,8 @@ export const nb_extensionCheck2 = async (event) => {
       document.getElementById(targetId).value= "";
       return false;
   }
-  
-  let pathpoint = obj.value.lastIndexOf('.');
-  let filepoint = obj.value.substring(pathpoint+1,event.length);
-  let filetype = filepoint.toLowerCase();
+  let fileNames = event.target.files[0].name.split(".");
+  let filetype = fileNames[1].toLowerCase();
   // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
   if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
   }else{
@@ -355,6 +386,13 @@ export const nb_extensionCheck2 = async (event) => {
     document.getElementById(targetId).value= "";
     return false;
   }
+
+  if(fileNames[0].length > 40){
+    alert("파일이름은 40글자 미만으로 설정해주시기 바랍니다.");
+    document.getElementById(targetId).value= "";
+    return false;
+}
+
 }
 
 
@@ -747,3 +785,23 @@ export const nb_moveToScroll = async function(isToTop){
   }
 }
 
+export const nb_moveToScrollAllRange = async function(isToTop){
+  if(isToTop){
+      let interval = setInterval(function(){
+          if(window.scrollY===0){clearInterval(interval);}
+          window.scrollTo(window.scrollX, window.scrollY-window.scrollY/20)
+      }, 1)
+  }else{
+      if(document.getElementById("bottom-div") !== null) document.getElementById("bottom-div").classList.add("hide");
+      let interval = setInterval(function(){
+          if(Math.abs(window.scrollY-(document.documentElement.scrollHeight-document.body.offsetHeight)) <10 ){
+            if(document.getElementById("bottom-div") !== null) document.getElementById("bottom-div").classList.remove("hide");
+            clearInterval(interval);
+            //window.scrollTo(window.scrollX, window.scrollY-300);
+          }else{
+            if(window.scrollY === 0)  window.scrollTo(window.scrollX, 100);
+            window.scrollTo(window.scrollX, window.scrollY+window.scrollY/20)
+          }
+      }, 1)
+  }
+}

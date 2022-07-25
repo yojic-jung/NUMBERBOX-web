@@ -6,8 +6,9 @@ const MyPageList = ()=>{
                 <div className="myPageMenuDIv">
                     <div className="myPageMenuWrap">
                         <Link className='linkNoneCss' to="/myContentsList"><span id="myPageProd" className="myPageMenu"><span className="myPageMenuTitle myProd">나의 제작문제</span></span></Link> 
-                        <Link className='linkNoneCss' to="/myRepository"><span id="myPageRepo" className="myPageMenu"><span className="myPageMenuTitle myRepo">나의 저장소</span></span></Link>
-                        <span className="myPageMenu"><span id="myPageTestPaper" className="myPageMenuTitle myWorkSheet">학습지</span></span>
+                        <Link className='linkNoneCss' to="/myRepository"><span id="myPageRepo" className="myPageMenu"><span className="myPageMenuTitle myRepo">저장소</span></span></Link>
+                        <span className="myPageMenu"><span id="myMathDocs" className="myPageMenuTitle myWorkSheet">학습지</span></span>
+                        <Link className='linkNoneCss' to="/myResource"><span id="myResource" className="myPageMenu"><span className="myPageMenuTitle myResource">컨텐츠</span></span></Link>
                     </div>
                 </div>
             </>
