@@ -141,7 +141,7 @@ return (
             <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
             <div id="resDetailedTitle" className='resDetailedTitle'></div>
             <div id="resDetailedCate" className='resDetailedCate'></div>
-            <div className='resDetailedDesc'>※ppt 슬라이드의 캡처본으로 실제보다 화질이 낮게 보입니다.</div>
+            <div className='resDetailedDesc'>※ 미리보기 이미지는 실제 파일의 화질보다 낮게 보이며 글꼴이 다를 수 있습니다.</div>
             <div id="customImgSliderErrBtn" className='errBtn customImgSliderErrBtn' onClick={(event)=>{errorReportOpen(event.target.dataset.resourceNo)}}></div>
             <div className='overflowHidden'>
                 <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
