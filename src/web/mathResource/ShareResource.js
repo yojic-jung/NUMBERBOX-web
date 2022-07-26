@@ -89,9 +89,7 @@ const ShareResource = ()=>{
         }
 
         document.getElementById("resDetailedPPtDownBtn").dataset.pptName = pptFileName;
-        document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-        let returnObj = await nb_dataFetch('/mathInfo/takePPtSlideImge?filePath=resourcePpt&fileName='+pptFileName, false);
-        document.getElementById("resDetailedTimeDesc").classList.add("hide");
+        let returnObj = await nb_dataFetch('/mathInfo/takePPtSlideImge?resourceNo='+resourceNo, true);
         document.getElementById("resDetailedWrap").classList.remove("hide");
         
         document.getElementById("customImgSliderErrBtn").dataset.resourceNo = resourceNo;
@@ -102,7 +100,7 @@ const ShareResource = ()=>{
             let sliderDiv = document.createElement('div');
             sliderDiv.className = "customSliderBox";
             let sliderImg = document.createElement('img');
-            sliderImg.src = "data:image/png;base64,"+returnObj.imgList[i];
+            sliderImg.src = returnObj.imgList[i].imgPath+"/"+returnObj.imgList[i].imgName;
             sliderDiv.append(sliderImg);
             sliderImg.classList.add("customSliderImg");
             if(i!==0) sliderImg.classList.add("hide");
@@ -159,15 +157,7 @@ return (
             </div>
         </div>
      </div>
-     <div id="resDetailedTimeDesc" className='blindBox hide'>
-        <div className='resDetailedTimeDesc'>
-            <div>
-                <img className="hourglass" src={hourglass} alt=""/>
-            </div>
-            ppt를 불러오는데 시간이 걸릴 수 있습니다.<br/>
-            잠시만 기다려 주세요...
-        </div>
-     </div>
+     
      {errContentsNo !== 0 &&
             <ErrorReportForMathCon title="컨텐츠 오류 신고" errType={2} parentMethod={errorReportClose} conNo={errContentsNo} />
         }

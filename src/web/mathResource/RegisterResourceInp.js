@@ -4,6 +4,7 @@ import addImg from 'img/add.png';
 import CustomSelectBox from 'web/common/CustomSelectBox';
 import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox} from 'js/common/common_nb.js';
 import "css/resourceFile/registerResource.css";
+import hourglass from 'img/hourglass.gif';
 
 const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
 
@@ -198,7 +199,9 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
         }
         formData.append("cateList", cateList);
 
-		let returnVal = await nb_formDataFetch("/mathInfo/registerResource", formData, true);
+        document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+		let returnVal = await nb_formDataFetch("/mathInfo/registerResource", formData, false);
+        document.getElementById("resDetailedTimeDesc").classList.add("hide");
         if(returnVal.isSuccess === true){
             await nb_fadeInOutA("컨텐츠가 정상적으로 등록 되었습니다.\n나의 컨텐츠 페이지에서 확인 가능합니다.", 2000);
             document.forms[0].reset();
@@ -230,10 +233,13 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
         }
         formData.append("cateList", cateList);
 
-        let returnVal = await nb_formDataFetch("/mathInfo/updateResource", formData, true);
+        document.getElementById("confirmBoxClose").click();
+        document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+        let returnVal = await nb_formDataFetch("/mathInfo/updateResource", formData, false);
+        document.getElementById("resDetailedTimeDesc").classList.add("hide");
+
         if(returnVal.isSuccess === true){
             await nb_fadeInOutA("컨텐츠가 정상적으로 수정 되었습니다.", 2000);
-            document.getElementById("confirmBoxClose").click();
             document.getElementById("updateResouceClose").click();
             parentMethod(returnVal.newMathResource);
             //수정된 컨텐츠로 초기화
@@ -320,6 +326,15 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
                     </div>
                 </div>
             </div>
+            <div id="resDetailedTimeDesc" className='blindBox hide'>
+            <div className='resDetailedTimeDesc'>
+                <div>
+                    <img className="hourglass" src={hourglass} alt=""/>
+                </div>
+                ppt를 등록하는데 시간이 걸릴 수 있습니다.<br/>
+                잠시만 기다려 주세요...
+            </div>
+     </div>
         </>
     );
 

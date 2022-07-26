@@ -31,7 +31,7 @@ const MyResource = ()=>{
         asyncUseEffect();
         }, []);
 
-    const showDetailedRes = async (event, title, pptFileName, resourceCate) =>{
+    const showDetailedRes = async (event, title, pptFileName, resourceNo, resourceCate) =>{
         if(event.target.classList.contains("reviseBtn") || event.target.classList.contains("delBtn")) return;
         document.getElementById("resDetailedTitle").innerHTML=title;
         document.getElementById("resDetailedCate").innerHTML = "";
@@ -48,9 +48,7 @@ const MyResource = ()=>{
         }
         
         document.getElementById("resDetailedPPtDownBtn").dataset.pptName = pptFileName;
-        document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-        let returnObj = await nb_dataFetch('/mathInfo/takePPtSlideImge?filePath=resourcePpt&fileName='+pptFileName, false);
-        document.getElementById("resDetailedTimeDesc").classList.add("hide");
+        let returnObj = await nb_dataFetch('/mathInfo/takePPtSlideImge?resourceNo='+resourceNo, true);
         document.getElementById("resDetailedWrap").classList.remove("hide");
         
         document.getElementById("customImgSliderBtnDiv").innerHTML = "";
@@ -60,7 +58,7 @@ const MyResource = ()=>{
             let sliderDiv = document.createElement('div');
             sliderDiv.className = "customSliderBox";
             let sliderImg = document.createElement('img');
-            sliderImg.src = "data:image/png;base64,"+returnObj.imgList[i];
+            sliderImg.src = returnObj.imgList[i].imgPath+"/"+returnObj.imgList[i].imgName;
             sliderDiv.append(sliderImg);
             sliderImg.classList.add("customSliderImg");
             if(i!==0) sliderImg.classList.add("hide");
@@ -115,7 +113,6 @@ const MyResource = ()=>{
     }
 
     const updateResourceObj = async (newResource) => {
-        console.log("as")
         let oldResourceIdx;
         let newResourceList = resourceList;
         resourceList.map((resourceMap, idx) => {
@@ -176,7 +173,7 @@ const MyResource = ()=>{
 
     const initResoureList = resourceList.map( (contentsMap, idx) => {
         return (<div id={"res-div-"+contentsMap.resourceNo} className="res-div" data-uniq-id={contentsMap.seqNo} key={idx}>
-                    <div className='res-over-lay' onClick={(event)=>{showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.mathResourceCate)}}>
+                    <div className='res-over-lay' onClick={(event)=>{showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.resourceNo, contentsMap.mathResourceCate)}}>
                         <span className='pptPageCnt'>{contentsMap.pptPageCnt}</span>
                         <span className='reviseBtn' onClick={()=>{updtValSet(contentsMap.resourceNo, contentsMap.title, contentsMap.imgPath, contentsMap.imgName, contentsMap.pptName, contentsMap.mathResourceCate);}}></span>
                         <span className='delBtn' onClick={()=>{nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.");setDelResourceNo(contentsMap.resourceNo)}} ></span>
@@ -221,15 +218,6 @@ const MyResource = ()=>{
                 </div>
             </div>
             </div>
-            <div id="resDetailedTimeDesc" className='blindBox hide'>
-            <div className='resDetailedTimeDesc'>
-                <div>
-                    <img className="hourglass" src={hourglass} alt=""/>
-                </div>
-                ppt를 불러오는데 시간이 걸릴 수 있습니다.<br/>
-                잠시만 기다려 주세요...
-            </div>
-        </div>
         <div id="promptBoxScreen" className='promptBoxScreen hide'>
                 <div id="promptBox" className='promptBox'>
                     <div className='promptBoxTop'><span id="promptBoxClose" className="promptBoxClose" onClick={()=>{document.getElementById("promptBoxScreen").classList.add('hide'); document.getElementById("promptInput").value="";}}>X</span></div>
