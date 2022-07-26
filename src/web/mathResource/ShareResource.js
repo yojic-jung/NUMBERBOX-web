@@ -7,6 +7,7 @@ import {nb_dataFetch, nb_dataFileFetch, nb_getParameterByName} from 'js/common/c
 import "css/resourceFile/shareResource.css";
 import hourglass from 'img/hourglass.gif';
 
+let resourceMenuArr;
 const ShareResource = ()=>{
     let location = useLocation();
     const [mainCate, setMainCate] = useState(new Array());	// 사용자 입력 문제
@@ -17,12 +18,13 @@ const ShareResource = ()=>{
     useEffect(() => {
         const asyncUseEffect = async function(){
             let returnVal = await nb_dataFetch('/mathInfo/takeResourceMenu', true);
-            let resourceMenu = returnVal["resourceMenuList"];
-            setResourceMenu(resourceMenu);
+            let resourceMenulist = returnVal["resourceMenuList"];
+            setResourceMenu(resourceMenulist);
+            resourceMenuArr=resourceMenulist;
             let uniqueArr = [];
-            resourceMenu.filter((element, index) => {
+            resourceMenulist.filter((element, index) => {
                 if(index!==0){
-                    if(resourceMenu[index-1]["mainCateName"] !== element["mainCateName"]){
+                    if(resourceMenulist[index-1]["mainCateName"] !== element["mainCateName"]){
                         uniqueArr.push(element);
                     }
                 }else{
@@ -75,9 +77,9 @@ const ShareResource = ()=>{
         document.getElementById("resDetailedTitle").innerHTML=title;
         document.getElementById("resDetailedCate").innerHTML = "";
         for(let i=0; i<resourceCate.length; i++){
-            for(let j=0; j<resourceMenu.length; j++){
-                if(resourceMenu[j].mainCateNo === resourceCate[i].mainCateNo && resourceMenu[j].midCateNo === resourceCate[i].midCateNo){
-                    let cateMenu = resourceMenu[j].mainCateName+"-"+resourceMenu[j].midCateName
+            for(let j=0; j<resourceMenuArr.length; j++){
+                if(resourceMenuArr[j].mainCateNo === resourceCate[i].mainCateNo && resourceMenuArr[j].midCateNo === resourceCate[i].midCateNo){
+                    let cateMenu = resourceMenuArr[j].mainCateName+"-"+resourceMenuArr[j].midCateName
                     let resourceCateDesc = document.createElement("span");
                     resourceCateDesc.innerHTML = cateMenu;
                     resourceCateDesc.className = "resourceCateDesc";
@@ -142,8 +144,7 @@ return (
             <div id="resDetailedTitle" className='resDetailedTitle'></div>
             <div id="resDetailedCate" className='resDetailedCate'></div>
             <div className='resDetailedDesc'>
-                ※ 미리보기 슬라이드는 실제보다 화질이 낮게 보이며 실제 슬라이드에 적용된 효과가
-                <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미리보기 슬라이드에는 적용이 안되어 나타날 수 있습니다.
+                ※ 미리보기는 실제 파일과 다소 차이가 있을 수 있으며 낮은 화질로 보여집니다.
             </div>
             <div id="customImgSliderErrBtn" className='errBtn customImgSliderErrBtn' onClick={(event)=>{errorReportOpen(event.target.dataset.resourceNo)}}></div>
             <div className='overflowHidden'>
