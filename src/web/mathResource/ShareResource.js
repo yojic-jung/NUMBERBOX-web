@@ -144,7 +144,7 @@ return (
             <div id="resDetailedTitle" className='resDetailedTitle'></div>
             <div id="resDetailedCate" className='resDetailedCate'></div>
             <div className='resDetailedDesc'>
-                ※ 미리보기는 실제 파일과 다소 차이가 있을 수 있으며 낮은 화질로 보여집니다.
+                ※ 미리보기 슬라이드는 실제 파일과 다소 차이가 있으며 낮은 화질로 보여집니다.
             </div>
             <div id="customImgSliderErrBtn" className='errBtn customImgSliderErrBtn' onClick={(event)=>{errorReportOpen(event.target.dataset.resourceNo)}}></div>
             <div className='overflowHidden'>
