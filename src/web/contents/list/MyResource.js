@@ -205,7 +205,7 @@ const MyResource = ()=>{
                 <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
                 <div id="resDetailedTitle" className='resDetailedTitle'></div>
                 <div id="resDetailedCate" className='resDetailedCate'></div>
-                <div className='resDetailedDesc'>※ppt 슬라이드의 캡처본으로 실제보다 화질이 낮게 보입니다.</div>
+                <div className='resDetailedDesc'>※미리보기 슬라이드는 실제 파일과 다소 차이가 날 수 있으며 낮은 화질로 보여집니다</div>
                 <div className='overflowHidden'>
                     <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
                 </div>
