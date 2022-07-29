@@ -47,7 +47,6 @@ const AdminSvcCenter = ()=>{
     const showReportCompleteList = async (targetId, errType) => {
         let reportStts =  document.getElementById(targetId).value;
         let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportSearchBySttsAndTypeByAdmin?reportStts="+reportStts+"&errType="+errType, true);
-        console.log(returnObj);
         if(errType === 0){
             setOneToOneList(returnObj.errReportList);
         }else if(errType === 1){
@@ -135,7 +134,6 @@ const AdminSvcCenter = ()=>{
             let errType = Number(document.getElementById("errTypeAdmin").value);
             if(errType === 0){
                 let newOneToOneList = oneToOneList.filter((errMap, idx)=>{
-                    console.log(reportId === errMap.reportId);
                     if(reportId === errMap.reportId) return false;
                     else return true;
                 })
@@ -246,9 +244,9 @@ return (
         <div id="conListDiv" className="adminServiceCenter">
             <div>
             검색 필터 : &nbsp;
-                <select id="reportSttsSel1">
+                <select id="reportSttsSel1" defaultValue="0">
                     <option value="-1">전체</option>
-                    <option value="0" selected={true}>접수</option>
+                    <option value="0">접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel1", 1)}}>검색</span>
@@ -269,9 +267,9 @@ return (
         <div id="resListDiv" className="adminServiceCenter hide">
         <div>
                 검색 필터 : &nbsp;
-                <select id="reportSttsSel2">
+                <select id="reportSttsSel2" defaultValue="0">
                     <option value="-1">전체</option>
-                    <option value="0" selected={true}>접수</option>
+                    <option value="0">접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel2", 2)}}>검색</span>
@@ -292,9 +290,9 @@ return (
         <div id="oneToOneDiv" className="adminServiceCenter oneToOne hide">
             <div>
             검색 필터 : &nbsp;
-                <select id="reportSttsSel3">
+                <select id="reportSttsSel3" defaultValue="0">
                     <option value="-1">전체</option>
-                    <option value="0" selected={true}>접수</option>
+                    <option value="0">접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel3", 0)}}>검색</span>

@@ -83,8 +83,6 @@ const ServiceCenter = ({myNickName})=>{
 
         document.getElementById("detailedSysCreateDate").innerHTML = errReport.sysCreateDate;
         document.getElementById("detailedReportContents").innerHTML = errReport.reportContents;
-        console.log(errReport);
-        console.log(errReport.firstImgName);
         if(errReport.firstImgName !== null){
             document.getElementById("detailedFirstImgShow").classList.remove("hide");
             document.getElementById("detailedFirstImgShow").src = errReport.firstImgPath +"/"+ errReport.firstImgName

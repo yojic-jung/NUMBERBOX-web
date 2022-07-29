@@ -30,7 +30,6 @@ const MyRepository = ()=>{
             document.getElementById("myPageRepo").classList.add("active");
             document.getElementById("myMathDocs").classList.remove("active");
             let returnObj= await nb_dataFetch("/mathInfo/takeMyRepo", true);
-            console.log(returnObj);
             let contentsNodeList = returnObj.mathContents;
             var contentsArray = [].slice.call(contentsNodeList, 0);
             contentsArray.sort(function(a, b)  {
