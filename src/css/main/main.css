@@ -24,11 +24,16 @@
 }
 
 .menu-title-etc{
-    font-family: 'TmoneyRoundWindExtraBold';
-    font-size: 20px;
+    font-family: 'GmarketSansBold';
+    font-size: 25px;
     color:#3e6599;
     padding: 10px 0;
     text-align: center;
+    letter-spacing: 1px;
+}
+
+.menu-title-etc2{
+    font-size: 19px;
 }
 
 .menu-list{
@@ -81,11 +86,15 @@
     flex: 1fr 4fr;
 }
 .bottom-menu-title{
-    font-family: 'TmoneyRoundWindExtraBold';
+    font-family: 'GmarketSansBold';
     font-size: 30px;
     color:white;
     padding: 20px 0;
     text-align: center;
+}
+
+.bottom-menu-title2{
+    font-size: 24px;
 }
 
 .bottom-menu-list-table{
@@ -106,6 +115,7 @@
     line-height: 200%;
 }
 .comp-info-title{
+    font-family: 'jejuGothic';
     font-size: 14px;
     color: rgb(208, 207, 207);
     margin-right:20px;

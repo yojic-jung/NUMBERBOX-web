@@ -212,8 +212,8 @@ const SignUp = ()=>{
 
 return (
         <div className='bage-ground'>
-            <div className='login-menu-title'><Link className='linkNoneCss' to="/">넘버링크</Link></div>
-            <div className='login-signup-desc'>넘버링크에 오신 것을 환영합니다!</div>
+            <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
+            <div className='login-signup-desc'>N명의수학에 오신 것을 환영합니다!</div>
             <div className="login-div">
                 <form id="signup-form" method="post">
                     <div className='login-input-div'>

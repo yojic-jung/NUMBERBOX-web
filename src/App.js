@@ -17,6 +17,7 @@ import {nb_isLogin} from 'js/common/common_nb.js';
 import GraphMake from 'web/mathResource/GraphMake';
 import TopMenuBar from 'web/common/TopMenuBar';
 import BottomMenuBar from 'web/common/BottomMenuBar';
+import AdminSvcCenter from 'web/admin/AdminSvcCenter';
 
 const App = ()=>{
   return (
@@ -37,6 +38,7 @@ const App = ()=>{
             <Route element={<TopMenuBar/>}>
               <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
               <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login" />} />
+              <Route exact path="/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login" />} />
               <Route element={<BottomMenuBar/>}>
                 <Route exact path="/" element={<Main />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login" />} />

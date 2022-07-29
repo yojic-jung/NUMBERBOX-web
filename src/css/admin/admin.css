@@ -1,0 +1,124 @@
+.errReportCnt{
+    position:relative;
+    display: inline-block;
+    min-width:30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: rgb(252, 99, 22);
+    text-align: center;
+    color:white;
+    line-height: 30px;
+    margin:0 3px;
+}
+
+
+.adminErrReportTitle{
+    font-size:20px;
+    padding:20px;
+}
+
+.adminErrReportTb{
+    border-spacing: 0;
+}
+
+
+.adminErrReportTbDiv{
+    cursor: pointer;
+    vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
+    opacity: 0.7;
+    border-bottom: 0.5px solid lightgrey;
+    padding:5px 15px
+}
+
+.adminErrReportTbDiv.active{
+    opacity: 1;
+    font-weight: bold;
+    border-bottom: 3px solid orange;
+}
+
+.adminServiceCenter .myQnATb td{
+    padding: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.adminServiceCenter .myQnATbContents{
+    width:470px;
+    text-align: left !important;
+}
+
+.adminServiceCenter .myQnATb{
+    margin-top:20px;
+}
+
+.reportErrType, .reportConNo, .reportDate{
+    width: 150px;
+}
+
+.adminServiceCenter.oneToOne .myQnATbContents{
+    width: 650px;
+}
+
+.detailedErrReportAdminWrap{
+    width:500px;
+    min-height:400px;
+    max-height: 90%;
+    overflow-y: scroll;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 7%);
+    box-sizing: border-box;
+    padding:10px;
+}
+
+.detailedReportContentsAdmin{
+    padding:3px 10px 10px 10px;
+    text-align: left;
+}
+
+.detailedErrReportConNoAdmin{
+    text-align: left;
+}
+
+.detailedErrReportAdminWrap::-webkit-scrollbar {width: 6px;}
+.detailedErrReportAdminWrap::-webkit-scrollbar-track {background: transparent; }
+.detailedErrReportAdminWrap::-webkit-scrollbar-thumb {background: #aeaeaf; border-radius: 45px;}
+.detailedErrReportAdminWrap::-webkit-scrollbar-thumb:hover {background: #504f4f;}
+
+.detailedErrReportTitle.admin{
+    font-family:'jejuGothic';
+}
+
+.detailedSysCreateDateAdmin{
+    margin-right:50px;
+}
+
+.closeBtn2.admin{
+    top:-13px;
+    right: -5px;
+}
+
+.questionText.admin{
+    outline: 1px solid black;
+}
+
+.adminBtn{
+    font-size:12px;
+    cursor: pointer;
+    background: rgb(142, 142, 142);
+    color:white;
+    display: inline-block;
+    padding:2px 5px;
+    margin: 10px 0 0 10px;
+    border-radius: 5px;
+}
+
+.reportStts.admin{
+    width: 100px;
+}

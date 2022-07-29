@@ -112,7 +112,12 @@
    /** src:url("font/GmarketSansTTFLight.ttf") 추후 변경 필요**/
     font-weight: 100;
 }
-
+@font-face {
+    font-family: 'GmarketSansBold';
+    src: url('font/GmarketSansBold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
 @font-face {
     font-family: 'caseBrck';

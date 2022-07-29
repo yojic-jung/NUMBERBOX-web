@@ -734,7 +734,7 @@ export const  nb_licenseUiCheck = async (licenseObj) => {
           document.getElementById("entLicSttsUi").classList.remove("activeCircle");
           document.getElementById("entLicSttsUi").classList.add("inactiveCircle");
         }
-      }else{  //넘버링크 문제의 경우
+      }else{  //N명의수학 문제의 경우
         document.getElementById("platformShareSttsUi").classList.remove("inactiveCircle");
         document.getElementById("platformShareSttsUi").classList.add("activeCircle");
 

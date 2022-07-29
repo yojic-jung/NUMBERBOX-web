@@ -3,9 +3,12 @@ import {Link} from "react-router-dom";
 import {nb_isLogin, nb_isManger, nb_isAdmin, nb_dataFetch} from 'js/common/common_nb.js';
 import defaultProfileImg from 'img/defaultProfile.png';
 import { Outlet } from "react-router";
+import ServiceCenter from 'web/common/ServiceCenter';
 
 const TopMenuBar = (isMain)=>{
     const [imgPath, setImgPath] = useState(null);
+    const [myNickName, setMyNickName] = useState(null);
+
     let isLogin = nb_isLogin();
     //매니저 권한 임시 구현
     let isManger = nb_isManger();
@@ -17,6 +20,7 @@ const TopMenuBar = (isMain)=>{
             const asyncUseEffect = async function(){
                 let jsonObj = await nb_dataFetch('/takeProfile', true);
                 if(jsonObj.isSuccess){
+                    setMyNickName(jsonObj.profile.nickname);
                     if(jsonObj.profile.profileImgPath !== null && jsonObj.profile.profileImgName !== null){
                         setImgPath(jsonObj.profile.profileImgPath+"/"+jsonObj.profile.profileImgName);
                     }
@@ -65,7 +69,7 @@ return (
     <>
     <div  id="topMenuBar" className='top-div'>
         <div className='bi-jutify-align'>
-            <div className={titleClass}><Link className='linkNoneCss' to="/">넘버링크</Link></div>
+            <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
             <div className={listClass}>
                 <table className='menu-list-table'>
                     <tbody>
@@ -89,7 +93,7 @@ return (
                                     <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
                                     <li>나의 학습지</li>
                                     <Link className='linkNoneCss' to="/myResource"><li>나의 컨텐츠</li></Link>
-                                    <li>고객센터</li>
+                                    <li onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
                                     <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
                                 </ul>
                             </td>
@@ -99,6 +103,9 @@ return (
             </div>
         </div>
     </div>
+    
+    <ServiceCenter myNickName={myNickName} />
+    
     {isManger && <div className='manager-menu'>
         <div className='bi-jutify-align'>
             <div>매니저 메뉴</div>
@@ -108,7 +115,7 @@ return (
                         <tr>
                             <td><Link className='manager-link' to="/workContentsList">작업내역</Link></td>
                             <td><Link className='manager-link' to="/registerContents">문제만들기</Link></td>
-                            {isAdmin && <td>컨텐츠 등록</td>}
+                            {isAdmin && <td><Link className='manager-link' to="/adminSvcCenter">관리자센터</Link></td>}
                         </tr>
                     </tbody>
                 </table>

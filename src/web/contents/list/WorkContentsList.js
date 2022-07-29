@@ -638,6 +638,39 @@ const WorkContentsList = ()=>{
 
         }
 
+
+        const searchWorkListByContentsNo = async function(hasNotiPhrases){
+            let contentsNo = document.getElementById("serchContentsNoVal").value;
+            let returnObj = await nb_dataFetch("/mathInfo/takeWorkContentsListByContentsNo?contentsno="+contentsNo, true);
+            window.history.pushState("", "문제검색", '/workContentsList?unitUniqId=0');
+            if(returnObj.error!=undefined){
+                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+            }
+
+            if(returnObj["isSearched"]){
+                fExecuteWidth = true;
+                if(returnObj["mathContents"].length===0){
+                    setContentsLen(0);
+                    setContentsList(returnObj["mathContents"]);
+                    if(hasNotiPhrases){
+                        await nb_fadeInOut("단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.", 2000);
+                        setEmptyListMsg("단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.");
+                    }  
+                    else{
+                        await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
+                        setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.");
+                    } 
+                }else{
+                    setContentsLen(returnObj["mathContents"].length);
+                    setContentsList(returnObj["mathContents"]);
+                    if(hasNotiPhrases)  await nb_fadeInOut("정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.", 2000);
+                    else  await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
+                }
+                
+            }
+
+        }
+
         const workContentsList = contentsList.map( (contentsMap, idx) => {
                 let quesNumber;
                 if(idx<9){
@@ -784,7 +817,7 @@ const WorkContentsList = ()=>{
                         <form method="post" id="workSearchForm">
                             <div id="workListUnitType" className='workListUnitType'>
                                 <div className='mini-title5'>
-                                    &nbsp; 넘버링크에서 원하는 문제를 찾아보세요.
+                                    &nbsp; N명의수학에서 원하는 문제를 찾아보세요.
                                 </div>
                                 <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelSecUnit" childId="secUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
                                 <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelSecUnit" childId="secUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -801,6 +834,7 @@ const WorkContentsList = ()=>{
                                 <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>
                             </div>
                         </form>
+                        <div className='alignCenter hide'>문제 고유 번호 검색 <input id="serchContentsNoVal" type="number" /> <button type="button" className="orangeBtn" onClick={()=>searchWorkListByContentsNo(false)}>검색</button></div>
                     </div>
                     <div className='workList'>
                         {workListChanged && workContentsList.length !==0 ? 

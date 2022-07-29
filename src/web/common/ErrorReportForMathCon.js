@@ -5,13 +5,13 @@ const ErrorReportForMathCon = ({title, errType, parentMethod, conNo})=>{
 
     useEffect(()=>{
       const asyncUseEffect = async function(){
-        document.getElementById("errorReportRootTitle").innerHTML = title;
-        let returnVal = await nb_dataFetch("/customCenter/takeErrReport?contentsNo="+conNo+"&errType="+errType, true);
-
+        /*
+        let returnVal = await nb_dataFetch("/serviceCenter/takeErrReport?contentsNo="+conNo+"&errType="+errType, true);
         if(returnVal.existErrReport !== null){
           document.getElementById("reportContents").value = returnVal.existErrReport.reportContents;
           document.getElementById("errRegisterBtn").innerHTML = "수정하기"
         }
+        */
       }
       asyncUseEffect();
     },[])
@@ -20,7 +20,7 @@ const ErrorReportForMathCon = ({title, errType, parentMethod, conNo})=>{
       let formData = new FormData(document.getElementById("erroReportForConForm"));
       formData.append("errType", errType);
       formData.append("contentsNo", conNo);
-      let returnVal = await nb_formDataFetch("/customCenter/registerError", formData, true);
+      let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
       if(returnVal.isSuccess === true){
           await nb_fadeInOutA("오류 신고가 정상적으로 등록되었습니다.", 1500);
           document.getElementById("erroReportForConForm").reset();

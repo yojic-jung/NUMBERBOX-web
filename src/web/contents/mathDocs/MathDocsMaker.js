@@ -165,7 +165,7 @@ const MathDocsMaker = ()=>{
     }
 
     const gotoPreviousStep = () =>{
-        document.getElementById("mathDocsDesc").innerHTML = "원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 넘버링크 제작 문제만 포함됩니다.)";
+        document.getElementById("mathDocsDesc").innerHTML = "원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 N명의수학 제작 문제만 포함됩니다.)";
         setShowChart(false);
         document.getElementById("mathDocsFirstStep").classList.remove("hide");
         window.scrollTo(0, 0);
@@ -1019,7 +1019,7 @@ const MathDocsMaker = ()=>{
 return (
     <>
     <Outlet />
-        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 넘버링크 제작 문제만 포함됩니다.)</div>
+        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
         <div className='noSelect mathDocsRootDiv'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
                 <div className="mathDocsSubjectInfoDiv">

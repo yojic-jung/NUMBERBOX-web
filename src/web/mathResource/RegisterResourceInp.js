@@ -204,7 +204,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
         document.getElementById("resDetailedTimeDesc").classList.add("hide");
         if(returnVal.isSuccess === true){
             await nb_fadeInOutA("컨텐츠가 정상적으로 등록 되었습니다.\n나의 컨텐츠 페이지에서 확인 가능합니다.", 2000);
-            document.forms[0].reset();
+            document.getElementById("resourceForm").reset();
             document.getElementById("representImg").src=image;
             document.getElementById("pptFileCustomDesc").innerText="choose File...";
             document.getElementById("mainCate").classList.add("bageText");

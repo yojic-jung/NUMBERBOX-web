@@ -144,7 +144,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 			return false;
 		}
 		
-		if(contentsClassify===0){	//넘버링크 제작만 아래 validation 체크
+		if(contentsClassify===0){	//N명의수학 제작만 아래 validation 체크
 			if(cusOrgSrcRef.innerText == "유사 문제 교재" || orgSrcRef.selectedIndex==0){
 				alert("유사 문제 교재를 선택해주세요.");
 				return false;
@@ -248,7 +248,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 			quesLevel.selectedIndex=0;
 			document.getElementById("cusQuesSelDiv").classList.remove("nbCustomSelected");
 	
-			if(contentsClassify === 0){		// 넘버링크 문제 유사문제 초기화
+			if(contentsClassify === 0){		// N명의수학 문제 유사문제 초기화
 				orgSrcPage.value = null;
 				orgSrcPage.classList.remove("customBlueBoxComplete");
 

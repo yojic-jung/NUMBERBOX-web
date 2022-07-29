@@ -57,8 +57,8 @@ const Login = ()=>{
 
 return (
         <div className='bage-ground'>
-            <div className='login-menu-title'><Link className='linkNoneCss' to="/">넘버링크</Link></div>
-            <div className='login-signup-desc'>넘버링크에 접속 하세요!</div>
+            <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
+            <div className='login-signup-desc'>N명의수학에 접속 하세요!</div>
             <div className="login-div">
                 <form id="login-form" method="post">
                     <div id="passChkValDesc" className='loginValDesc'></div>
@@ -72,7 +72,7 @@ return (
                         <div><label><span id='checkCircle'></span><input onChange={()=>{fKeepLoginStateBtn()}} type="checkbox" id="emailSave" className='hide' />로그인 상태 유지하기</label></div>
                         <div id="emailPassFind"><a className="emailPassFind" href="#">아이디/비밀번호 찾기</a></div>
                     </div>
-                    <div className="signUpDiv">넘버링크 계정이 없으신가요? <a className="signUpLink" href="/signup">회원가입</a></div><br/>
+                    <div className="signUpDiv">N명의수학 계정이 없으신가요? <a className="signUpLink" href="/signup">회원가입</a></div><br/>
                 </form>
             </div>
         </div>

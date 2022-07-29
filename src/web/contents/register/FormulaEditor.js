@@ -445,7 +445,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					solImgName="N"
 				}
 				// 주관식 객관식 마지막 validation에서 처리 필요(X)
-				if(contentsClassify===0){	//넘버링크만 셋팅
+				if(contentsClassify===0){	//N명의수학만 셋팅
 					//유사 교재
 					document.getElementById("orgSrcRef").value = myContents["myContents"].mathContentsComp[0].orgSrcRef;
 					document.getElementById("cusOrgRefSelTitle").innerHTML =document.getElementById("orgSrcRef")[document.getElementById("orgSrcRef").selectedIndex].innerText;
@@ -496,7 +496,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					//사용자 제작 문제
 					if(myContents["myContents"].mathContentsLicense !== null && myContents["myContents"].mathContentsLicense !== undefined){
 						await nb_licenseUiCheck(myContents["myContents"].mathContentsLicense[0]);
-					//넘버링크 문제
+					//N명의수학 문제
 					}else{		
 						await nb_licenseUiCheck();
 					}

@@ -493,6 +493,34 @@ const ContentsList = ()=>{
             }
 
         }
+        
+
+        const searchWorkListByContentsNo = async function(hasNotiPhrases){
+            let contentsNo = document.getElementById("serchContentsNoVal").value;
+            let returnObj = await nb_dataFetch("/mathInfo/takeContentsListByContentsNo?contentsno="+contentsNo, true);
+            if(returnObj.error!=undefined){
+                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+            }
+
+            if(returnObj["isSearched"]){
+                fExecuteWidth = true;
+                if(returnObj["mathContents"].length===0){
+                    setConRepoInfoList(returnObj["mathconRepoInfo"]);
+                    setConLikeInfoList(returnObj["mathConLikeInfo"]);
+                    setContentsList(returnObj["mathContents"]);
+                    await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
+                    setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.", 2000);
+                }else{
+                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId=0');
+                    setConRepoInfoList(returnObj["mathconRepoInfo"]);
+                    setConLikeInfoList(returnObj["mathConLikeInfo"]);
+                    setContentsList(returnObj["mathContents"]);
+                    if(hasNotiPhrases)  await nb_fadeInOut("정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.", 2000);
+                    else  await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
+                }
+                
+            }
+        }
 
         const showDetailConInfo = async (event, contentsNo, userNo)=>{
             if(event.target.classList.contains("errBtn")) return;
@@ -574,7 +602,7 @@ const ContentsList = ()=>{
                 await nb_licenseUiCheck(contents.mathContentsLicense[0]);
             }else{
                 document.getElementById("detailedConImg").classList.add("hide");
-                document.getElementById("userNickname").innerHTML = "넘버링크";
+                document.getElementById("userNickname").innerHTML = "N명의수학";
                 document.getElementById("nicknamewrap").classList.add('manager');
                 document.getElementById("nicknamewrap").dataset.userNo = 0;
                 await nb_licenseUiCheck();
@@ -616,7 +644,7 @@ const ContentsList = ()=>{
                                                             <span id={"contentsLike"+contentsMap.contentsNo} className="likeBtn" onClick={(event)=>{likeContents(event, contentsMap.contentsNo);}}></span>
                                                         </span>
                                                         {contentsMap.contentsClassify === 0 ?
-                                                        <span className='userSearchBtn manager'>넘버링크</span>
+                                                        <span className='userSearchBtn manager'>N명의수학</span>
                                                         :  <Link className='linkNoneCss' to={"/userProfile?userNo="+contentsMap.membersProfile.userNo}><span className='userSearchBtn'><img src={profileImgPath} alt="" className='contentsListProfile'/> {contentsMap.membersProfile.nickname}</span></Link>
                                                         }
                                                     </div>
@@ -651,7 +679,7 @@ const ContentsList = ()=>{
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className='errBtn topErrBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo)}}onMouseOver={(event)=>{event.target.closest(".td1").classList.remove("backHover")}} onMouseOut={(event)=>{event.target.closest(".td1").classList.add("backHover")}}></div>
+                                                <div className='errBtn topErrBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo)}} onMouseOver={(event)=>{event.target.closest(".td1").classList.remove("backHover")}} onMouseOut={(event)=>{event.target.closest(".td1").classList.add("backHover")}}></div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -673,7 +701,7 @@ const ContentsList = ()=>{
                         <form method="post" id="workSearchForm">
                             <div id="workListUnitType" className='workListUnitType'>
                                 <div className='mini-title5'>
-                                    &nbsp; 넘버링크에서 원하는 문제를 찾아보세요.
+                                    &nbsp; N명의수학에서 원하는 문제를 찾아보세요.
                                 </div>
                                 <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelSecUnit" childId="secUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
                                 <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelSecUnit" childId="secUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -690,6 +718,7 @@ const ContentsList = ()=>{
                                 <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>
                             </div>
                         </form>
+                        <div className='alignCenter hide'>문제 고유 번호 검색 <input id="serchContentsNoVal" type="number" /> <button type="button" className="orangeBtn" onClick={()=>searchWorkListByContentsNo(false)}>검색</button></div>
                     </div>
                     <div className='workList'>
                         {workListChanged && workContentsList.length !==0 ? 
@@ -709,7 +738,7 @@ const ContentsList = ()=>{
             <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
             
             {errContentsNo !== 0 &&
-            <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} />
+            <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} errType={1} title="문제 오류 신고"/>
             }
             </>
 

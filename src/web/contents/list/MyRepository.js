@@ -176,7 +176,7 @@ const MyRepository = ()=>{
                 await nb_licenseUiCheck(contents.mathContentsLicense[0]);
             }else{
                 document.getElementById("detailedConImg").classList.add("hide");
-                document.getElementById("userNickname").innerHTML = "넘버링크";
+                document.getElementById("userNickname").innerHTML = "N명의수학";
                 document.getElementById("nicknamewrap").classList.add('manager');
                 document.getElementById("nicknamewrap").dataset.userNo = 0;
                 await nb_licenseUiCheck();
@@ -252,7 +252,7 @@ const MyRepository = ()=>{
                                             <div className='justifyAlign'>
                                                 <div>
                                                     {contentsMap.contentsClassify === 0 ?
-                                                    <span className='userSearchBtn manager hide'>넘버링크</span>
+                                                    <span className='userSearchBtn manager hide'>N명의수학</span>
                                                     :  <span className='userSearchBtn hide'><img src={profileImgPath} alt="" className='contentsListProfile'/> {contentsMap.membersProfile.nickname}</span>
                                                     }
                                                     <span>[{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}</span>
