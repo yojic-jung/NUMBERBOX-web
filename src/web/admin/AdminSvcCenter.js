@@ -248,7 +248,7 @@ return (
             검색 필터 : &nbsp;
                 <select id="reportSttsSel1">
                     <option value="-1">전체</option>
-                    <option value="0" selected >접수</option>
+                    <option value="0" selected={true}>접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel1", 1)}}>검색</span>
@@ -271,7 +271,7 @@ return (
                 검색 필터 : &nbsp;
                 <select id="reportSttsSel2">
                     <option value="-1">전체</option>
-                    <option value="0" selected >접수</option>
+                    <option value="0" selected={true}>접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel2", 2)}}>검색</span>
@@ -294,7 +294,7 @@ return (
             검색 필터 : &nbsp;
                 <select id="reportSttsSel3">
                     <option value="-1">전체</option>
-                    <option value="0" selected >접수</option>
+                    <option value="0" selected={true}>접수</option>
                     <option value="1">답변 완료</option>
                 </select>
                 <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel3", 0)}}>검색</span>

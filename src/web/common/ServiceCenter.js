@@ -64,7 +64,7 @@ const ServiceCenter = ({myNickName})=>{
 
         if(errReport.replyContents !== null){
             document.getElementById("replyContentsDiv").classList.remove("hide");
-            document.getElementById("replyContents").innerHTML = errReport.replyContents;
+            document.getElementById("replyContents").innerText = errReport.replyContents;
         }
         
 

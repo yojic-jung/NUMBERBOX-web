@@ -1492,6 +1492,7 @@
 .detailedReplyTitle{
     font-weight: bold;
     position: relative;
+    margin-bottom: 10px;
 }
 
 .detailedReplyTitle::before{
