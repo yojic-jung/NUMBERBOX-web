@@ -1485,7 +1485,7 @@
 .detailedReplyDiv{
     font-size: 14px;
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';
-    padding:10px 10px 10px 60px;
+    padding:20px 10px 10px 60px;
     color:black;
 }
 
@@ -1522,6 +1522,6 @@
     display: inline-block;
     text-align: center;
     position: absolute;
-    top:-3px;
+    top:-7px;
     left:-47px;
 }

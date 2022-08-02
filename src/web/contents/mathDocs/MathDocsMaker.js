@@ -1,15 +1,23 @@
 import React, {useState, useEffect } from 'react';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
-import {nb_dataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox} from 'js/common/common_nb.js';
 import CustomPieChart from "web/common/CustomPieChart";
 import CustomBarChart from "web/common/CustomBarChart";
 import { ReactSortable } from "react-sortablejs";
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
+import MathDocsPaperA from 'web/contents/mathDocs/MathDocsPaperA';
+import makePdf from "js/common/makePdf";
+
 
 const MathDocsMaker = ()=>{
-
+    
+    const [mathDocsSubTitle, setMathDocsSubTitle] = useState("");
+    const [mathDocsTitle, setMathDocsTitle] = useState("");
+    const [mathDocsGrade, setMathDocsGrade] = useState("");
+    const [mathDocsOwner, setMathDocsOwner] = useState("");
+    const [rerenderVal, setRerenderVal] = useState(0);
     const [subjectList, setSubjectList] = useState(new Array());
     const [showChart, setShowChart] = useState(false);
     const [conArrByLvOnBar, setConArrByLvOnBar] = useState(new Array());
@@ -22,6 +30,7 @@ const MathDocsMaker = ()=>{
     const [isSearchedMyRepo, setIsSearchedMyRepo] = useState(false);
     const [similarContents, setSimilarContents] = useState(new Array());
     const [errContentsNo, setErrContentsNo] = useState(0);
+    const [showMathPaper, setShowMathPaper] = useState(false);
 
     useEffect(() => {
             const asyncUseEffect = async function(){
@@ -173,7 +182,17 @@ const MathDocsMaker = ()=>{
 
     const twoStepCheck = () =>{
         document.getElementById("mathDocsThrStep").classList.remove("hide");
-        document.getElementById("docsTitle").value = document.getElementsByClassName("subjectBtn active")[0].innerHTML;
+        let grade = "";
+        if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 1")){
+            grade="중1";
+        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 2")){
+            grade="중2";
+        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 3")){
+            grade="중3";
+        }
+        
+        document.getElementById("docsGrade").value = grade;
+        document.getElementById("docsTitle").value = document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo +" 학습지";
     }
 
     const unitSelct = async (event) => {
@@ -809,6 +828,38 @@ const MathDocsMaker = ()=>{
         setErrContentsNo(0);
     }
 
+    const printMathDocsPaper = async () => {
+        if(document.getElementById("docsGrade").value.length > 6){
+            nb_fadeInOutB("학년은 7글자 미만으로 입력 해주세요.", 2000);
+            return;
+        }
+        if(document.getElementById("docsTitle").value.length > 19){
+            nb_fadeInOutB("학습지 제목은 20글자 미만으로 입력 해주세요.", 2000);
+            return;
+        }
+        if(document.getElementById("mathDocsOwner").value.length > 19){
+            nb_fadeInOutB("출제자명은 20글자 미만으로 입력 해주세요.", 2000);
+            return;
+        }
+
+        let mathDocsA4Frame = document.getElementsByClassName("mathDocsA4Frame");
+        for(let i=0; i<mathDocsA4Frame.length; i++){
+            mathDocsA4Frame[i].remove();
+        }
+        setRerenderVal(rerenderVal+1);
+        setMathDocsGrade(document.getElementById("docsGrade").value);
+        setMathDocsTitle(document.getElementById("docsTitle").value);
+        setMathDocsSubTitle(document.getElementsByClassName("secUnitBtn active")[0].innerHTML+"~"+document.getElementsByClassName("secUnitBtn active")[document.getElementsByClassName("secUnitBtn active").length-1].innerHTML);
+        setMathDocsOwner(document.getElementById("mathDocsOwner").value);
+        setShowMathPaper(false);
+        setShowMathPaper(true);
+        document.getElementById("mathDocsThrStep").classList.add("hide");
+    }
+
+    const saveMathDocsPaper = async () =>{
+        nb_confirmBox("학습지를 [나의 학습지] 페이지에 저장하시겠습니까?")
+    }
+
     const subjectInfoList = subjectList.map( (subjectInfo) => {
         //중등인 경우 
         if(subjectInfo.mainVal.includes("중등")){
@@ -1016,6 +1067,61 @@ const MathDocsMaker = ()=>{
                 });
         
 
+                const workContentsList2 = mathContentsList.map( (contentsMap, idx) => {
+                    let quesNumber;
+                    if(idx<9){
+                        quesNumber = "0"+(idx+1);
+                    }else{
+                        quesNumber = idx+1;
+                    }
+    
+                    let isSolImgHide= "hide"
+                    if(contentsMap.solutionImg !== null){
+                        isSolImgHide="";
+                    }
+    
+                    let isBlank="";
+                    if(contentsMap.choiceAnswer===null)isBlank="hide";
+    
+    
+                    let solImgPath;
+                    if(contentsMap.solutionImg===null) solImgPath = "";
+                    else solImgPath = contentsMap.solutionImgPath+contentsMap.solutionImg;
+                   
+                    return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
+                                    <table className='workListTable'>
+                                        <tbody>
+                                            <tr>
+                                                <td className='td2'>
+                                                    <div className='solRootDiv'>
+                                                        <div className='ansSolDiv'>
+                                                        
+                                                            <div id="workAnsShow" className='ansShow'>
+                                                                <div>
+                                                                    
+                                                                    <div className='ansContents'>
+                                                                        <span className='mini-title6'>{quesNumber}. 답</span>&nbsp;&nbsp;
+                                                                        <span  dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
+                                                                        <span className={"marginRFive "+isBlank}></span>
+                                                                        <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="workSolShow" className='solShow'>
+                                                                <span className='mini-title6'>해설</span>
+                                                                <div id="solImg-show" className={"solImg-show "+isSolImgHide}>
+                                                                    <img src={solImgPath} id="solutionImgOutput" alt="" />
+                                                                </div>
+                                                                <div className='solContents' dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div> 
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+            });
 return (
     <>
     <Outlet />
@@ -1293,32 +1399,55 @@ return (
                         <table className='mathDocsThrStepTb'>
                             <tbody>
                                 <tr>
-                                    <td><div className='mathDocsThrStepDetailTitle'>페이지당 문제수</div></td>
+                                    <td><div className='mathDocsThrStepDetailTitle'>페이지당 문제 수</div></td>
                                     <td className='pagePerConCnt active' onClick={(event)=>{pagePerConCnt(event)}}>4</td>
                                     <td className='pagePerConCnt' onClick={(event)=>{pagePerConCnt(event)}}>6</td>
+                                    <td className='pagePerConCnt' onClick={(event)=>{pagePerConCnt(event)}}>8</td>
                                     <td><input id="pagePerConCntInp" className='hide' type="number"/></td>
                                 </tr>
                                 <tr>
+                                    <td></td>
+                                    <td colSpan="3" className="pagePerConCntDesc">페이지당 문제 수는 문제 길이에 따라 달라질 수 있습니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><div className='mathDocsThrStepDetailTitle'>학년</div></td>
+                                    <td colSpan="3"><input id="docsGrade" name="" className='mathDocsThrStepInput' type="text" /></td>
+                                </tr>
+                                <tr>
                                     <td><div className='mathDocsThrStepDetailTitle'>학습지 제목</div></td>
-                                    <td colSpan="2"><input id="docsTitle" name="docsTitle" className='mathDocsThrStepInput' type="text" /></td>
+                                    <td colSpan="3"><input id="docsTitle" name="docsTitle" className='mathDocsThrStepInput' type="text" /></td>
                                 </tr>
                                 <tr>
                                     <td><div className='mathDocsThrStepDetailTitle'>출제자(선택)</div></td>
-                                    <td colSpan="2"><input id=""name="" className='mathDocsThrStepInput'  type="text" /></td>
+                                    <td colSpan="3"><input id="mathDocsOwner"name="" className='mathDocsThrStepInput'  type="text" /></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                    <div className='mathDocsDown'>학습지 다운</div>
-                    <div className='mathDocsPrint'>학습지 출력</div>
+                    <div className='mathDocsDown hide' onClick={()=>{makePdf("mathDocsPaperPdf");}}>학습지 다운</div>
+                    <div className='mathDocsPrint' onClick={()=>{printMathDocsPaper();}}>학습지 출력</div>
             </div>
         </div>
+
+        <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
+            <div id="confirmBox" className='confirmBox'>
+                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");}}>X</span></div>
+                <div id="confirmMsg" className="confirmMsg"></div>
+                <div className='alignCenter'>
+                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide")}}>아니오</span>
+                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{}}>네</span>
+                </div>
+            </div>
+        </div>
+        <div>{workContentsList2}</div>
         
         {errContentsNo !== 0 &&
             <ErrorReportForMathCon title="문제 오류 신고" errType={1} parentMethod={errorReportClose} conNo={errContentsNo} />
         }
-        
+
+        {showMathPaper && <MathDocsPaperA mathContentsList={mathContentsList} mathDocsTitle={mathDocsTitle} mathDocsSubTitle={mathDocsSubTitle} mathDocsGrade={mathDocsGrade} mathDocsOwner={mathDocsOwner} key={rerenderVal} parentMethod={saveMathDocsPaper}/>}
+       
     </>
     )
 }
