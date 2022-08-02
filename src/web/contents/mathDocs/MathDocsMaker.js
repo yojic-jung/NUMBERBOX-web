@@ -1440,7 +1440,7 @@ return (
                 </div>
             </div>
         </div>
-        <div>{workContentsList2}</div>
+        <div className='hide'>{workContentsList2}</div>
         
         {errContentsNo !== 0 &&
             <ErrorReportForMathCon title="문제 오류 신고" errType={1} parentMethod={errorReportClose} conNo={errContentsNo} />
