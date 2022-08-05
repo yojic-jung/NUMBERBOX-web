@@ -186,7 +186,7 @@ export const fadeIn = async (targetId) => {
     if (op >= 1){
       clearInterval(timer);
     }
-    dom.style.display= "inline-block"
+    dom.classList.add("inBlock");
     dom.style.opacity = op;
     op += 0.1;
   }, 30);
@@ -198,7 +198,7 @@ export const fadeOut = async (targetId) => {
   let timer = setInterval(function () {
     if (op <= 0.1 ){
       clearInterval(timer);
-      dom.style.display = 'none';
+      dom.classList.remove("inBlock");
     }
     dom.style.opacity = op;
     op -=  0.1;

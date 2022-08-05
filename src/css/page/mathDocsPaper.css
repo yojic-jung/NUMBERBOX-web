@@ -4,30 +4,24 @@
 */
 
 .mathDocsA4Frame {
-    width: calc(21cm * 1.142);
-    height: calc(29.7cm * 1.142) ;
+    width: 210mm;
+    height: 297mm;
     margin: 0 auto;
     word-break: break-all;
     line-height: 160%;
     font-size: 16px;
-    zoom:0.8756
+    page-break-after: always;
 }
 
 .tmpHideDivForPrint{
     display: none;
 }
 
-
-
-.mathDocstitlePadding{
-    padding:calc(7mm * 1.142);
-}
-
 .mathDocsPaperWrap{
     margin:auto;
-    width: calc(194mm * 1.142);
-    height: calc(270mm * 1.142);
-    border-bottom: 1px solid rgb(130, 130, 130);
+    width: 210mm;
+    height: 297mm;
+    border-bottom: 0.5mm solid rgb(130, 130, 130);
 }
 
 
@@ -35,8 +29,8 @@
     position: relative;
     font-family: 'jejuGothic';
     line-height: 180%;
-    border-bottom: 5px solid rgb(146, 184, 255);
-    height:calc(33mm * 1.142);
+    border-bottom: 2mm solid rgb(146, 184, 255);
+    height:31mm;
 }
 
 .mathDocsPaperGrade{
@@ -54,8 +48,14 @@
    
 }
 .mathDocsPaperSubTitle{
-    font-size:18px;
-    color:rgb(48, 48, 48);
+    font-size: 16px;
+    color: rgb(48, 48, 48);
+    font-family: 'nbFormulaFont';
+    line-height: 160%;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .mathDocsPaperSubTitle2{
     font-size:14px;
@@ -89,17 +89,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: calc(237mm * 1.142);
+    height: 264mm;
 }
 
 .mathDocsPaperContentsWrap.onlyContents {
-    height: calc(270mm * 1.142);
-    border-top: 1px solid rgb(130, 130, 130);
+    height: 297mm;
+    border-top: 0.5mm solid rgb(130, 130, 130);
 }
 
 
 .mathAnswerTb{
-    min-width: 200px;
+    min-width: 190px;
     display: inline-block;
     position: relative;
     border-spacing: 0;
@@ -108,7 +108,7 @@
 
 .paperContentsLeft, .paperContentsRight{
     width: 50%;
-    height: 97%;
+    height: 99%;        
     font-family: 'nbFormulaFont';
 }
 
@@ -116,18 +116,31 @@
     border-right: 1px solid gray;
 }
 
+.paperContentsLeft.sol{
+    width: 100%;
+    border-right:none;
+}
 
-.fourArrPageCon, .fourArrPageAns{
-    width:406px;
+.fourArrPageCon, .sixArrPageCon, .eightArrPageCon{
+    width:387px;
     height: 50%;
+    clear:both;
+}
+
+.paperContentsRight .fourArrPageCon, .paperContentsRight .sixArrPageCon, .paperContentsRight .eightArrPageCon{
+    margin: 0 0 0 auto;
+}
+
+.sixArrPageCon{
+    height: 33%;
+}
+
+.eightArrPageCon{
+    height: 25%;
 }
 
 .mathDocsA4Frame .quesDiv, .ansSolDiv{
     margin: 0;
-}
-
-.paperContentsRight .fourArrPageCon{
-    margin: 0 0 0 auto;
 }
 
 .mathPaperQuesNumber{
@@ -138,12 +151,12 @@
 .mathDocsPaperAnsTitle{
     font-family: 'CookieRun-Regular';
     font-size: 18px;
-    background: rgb(230, 239, 255);
+    background: rgb(208, 225, 255);
     padding: 8px 0 8px 15px;
 }
 
 .mathDocsPaperAnswer, .mathDocsPaperAnswer.rightLayer{
-    width: 406px;
+    width: 387px;
     margin-top: 10px;
     line-height: 100%;
 }
@@ -167,27 +180,64 @@
     text-align: center;
     display: inline-block;
     padding: 3px 8px;
-    width: 80px;
+    width: 90px;
     border-radius: 5px;
     background: rgb(16, 41, 138);
     color:white;
 }
 
 .ellipseUi::before{
-    content: 'A';
+    font-size: 14px;
+    content: 'Ans';
     display: inline-block;
-    width: 24px;
-    height:24px;
+    width: 35px;
+    height:22px;
+    line-height: 22px;
+    vertical-align: middle;
     border-radius: 12px;
-    margin-right: 5px;
+    margin-right: 10px;
     background: white;
     color:rgb(16, 41, 138);
 }
 
+.ellipseUi.sol::before{
+    content: 'Sol';
+}
+
+.mathoDocsSolution{
+    column-count: 2;
+    height: unset;
+    font-family: 'nbFormulaFont';
+    column-gap: 19px;
+    column-rule: 1px solid rgb(184, 184, 184);
+}
+
+
+
+/*
+*  문제 마다 여백 최소 20mm
+*/
+
+.mathDocsMinPadding{
+    clear:both;
+    height: 20mm;
+}
+
+
+/*
+* 해설 간격 설정
+*/
+.mathDocsA4Frame .ansShow{
+    padding-top: 10px;
+    margin-top:25px;
+    border-top: 2px solid dimgray;
+    border-bottom: 1px solid lightgray;
+    clear:both;
+}
 
 @page {
     size: A4;
-    margin: 0cm;
+    margin: 15mm 10mm 10mm 10mm;
 }
     
 @media print {
@@ -214,22 +264,17 @@
 
     .mathDocsA4Frame {
         -webkit-print-color-adjust: exact;
+        -print-color-adjust: exact;
         margin: 0;
         border: initial;
         width: initial;
         min-height: initial;
-        page-break-after: always;
         display: block;
-    }
-    
-    .mathoDocsSolution{
-        column-count: 2;
-        height: unset;
-        margin:1.5cm;
+       
     }
 
     #root > div:not(.mathDocsA4Frame):not(.mathDocsWrap){
-        display: none;
+        display: none !important;
     }
 }
 
@@ -238,3 +283,16 @@
 /*
 *   학습지 페이지 수식 버그 해결
 */
+
+.mathDocsA4Frame .nbRootBase{
+    box-shadow:none;
+    border-top:1px solid black;
+}
+
+.mathDocsA4Frame .nbRootBox{
+    vertical-align: text-top;
+}
+
+.mathDocsA4Frame .nbRootBase::before{
+    top:0.14em;
+}

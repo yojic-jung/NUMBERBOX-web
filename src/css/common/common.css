@@ -1,7 +1,7 @@
 .hide{display:none !important;}
 
 .inBlock{
-    display:inline-block;
+    display:inline-block !important;
 }
 .center{
     text-align: center;

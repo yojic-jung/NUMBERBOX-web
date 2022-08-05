@@ -797,3 +797,15 @@
 .mathDocsMyProdWrap .workListTable, .mathDocsMyRepoWrap .workListTable, .mathDocsSimConWrap .workListTable{
     width: calc(100% - 20px);
 }
+
+
+/*
+* [start] 이미지 float 속성 적용된 경우 이미지 감싸고 있는 div 높이 계산 제대로 안되는 버그 해결
+*/
+.mathDocsContents .quesDiv, .mathDocsA4Frame .quesDiv {
+    display: inline-block;
+}
+
+/*
+* [end]
+*/

@@ -9,10 +9,12 @@ import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
 import MathDocsPaperA from 'web/contents/mathDocs/MathDocsPaperA';
 import makePdf from "js/common/makePdf";
+import {reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
 
 
 const MathDocsMaker = ()=>{
-    
+
+    const [mathDocsPerPageCnt, setMathDocsPerPageCnt] = useState(4);
     const [mathDocsSubTitle, setMathDocsSubTitle] = useState("");
     const [mathDocsTitle, setMathDocsTitle] = useState("");
     const [mathDocsGrade, setMathDocsGrade] = useState("");
@@ -171,6 +173,33 @@ const MathDocsMaker = ()=>{
         window.scrollTo(0, 0);
         setIsSearchedMyCon(false);
         setIsSearchedMyRepo(false);
+
+        let grade = "";
+        if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 1")){
+            grade="중1";
+        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 2")){
+            grade="중2";
+        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 3")){
+            grade="중3";
+        }
+        
+        let subTitle="";
+        if(document.getElementsByClassName("secUnitBtn active").length === 0){
+            if(document.getElementsByClassName("thrUnitBtn active").length === 0){
+                subTitle= document.getElementsByClassName("typeBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("typeBtn active")[document.getElementsByClassName("typeBtn active").length-1].innerHTML
+                if(document.getElementsByClassName("typeBtn active").length === 1) subTitle= document.getElementsByClassName("typeBtn active")[0].innerHTML;
+            }else{
+                subTitle= document.getElementsByClassName("thrUnitBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("thrUnitBtn active")[document.getElementsByClassName("thrUnitBtn active").length-1].innerHTML
+                if(document.getElementsByClassName("thrUnitBtn active").length === 1) subTitle= document.getElementsByClassName("thrUnitBtn active")[0].innerHTML;
+            }
+        }else{
+            subTitle= document.getElementsByClassName("secUnitBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("secUnitBtn active")[document.getElementsByClassName("secUnitBtn active").length-1].innerHTML
+            if(document.getElementsByClassName("secUnitBtn active").length === 1) subTitle= document.getElementsByClassName("secUnitBtn active")[0].innerHTML;
+        }
+
+        document.getElementById("docsGrade").value = grade;
+        document.getElementById("docsTitle").value = document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo +" 학습지";
+        document.getElementById("docsSubTitle").value = subTitle;
     }
 
     const gotoPreviousStep = () =>{
@@ -182,17 +211,6 @@ const MathDocsMaker = ()=>{
 
     const twoStepCheck = () =>{
         document.getElementById("mathDocsThrStep").classList.remove("hide");
-        let grade = "";
-        if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 1")){
-            grade="중1";
-        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 2")){
-            grade="중2";
-        }else if(document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo.includes("중등 3")){
-            grade="중3";
-        }
-        
-        document.getElementById("docsGrade").value = grade;
-        document.getElementById("docsTitle").value = document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo +" 학습지";
     }
 
     const unitSelct = async (event) => {
@@ -841,19 +859,20 @@ const MathDocsMaker = ()=>{
             nb_fadeInOutB("출제자명은 20글자 미만으로 입력 해주세요.", 2000);
             return;
         }
-
+        document.getElementById("mathDocsThrStep").classList.add("hide");
         let mathDocsA4Frame = document.getElementsByClassName("mathDocsA4Frame");
         for(let i=0; i<mathDocsA4Frame.length; i++){
             mathDocsA4Frame[i].remove();
         }
-        setRerenderVal(rerenderVal+1);
+
         setMathDocsGrade(document.getElementById("docsGrade").value);
         setMathDocsTitle(document.getElementById("docsTitle").value);
-        setMathDocsSubTitle(document.getElementsByClassName("secUnitBtn active")[0].innerHTML+"~"+document.getElementsByClassName("secUnitBtn active")[document.getElementsByClassName("secUnitBtn active").length-1].innerHTML);
+        await reg_removeStyleAttribute("mathContents");
+        setMathDocsPerPageCnt(Number(document.getElementById("pagePerConCntInp").value));
+        setMathDocsSubTitle(document.getElementById("docsSubTitle").value);
         setMathDocsOwner(document.getElementById("mathDocsOwner").value);
-        setShowMathPaper(false);
+        setRerenderVal(rerenderVal+1);
         setShowMathPaper(true);
-        document.getElementById("mathDocsThrStep").classList.add("hide");
     }
 
     const saveMathDocsPaper = async () =>{
@@ -935,6 +954,7 @@ const MathDocsMaker = ()=>{
                                                     <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
                                                     <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                 </div>
+                                                <div className="mathDocsMinPadding"></div>
                                             </div>
                                         </div>
                                     </td>
@@ -1000,6 +1020,7 @@ const MathDocsMaker = ()=>{
                                                         <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
                                                         <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                     </div>
+                                                    <div className="mathDocsMinPadding"></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -1057,6 +1078,7 @@ const MathDocsMaker = ()=>{
                                                             <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
                                                             <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                         </div>
+                                                        <div className="mathDocsMinPadding"></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -1308,7 +1330,7 @@ return (
                     <div>
                         <div className='workList mathDocsContents'>
                         <div className='mini-title8'>드래그하여 문제 순서를 변경할 수 있습니다.</div>
-                            <ReactSortable list={mathContentsList} animation={200} setList={setMathContentsList} className='contents-show userSearchPage grab'>
+                            <ReactSortable list={mathContentsList} animation={200} setList={setMathContentsList} id="mathContents" className='contents-show userSearchPage grab'>
                                 {mathContentsList.map( (contentsMap, idx) => {
                                 let quesNumber;
                                 if(idx<9){
@@ -1361,6 +1383,7 @@ return (
                                                                                 <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
                                                                                 <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                                             </div>
+                                                                            <div className="mathDocsMinPadding"></div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1403,7 +1426,7 @@ return (
                                     <td className='pagePerConCnt active' onClick={(event)=>{pagePerConCnt(event)}}>4</td>
                                     <td className='pagePerConCnt' onClick={(event)=>{pagePerConCnt(event)}}>6</td>
                                     <td className='pagePerConCnt' onClick={(event)=>{pagePerConCnt(event)}}>8</td>
-                                    <td><input id="pagePerConCntInp" className='hide' type="number"/></td>
+                                    <td><input id="pagePerConCntInp" className='hide' type="number" defaultValue={4}/></td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -1416,6 +1439,10 @@ return (
                                 <tr>
                                     <td><div className='mathDocsThrStepDetailTitle'>학습지 제목</div></td>
                                     <td colSpan="3"><input id="docsTitle" name="docsTitle" className='mathDocsThrStepInput' type="text" /></td>
+                                </tr>
+                                <tr>
+                                    <td><div className='mathDocsThrStepDetailTitle'>학습지 부제목</div></td>
+                                    <td colSpan="3"><input id="docsSubTitle" name="docsSubTitle" className='mathDocsThrStepInput' type="text" /></td>
                                 </tr>
                                 <tr>
                                     <td><div className='mathDocsThrStepDetailTitle'>출제자(선택)</div></td>
@@ -1446,7 +1473,7 @@ return (
             <ErrorReportForMathCon title="문제 오류 신고" errType={1} parentMethod={errorReportClose} conNo={errContentsNo} />
         }
 
-        {showMathPaper && <MathDocsPaperA mathContentsList={mathContentsList} mathDocsTitle={mathDocsTitle} mathDocsSubTitle={mathDocsSubTitle} mathDocsGrade={mathDocsGrade} mathDocsOwner={mathDocsOwner} key={rerenderVal} parentMethod={saveMathDocsPaper}/>}
+        {showMathPaper && <MathDocsPaperA perPageCnt={mathDocsPerPageCnt} mathContentsList={mathContentsList} mathDocsTitle={mathDocsTitle} mathDocsSubTitle={mathDocsSubTitle} mathDocsGrade={mathDocsGrade} mathDocsOwner={mathDocsOwner} key={rerenderVal} parentMethod={saveMathDocsPaper}/>}
        
     </>
     )
