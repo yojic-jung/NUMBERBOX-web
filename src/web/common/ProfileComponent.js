@@ -143,7 +143,7 @@ const ProfileComponent = ({isMine, userNo})=>{
 
     return (
             <>
-            <div className='myProfileDiv'>
+            <div id="myProfileDiv" className='myProfileDiv'>
                 <table className='myProfileTable'>
                     <tbody>
                         <tr>

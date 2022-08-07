@@ -47,6 +47,7 @@ const App = ()=>{
                 <Route exact path="/contentsList" element={nb_isLogin()  ? <ContentsList /> : <Navigate to="/login" />} />
                 <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
+                <Route exact path="/myMathDocs" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/myResource" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login" />} />

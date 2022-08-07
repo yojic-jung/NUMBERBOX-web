@@ -8,10 +8,12 @@ const AdminSvcCenter = ()=>{
     const [oneToOneQuestion, setOneToOneQuestion] = useState(0);
     const [conErrCnt, setConErrCnt] = useState(0);
     const [resErrCnt, setResErrCnt] = useState(0);
+    const [mathDocsErrCnt, setmMathDocsErrCnt] = useState(0);
 
     const [oneToOneList, setOneToOneList] = useState(new Array());
     const [conErrList, setConErrList] = useState(new Array());
     const [resErrList, setResErrList] = useState(new Array());
+    const [mathDocsErrList, setMathDocsErrList] = useState(new Array());
 
     useEffect(() => {
         if(!isAdmin) window.location.href = "/";
@@ -19,11 +21,13 @@ const AdminSvcCenter = ()=>{
             let returnVal = await nb_dataFetch("/serviceCenter/takeErrReportCount", true);
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportByAdmin?reportStts=0", true);
             setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
+            setmMathDocsErrCnt(returnVal.mathDocsErrCnt);
             setConErrCnt(returnVal.conErrCnt);
             setResErrCnt(returnVal.resErrCnt);
             setOneToOneList(returnObj.oneToOneList);
             setConErrList(returnObj.conErrList);
             setResErrList(returnObj.resErrList);
+            setMathDocsErrList(returnObj.mathDocsErrList);
         }
 
         asyncUseEffect();
@@ -41,7 +45,6 @@ const AdminSvcCenter = ()=>{
             adminErrReportTbDiv[i].classList.remove('active');
         }
         event.currentTarget.classList.add("active");
-        
     }
 
     const showReportCompleteList = async (targetId, errType) => {
@@ -53,6 +56,8 @@ const AdminSvcCenter = ()=>{
             setConErrList(returnObj.errReportList);
         }else if(errType === 2){
             setResErrList(returnObj.errReportList);
+        }else if(errType === 3){
+            setMathDocsErrList(returnObj.errReportList);
         }
     }
 
@@ -65,6 +70,8 @@ const AdminSvcCenter = ()=>{
             errType = "문제 오류 신고"
         }else if(errReport.errType === 2){
             errType = "컨텐츠 오류 신고"
+        }else if(errReport.errType === 3){
+            errType = "학습지 오류 신고"
         }
 
         document.getElementById("reportId").value=errReport.reportId;
@@ -85,7 +92,14 @@ const AdminSvcCenter = ()=>{
         document.getElementById("detailedReportSttsAdmin").innerHTML = reportStts;
 
         if(errReport.contentsNo !== 0){
-            document.getElementById("detailedErrReportConNoAdmin").innerHTML = "문제고유번호 : "+errReport.contentsNo;
+            
+            if(errReport.errType === 1){
+                document.getElementById("detailedErrReportConNoAdmin").innerHTML = "문제 고유 번호 : "+errReport.contentsNo;
+            }else if(errReport.errType === 2){
+                document.getElementById("detailedErrReportConNoAdmin").innerHTML = "컨텐츠 번호 : "+errReport.contentsNo;
+            }else if(errReport.errType === 3){
+                document.getElementById("detailedErrReportConNoAdmin").innerHTML = "학습지 번호 : "+errReport.contentsNo;
+            }
             document.getElementById("detailedErrReportConNoAdmin").classList.remove("hide");
         }else{
             document.getElementById("detailedErrReportConNoAdmin").classList.add("hide");
@@ -125,6 +139,11 @@ const AdminSvcCenter = ()=>{
     }
 
     const errorReplyByAdmin = async () =>{
+        if (document.getElementById("questionReply").value.length < 20){
+            nb_fadeInOutB("문의 내용은 최소 20글자 이상 작성하여 주시기 바랍니다.", 2000);
+            return;
+        }
+        
         let formData = new FormData(document.getElementById("replyErrReportForm"));
         let returnVal = await nb_formDataFetch("/serviceCenter/replyErrorReport", formData, true);
         if(returnVal.isSuccess){
@@ -153,12 +172,43 @@ const AdminSvcCenter = ()=>{
                 })
                 setResErrList(newResErrList);
                 setResErrCnt(newResErrList.length);
+            }else if(errType === 3){
+                let newDocsErrList = mathDocsErrList.filter((errMap, idx)=>{
+                    if(reportId === errMap.reportId) return false;
+                    else return true;
+                })
+                setMathDocsErrList(newDocsErrList);
+                setmMathDocsErrCnt(newDocsErrList.length);
             }
             document.getElementById("replyErrReportForm").reset();
             document.getElementById("detailedAdminQnaClose").click();
         }
     }
    
+    const mathDocsErrReportList = mathDocsErrList.map((errMap)=>{
+        let errType = "1:1 문의"
+        if(errMap.errType === 1){
+            errType = "문제 오류 신고"
+        }else if(errMap.errType === 2){
+            errType = "컨텐츠 오류 신고"
+        }else if(errMap.errType === 3){
+            errType = "학습지 오류"
+        }
+
+        let reportStts = "접수"
+        let reportSttsClassName = "orgText";
+        if(errMap.reportStts === 1){
+            reportStts = "답변완료"
+            reportSttsClassName = "greenText";
+        }
+        return <tr key={errMap.reportId}>
+                    <td className='reportErrType'>{errType}</td>
+                    <td className='reportConNo'>{errMap.contentsNo}</td>
+                    <td className='myQnATbContents' onClick={(event)=>{showDetailedErrReport(errMap)}}>{errMap.reportContents}</td>
+                    <td className='reportDate'>{errMap.sysCreateDate}</td>
+                    <td className={reportSttsClassName + ' reportStts admin'}>{reportStts}</td>
+                </tr>
+    })
 
     const conErrReportList = conErrList.map((errMap)=>{
         let errType = "1:1 문의"
@@ -234,14 +284,39 @@ return (
         <table className='adminErrReportTb'>
             <tbody>
                 <tr>
-                    <td><div className='adminErrReportTbDiv active' onClick={(event)=>{showErrReport(event, "conListDiv")}}>문제 오류 신고 내역<span className='errReportCnt'>+{conErrCnt}</span></div></td>
+                    <td><div className='adminErrReportTbDiv active' onClick={(event)=>{showErrReport(event, "docsListDiv")}}>학습지 오류 신고 내역<span className='errReportCnt'>+{mathDocsErrCnt}</span></div></td>
+                    <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, "conListDiv")}}>문제 오류 신고 내역<span className='errReportCnt'>+{conErrCnt}</span></div></td>
                     <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, "resListDiv")}}>컨텐츠 오류 신고 내역<span className='errReportCnt'>+{resErrCnt}</span></div></td>
                     <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, "oneToOneDiv")}}>1:1 문의 내역<span className='errReportCnt'>+{oneToOneQuestion}</span></div></td>
                 </tr>
             </tbody>
         </table>
-        
-        <div id="conListDiv" className="adminServiceCenter">
+
+        <div id="docsListDiv" className="adminServiceCenter">
+            <div>
+            검색 필터 : &nbsp;
+                <select id="reportSttsSel0" defaultValue="0">
+                    <option value="-1">전체</option>
+                    <option value="0">접수</option>
+                    <option value="1">답변 완료</option>
+                </select>
+                <span className='adminBtn' onClick={()=>{showReportCompleteList("reportSttsSel0", 3)}}>검색</span>
+            </div>
+            <table className='myQnATb'>
+                <tbody>
+                    <tr>
+                        <td>서비스 구분</td>
+                        <td>학습지 번호</td>
+                        <td>문의 내용</td>
+                        <td>등록일</td>
+                        <td className='reportStts admin'>상태</td>
+                    </tr>
+                    {mathDocsErrReportList}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="conListDiv" className="adminServiceCenter hide">
             <div>
             검색 필터 : &nbsp;
                 <select id="reportSttsSel1" defaultValue="0">

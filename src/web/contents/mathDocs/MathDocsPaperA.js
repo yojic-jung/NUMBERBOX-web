@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import {nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox} from 'js/common/common_nb.js';
 import "css/page/mathDocsPaper.css";
 
 const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSubTitle, mathDocsGrade, mathDocsOwner, parentMethod})=>{
@@ -529,8 +530,20 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
 
   useEffect(() => {
         const asyncUseEffect = async function(){
+            window.isMathDocsSuccess = false;
             document.getElementById("page-transit").classList.remove("hide");
             document.getElementById("page-transit-img").classList.remove("hide");
+
+            setTimeout(async function(){
+                if(!window.isMathDocsSuccess){
+                    document.getElementById("reportContents").value ="학습지가 생성되지 않습니다.";
+                    document.getElementById("mathDocsErrTitle").innerHTML ="학습지가 생성되지 않으시나요?";
+                    document.getElementById("page-transit").classList.add("hide");
+                    document.getElementById("page-transit-img").classList.add("hide");
+                    document.getElementById("mathDocsErrReportBox").classList.remove("hide");
+                }
+            }, 10000);
+           
             setContentsList(mathContentsList);
             document.getElementById("mathDocsPaperGrade").innerHTML = mathDocsGrade;
             document.getElementById("mathDocsPaperTitle").innerHTML = mathDocsTitle;
@@ -669,6 +682,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
             }
            
             setTimeout(function(){
+                window.isMathDocsSuccess = true;
                 document.getElementById("page-transit").classList.add("hide");
                 document.getElementById("page-transit-img").classList.add("hide");
                 window.print();

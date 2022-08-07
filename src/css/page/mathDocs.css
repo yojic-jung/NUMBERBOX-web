@@ -516,6 +516,7 @@
     text-align: center;
     vertical-align: middle;
     width:250px;
+    margin: auto;
 }
 
 
@@ -809,3 +810,133 @@
 /*
 * [end]
 */
+
+.mathDocsErrTitle{
+    width: 350px;
+    margin-top: 10px;
+    padding: 15px;
+    font-size: 18px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.mathDocsErrBtn, .mathDocsErrBtn2{
+    cursor: pointer;
+    font-size: 14px;
+    width: 150px;
+    margin: 15px auto;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    background: #5596D8;
+}
+.mathDocsErrBtn{
+    margin-top: 35px;
+}
+
+.mathDocsErrBtn2{
+    color: #5596D8;
+    background:white;
+    padding: 2px;
+    border: 3px solid #5596D8;
+}
+
+
+.mathDocsList{
+    width: 1000px;
+    margin: 20px auto 0 auto;
+    border-spacing: 0;
+    font-family: 'nbFormulaFont';
+    line-height: 160%;
+}
+.mathDocsList th{
+    padding: 10px 0;
+    border-bottom : 1px solid rgb(104, 104, 104);
+    background-color: #A4B0D8;
+    color:white;
+    font-weight: normal;
+    letter-spacing: 2px;
+}
+
+.mathDocsList td{
+}
+
+.mathDocsList tr:nth-child(odd){
+    background-color: #F7F9FC;
+}
+
+.mathDocsList tr:nth-child(even){
+    background-color: #ffffff;
+}
+
+.docsListTitle{
+    width: 250px;
+}
+
+.docsListSubTitle{
+    width: 350px;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.docsListDate{
+    font-size: 10px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+}
+
+
+.allSpace.docs{
+    padding: 7px 0;
+}
+
+.docsListTr:hover td:not(.docsListErr):not(.docsListDel){
+    cursor: pointer;
+    background-color: #e7ecf3;
+}
+
+.docsListErr{
+    font-size: 12px;
+    color:rgb(9, 120, 9);
+}
+
+
+.errBtn.docsList, .delBtn.docsList{
+    position: relative;
+    top:0;
+    left: 0;
+}
+
+.mathDocsErrDesc{
+    width: 300px;
+    text-align: center;
+    color:rgb(155, 155, 155);
+    font-family: 'jejUGothic';
+    font-size: 14px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 0.5px solid lightgray;
+    border-radius: 10px;
+}
+
+.errBtnWrap{
+    cursor: pointer;
+}
+
+.errBtn.mathDocs{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.errBtnWrap.mathDocs:hover{
+    color:orange;
+}
+
+.errBtnWrap.mathDocs:hover .errBtn.mathDocs{
+    color:orange;
+    width: 20px;
+    height: 20px;
+    background:  url("img/sirenOrg.png") no-repeat center;
+    background-size: 20px;
+}

@@ -1,7 +1,9 @@
 import React, {useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
-import {nb_dataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_formDataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, 
+    nb_fadeInOutB, nb_confirmBox, nb_getParameterByName} from 'js/common/common_nb.js';
 import CustomPieChart from "web/common/CustomPieChart";
 import CustomBarChart from "web/common/CustomBarChart";
 import { ReactSortable } from "react-sortablejs";
@@ -11,9 +13,12 @@ import MathDocsPaperA from 'web/contents/mathDocs/MathDocsPaperA';
 import makePdf from "js/common/makePdf";
 import {reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
 
-
+let currentPath = "";
 const MathDocsMaker = ()=>{
+    let location = useLocation();
 
+    const [mathDocsNo, setMathDocsNo] = useState(0);
+    const [isInnerPage, setIsInnerPage] = useState(false);
     const [mathDocsPerPageCnt, setMathDocsPerPageCnt] = useState(4);
     const [mathDocsSubTitle, setMathDocsSubTitle] = useState("");
     const [mathDocsTitle, setMathDocsTitle] = useState("");
@@ -31,17 +36,98 @@ const MathDocsMaker = ()=>{
     const [myRepoContents, setMyRepoContents] = useState(new Array());
     const [isSearchedMyRepo, setIsSearchedMyRepo] = useState(false);
     const [similarContents, setSimilarContents] = useState(new Array());
+    const [errContentsTitle, setErrContentsTitle] = useState("");
     const [errContentsNo, setErrContentsNo] = useState(0);
+    const [errType, setErrType] = useState(0);
     const [showMathPaper, setShowMathPaper] = useState(false);
 
     useEffect(() => {
-            const asyncUseEffect = async function(){
-                let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
-                setSubjectList(jsonObj["mathSubjectInfo"])
-                unitListSetFunction(jsonObj["mathSubjectInfo"], jsonObj["mathSecUnitInfo"], jsonObj["mathThrUnitInfo"]);
+        let param = nb_getParameterByName("docsNo")
+        if(currentPath === location.pathname && subjectList.length !== 0) { //url 같은 경우
+            window.location.reload();
+            return; 
+        }
+        currentPath = location.pathname;
+
+        const asyncUseEffect = async function(){
+            window.addEventListener('popstate', () => {gotoPreviousStep();});
+            let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
+            setSubjectList(jsonObj["mathSubjectInfo"])
+            unitListSetFunction(jsonObj["mathSubjectInfo"], jsonObj["mathSecUnitInfo"], jsonObj["mathThrUnitInfo"]);
+            if(param !== ""){
+                document.getElementById("page-transit").classList.remove("hide");
+                document.getElementById("page-transit-img").classList.remove("hide");
+                setIsInnerPage(true)
+                setMathDocsNo(Number(param));
+                showMathDocsByMyMathDocsPage(param);
             }
-            asyncUseEffect();
-    },[]);
+        }
+        asyncUseEffect();
+    }, [location]);
+
+    const showMathDocsByMyMathDocsPage = async (mathDocsNo) => {
+        document.getElementById("mathDocsFirstStep").classList.add("hide");
+        let jsonObj = await nb_dataFetch('/mathDocs/mathDocsByMyMathDocsPage?docsNo='+mathDocsNo, true);
+        let mathContentsList = jsonObj["mathContentsList"];
+        let mathDocsPaper = jsonObj["mathDocsPaper"];
+        
+        let lv1Len=0;
+        let lv2Len=0;
+        let lv3Len=0;
+        let lv4Len=0;
+        let lv5Len=0;
+        let multiConCnt = 0;
+        let essayConCnt = 0;
+        for(let i=0; i<mathContentsList.length; i++){
+            if(mathContentsList[i].multiChoiceType==="M"){
+                multiConCnt +=1;
+            }else{
+                essayConCnt +=1;
+            }
+            if(mathContentsList[i].quesLevel === 1){
+                lv1Len +=1;
+            }else if(mathContentsList[i].quesLevel === 2){
+                lv2Len +=1;
+            }else if(mathContentsList[i].quesLevel === 3){
+                lv3Len +=1;
+            }else if(mathContentsList[i].quesLevel === 4){
+                lv4Len +=1;
+            }else if(mathContentsList[i].quesLevel === 5){
+                lv5Len +=1;
+            }
+        }
+
+        setShowChart(false);
+        setConTotalCnt(mathContentsList.length);
+        setMathContentsList(mathContentsList);
+        let barArr = [{"labelName":"하", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+        {"labelName":"중하", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+        {"labelName":"중", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+        {"labelName":"중상", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+        {"labelName":"상", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        setConArrByLvOnBar(barArr);
+        let pieArr = [
+            {"labelName":"객관식", "value":multiConCnt ,"className":"multiChoicePieLabel", "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+            {"labelName":"주관식", "value":essayConCnt ,"className":"essayPieLabel", "backgroundColor":"rgb(13, 53, 149, 0.7)"}]
+        setConArrByMultiOnPie(pieArr);
+        setShowChart(true);
+        document.getElementById("mathDocsDesc").innerHTML = "문제를 교체하거나 추가할 수 있습니다.";
+       
+        await nb_multiChoiceGridSet("quesConMultiShow");
+        window.scrollTo(0, 0);
+        setIsSearchedMyCon(false);
+        setIsSearchedMyRepo(false);
+        
+        document.getElementById("docsGrade").value = mathDocsPaper.docsGrade;
+        document.getElementById("docsTitle").value = mathDocsPaper.docsTitle;
+        document.getElementById("docsSubTitle").value = mathDocsPaper.docsSubTitle;
+        document.getElementById("mathDocsOwner").value = mathDocsPaper.docsOwner;
+
+        document.getElementById("docsPreviousBtn").classList.add("hide");
+        document.getElementById("docsPreviousPage").classList.remove("hide");
+        document.getElementById("page-transit").classList.add("hide");
+        document.getElementById("page-transit-img").classList.add("hide");
+    }
 
     const pagePerConCnt = (event) => {
         let conCntSelTd = document.getElementsByClassName("pagePerConCnt");
@@ -93,8 +179,6 @@ const MathDocsMaker = ()=>{
                 unitUniqNoAndTypeNo += "-"+typeBtn[i].dataset.unitUniqNo+","+typeBtn[i].dataset.typeNo;
             }
         }
-
-        
 
         let isLevelChecked = false;
         let level = document.getElementsByName("level");
@@ -188,9 +272,25 @@ const MathDocsMaker = ()=>{
             if(document.getElementsByClassName("thrUnitBtn active").length === 0){
                 subTitle= document.getElementsByClassName("typeBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("typeBtn active")[document.getElementsByClassName("typeBtn active").length-1].innerHTML
                 if(document.getElementsByClassName("typeBtn active").length === 1) subTitle= document.getElementsByClassName("typeBtn active")[0].innerHTML;
+            
+                //수식 요소가 포함된 경우
+                if(document.getElementsByClassName("typeBtn active")[0].querySelectorAll("*").length !== 0 ){
+                    subTitle = "";
+                }
+                if(document.getElementsByClassName("typeBtn active").length !== 1 && document.getElementsByClassName("typeBtn active")[1].querySelectorAll("*").length !== 0 ){
+                    subTitle = "";
+                }
             }else{
-                subTitle= document.getElementsByClassName("thrUnitBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("thrUnitBtn active")[document.getElementsByClassName("thrUnitBtn active").length-1].innerHTML
+                subTitle = document.getElementsByClassName("thrUnitBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("thrUnitBtn active")[document.getElementsByClassName("thrUnitBtn active").length-1].innerHTML
                 if(document.getElementsByClassName("thrUnitBtn active").length === 1) subTitle= document.getElementsByClassName("thrUnitBtn active")[0].innerHTML;
+                
+                //수식 요소가 포함된 경우
+                if(document.getElementsByClassName("thrUnitBtn active")[0].querySelectorAll("*").length !== 0 ){
+                    subTitle = "";
+                }
+                if(document.getElementsByClassName("thrUnitBtn active").length !== 1 && document.getElementsByClassName("thrUnitBtn active")[1].querySelectorAll("*").length !== 0 ){
+                    subTitle = "";
+                }
             }
         }else{
             subTitle= document.getElementsByClassName("secUnitBtn active")[0].innerHTML+" ~ "+document.getElementsByClassName("secUnitBtn active")[document.getElementsByClassName("secUnitBtn active").length-1].innerHTML
@@ -200,6 +300,7 @@ const MathDocsMaker = ()=>{
         document.getElementById("docsGrade").value = grade;
         document.getElementById("docsTitle").value = document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo +" 학습지";
         document.getElementById("docsSubTitle").value = subTitle;
+        window.history.pushState("", "학습지 만들기 2단계", '/makeMathDocsTwoStep');
     }
 
     const gotoPreviousStep = () =>{
@@ -838,25 +939,61 @@ const MathDocsMaker = ()=>{
         nb_fadeInOutA("문제가 삭제 되었습니다.", 2000);
     }
 
-    const errorReportOpen = async (contentsNo) => {
+    const mathDocsErrorReport = async () => {
+        let formData = new FormData();
+        let contentsNoList;
+        for(let i=0; i< mathContentsList.length; i++){
+            if(i===0){
+                contentsNoList = mathContentsList[i].contentsNo;
+            }else{
+                contentsNoList += ","+mathContentsList[i].contentsNo;
+            }
+        }
+        formData.append("docsGrade", document.getElementById("docsGrade").value);
+        formData.append("docsTitle", document.getElementById("docsTitle").value);
+        formData.append("docsSubTitle", document.getElementById("docsSubTitle").value);
+        formData.append("docsOwner", document.getElementById("mathDocsOwner").value);
+        formData.append("docsErrStts", 2);
+        formData.append("contentsNoList", contentsNoList);
+        let jsonObj = await nb_formDataFetch("/mathDocs/registerMathDocsPaper", formData, false);
+        if(jsonObj.isSuccess){
+            let formData = new FormData();
+            formData.append("errType", 3);
+            formData.append("contentsNo", jsonObj.docsNo);
+            formData.append("reportContents", document.getElementById("reportContents").value);
+            let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
+            if(returnVal.isSuccess === true){
+                await nb_fadeInOutA("오류 신고가 정상적으로 등록되었습니다.\n학습지를 재생성하여 다시 시도해주시기 바랍니다.", 1500);
+                await mathDocsInit();
+            }
+            
+        }
+    }
+    const errorReportOpen = async (contentsNo, errTitle, errType) => {
+        setErrContentsTitle(errTitle);
+        setErrType(errType);
         setErrContentsNo(contentsNo);
     }
 
-    const errorReportClose = async (contentsNo) => {
+    const errorReportClose = async () => {
         setErrContentsNo(0);
     }
 
     const printMathDocsPaper = async () => {
-        if(document.getElementById("docsGrade").value.length > 6){
-            nb_fadeInOutB("학년은 7글자 미만으로 입력 해주세요.", 2000);
+        if(document.getElementById("docsGrade").value.length > 7){
+            nb_fadeInOutB("학년은 7글자 이하로 입력 해주세요.", 2000);
             return;
         }
-        if(document.getElementById("docsTitle").value.length > 19){
-            nb_fadeInOutB("학습지 제목은 20글자 미만으로 입력 해주세요.", 2000);
+        if(document.getElementById("docsTitle").value.length > 20){
+            nb_fadeInOutB("학습지 제목은 20글자 이하로 입력 해주세요.", 2000);
             return;
         }
-        if(document.getElementById("mathDocsOwner").value.length > 19){
-            nb_fadeInOutB("출제자명은 20글자 미만으로 입력 해주세요.", 2000);
+        if(document.getElementById("docsSubTitle").value.length > 100){
+            nb_fadeInOutB("학습지 부제목은 100글자 이하로 입력 해주세요.", 2000);
+            return;
+        }
+        if(document.getElementById("mathDocsOwner").value.length > 20){
+            nb_fadeInOutB("출제자명은 20글자 이하로 입력 해주세요.", 2000);
             return;
         }
         document.getElementById("mathDocsThrStep").classList.add("hide");
@@ -876,7 +1013,73 @@ const MathDocsMaker = ()=>{
     }
 
     const saveMathDocsPaper = async () =>{
-        nb_confirmBox("학습지를 [나의 학습지] 페이지에 저장하시겠습니까?")
+        if(isInnerPage) {
+            nb_confirmBox("학습지를 수정하신 경우\n수정한 내용으로 저장됩니다. 저장하시겠습니까?")
+        }else{
+            nb_confirmBox("학습지를 [나의 학습지] 페이지에 저장하시겠습니까?")
+        }
+    }
+
+    const mathDocsInit = async () =>{
+            let mathDocsUnitBtn = document.getElementsByClassName("mathDocsUnitBtn active");
+            while(mathDocsUnitBtn.length>0){
+                mathDocsUnitBtn[0].click();
+            }
+            
+            let levelSelTd = document.getElementsByClassName("levelSelTd active");
+            for(let i=0; i<levelSelTd.length; i++){
+                levelSelTd[i].classList.remove("active");;
+            }
+
+            document.getElementById("level1").checked = false;
+            document.getElementById("level3").checked = false;
+            document.getElementById("level5").checked = false;
+
+            let conCntSelTd = document.getElementsByClassName("conCntSelTd active");
+            for(let i=0; i<conCntSelTd.length; i++){
+                conCntSelTd[i].classList.remove("active");
+            }
+            
+            document.getElementById("conCntInput").value = "";
+
+            document.getElementById("confirmBoxClose").click();
+            window.history.back();
+    }
+
+    const registerMathDocsPaper= async () => {
+        let formData = new FormData();
+
+        let contentsNoList;
+        for(let i=0; i< mathContentsList.length; i++){
+            if(i===0){
+                contentsNoList = mathContentsList[i].contentsNo;
+            }else{
+                contentsNoList += ","+mathContentsList[i].contentsNo;
+            }
+        }
+
+        if(isInnerPage){
+            formData.append("docsNo", Number(mathDocsNo));
+        }
+
+        formData.append("docsGrade", document.getElementById("docsGrade").value);
+        formData.append("docsTitle", document.getElementById("docsTitle").value);
+        formData.append("docsSubTitle", document.getElementById("docsSubTitle").value);
+        formData.append("docsOwner", document.getElementById("mathDocsOwner").value);
+        formData.append("docsErrStts", 0);
+        formData.append("contentsNoList", contentsNoList);
+        let jsonObj = await nb_formDataFetch("/mathDocs/registerMathDocsPaper", formData, true);
+        if(jsonObj.isSuccess){
+            if(!isInnerPage){
+                await mathDocsInit();
+                nb_fadeInOutA("[나의 학습지] 페이지에 정상적으로 저장 되었습니다.", 2000);
+            }else{
+                window.history.back();
+            }
+        }else{
+            nb_fadeInOutB("학습지 저장 도중 에러가 발생 했습니다.\n다시 시도해주시거나 새로고침 후 다시 시도해주시기 바랍니다.\n지속적으로 문제 발생시 고객센터에 신고해주시면 감사하겠습니다.");
+        }
+        
     }
 
     const subjectInfoList = subjectList.map( (subjectInfo) => {
@@ -1217,7 +1420,8 @@ return (
                                 <CustomPieChart pieArr={conArrByMultiOnPie}/>
                             </div>
                         </div>
-                        
+                        <div className='inBlock'>
+                        <div className="mathDocsErrDesc"><span className="errBtnWrap mathDocs" onClick={()=>{document.getElementById("mathDocsErrTitle").innerHTML ="학습지 오류 내용을 적어주세요.";document.getElementById("reportContents").value =""; document.getElementById("mathDocsErrReportBox").classList.remove("hide");}}><div className='errBtn mathDocs'></div>학습지 오류 신고</span></div>
                         <div className='conAddBtnWrap'>
                             <table className='conAddBtnTb'>
                                 <tbody>
@@ -1233,6 +1437,8 @@ return (
                                 </tbody>
                             </table>
                         </div>
+                        </div>
+                        
                         <div id="mathDocsInfoShow" className="blindBox hide">
                             <div className='mathDocsInfoRootDiv'>
                                     <div className='mathDocsInfoTitle'>문제 간략 요약 보기</div>
@@ -1387,7 +1593,7 @@ return (
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo)}}></div>
+                                                                <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo, "문제 오류 신고", 1)}}></div>
                                                                 <div className='delBtn' onClick={()=>{contentsDel(contentsMap.contentsNo)}}></div>
                                                             </td>
                                                         </tr>
@@ -1399,8 +1605,9 @@ return (
                         </div>
                         <div className='bottomFixed'>
                             <div className='twoStepDiv'>
-                                <div className='inBlock orangeBorderBtn previousStep' onClick={(event)=>{gotoPreviousStep()}}>이전단계</div>
-                                <div className='inBlock orangeBtn nextStep' onClick={(event)=>{twoStepCheck()}}>학습지 만들기</div>
+                                <div id="docsPreviousBtn" className='inBlock orangeBorderBtn previousStep' onClick={()=>{window.history.back()}}>이전단계</div>
+                                <div id="docsPreviousPage" className='inBlock orangeBorderBtn previousStep hide' onClick={()=>{window.history.back()}}>이전 페이지</div>
+                                <div id="docsMakeBtn" className='inBlock orangeBtn nextStep' onClick={()=>{twoStepCheck()}}>학습지 만들기</div>
                             </div>
                         </div>
                         <div id ="scrollMoveBtn" className='scrollMoveBtn'>
@@ -1463,18 +1670,30 @@ return (
                 <div id="confirmMsg" className="confirmMsg"></div>
                 <div className='alignCenter'>
                     <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide")}}>아니오</span>
-                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{}}>네</span>
+                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{registerMathDocsPaper()}}>네</span>
                 </div>
             </div>
         </div>
         <div className='hide'>{workContentsList2}</div>
         
         {errContentsNo !== 0 &&
-            <ErrorReportForMathCon title="문제 오류 신고" errType={1} parentMethod={errorReportClose} conNo={errContentsNo} />
+            <ErrorReportForMathCon title={errContentsTitle} errType={errType} parentMethod={errorReportClose} conNo={errContentsNo} />
         }
 
         {showMathPaper && <MathDocsPaperA perPageCnt={mathDocsPerPageCnt} mathContentsList={mathContentsList} mathDocsTitle={mathDocsTitle} mathDocsSubTitle={mathDocsSubTitle} mathDocsGrade={mathDocsGrade} mathDocsOwner={mathDocsOwner} key={rerenderVal} parentMethod={saveMathDocsPaper}/>}
        
+       <div id="mathDocsErrReportBox" className='blindBox hide'>
+            <div className='confirmBox'>
+                <div className='closeBtn2' onClick={() =>{document.getElementById("mathDocsErrReportBox").classList.add("hide")}}>X</div>
+                <div id="mathDocsErrTitle" className='mathDocsErrTitle'>학습지가 생성되지 않으시나요?</div>
+                    <div>
+                        <div className='paddingTen'></div>
+                        <textarea id="reportContents" name="reportContents" className='errorReportContents'/>
+                    </div>
+                <div id="mathDocsErrBtn" className="mathDocsErrBtn" onClick={()=>{document.getElementById("mathDocsErrReportBox").classList.add("hide");mathDocsErrorReport();}}>학습지 오류 신고</div>
+                <div className="mathDocsErrBtn2" onClick={() =>{document.getElementById("mathDocsErrReportBox").classList.add("hide")}}>취소</div>
+            </div>
+       </div>
     </>
     )
 }

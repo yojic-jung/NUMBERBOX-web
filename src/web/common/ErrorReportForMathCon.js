@@ -24,14 +24,14 @@ const ErrorReportForMathCon = ({title, errType, parentMethod, conNo})=>{
       if(returnVal.isSuccess === true){
           await nb_fadeInOutA("오류 신고가 정상적으로 등록되었습니다.", 1500);
           document.getElementById("erroReportForConForm").reset();
-          parentMethod();
+          parentMethod(conNo);
       }
     }
    
   return (
     <div id="errorReportForContentsDiv" className='blindBox'>
         <div className='errorReportRootDiv'>
-            <div id="errorReportRootTitle" className='errorReportRootTitle'>문제 오류 신고하기</div>
+            <div id="errorReportRootTitle" className='errorReportRootTitle'>{title}</div>
             <div className='errorReportRootDesc'>오류 내용을 적어 주세요...(선택)</div>
             <div id="errCloseBtn" className='closeBtn errCloseBtn' onClick={()=>{parentMethod()}}>X</div>
             <div>

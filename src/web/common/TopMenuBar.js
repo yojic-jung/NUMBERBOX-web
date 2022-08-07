@@ -91,7 +91,7 @@ return (
                                     <li>프로필</li>
                                     <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
                                     <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
-                                    <li>나의 학습지</li>
+                                    <Link className='linkNoneCss' to="/myMathDocs"><li>나의 학습지</li></Link>
                                     <Link className='linkNoneCss' to="/myResource"><li>나의 컨텐츠</li></Link>
                                     <li onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
                                     <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>

@@ -108,6 +108,10 @@ const ServiceCenter = ({myNickName})=>{
     }
 
     const registerError = async () => {
+        if (document.getElementById("questionText").value.length < 10){
+            nb_fadeInOutB("문의 내용은 최소 10글자 이상 작성하여 주시기 바랍니다.", 2000);
+            return;
+        }
         if (document.getElementById("questionText").value.length > 500){
             nb_fadeInOutB("1:1 문의 내용은 500글자 미만으로 입력 해주세요.", 2000);
             return;

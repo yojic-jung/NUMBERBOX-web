@@ -8,12 +8,14 @@ import MyPageList from 'web/common/MyPageList';
 import MyContentsList from 'web/contents/list/MyContentsList';
 import MyResource from 'web/contents/list/MyResource';
 import MyRepository from 'web/contents/list/MyRepository';
+import MyMathDocs from 'web/contents/list/MyMathDocs';
 
 const MyPageWrap = ()=>{
     let location = useLocation();
     
     const [isMyContentList, setIsMyContentList] = useState(false);
     const [isMyRepository, setIsMyRepository] = useState(false);
+    const [isMyMathDocs, setIsMyMathDocs] = useState(false);
     const [isMyResource, setIsMyResource] = useState(false);
 
     useEffect(()=>{
@@ -21,15 +23,24 @@ const MyPageWrap = ()=>{
             if(location.pathname === "/myContentsList"){
                 setIsMyContentList(true);
                 setIsMyRepository(false);
+                setIsMyMathDocs(false);
                 setIsMyResource(false);
             }else if(location.pathname === "/myRepository"){
                 setIsMyContentList(false);
                 setIsMyRepository(true);
+                setIsMyMathDocs(false);
                 setIsMyResource(false);
             }else if(location.pathname === "/myResource"){
                 setIsMyContentList(false);
                 setIsMyRepository(false);
+                setIsMyMathDocs(false);
                 setIsMyResource(true);
+            }
+            else if(location.pathname === "/myMathDocs"){
+                setIsMyContentList(false);
+                setIsMyRepository(false);
+                setIsMyMathDocs(true);
+                setIsMyResource(false);
             }
         }
         asyncUseEffect();
@@ -41,6 +52,7 @@ const MyPageWrap = ()=>{
         <MyPageList />
         {isMyContentList && <MyContentsList isMine={true} />}
         {isMyRepository && <MyRepository />}
+        {isMyMathDocs && <MyMathDocs />}
         {isMyResource && <MyResource />}
     </>
   );

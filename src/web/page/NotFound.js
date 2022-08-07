@@ -1,9 +1,17 @@
-import React from 'react';
-import { useNavigate  } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate  } from 'react-router-dom';
 import "css/page/etcPage.css";
 
 const NotFound = ()=>{
+    let location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if(location.pathname === "/makeMathDocsTwoStep"){
+            window.history.back();
+        }
+    },[]);
+
 return (
     <div className='marginSevenZero'>    
         <div className='errorCircle'>
