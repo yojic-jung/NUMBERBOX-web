@@ -149,7 +149,8 @@ const WorkContentsList = ()=>{
     }
 
     useEffect(()=>{
-        let param = nb_getParameterByName("unitUniqId")
+        let param = nb_getParameterByName("unitUniqId");
+        let param2 = nb_getParameterByName("contentsNo");
         if(currentPath === location.pathname && param === "") {
             if(contentsList.length!==0){
                 setContentsList([])
@@ -177,6 +178,8 @@ const WorkContentsList = ()=>{
             if(param !== ""){
                 historyBackSearchCondSetting(param)
             }
+
+            searchWorkListByContentsNo(param2, false);
         }
         if(!fExecuteWidth){
             asyncUseEffect();
@@ -639,10 +642,9 @@ const WorkContentsList = ()=>{
         }
 
 
-        const searchWorkListByContentsNo = async function(hasNotiPhrases){
-            let contentsNo = document.getElementById("serchContentsNoVal").value;
+        const searchWorkListByContentsNo = async function(contentsNo, hasNotiPhrases){
             let returnObj = await nb_dataFetch("/mathInfo/takeWorkContentsListByContentsNo?contentsno="+contentsNo, true);
-            window.history.pushState("", "문제검색", '/workContentsList?unitUniqId=0');
+            window.history.pushState("", "문제검색", '/workContentsList?unitUniqId=0&contentsNo='+contentsNo);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }
@@ -834,7 +836,6 @@ const WorkContentsList = ()=>{
                                 <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>
                             </div>
                         </form>
-                        <div className='alignCenter hide'>문제 고유 번호 검색 <input id="serchContentsNoVal" type="number" /> <button type="button" className="orangeBtn" onClick={()=>searchWorkListByContentsNo(false)}>검색</button></div>
                     </div>
                     <div className='workList'>
                         {workListChanged && workContentsList.length !==0 ? 

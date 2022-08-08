@@ -849,15 +849,12 @@
     line-height: 160%;
 }
 .mathDocsList th{
-    padding: 10px 0;
+    padding: 5px 0;
     border-bottom : 1px solid rgb(104, 104, 104);
-    background-color: #A4B0D8;
+    background-color: rgb(49, 88, 142);
     color:white;
     font-weight: normal;
     letter-spacing: 2px;
-}
-
-.mathDocsList td{
 }
 
 .mathDocsList tr:nth-child(odd){

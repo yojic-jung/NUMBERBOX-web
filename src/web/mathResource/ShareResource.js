@@ -5,7 +5,6 @@ import RoundButtonList from 'web/common/RoundButtonList';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
 import {nb_dataFetch, nb_dataFileFetch, nb_getParameterByName} from 'js/common/common_nb.js';
 import "css/resourceFile/shareResource.css";
-import hourglass from 'img/hourglass.gif';
 
 let resourceMenuArr;
 const ShareResource = ()=>{
@@ -33,8 +32,18 @@ const ShareResource = ()=>{
             });
             setMainCate(uniqueArr);
             document.getElementById("shareResource").classList.add("active")
-            let param = nb_getParameterByName("mainCateNo")
-            let returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
+            let param = nb_getParameterByName("mainCateNo");
+            let param2 = nb_getParameterByName("resourceNo")
+            let returnObj;
+            if(param2 !== ""){
+                returnObj = await nb_dataFetch('/mathInfo/takeResourceByResourceNo?resourceNo='+param2, true);
+                console.log(returnObj);
+                param = returnObj.resourceList[0].mathResourceCate[0].mainCateNo;
+            }else{
+                returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
+                console.log(returnObj);
+            }
+            
             let cateMenu = document.querySelectorAll(".cateMenu");
             for(let i=0; i<cateMenu.length; i++){
                 cateMenu[i].classList.remove("active")

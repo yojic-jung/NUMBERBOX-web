@@ -95,10 +95,20 @@ const AdminSvcCenter = ()=>{
             
             if(errReport.errType === 1){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "문제 고유 번호 : "+errReport.contentsNo;
+                document.getElementById("orgContentsLink").innerHTML = "문제검색에서 열기"
+                document.getElementById("orgContentsLink").href = "/contentsList?contentsNo="+errReport.contentsNo;
+                document.getElementById("orgContentsLink2").classList.remove("hide");
+                document.getElementById("orgContentsLink2").href = "/workContentsList?contentsNo="+errReport.contentsNo;
             }else if(errReport.errType === 2){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "컨텐츠 번호 : "+errReport.contentsNo;
+                document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink").innerHTML = "컨텐츠 열기"
+                document.getElementById("orgContentsLink").href = "/shareResource?resourceNo="+errReport.contentsNo;
             }else if(errReport.errType === 3){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "학습지 번호 : "+errReport.contentsNo;
+                document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink").innerHTML = "학습지 열기"
+                document.getElementById("orgContentsLink").href = "/makeMathDocs?docsNo="+errReport.contentsNo;
             }
             document.getElementById("detailedErrReportConNoAdmin").classList.remove("hide");
         }else{
@@ -353,7 +363,7 @@ return (
                 <tbody>
                     <tr>
                         <td>서비스 구분</td>
-                        <td>문제 고유 번호</td>
+                        <td>컨텐츠 번호</td>
                         <td>문의 내용</td>
                         <td>등록일</td>
                         <td className='reportStts admin'>상태</td>
@@ -397,6 +407,10 @@ return (
                     <span id="detailedSysCreateDateAdmin" className='detailedSysCreateDateAdmin'></span>
                 </div>
                 <div id="detailedErrReportConNoAdmin" className='detailedErrReportConNoAdmin hide'></div>
+                <div className='alignLeft'>
+                    <a id="orgContentsLink" href="/" target='_blank'>문제 열기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a id="orgContentsLink2" href="/" target='_blank' className='hide'>작업내역에서 문제 열기</a>
+                </div>
                 <div className='alignLeft'>문의 내용 :</div>
                 <div id="detailedReportContentsAdmin" className='detailedReportContentsAdmin'></div>
                 <div className='alignCenter'>

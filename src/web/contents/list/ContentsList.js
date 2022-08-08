@@ -146,7 +146,8 @@ const ContentsList = ()=>{
     }
     
     useEffect(()=>{
-        let param = nb_getParameterByName("unitUniqId")
+        let param = nb_getParameterByName("unitUniqId");
+        let param2 = nb_getParameterByName("contentsNo");
         if(currentPath === location.pathname && param === "") {
             if(contentsList.length!==0){
                 setContentsList([])
@@ -172,6 +173,10 @@ const ContentsList = ()=>{
             //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
             if(param !== ""){
                 historyBackSearchCondSetting(param)
+            }
+
+            if(param2 !== ""){
+                searchWorkListByContentsNo(param2, false)
             }
         }
         if(!fExecuteWidth){
@@ -495,9 +500,8 @@ const ContentsList = ()=>{
         }
         
 
-        const searchWorkListByContentsNo = async function(hasNotiPhrases){
-            let contentsNo = document.getElementById("serchContentsNoVal").value;
-            let returnObj = await nb_dataFetch("/mathInfo/takeContentsListByContentsNo?contentsno="+contentsNo, true);
+        const searchWorkListByContentsNo = async function(contentsNoParam, hasNotiPhrases){
+            let returnObj = await nb_dataFetch("/mathInfo/takeContentsListByContentsNo?contentsno="+contentsNoParam, true);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }
@@ -511,7 +515,7 @@ const ContentsList = ()=>{
                     await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
                     setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.", 2000);
                 }else{
-                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId=0');
+                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId=0&conentsNo='+contentsNoParam);
                     setConRepoInfoList(returnObj["mathconRepoInfo"]);
                     setConLikeInfoList(returnObj["mathConLikeInfo"]);
                     setContentsList(returnObj["mathContents"]);
@@ -718,7 +722,6 @@ const ContentsList = ()=>{
                                 <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>
                             </div>
                         </form>
-                        <div className='alignCenter hide'>문제 고유 번호 검색 <input id="serchContentsNoVal" type="number" /> <button type="button" className="orangeBtn" onClick={()=>searchWorkListByContentsNo(false)}>검색</button></div>
                     </div>
                     <div className='workList'>
                         {workListChanged && workContentsList.length !==0 ? 
