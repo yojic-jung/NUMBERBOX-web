@@ -34,6 +34,7 @@ const App = ()=>{
       <BrowserRouter>
           <Routes>
             <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
+            <Route exact path="/loginCallBackNaver" element={<Login />} />
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>
               <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
