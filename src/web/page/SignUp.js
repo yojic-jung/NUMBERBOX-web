@@ -23,7 +23,7 @@ const SignUp = ()=>{
         callbackUrlNaver = "https://nsoohak.com/loginCallBackNaver";
     }
 
-    callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
+    //callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
 
     const naverLogin = new naver.LoginWithNaverId({
         clientId: "nHyzlpf4lzeLBMbSC5VL",
