@@ -178,8 +178,9 @@ const WorkContentsList = ()=>{
             if(param !== ""){
                 historyBackSearchCondSetting(param)
             }
-
-            searchWorkListByContentsNo(param2, false);
+            if(param2 !== ""){
+                searchWorkListByContentsNo(param2, false);
+            }
         }
         if(!fExecuteWidth){
             asyncUseEffect();
