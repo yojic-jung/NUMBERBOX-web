@@ -3,17 +3,14 @@ import jsPDF from "jspdf";
 
 const makePdf = async (targetId) => {
     html2canvas(document.querySelector("#mathDocsPaperPdf")).then(canvas => {
-        console.log(canvas);
         // base64 url 로 변환
         var imgData = canvas.toDataURL('image/jpeg');
-        console.log(canvas.height);
       
         let imgWidth = 210; // 이미지 가로 길이(mm) A4 기준
         let pageHeight = imgWidth * 1.414;  // 출력 페이지 세로 길이 계산 A4 기준
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let heightLeft = imgHeight;
         var margin = 0;
-        console.log(imgHeight);
         var doc = new jsPDF('p', 'mm', 'a4');
         var position = 0;
       

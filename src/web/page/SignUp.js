@@ -13,8 +13,32 @@ const SignUp = ()=>{
     const [phoneNumber, setPhoneNumber] = useState("");
     const [birth, setBirth] = useState("");
 
+    const { naver } = window;
+    
+    var currentUrlNaver = window.location.href;
+    var callbackUrlNaver = '';
+    if(currentUrlNaver.indexOf("www.nsoohak.com") != -1){
+        callbackUrlNaver = "https://www.nsoohak.com/loginCallBackNaver";
+    }else{
+        callbackUrlNaver = "https://nsoohak.com/loginCallBackNaver";
+    }
+
+    callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
+
+    const naverLogin = new naver.LoginWithNaverId({
+        clientId: "nHyzlpf4lzeLBMbSC5VL",
+        callbackUrl: callbackUrlNaver, 
+        isPopup: false, // popup 형식으로 띄울것인지 설정
+        loginButton: { color: 'white', type: 3, height: '47' }, //버튼의 스타일, 타입, 크기를 지정
+      });
+
+    const initializeNaverLogin = () => {
+        naverLogin.init();
+      };
+
     useEffect(() => {
         const asyncUseEffect = async () =>{
+            initializeNaverLogin();
             let returnObj = await nb_dataFetch("/takeMerchantUid", true);
             setMerchantUid(returnObj.merchantUid);
             setMerchantIdCode(returnObj.merchantIdCode);
@@ -290,7 +314,10 @@ return (
                         
                     </div>
                     <div className='login-btn'  onClick={()=>{sigupRequest()}}>가입완료</div>
-
+                    <div className="grid-naver hide" id='naverIdLogin'></div>
+                    <div className="naver-customize" onClick={()=>{naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
+                        네이버 아이디로 회원가입
+                    </div>
                 </form>
             </div>
         </div>

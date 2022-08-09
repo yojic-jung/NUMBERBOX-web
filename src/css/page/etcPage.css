@@ -112,7 +112,7 @@
 
 .signUpDiv{
     width: 90%;
-    margin: 80px auto 0 auto;
+    margin: 50px auto 0 auto;
     text-align: center;
 }
 
@@ -230,3 +230,29 @@
     text-transform: uppercase;
     outline: none;
 }   
+
+.naver-customize{
+    text-align: center;
+    background-image: url('img/naverbackground.png');
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-size: 15px;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-weight: bolder;
+    width: 90%;
+    margin: 20px auto;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.naver-customize::before{
+    content: '';
+    display: inline-block;
+    background-image: url('img/naver.png');
+    background-size: 45px;
+    width: 45px;
+    height: 45px;
+    vertical-align: middle;
+    margin-right: 10px;
+}

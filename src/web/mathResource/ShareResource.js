@@ -37,11 +37,9 @@ const ShareResource = ()=>{
             let returnObj;
             if(param2 !== ""){
                 returnObj = await nb_dataFetch('/mathInfo/takeResourceByResourceNo?resourceNo='+param2, true);
-                console.log(returnObj);
                 param = returnObj.resourceList[0].mathResourceCate[0].mainCateNo;
             }else{
                 returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
-                console.log(returnObj);
             }
             
             let cateMenu = document.querySelectorAll(".cateMenu");
