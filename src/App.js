@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Main from 'web/page/Main'
 import Login from 'web/page/Login'
+import EmailPassFind from 'web/page/EmailPassFind'
 import NaverLoginSuccess from 'web/page/NaverLoginSuccess'
 import SignUp from 'web/page/SignUp'
 import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker'
@@ -35,6 +36,7 @@ const App = ()=>{
       <BrowserRouter>
           <Routes>
             <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
+            <Route exact path="/emailPassFind" element={nb_isLogin()  ? <Navigate to="/" /> : <EmailPassFind />} />
             <Route exact path="/loginCallBackNaver" element={<NaverLoginSuccess />} />
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>

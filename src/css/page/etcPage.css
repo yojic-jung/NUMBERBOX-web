@@ -256,3 +256,46 @@
     vertical-align: middle;
     margin-right: 10px;
 }
+
+.emailPassFindDiv{
+    width: 80%;
+    margin:0 auto 60px auto;
+    outline: 1px solid rgb(176, 176, 176);
+    border-radius: 5px;
+    padding-bottom: 20px;
+}
+
+.login-input.emailPassFind{
+    display: block;
+    margin: 0 auto 30px auto;
+    width: 90%;
+}
+
+.login-btn.emailPassFind{
+    color:white;
+    padding: 0px;
+    margin: 10px auto 10px auto;
+}
+
+.emailPassFindDesc{
+    font-size: 13px;
+    font-family: 'jejuGothic';
+    background: rgb(238, 238, 238);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-indent: 10px;
+    margin-bottom: 30px;
+}
+
+.borderBox.emailPassFind{
+    border: 1px solid gray;
+    width: 80%;
+    margin:0 auto 30px auto;
+    padding: 5px;
+}
+
+.phoneCertifyBtn.emailPassFind{
+    width: 100%;
+    margin:0 auto 0 auto;
+    padding: 0;
+}
