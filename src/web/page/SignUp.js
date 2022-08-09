@@ -1,14 +1,67 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link} from "react-router-dom";
-import { nb_formDataFetch} from 'js/common/common_nb.js';
+import { nb_formDataFetch, nb_dataFetch} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/page/etcPage.css";
 
 const SignUp = ()=>{
+
+    const [merchantUid, setMerchantUid] = useState(0);
+    const [merchantIdCode, setMerchantIdCode] = useState(0);
+    const [isPhoneIdentified, setIsPhoneIdentified] = useState(false);
+    const [name, setName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [birth, setBirth] = useState("");
+
+    useEffect(() => {
+        const asyncUseEffect = async () =>{
+            let returnObj = await nb_dataFetch("/takeMerchantUid", true);
+            setMerchantUid(returnObj.merchantUid);
+            setMerchantIdCode(returnObj.merchantIdCode);
+        }
+
+        asyncUseEffect();
+    },[]);
+
+        function onClickCertification() {
+          /* 1. 가맹점 식별하기 */
+          const { IMP } = window;
+          IMP.init(merchantIdCode);
+    
+          /* 2. 본인인증 데이터 정의하기 */
+          const data = {
+            merchant_uid: merchantUid+new Date(), 
+            popup : false 
+          };
+    
+          /* 4. 본인인증 창 호출하기 */
+          IMP.certification(data, callback);
+        }
+    
+        /* 3. 콜백 함수 정의하기 */
+        async function callback(response) {
+          const {
+            success,
+            merchant_uid,
+            error_msg,
+          } = response;
+    
+          if (success) {
+            alert('본인인증 성공');
+            let returnData = await nb_dataFetch("/certifications/"+response.imp_uid, true);
+            document.getElementById("phoneCertifyBtn").classList.remove("loginValDescUI");
+            document.getElementById("phoneCertiValDesc").innerText = "";
+            setIsPhoneIdentified(true)
+            setName(returnData.name);
+            setPhoneNumber(returnData.phone);
+            setBirth(returnData.birth);
+          } else {
+            alert(`본인인증 실패: ${error_msg}`);
+          }
+        }
+
     const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     const passRegex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;//패스워드 문자 숫자 특수문자 8-15자
-	const phoneRegex = /^\d{3}\d{3,4}\d{4}$/;
-    const birthRegex = /^[0-9]{6}$/;
 
     const fagreeStateBtn = () =>{
        let isChecked =  document.getElementById("agreeChk").checked;
@@ -123,42 +176,26 @@ const SignUp = ()=>{
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
         let passwordChk = document.getElementById("passwordChk").value;
-        let userName = document.getElementById("userName").value;
-        let phoneNumber = document.getElementById("phoneNumber").value;
-        let birth = document.getElementById("birth").value;
         let agreeChk = document.getElementById("agreeChk").checked;
 
 
         let isValid = true;
+        
         if(!agreeChk){
             document.getElementById("agreeValDesc").classList.add("redText");
             document.getElementById("agreeValDesc").innerText = "이용약관 개인정보보호 방침에 동의해주세요.";
             isValid = false;
         }
-        if(!birthRegex.test(birth)){
-            document.getElementById("birthValDesc").innerText = "생년월일 6자리(ex. 880521)를 입력해주세요.";
-            document.getElementById("birthValDesc").classList.remove("blueText");
-            document.getElementById("birthValDesc").classList.add("redText");
-            document.getElementById("birth").classList.add("loginValDescUI");
-            window.scroll(0, document.getElementById("birth"));
+
+        if(!isPhoneIdentified){
+            document.getElementById("phoneCertiValDesc").innerText = "휴대폰 본인인증을 진행 해주세요.";
+            document.getElementById("phoneCertiValDesc").classList.remove("blueText");
+            document.getElementById("phoneCertiValDesc").classList.add("redText");
+            document.getElementById("phoneCertifyBtn").classList.add("loginValDescUI");
+            window.scroll(0, document.getElementById("phoneCertifyBtn"));
             isValid = false;
         }
-        if(!phoneRegex.test(phoneNumber)){
-            document.getElementById("phoneNumberValDesc").innerText = "-(하이픈)을 없앤 휴대폰 번호를 입력해주세요.";
-            document.getElementById("phoneNumberValDesc").classList.remove("blueText");
-            document.getElementById("phoneNumberValDesc").classList.add("redText");
-            document.getElementById("phoneNumber").classList.add("loginValDescUI");
-            window.scroll(0, document.getElementById("phoneNumber"));
-            isValid = false;
-        }
-        if(userName.length < 2 || userName.length > 17){
-            document.getElementById("userNameValDesc").innerText = "이름을 입력해주세요.";
-            document.getElementById("userNameValDesc").classList.remove("blueText");
-            document.getElementById("userNameValDesc").classList.add("redText");
-            document.getElementById("userName").classList.add("loginValDescUI");
-            window.scroll(0, document.getElementById("userName"));
-            isValid = false;
-        }
+
         if(password !== passwordChk){
             document.getElementById("passChkValDesc").innerText = "비밀번호가 일치하지 않습니다.";
             document.getElementById("passChkValDesc").classList.remove("blueText");
@@ -192,11 +229,16 @@ const SignUp = ()=>{
             isValid = false;
         }
 
+        
+
         if(!isValid){
             return;
         }
 
         let formData = new FormData(document.getElementById("signup-form"));
+        formData.append("userName", name);
+        formData.append("phoneNumber", phoneNumber);
+        formData.append("birth", birth);
 		let returnObj = await nb_formDataFetch("/signup",formData, true);
         if(returnObj.isSuccess === "success"){
             alert("회원가입이 정상적으로 완료되었습니다.");
@@ -232,20 +274,10 @@ return (
                     </div>
                     <div id="passChkValDesc" className='loginValDesc'></div>
                     <div className='login-input-div'>
-                        이름<br/>
-                        <input  id="userName" name="userName" className="login-input" type="text" placeholder='이름을 입력해주세요' onKeyUp={(event) =>{enterKeyEv(event);}} onFocus={()=>{removeLoginValDescUI();}}/>
+                        <div id="phoneCertifyBtn" className='phoneCertifyBtn' onClick={()=>{onClickCertification()}}>휴대폰 본인인증</div>
+                        <div id="phoneCertiValDesc" className='loginValDesc'></div>
                     </div>
-                    <div id="userNameValDesc" className='loginValDesc'></div>
-                    <div className='login-input-div'>
-                        휴대폰 번호<br/>
-                        <input  id="phoneNumber" name="phoneNumber" className="login-input" type="text" placeholder='-(하이픈)을 없앤 휴대폰 번호를 입력해주세요.' onKeyUp={(event) =>{enterKeyEv(event);}} onFocus={()=>{removeLoginValDescUI();}}/>
-                    </div>
-                    <div id="phoneNumberValDesc" className='loginValDesc'></div>
-                    <div className='login-input-div'>
-                        생년월일<br/>
-                        <input  id="birth" name="birth" className="login-input" type="text" placeholder='생년월일 6자리(ex. 880521)을 입력해주세요.' onKeyUp={(event) =>{enterKeyEv(event);}} onFocus={()=>{removeLoginValDescUI();}} />
-                    </div>
-                    <div id="birthValDesc" className='loginValDesc'></div>
+                    
                     <div>
                     <div className='login-input-div'>
                         <label>

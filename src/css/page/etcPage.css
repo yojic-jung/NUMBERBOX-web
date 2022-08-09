@@ -214,3 +214,19 @@
 .loginErrMsg::before{
     content:'\274C';
 }
+
+.phoneCertifyBtn{
+    cursor: pointer;
+    text-align: center;
+    color:white;
+    background: rgb(124, 62, 253);
+    background-size: 400% 400%;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-radius: 2px;
+    padding:6px 0px;
+    text-shadow: 1px 1px 1px rgb(0 0 0 / 14%);
+    text-transform: uppercase;
+    outline: none;
+}   
