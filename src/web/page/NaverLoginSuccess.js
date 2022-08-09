@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {nb_formDataFetch} from 'js/common/common_nb.js';
+import {nb_formJsonFetch} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/common/common.css";
 
@@ -70,7 +70,7 @@ const NaverLoginSuccess = ()=>{
                         formData.append("userName", name);
                         formData.append("phoneNumber", mobile.replaceAll("-", ""));
                         formData.append("birth", birthyear.slice(2)+birthday.replaceAll("-", ""));
-                        let returObj = await nb_formDataFetch("/naverLogin", formData, true);
+                        let returObj = await nb_formJsonFetch("/naverLogin", formData, true);
                         if(returObj.isSuccess !== undefined){
                             if(returObj.isSuccess === "signUpSuccess"){
                                 window.location.href = "/?succeedSignUp=1";
