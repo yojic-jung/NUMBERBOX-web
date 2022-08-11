@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Link} from "react-router-dom";
+import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import { nb_formDataFetch, nb_dataFetch} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/page/etcPage.css";
 
 const SignUp = ()=>{
-
+    const navigate = useNavigate ();
+    
     const [merchantUid, setMerchantUid] = useState(0);
     const [merchantIdCode, setMerchantIdCode] = useState(0);
     const [isPhoneIdentified, setIsPhoneIdentified] = useState(false);
@@ -279,6 +281,7 @@ const SignUp = ()=>{
 return (
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
+            <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
             <div className='login-signup-desc'>N명의수학에 오신 것을 환영합니다!</div>
             <div className="login-div">
                 <form id="signup-form" method="post">

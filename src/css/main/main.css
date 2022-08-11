@@ -86,6 +86,7 @@
     flex: 1fr 4fr;
 }
 .bottom-menu-title{
+    letter-spacing: 1px;
     font-family: 'GmarketSansBold';
     font-size: 30px;
     color:white;

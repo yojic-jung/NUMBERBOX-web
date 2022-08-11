@@ -16,7 +16,7 @@ const NaverLoginSuccess = ()=>{
                     callbackUrlNaver = "https://nsoohak.com/loginCallBackNaver";
                 }
 
-                //callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
+                callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
 
                 const naverLogin = new naver.LoginWithNaverId({
                     clientId: "nHyzlpf4lzeLBMbSC5VL",
@@ -64,13 +64,20 @@ const NaverLoginSuccess = ()=>{
                             naverLogin.reprompt();
                             return;
                         }
-        
+
+                        let param = "";
+                        if(window.localStorage.getItem("loginState") === "keep"){
+                            param="?loginState=keep"
+                        }
+
+                        window.localStorage.setItem("loginState", null);
+
                         let formData = new FormData();
                         formData.append("email", email);
                         formData.append("userName", name);
                         formData.append("phoneNumber", mobile.replaceAll("-", ""));
                         formData.append("birth", birthyear.slice(2)+birthday.replaceAll("-", ""));
-                        let returObj = await nb_formJsonFetch("/naverLogin", formData, true);
+                        let returObj = await nb_formJsonFetch("/naverLogin"+param, formData, true);
                         if(returObj.isSuccess !== undefined){
                             if(returObj.isSuccess === "signUpSuccess"){
                                 window.location.href = "/?succeedSignUp=1";

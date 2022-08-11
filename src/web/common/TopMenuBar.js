@@ -88,7 +88,7 @@ return (
                                 }
                                 
                                 <ul className="myService-list hide">
-                                    <li>프로필</li>
+                                    <Link className='linkNoneCss' to="/myProfile"><li>프로필</li></Link>
                                     <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
                                     <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
                                     <Link className='linkNoneCss' to="/myMathDocs"><li>나의 학습지</li></Link>

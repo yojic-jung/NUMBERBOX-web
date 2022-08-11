@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import {Link} from "react-router-dom";
 import {nb_formJsonFetch} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/page/etcPage.css";
 
 const Login = ()=>{
+    const navigate = useNavigate ();
 
     const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     const { naver } = window;
@@ -17,7 +19,7 @@ const Login = ()=>{
         callbackUrlNaver = "https://nsoohak.com/loginCallBackNaver";
     }
 
-    //callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
+    callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
 
     const naverLogin = new naver.LoginWithNaverId({
         clientId: "nHyzlpf4lzeLBMbSC5VL",
@@ -90,6 +92,7 @@ const Login = ()=>{
 return (
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
+            <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
             <div className='login-signup-desc'>N명의수학에 접속 하세요!</div>
             <div className="login-div">
                 <form id="login-form" method="post">
@@ -101,7 +104,7 @@ return (
                     <div id="loginErrMsg" className='loginErrMsg hide'></div>
                     <div id="login-btn" className='login-btn disabled' onClick={(event)=>{fLoginBtnUiVal(event)}}>로그인</div>
                     <div className="grid-naver hide" id='naverIdLogin'></div>
-                    <div className="naver-customize" onClick={()=>{naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
+                    <div className="naver-customize" onClick={()=>{if(document.getElementById("emailSave").checked){ window.localStorage.setItem("loginState", "keep");}else{window.localStorage.setItem("loginState", null)} naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
                         네이버 아이디로 로그인
                     </div>
                     <div className='login-etc-info'>

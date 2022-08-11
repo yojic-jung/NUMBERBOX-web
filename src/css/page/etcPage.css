@@ -37,12 +37,23 @@
 }
 
 .login-menu-title{
+    letter-spacing: 1px;
     margin: 0px auto 20px auto;
     width:1100px;
     font-family: 'GmarketSansBold';
     font-size: 30px;
     color:#3e6599;
 }
+
+.login-menu-back{
+    letter-spacing: 1px;
+    margin: 0px auto 20px auto;
+    width:1100px;
+    font-family: 'GmarketSansBold';
+    font-size: 20px;
+    color:gray;
+}
+
 .login-div{
     background-color: white;
     min-height: 410px;
@@ -298,4 +309,58 @@
     width: 100%;
     margin:0 auto 0 auto;
     padding: 0;
+}
+
+.myProfileWrap{
+    width: 1000px;
+    margin: 30px auto 100px auto;
+    min-height: 300px;
+    line-height: 200%;
+}
+
+.myProfileTitle{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.myProfileDesc{
+    font-size: 14px;
+    color:gray;
+}
+
+.myProfileConfirmTable{
+    font-size: 14px;
+    color:gray;
+    width: 100%;
+    border-spacing: 0;
+    margin-bottom: 20px;
+}
+
+
+.myProfileConfirmTable > tbody > tr > td:first-child{
+    background: #e4f0ff;
+    text-align: center;
+    text-indent: 0px;
+    width: 200px;
+}
+
+.myProfileConfirmTable > tbody > tr> td{
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding: 5px;
+    text-indent: 20px;
+}
+
+.myProfileConfirmTable.update td{
+    padding: 10px 0;
+}
+
+
+.confirmPassword{
+    width: 200px;
+    font-size:16px;
+}
+
+.confirmPassword.detail{
+    margin-left: 10px;
 }

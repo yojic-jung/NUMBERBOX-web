@@ -39,6 +39,10 @@
     margin:10px;
 }
 
+.marginLTwoZero{
+    margin-left: 20px;
+}
+
 .marginTenAuto{
     margin:10px auto !important;
 }
@@ -93,6 +97,11 @@
     font-weight:bolder;
     color: rgb(61, 147, 190);
 }
+
+.bolder{
+    font-weight:bolder;
+}
+
 .MJXc-display{
     display: inline-block !important;
 }
@@ -185,6 +194,7 @@
     font-size: 17px;
     padding: 10px 0 15px 0;
 }
+
 
 .pointer{
     cursor: pointer;
@@ -1533,4 +1543,22 @@
     position: absolute;
     top:-7px;
     left:-47px;
+}
+
+.customBtn{
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: #2d6bc2;
+    color:white;
+    cursor: pointer;
+}
+
+.customBtn2{
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 5px;
+    background: #b0b0b0;
+    color:white;
+    cursor: pointer;
 }
