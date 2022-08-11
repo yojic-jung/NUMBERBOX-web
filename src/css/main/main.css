@@ -69,11 +69,6 @@
     border: 1px solid rgb(214, 230, 246);
 }
 
-.back{
-    width: 100%;
-    height: 100%;
-    background-color: #e1eeff;
-}
 
 
 .bottom-div{
@@ -181,3 +176,305 @@
     text-decoration: none;
 }
 /*매니저 권한 임시 구현 끝*/
+
+.mainImgBox{
+    width: 30%;
+    background-color: white;
+    line-height: 250%;
+    margin: 10px auto;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 30%);
+    box-sizing: border-box;
+}
+
+.mainImgBox.first{
+    width: 37%;
+    position: absolute;
+    top: 10px;
+    left: 64%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.mainImgBox.second{
+    position: absolute;
+    top: 150px;
+    left: 70%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.mainImgBox.third{
+    position: absolute;
+    top: 340px;
+    left: 75%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.mainImgUI{
+    width: 100%;
+}
+
+.mainDiv{
+    background-color: #eef6ff;
+    position: relative;
+    height: 630px;
+}
+
+@keyframes target_updown1 {
+    0% { top: 65px;}
+    50% { top: 85px; }
+    100% { top: 65px;}
+}
+
+@keyframes target_updown2 {
+    0% { top: 160px;}
+    50% { top: 140px; }
+    100% { top: 160px;}
+}
+
+
+.mainImgDesc {
+    font-family: 'jejuGothic';
+    position: absolute;
+    color:white;
+    padding: 7px 10px;
+    border-radius: 10px;
+}
+
+
+.mainImgDesc.first {
+    animation: target_updown1 2s; 
+    animation-iteration-count: infinite;
+    left: calc(20% - 120px);
+    background-color: rgb(115, 139, 207);
+    z-index: 5;
+}
+
+.mainImgDesc.first::after {
+    border-top: 15px solid rgb(115, 139, 207);
+    border-left: 15px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 0px solid rgb(115, 139, 207);
+    content: "";
+    position: absolute;
+    right: 15px;
+    bottom: -14px;
+}
+
+.mainImgDesc.second {
+    animation: target_updown2 2s; 
+    animation-iteration-count: infinite;
+    left: calc(20% + 100px);
+    background-color: #ab9fdb;
+    z-index: 5;
+}
+
+.mainImgDesc.second::before {
+    border-top: 15px solid #ab9fdb;
+    border-left: 15px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 0px solid transparent;
+    content: "";
+    position: absolute;
+    left: -12px;
+}
+
+.mainTitle{
+    font-family: 'jejuGothic';
+    position: absolute;
+    top:230px;
+    left: 15%;
+    font-size: 35px;
+    line-height: 160%;
+    z-index: 5;
+}
+
+.mainImgDiv{
+    width: 70px;
+    position: absolute;
+    top:130px;
+    left: 20%;
+}
+
+.mainSubRootDiv1, .mainSubRootDiv2{
+    padding: 50px;
+}
+
+.mainSubRootDiv2{
+    background: #fbf8ff;
+}
+
+.mainSubDiv1{
+    display: flex;
+    flex: 2 1;
+    width: 1000px;
+    margin: auto;
+    position: relative;
+    padding: 20px 0;
+}
+
+
+
+.mainSubDiv1 .mainSubBox, .mainSubDiv1 .mainSubBox2{
+    width: 40%;
+    background-color: white;
+    line-height: 250%;
+    margin: 10px 10px 10px 50px;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 14px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 30%);
+    box-sizing: border-box;
+}
+.mainSubBox.first{
+    z-index: 2;
+}
+.mainSubDiv1 .mainSubBox2{
+    padding: 10px;
+    position: absolute;
+    bottom:0;
+    left: 10%;
+    width: 55%;
+}
+
+.mainSubDiv2{
+    display: flex;
+    flex: 2 1;
+    width: 1000px;
+    margin: auto;
+    position: relative;
+    padding: 20px 0;
+}
+
+
+.mainSubTitle{
+    font-size: 25px;
+    margin:10px;
+    font-family: 'TmoneyRoundWindExtraBold';
+}
+
+.mainSubDesc{
+    margin:10px;
+    font-family: 'jejuGothic';
+    line-height: 140%;
+    margin-bottom: 30px;
+}
+
+.mainSubDiv2Title{
+    font-family: 'TmoneyRoundWindExtraBold';
+    font-size: 20px;
+    width: 1000px;
+    margin:10px auto;
+}
+
+.mainSubDiv2Desc{
+    width: 1000px;
+    margin:10px auto;
+    font-family: 'jejuGothic';
+    line-height: 160%;
+}
+
+.mainSubDiv2 .mainSubBox.first{
+    padding: 10px;
+    width: 70%;
+    background-color: white;
+    line-height: 250%;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 30%);
+    box-sizing: border-box;
+    margin:30px 30px 60px 0;
+}
+
+.mainSubDiv2 .mainSubBox.second{
+    background-color: white;
+    line-height: 250%;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 1.5rem rgba(249, 171, 36, 0.7);
+    box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+    z-index: 2;
+}
+
+.mainSubDiv3{
+    width: 1000px;
+    margin:auto;
+    padding: 50px;
+    position: relative;
+}
+
+.mainSubDiv3 .mainSubBox.first, .mainSubDiv3 .mainSubBox.second{
+    display: inline-block;
+    background-color: white;
+    line-height: 250%;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 1.5rem rgba(175, 175, 175, 0.7);
+    box-sizing: border-box;
+    padding: 10px;
+    z-index: 2;
+}
+
+.mainSubDiv3 .mainSubBox.first{
+    width: 50%;
+    position: absolute;
+    bottom:0;
+    left: 0;
+    z-index: 3;
+}
+
+.mainSubDiv3 .mainSubBox.second{
+    width: 60%;
+}
+
+.mainSubDescTitle{
+    position: relative;
+    margin: 0 0 7px 25px;
+}
+
+.mainSubDescTitle.second{
+    margin-top:30px;
+}
+
+.mainSubDescTitle::before{
+    display: inline-block;
+    background:rgb(148, 103, 253);
+    color:white;
+    width:20px;
+    height:20px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-align: center;
+    line-height:24px;
+    position: absolute;
+    left: -25px;
+    vertical-align: text-bottom;
+}
+
+
+.mainSubDescTitle.first::before{
+    content: '1';
+}
+
+.mainSubDescTitle.second::before{
+    content: '2';
+}
+
+
+
+.mainSubDescContents{
+    position: relative;
+    margin-left: 35px;
+}
+
+.mainSubDescContents::before{
+    content: '-';
+    position: absolute;
+    left: -10px;
+}
