@@ -42,14 +42,14 @@ const App = ()=>{
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>
               <Route exact path="/resourceTools" element={<GraphMake />} />
-              <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login?isDirect=false" /> } />
+              <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />
               <Route exact path="/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login?isDirect=false" />} />
               <Route element={<BottomMenuBar/>}>
                 <Route exact path="/" element={<Main />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
-                <Route exact path="/contentsList" element={nb_isLogin()  ? <ContentsList /> : <Navigate to="/login?isDirect=false" /> } />
+                <Route exact path="/contentsList" element={<ContentsList /> } />
                 <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
