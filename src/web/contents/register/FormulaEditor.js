@@ -5,7 +5,7 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
-import {nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_extensionCheck2, nb_getCheckedVal, 
+import {nb_isLogin, nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_extensionCheck2, nb_getCheckedVal, 
 	nb_licenseUiCheck, nb_imgFileDel, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownTdWidthChange, reg_mUpTdWidthChange, 
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
@@ -568,6 +568,10 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 
 	let multiChoiceId = ["firNoFormulaEditor", "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor"];
 	const contentsValidation = async function(){
+		if(!nb_isLogin()) {
+			alert("로그인 이후 사용해주시기 바랍니다.");
+			return;
+		}
 		//객관식 br태그만 남아있는 경우 제거
 		for(let i=0; i<multiChoiceId.length; i++){
 			let childNodes = document.getElementById(multiChoiceId[i]).childNodes;

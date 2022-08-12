@@ -41,15 +41,15 @@ const App = ()=>{
             <Route exact path="/loginCallBackNaver" element={<NaverLoginSuccess />} />
             <Route exact path="/signup" element={<SignUp />} />
             <Route element={<TopMenuBar/>}>
-              <Route exact path="/resourceTools" element={nb_isLogin()  ? <GraphMake /> : <Navigate to="/login" />} />
-              <Route exact path="/makeMathDocs" element={nb_isLogin()  ? <MathDocsMaker /> : <Navigate to="/login" />} />
+              <Route exact path="/resourceTools" element={<GraphMake />} />
+              <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />
               <Route exact path="/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login" />} />
               <Route element={<BottomMenuBar/>}>
                 <Route exact path="/" element={<Main />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login" />} />
-                <Route exact path="/makeContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={1} /> : <Navigate to="/login" />} />
+                <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
-                <Route exact path="/contentsList" element={nb_isLogin()  ? <ContentsList /> : <Navigate to="/login" />} />
+                <Route exact path="/contentsList" element={<ContentsList /> } />
                 <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login" />} />
                 <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />
                 <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login" />} />

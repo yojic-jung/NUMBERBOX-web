@@ -7,7 +7,7 @@ import {nb_dataFetch} from 'js/common/common_nb.js';
 import CustomUnitSelBox from 'web/common/CustomUnitSelBox';
 import UnitSelBox from 'web/common/UnitSelBox';
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
-import {nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, nb_closeBtn, nb_detectScrollPosition, nb_moveToScroll,
+import {nb_isLogin, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, nb_closeBtn, nb_detectScrollPosition, nb_moveToScroll,
     nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_getParameterByName, nb_topMenuFixed2} from 'js/common/common_nb.js';
 import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
@@ -426,6 +426,10 @@ const ContentsList = ()=>{
         } 
         
         const searchMyWorkList = async function(hasNotiPhrases){
+            if(!nb_isLogin()) {
+                alert("로그인 이후 사용해주시기 바랍니다.");
+                return;
+            }
             let customSubject = document.getElementById("cusSelSubTitle");
             let subject = document.getElementById("subject");
             //let customFirUnit = document.getElementById("cusSelFirUnitTitle");

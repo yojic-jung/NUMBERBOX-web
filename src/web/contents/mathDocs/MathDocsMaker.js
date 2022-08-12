@@ -2,7 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
-import {nb_dataFetch, nb_formDataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, 
+import {nb_isLogin, nb_dataFetch, nb_formDataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, 
     nb_fadeInOutB, nb_confirmBox, nb_getParameterByName} from 'js/common/common_nb.js';
 import CustomPieChart from "web/common/CustomPieChart";
 import CustomBarChart from "web/common/CustomBarChart";
@@ -157,6 +157,11 @@ const MathDocsMaker = ()=>{
     }
 
     const firstStepCheck = async () => {
+        if(!nb_isLogin()) {
+            alert("로그인 이후 사용해주시기 바랍니다.");
+            return;
+        }
+        
         if(document.getElementsByClassName("typeBtn active").length === 0){
             alert("단원 또는 유형을 선택해 주세요.");
             return;
