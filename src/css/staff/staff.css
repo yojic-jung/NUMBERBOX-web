@@ -312,6 +312,18 @@
     padding:8px 10px;
     border:1px solid lightgray;
     cursor:pointer;
+    text-align: center;
+}
+
+.tabTable td.tabTableDesc{
+    text-align: left;
+    display: inline-block;
+    text-indent: 10px;
+    background-color: rgb(165, 132, 228);
+    color:white;
+    margin:0 0 1px 10px;
+    border-radius: 5px;
+    width: 100%;
 }
 
 .checkedTap{

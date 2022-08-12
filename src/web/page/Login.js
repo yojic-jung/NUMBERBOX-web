@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import { useNavigate  } from 'react-router-dom'; // useHistory 추가
+import React, { useEffect} from 'react';
+import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import {Link} from "react-router-dom";
-import {nb_formJsonFetch} from 'js/common/common_nb.js';
+import {nb_formJsonFetch, nb_getParameterByName} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/page/etcPage.css";
 
@@ -87,12 +87,20 @@ const Login = ()=>{
        }
     }
 
+    const goBack = async () => {
+        let param = await nb_getParameterByName("isDirect");
+        if(param !== ""){
+            navigate(-2);
+        }else{
+            navigate(-1);
+        }
+    }
 
 
 return (
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
-            <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
+            <div className='login-menu-back'><span className='pointer' onClick={()=>{goBack();}}>&lt;뒤로가기</span></div>
             <div className='login-signup-desc'>N명의수학에 접속 하세요!</div>
             <div className="login-div">
                 <form id="login-form" method="post">

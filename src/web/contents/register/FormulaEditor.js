@@ -309,6 +309,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
+			if(nb_isLogin()){
+				document.getElementById("tabTableDesc").classList.add("hide");
+			}else{
+				document.getElementById("tabTableDesc").classList.remove("hide");
+			}
 			let contentEditClass = document.querySelectorAll('[contenteditable]');
 			for(let i=0; i<contentEditClass.length; i++){
 				if(contentEditClass[i].id !== "answerFormulaEditor"){

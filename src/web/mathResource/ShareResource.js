@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import RoundButtonList from 'web/common/RoundButtonList';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
-import {nb_dataFetch, nb_dataFileFetch, nb_getParameterByName} from 'js/common/common_nb.js';
+import {nb_isLogin, nb_dataFetch, nb_dataFileFetch, nb_getParameterByName} from 'js/common/common_nb.js';
 import "css/resourceFile/shareResource.css";
 
 let resourceMenuArr;
@@ -65,6 +65,10 @@ const ShareResource = ()=>{
     }, [location]);
 
     const errorReportOpen = async (resoureNo) => {
+        if(!nb_isLogin()) {
+			alert("로그인 이후 사용해주시기 바랍니다.");
+			return;
+		}
         setErrContentsNo(resoureNo);
     }
 

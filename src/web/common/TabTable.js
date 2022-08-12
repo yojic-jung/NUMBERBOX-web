@@ -9,13 +9,17 @@ const TabTable = ({className, tabList, clickEv}) => {
     );
 
     return (
+        <>
         <table className={className}>
             <tbody>
                 <tr>
                     {tabTd}
+                    <td id="tabTableDesc" className='tabTableDesc hide'>로그인 이후 사용해주시기 바랍니다.</td>
                 </tr>
             </tbody>
         </table>
+        </>
+        
     );
 
 }
