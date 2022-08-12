@@ -221,7 +221,7 @@
 .mainDiv{
     background-color: #eef6ff;
     position: relative;
-    height: 630px;
+    height: 95vh;
 }
 
 @keyframes target_updown1 {
@@ -302,6 +302,7 @@
 
 .mainSubRootDiv1, .mainSubRootDiv2{
     padding: 50px;
+    
 }
 
 .mainSubRootDiv2{
@@ -364,18 +365,29 @@
     margin-bottom: 30px;
 }
 
+.mainSubDesc2{
+    font-size: 18px;
+    margin:10px;
+    font-family: 'jejuGothic';
+    line-height: 180%;
+    margin-bottom: 30px;
+}
+
 .mainSubDiv2Title{
     font-family: 'TmoneyRoundWindExtraBold';
-    font-size: 20px;
+    font-size: 25px;
     width: 1000px;
     margin:10px auto;
 }
 
 .mainSubDiv2Desc{
     width: 1000px;
-    margin:10px auto;
+    margin:50px auto 20px auto;
     font-family: 'jejuGothic';
     line-height: 160%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 40px;
 }
 
 .mainSubDiv2 .mainSubBox.first{
@@ -436,11 +448,9 @@
 .mainSubDescTitle{
     position: relative;
     margin: 0 0 7px 25px;
+    font-size: 22px;
 }
 
-.mainSubDescTitle.second{
-    margin-top:30px;
-}
 
 .mainSubDescTitle::before{
     display: inline-block;
@@ -470,11 +480,164 @@
 
 .mainSubDescContents{
     position: relative;
-    margin-left: 35px;
+    margin-left: 25px;
+    word-break: keep-all;
 }
 
-.mainSubDescContents::before{
-    content: '-';
+
+
+/*
+* congrate css[strt]
+*/
+body {
+    font-family: 'Roboto';
+    margin: 0;
+    padding: 0;
+  }
+  
+  @keyframes confetti-slow {
+    0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
+    
+    100% { transform: translate3d(25px, 105vh, 0) rotateX(360deg) rotateY(180deg); }
+  }
+  
+  @keyframes confetti-medium {
+    0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
+    
+    100% { transform: translate3d(100px, 105vh, 0) rotateX(100deg) rotateY(360deg); }
+  }
+  
+  @keyframes confetti-fast {
+    0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
+    
+    100% { transform: translate3d(-50px, 105vh, 0) rotateX(10deg) rotateY(250deg); }
+  }
+  
+
+  .container {
+    width: 98vw;
+    padding: 0;
+    height: 50vh;
+    margin: auto;
+    background: linear-gradient(white 0%, white 25%, rgba(237, 218, 243, 0.1) 50%, rgba(235, 235, 235, 0.5));
+    border:1px solid white;
+    display:fixed;
+    top:0px;
+  }
+  
+  .confetti-container {
+    perspective: 700px;
     position: absolute;
-    left: -10px;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .confetti {
+    position: absolute;
+    z-index: 1;
+    top: -10px;
+    border-radius: 0%;
+    animation: confetti-slow 3s linear 1 forwards;
+  }
+  
+  .js-container-inner{
+    text-align:center;
+    margin-top:30px;
+    position: absolute;
+    top:45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  @-webkit-keyframes checkmark {
+    0% {
+      height: 0;
+      width: 0;
+      opacity: 1;
+    }
+    20% {
+      height: 0;
+      width: 37.5px;
+      opacity: 1;
+    }
+    40% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+    100% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+  }
+  @-moz-keyframes checkmark {
+    0% {
+      height: 0;
+      width: 0;
+      opacity: 1;
+    }
+    20% {
+      height: 0;
+      width: 37.5px;
+      opacity: 1;
+    }
+    40% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+    100% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+  }
+  @keyframes checkmark {
+    0% {
+      height: 0;
+      width: 0;
+      opacity: 1;
+    }
+    20% {
+      height: 0;
+      width: 37.5px;
+      opacity: 1;
+    }
+    40% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+    100% {
+      height: 75px;
+      width: 37.5px;
+      opacity: 1;
+    }
+  }
+  
+  
+/*
+* congrate css[end]
+*/
+
+.mainSubTitle1{
+    font-family: 'GmarketSansBold';
+    font-size: 25px;
+    color: #3e6599;
+    padding: 10px 0;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.mainSubTitileName{
+    font-size: 35px;
+    letter-spacing: 2px;
+}
+
+.mainSubTitileName2{
+    font-size: 25px;
 }
