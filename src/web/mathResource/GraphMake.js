@@ -17,7 +17,7 @@ const GraphMake = ()=>{
         api.setAxisLabels(1, "x","y","z");
         document.getElementsByClassName("avDummyLabel")[0].innerText="함수식 입력(+버튼으로 텍스트 변경가능)";
         document.getElementsByClassName("toggleStyleBar")[1].click();
-        document.getElementsByClassName("gwt-ToggleButton-down")[0].classList.add("force-hide");
+        //document.getElementsByClassName("gwt-ToggleButton-down")[0].classList.add("force-hide");
         document.getElementsByClassName("MyCanvasButton")[0].classList.add("force-hide");
         document.getElementsByClassName("MyCanvasButton")[1].classList.add("force-hide");
         document.getElementsByClassName("MyCanvasButton")[2].classList.add("force-hide");
