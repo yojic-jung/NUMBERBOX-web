@@ -66,8 +66,7 @@
 .mathDocsLevelDiv.mobile{
     width: 100%;
     border:unset;
-    border-top: 0.5px solid rgb(206, 206, 206);
-    border-bottom: 0.5px solid rgb(206, 206, 206);
+    border-top: 1px solid rgb(95, 95, 95);
     padding:10px;
 }
 
@@ -225,6 +224,10 @@
     font-size: 16px;
     width:40px;
     color: rgb(77, 77, 77);
+}
+
+.conCnt.mobile{
+    width:20px;
 }
 
 .levelSelTd.active, .conCntSelTd.active{

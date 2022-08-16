@@ -1712,7 +1712,7 @@ return (
        </div>
        </BrowserView>
        <MobileView>
-       <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5 mobile'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
+       <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5 mobile'>원하는 단원을 선택하여 학습지를 만들어보세요.</div>
         <div className='noSelect mathDocsRootDiv mobile'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
                 <div className="mathDocsSubjectInfoDiv mobile">
@@ -1753,18 +1753,14 @@ return (
                                     <td>문항 수</td>
                                     <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>10</td>
                                     <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>20</td>
-                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>30</td>
                                     <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>50</td>
                                     <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>100</td>
-                                    <td><input id="conCntInput" className='conCnt' type="text" onKeyUp={(event)=>{conCntKeyUp(event)}} /></td>
+                                    <td><input id="conCntInput" className='conCnt mobile' type="text" onKeyUp={(event)=>{conCntKeyUp(event)}} /></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <br/>
-                    <div className='alignRight'>
-                        <div className='inBlock orangeBtn mobile' onClick={(event)=>{firstStepCheck()}}>다음단계</div>
-                    </div>
+                    <div className='inBlock orangeBtn mobile' onClick={(event)=>{firstStepCheck()}}>&gt;</div>
                 </div>
                 </div>
             </div>
