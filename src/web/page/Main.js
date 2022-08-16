@@ -158,7 +158,10 @@ return (
                     <span className='mainSubTitileName'>"N명<span className='mainSubTitileName2'>의</span>수학"</span>
                 </div>
                 <div className='mainSubDesc2'>
-                지금 N명의 수학을 누려보세요!
+                <b>[PC버전]</b>에서 서비스 제공중입니다.<br/>
+                <b>수학문제 만들기</b>, <b>문제 공유 서비스</b>,<br/>
+                <b>학습지 제작</b>, <b>그래프 만들기</b>, <b>이미지 공유</b> 등의 <br/>
+                서비스를 누려보세요!
                 </div>
             </div>  
         </div>

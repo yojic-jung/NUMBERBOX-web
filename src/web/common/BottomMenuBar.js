@@ -77,7 +77,7 @@ const BottomMenuBar = ()=>{
                     </ul>
                 </div>
             </div>
-            <div className='bottom-company-info'>
+            <div className='bottom-company-info mobile'>
                 <div className='comp-info-div'>
                     상호 <span className='comp-info-title'>N명의수학</span>
                     대표자 <span className='comp-info-title'>정요직</span><br/>
