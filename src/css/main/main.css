@@ -333,7 +333,10 @@
 
 .mainSubRootDiv1, .mainSubRootDiv2{
     padding: 50px;
-    
+}
+
+.mainSubRootDiv1.mobile, .mainSubRootDiv2.mobile{
+    padding: 20px 0;
 }
 
 .mainSubRootDiv2{
@@ -347,6 +350,12 @@
     margin: auto;
     position: relative;
     padding: 20px 0;
+}
+
+.mainSubDiv1.mobile{
+    width: 90%;
+    margin: auto;
+    display: block;
 }
 
 
@@ -373,6 +382,15 @@
     width: 55%;
 }
 
+.mainSubDiv1.mobile .mainSubBox2{
+    position:relative;
+    width: 90%;
+    left:unset;
+    bottom:unset;
+    padding:5px;
+    margin:0 auto;
+}
+
 .mainSubDiv2{
     display: flex;
     flex: 2 1;
@@ -389,11 +407,20 @@
     font-family: 'TmoneyRoundWindExtraBold';
 }
 
+.mainSubTitle.mobile{
+    font-size: 22px;
+}
+
 .mainSubDesc{
     margin:10px;
     font-family: 'jejuGothic';
     line-height: 140%;
     margin-bottom: 30px;
+}
+
+.mainSubDesc.mobile{
+    font-size: 14px;
+    word-break: keep-all;
 }
 
 .mainSubDesc2{
@@ -415,6 +442,13 @@
     margin:10px auto;
 }
 
+.mainSubDiv2Title.mobile{
+    padding: 0 0 20px 0;
+    width: 90%;
+    font-size: 22px;
+    text-align: center;
+}
+
 .mainSubDiv2Desc{
     width: 1000px;
     margin:50px auto 20px auto;
@@ -423,6 +457,13 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 40px;
+}
+
+.mainSubDiv2Desc.mobile{
+    width: 90%;
+    display: block;
+    font-size: 14px;
+    margin:30px auto 0px auto;
 }
 
 .mainSubDiv2 .mainSubBox.first{
@@ -437,6 +478,11 @@
     margin:30px 30px 60px 0;
 }
 
+.mainSubDiv2.mobile .mainSubBox.first{
+    margin:0 auto;
+    padding-bottom: 50%;
+}
+
 .mainSubDiv2 .mainSubBox.second{
     background-color: white;
     line-height: 250%;
@@ -449,11 +495,32 @@
     z-index: 2;
 }
 
+.mainSubDiv2.mobile .mainSubBox.second{
+    width:90%;
+    margin: auto;
+    position: absolute;
+    left: 50%;
+    bottom:0;
+    transform: translateX(-50%);
+}
+
+.mainSubDiv2.mobile{
+    padding: 0;
+    display: block;
+    width: 100%;
+    margin:10px auto;
+}
+
 .mainSubDiv3{
     width: 1000px;
     margin:auto;
     padding: 50px;
     position: relative;
+}
+
+.mainSubDiv3.mobile{
+    width: 90%;
+    padding: 20px 0;
 }
 
 .mainSubDiv3 .mainSubBox.first, .mainSubDiv3 .mainSubBox.second{
@@ -480,10 +547,23 @@
     width: 60%;
 }
 
+.mainSubDiv1 .mainSubBox.mobile{
+    position: absolute;
+    bottom : 0;
+    right: 0;
+    padding: 5px;
+    width: 45%;
+}
+
 .mainSubDescTitle{
     position: relative;
     margin: 0 0 7px 25px;
     font-size: 22px;
+}
+
+.mainSubDescTitle.mobile{
+    font-size: 18px;
+    margin:10px 0 10px 25px;
 }
 
 
