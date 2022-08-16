@@ -25,7 +25,7 @@ const Login = ()=>{
         clientId: "nHyzlpf4lzeLBMbSC5VL",
         callbackUrl: callbackUrlNaver, 
         isPopup: false, // popup 형식으로 띄울것인지 설정
-        loginButton: { color: 'white', type: 3, height: '47' }, //버튼의 스타일, 타입, 크기를 지정
+        loginButton: { color: 'white', type: 3, height: '87' }, //버튼의 스타일, 타입, 크기를 지정
       });
 
     const initializeNaverLogin = () => {
@@ -111,8 +111,8 @@ return (
                     <div id="passChkValDesc" className='loginValDesc'></div>
                     <div id="loginErrMsg" className='loginErrMsg hide'></div>
                     <div id="login-btn" className='login-btn disabled' onClick={(event)=>{fLoginBtnUiVal(event)}}>로그인</div>
-                    <div className="grid-naver hide" id='naverIdLogin'></div>
-                    <div className="naver-customize" onClick={()=>{if(document.getElementById("emailSave").checked){ window.localStorage.setItem("loginState", "keep");}else{window.localStorage.setItem("loginState", null)} naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
+                    <div className="grid-naver alignCenter" id='naverIdLogin'></div>
+                    <div className="naver-customize hide" onClick={()=>{if(document.getElementById("emailSave").checked){ window.localStorage.setItem("loginState", "keep");}else{window.localStorage.setItem("loginState", null)} naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
                         네이버 아이디로 로그인
                     </div>
                     <div className='login-etc-info'>
