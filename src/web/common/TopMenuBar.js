@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { BrowserView, MobileView } from 'react-device-detect';
 import {Link} from "react-router-dom";
 import {nb_isLogin, nb_isManger, nb_isAdmin, nb_dataFetch} from 'js/common/common_nb.js';
 import defaultProfileImg from 'img/defaultProfile.png';
@@ -67,6 +68,7 @@ const TopMenuBar = (isMain)=>{
    
 return (
     <>
+    <BrowserView>
     <div  id="topMenuBar" className='top-div'>
         <div className='bi-jutify-align'>
             <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
@@ -126,6 +128,67 @@ return (
             </div>
         </div>
     </div>}
+    </BrowserView>
+    <MobileView>
+        <div  id="topMenuBar" className='top-div'>
+            <div className='bi-jutify-align mobile'>
+                <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
+                <div className={listClass}>
+                    <table className='menu-list-table mobile'>
+                        <tbody>
+                            {!isLogin && <tr>
+                                <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
+                                <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
+                                <td><Link className='linkNoneCss' to="/makeContents">문제<br/>만들기</Link></td>
+                                <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
+                            </tr>}
+                            {isLogin && <tr>
+                                <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
+                                <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
+                                <td><Link className='linkNoneCss' to="/makeContents">문제<br/>만들기</Link></td>
+                                <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
+                                <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
+                                    {imgPath === null ?
+                                        <img id="topMenuProfileImg" alt="." src={defaultProfileImg} className="topMenuProfileImg"/> 
+                                        : <img id="topMenuProfileImg" alt="." src={imgPath} className="topMenuProfileImg"/> 
+                                    }
+                                    
+                                    <ul className="myService-list hide">
+                                        <Link className='linkNoneCss' to="/myProfile"><li>프로필</li></Link>
+                                        <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
+                                        <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
+                                        <Link className='linkNoneCss' to="/myMathDocs"><li>나의 학습지</li></Link>
+                                        <Link className='linkNoneCss' to="/myResource"><li>나의 컨텐츠</li></Link>
+                                        <li onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
+                                        <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
+                                    </ul>
+                                </td>
+                            </tr>}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <ServiceCenter myNickName={myNickName} />
+        
+        {isManger && <div className='manager-menu'>
+            <div className='bi-jutify-align mobile'>
+                <div>매니저 메뉴</div>
+                <div>
+                    <table className='menu-list-table'>
+                        <tbody>
+                            <tr>
+                                <td><Link className='manager-link' to="/workContentsList">작업내역</Link></td>
+                                <td><Link className='manager-link' to="/registerContents">문제만들기</Link></td>
+                                {isAdmin && <td><Link className='manager-link' to="/adminSvcCenter">관리자센터</Link></td>}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>}
+    </MobileView>
     <Outlet />
     </>
     )

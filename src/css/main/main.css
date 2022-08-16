@@ -64,6 +64,10 @@
     border-spacing: 20px 10px;
 }
 
+.menu-list-table.mobile{
+    border-spacing: 5px 0;
+    
+}
 
 .signLoginBtn{
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';
@@ -396,6 +400,10 @@
     margin-bottom: 30px;
 }
 
+.mainSubDesc2.mobile{
+    font-size: 16px;
+}
+
 .mainSubDiv2Title{
     font-family: 'TmoneyRoundWindExtraBold';
     font-size: 25px;
@@ -583,6 +591,11 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 95%;
+  }
+
+  .fontEmphasis{
+    font-size: 18px;
+    font-weight: bold;
   }
 
   @-webkit-keyframes checkmark {
