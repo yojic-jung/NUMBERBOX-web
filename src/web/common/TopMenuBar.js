@@ -130,7 +130,7 @@ return (
     </div>}
     </BrowserView>
     <MobileView>
-        <div  id="topMenuBar" className='top-div'>
+        <div  id="topMenuBar" className='top-div mobile'>
             <div className='bi-jutify-align mobile'>
                 <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
                 <div className={listClass}>

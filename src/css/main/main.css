@@ -4,6 +4,10 @@
     border-bottom: 1px solid rgba(0,0,0,0.2);
 }
 
+.top-div.mobile{
+    padding: 15px 0;
+}
+
 .bi-jutify-align, .bi-jutify-align2{
     max-width: 900px;
     margin: auto;
@@ -65,8 +69,8 @@
 }
 
 .menu-list-table.mobile{
-    border-spacing: 5px 0;
-    
+    border-spacing: 10px 0;
+
 }
 
 .signLoginBtn{
