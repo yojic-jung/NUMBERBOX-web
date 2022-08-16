@@ -95,8 +95,17 @@
     text-align: center;
 }
 
+.bottom-menu-title.mobile{
+    letter-spacing: 2px;
+    font-size: 20px;
+}
+
 .bottom-menu-title2{
     font-size: 24px;
+}
+
+.bottom-menu-title2.mobile{
+    font-size: 16px;
 }
 
 .bottom-menu-list-table{
@@ -132,6 +141,7 @@
 
 .bottom-ul.mobile{
     padding-left: 10px;
+    font-size: 14px;
 }
 
 .myService-wrap{

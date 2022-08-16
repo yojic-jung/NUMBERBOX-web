@@ -67,7 +67,7 @@ const BottomMenuBar = ()=>{
         <MobileView>
         <div id="bottom-div" className='bottom-div'>
             <div className='bi-jutify-align mobile'>
-                <div className='bottom-menu-title'><Link className='linkNoneCss' to="/">N명<span className='bottom-menu-title2'>의</span>수학</Link></div>
+                <div className='bottom-menu-title mobile'><Link className='linkNoneCss' to="/">N명<span className='bottom-menu-title2 mobile'>의</span>수학</Link></div>
                 <div>
                     <ul className='bottom-ul mobile'>
                         <li>
