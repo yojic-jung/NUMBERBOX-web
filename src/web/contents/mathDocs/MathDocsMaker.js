@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
@@ -164,7 +165,9 @@ const MathDocsMaker = ()=>{
 
     const firstStepCheck = async () => {
         if(!nb_isLogin()) {
-            alert("로그인 이후 사용해주시기 바랍니다.");
+            if(isBrowser) alert("로그인 이후 사용해 주시기 바랍니다.");
+            else alert("PC로 접속하여 사용해 주시기 바랍니다.");
+            
             return;
         }
         
@@ -316,7 +319,7 @@ const MathDocsMaker = ()=>{
     }
 
     const gotoPreviousStep = () =>{
-        document.getElementById("mathDocsDesc").innerHTML = "원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 N명의수학 제작 문제만 포함됩니다.)";
+        document.getElementById("mathDocsDesc").innerHTML = "원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)";
         setShowChart(false);
         document.getElementById("mathDocsFirstStep").classList.remove("hide");
         window.scrollTo(0, 0);
@@ -1362,7 +1365,8 @@ const MathDocsMaker = ()=>{
 return (
     <>
     <Outlet />
-        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생생 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
+    <BrowserView>
+        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
         <div className='noSelect mathDocsRootDiv'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
                 <div className="mathDocsSubjectInfoDiv">
@@ -1706,6 +1710,66 @@ return (
                 <div className="mathDocsErrBtn2" onClick={() =>{document.getElementById("mathDocsErrReportBox").classList.add("hide")}}>취소</div>
             </div>
        </div>
+       </BrowserView>
+       <MobileView>
+       <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5 mobile'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
+        <div className='noSelect mathDocsRootDiv mobile'>
+            <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
+                <div className="mathDocsSubjectInfoDiv mobile">
+                    {subjectInfoList}
+                </div>
+                <div className="mathDocsSubjectListDiv mobile"></div>
+                <div className='bottomFixed'>
+                <div className='mathDocsLevelDiv mobile'>
+                    <div className='inBlock'>
+                        <table className='levelSelTb'>
+                            <tbody>
+                                <tr>
+                                    <td>난이도</td>
+                                        <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
+                                        <label htmlFor='level1'>
+                                            <input type="radio" id="level1" name="level" value="1" className='hide' /> 하
+                                        </label>
+                                        </td>
+                                    <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
+                                        <label htmlFor='level3'>
+                                            <input type="radio" id="level3" name="level" value="3" className='hide' /> 중
+                                        </label>
+                                    </td>
+                                    <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
+                                        <label htmlFor='level5'>
+                                            <input type="radio" id="level5" name="level" value="5" className='hide' /> 상
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div className='inBlock'>
+                        <table className='levelSelTb'>
+                            <tbody>
+                                <tr>
+                                    <td>문항 수</td>
+                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>10</td>
+                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>20</td>
+                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>30</td>
+                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>50</td>
+                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>100</td>
+                                    <td><input id="conCntInput" className='conCnt' type="text" onKeyUp={(event)=>{conCntKeyUp(event)}} /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div className='alignRight'>
+                        <div className='inBlock orangeBtn mobile' onClick={(event)=>{firstStepCheck()}}>다음단계</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+       </MobileView>
     </>
     )
 }

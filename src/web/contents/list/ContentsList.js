@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import {Link} from "react-router-dom";
 import FormulaEditor from 'web/contents/register/FormulaEditor'
@@ -39,11 +40,11 @@ const ContentsList = ()=>{
 
     const removeAddedEvent = () => {
         window.removeEventListener('scroll', nb_detectScrollPosition);
-        window.removeEventListener('scroll', topMenuFixed);
+        if(isBrowser) window.removeEventListener('scroll', topMenuFixed);
     }
 
     const topMenuFixed = () => {
-        nb_topMenuFixed2("workListUnitTypeRoot")
+        if(isBrowser) nb_topMenuFixed2("workListUnitTypeRoot")
     }
 
     const modalPopupOpen = async (event)  =>{
@@ -427,7 +428,8 @@ const ContentsList = ()=>{
         
         const searchMyWorkList = async function(hasNotiPhrases){
             if(!nb_isLogin()) {
-                alert("로그인 이후 사용해주시기 바랍니다.");
+                if(isBrowser) alert("로그인 이후 사용해주시기 바랍니다.");
+                else alert("PC에서 사용 가능한 서비스 입니다.");
                 return;
             }
             let customSubject = document.getElementById("cusSelSubTitle");
@@ -697,11 +699,12 @@ const ContentsList = ()=>{
 
 
   return ( <>
-             <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
-                <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
-                <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>
-                <div id='conListScrollToBottom' className='conListScrollToBottom' tooltip="맨 아래로" onClick={()=>{nb_moveToScroll(false);}}></div>
-            </div>
+            <BrowserView>
+                <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
+                    <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
+                    <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>
+                    <div id='conListScrollToBottom' className='conListScrollToBottom' tooltip="맨 아래로" onClick={()=>{nb_moveToScroll(false);}}></div>
+                </div>
             
                 { !modalState &&
                 <div>
@@ -747,6 +750,59 @@ const ContentsList = ()=>{
             {errContentsNo !== 0 &&
             <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} errType={1} title="문제 오류 신고"/>
             }
+            </BrowserView>
+            <MobileView>
+            <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
+                    <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
+                    <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>
+                    <div id='conListScrollToBottom' className='conListScrollToBottom' tooltip="맨 아래로" onClick={()=>{nb_moveToScroll(false);}}></div>
+                </div>
+            
+                { !modalState &&
+                <div>
+                    <div id="workListUnitTypeRoot" className='workListUnitTypeRoot mobile'>
+                        <form method="post" id="workSearchForm">
+                            <div id="workListUnitType" className='workListUnitType mobile'>
+                                <div className='mini-title5'>
+                                    &nbsp; PC버전으로 접속하여 원하는 문제를 찾아보세요.
+                                </div>
+                                <CustomUnitSelBox value={subjectBox} cusSelId="cusSelSub" cusChildId="cusSelSecUnit" childId="secUnit" originSel="subject" parentMethod={()=>{}} title="과목"></CustomUnitSelBox>
+                                <UnitSelBox value={subjectBox} myId="subject" cusChildId="cusSelSecUnit" childId="secUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+                                {/*
+                                <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
+                                <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+                                */}
+                                <CustomUnitSelBox value={secUnitSelBox} cusSelId="cusSelSecUnit" cusChildId="cusSelThrUnit" childId="thrUnit" originSel="secUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
+                                <UnitSelBox value={secUnitSelBox} myId="secUnit" cusChildId="cusSelThrUnit" childId="thrUnit" isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
+                                
+                                <CustomUnitSelBox value={thrUnitSelBox} cusSelId="cusSelThrUnit" cusChildId="cusSelQuesType" childId="quesType" originSel="thrUnit" parentMethod={()=>{}} title="중단원"></CustomUnitSelBox>
+                                <UnitSelBox value={thrUnitSelBox} myId="thrUnit" cusChildId="cusSelQuesType" childId="quesType" isUnitBubbleEv={false}  parentMethod={()=>{}}></UnitSelBox>
+                                
+                                <button type="button" className="orangeBtn" onClick={()=>searchMyWorkList(false)}>검색</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div className='workList mobile'>
+                        {workListChanged && workContentsList.length !==0 ? 
+                            <div className="contents-show userSearchPage" id="contents-show">{workContentsList}</div>
+                            : <EmptyList msg="" imgName="searchList" addImgClass="" /> 
+                        }
+                        <DetailedContentsWrap isBasedParent={true} modalRepoChange={modalBaseRepoChange} modalLikeChange={modalBaseLikeChange}/>
+
+                    </div>
+                </div>
+            }
+                   
+            <div id="outerFormulaEditor" className='fixedBox hide'>
+                <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
+                { modalState  && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2}/>}
+            </div>
+            <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
+            
+            {errContentsNo !== 0 &&
+            <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} errType={1} title="문제 오류 신고"/>
+            }
+            </MobileView>
             </>
 
   );
