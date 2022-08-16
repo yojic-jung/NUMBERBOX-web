@@ -327,7 +327,10 @@
     }
     .customSliderImg{
         width:100% !important
-      }
+    }
+    .customSliderBox{
+    width:100% !important
+    }
   }
   
   .customImgSliderBtnDiv{
