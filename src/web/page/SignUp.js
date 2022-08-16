@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react';
+import ServicePolicy from 'web/page/ServicePolicy'
+import PrivacyPolicy from 'web/page/PrivacyPolicy'
 import {Link} from "react-router-dom";
 import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import { nb_formDataFetch, nb_dataFetch} from 'js/common/common_nb.js';
@@ -311,7 +313,7 @@ return (
                             <span id='checkCircle'></span>
                             <input onChange={()=>{fagreeStateBtn()}} type="checkbox" id="agreeChk" className='hide' />
                         </label>
-                            회사의 <span className='agreeState'>이용약관</span>과 <span className='agreeState'>개인정보보호 방침</span>에 동의합니다.
+                            회사의 <span className='agreeState' onClick={()=>{document.getElementById("servicePolicyState").classList.remove("hide");}}>이용약관</span>과 <span onClick={()=>{document.getElementById("privacyPolicyState").classList.remove("hide");}} className='agreeState'>개인정보보호 방침</span>에 동의합니다.
                     </div>
                     <div id="agreeValDesc" className='loginValDesc'></div>
                         
@@ -323,6 +325,8 @@ return (
                     </div>
                 </form>
             </div>
+            <ServicePolicy />
+            <PrivacyPolicy />
         </div>
     )
 }

@@ -1,9 +1,11 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import { Outlet } from "react-router";
+import ServicePolicy from 'web/page/ServicePolicy'
+import PrivacyPolicy from 'web/page/PrivacyPolicy'
 
 const BottomMenuBar = ()=>{
-return (
+    return (
     <>
     <Outlet />
         <div id="bottom-div" className='bottom-div'>
@@ -27,14 +29,14 @@ return (
                 </div>
                 <div className='bottom-menu-list'>
                     <ul className='bottom-ul'>
-                        <li>회사소개</li>
-                        <li className='pointer' onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
+                        <li className='pointer' onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide");document.getElementById("servicePolicyTab").click();}}>운영정책</li>
+                        <li className='pointer' onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide");document.getElementById("serviceQuestionTab").click();}}>고객센터</li>
                     </ul>
                 </div>
                 <div className='bottom-menu-list'>
                     <ul className='bottom-ul'>
-                        <li>이용약관</li>
-                        <li>개인정보처리방침</li>
+                        <li><span className='pointer' onClick={()=>{document.getElementById("servicePolicyState").classList.remove("hide");}}>이용약관</span></li>
+                        <li><span className='pointer' onClick={()=>{document.getElementById("privacyPolicyState").classList.remove("hide");}}>개인정보처리방침</span></li>
                     </ul>
                 </div>
             </div>
@@ -56,6 +58,8 @@ return (
                 </div>
                         
                 </div>
+                <ServicePolicy />
+                <PrivacyPolicy />
         </div>
     </>
     )

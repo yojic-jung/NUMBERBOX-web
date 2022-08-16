@@ -156,8 +156,8 @@ return (
             <div className='serviceCenterRootDiv'>
                 <div id="serviceCenterRootTitle" className='serviceCenterRootTitle'>{myNickName}님, 무엇을 도와 드릴까요?</div>
                 <div className='serviceCenterTabMenu'>
-                    <span className='serviceCenterTab active' onClick={(event)=>{serviceCenterMenuClick(event, "servicePolicy")}}>운영정책</span>
-                    <span className='serviceCenterTab' onClick={(event)=>{serviceCenterMenuClick(event, "serviceQuestion")}}>1:1 문의</span>
+                    <span id="servicePolicyTab" className='serviceCenterTab active' onClick={(event)=>{serviceCenterMenuClick(event, "servicePolicy")}}>운영정책</span>
+                    <span id="serviceQuestionTab" className='serviceCenterTab' onClick={(event)=>{serviceCenterMenuClick(event, "serviceQuestion")}}>1:1 문의</span>
                     <span className='serviceCenterTab' onClick={(event)=>{serviceCenterMenuClick(event, "myQnA")}}>나의 문의내역</span>
                 </div>
                 <div id="errCloseBtn" className='closeBtn errCloseBtn' onClick={()=>{document.getElementById("serviceCenter").classList.add("hide")}}>X</div>
