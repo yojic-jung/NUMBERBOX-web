@@ -274,6 +274,12 @@
     color: rgb(179, 179, 179);
 }
 
+@media screen and (max-width: 800px){
+    .closeBtn, .closeBtn2{
+        color: rgb(65, 65, 65);
+    }
+  }
+
 .mini-closeBtn{
     position: absolute;
     top:15px;
