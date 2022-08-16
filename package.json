@@ -12,6 +12,7 @@
     "jquery": "^3.6.0",
     "jspdf": "^2.5.1",
     "react": "^17.0.2",
+    "react-device-detect": "^2.2.2",
     "react-dom": "^17.0.2",
     "react-geogebra": "^1.2.4",
     "react-router-dom": "^6.2.1",

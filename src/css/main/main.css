@@ -15,6 +15,12 @@
     max-width: 1000px;
     margin:20px auto;
 }
+
+.bi-jutify-align.mobile{
+    width:90%;
+    margin:auto;
+}
+
 .menu-title{
     font-family: 'TmoneyRoundWindExtraBold';
     font-size: 30px;
@@ -122,6 +128,10 @@
     font-family: 'jejuGothic';
     line-height: 160%;
     color:white;
+}
+
+.bottom-ul.mobile{
+    padding-left: 10px;
 }
 
 .myService-wrap{
@@ -552,6 +562,16 @@ body {
     transform: translate(-50%, -50%);
   }
   
+  .js-container-inner.mobile{
+    text-align:center;
+    margin-top:30px;
+    position: absolute;
+    top:45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
+
   @-webkit-keyframes checkmark {
     0% {
       height: 0;

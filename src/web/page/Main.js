@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import { BrowserView, MobileView } from 'react-device-detect';
 import {nb_getParameterByName, nb_fadeInOutA} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/common/common.css";
@@ -68,20 +69,12 @@ const Main = ()=>{
               this.containerEl.appendChild(confettiEl);
             }, 25);
           };
-          
           window.confettiful = new Confettiful(document.querySelector('.js-container'));
-          
-          
-          
     })
-
-
-
-    
-    
 
 return (
     <>
+    <BrowserView>
         <div className='mainDiv'>
             <div className='mainImgBox first'><img className='mainImgUI' src={main1} alt=""/></div>
             <div className='mainImgBox second'><img className='mainImgUI' src={main2} alt=""/></div>
@@ -155,8 +148,21 @@ return (
                 <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
             </div>
         </div>
-        
-        
+        </BrowserView>
+        <MobileView>
+            <div className='relative'>
+            <div className="js-container container mobile"></div>
+            <div className='js-container-inner mobile'>
+                <div className='mainSubTitle1'>
+                    N명의 공유플랫폼,<br/>
+                    <span className='mainSubTitileName'>"N명<span className='mainSubTitileName2'>의</span>수학"</span>
+                </div>
+                <div className='mainSubDesc2'>
+                지금 N명의 수학을 누려보세요!
+                </div>
+            </div>  
+        </div>
+        </MobileView>
     </>
     )
 }
