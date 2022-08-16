@@ -10,6 +10,10 @@
     margin: auto;
 }
 
+.resourceMenuDiv.mobile{
+    width:100%;
+}
+
 .resourceMenuBtn{
     font-size: 16px;
     color:rgb(221, 221, 221);
@@ -32,6 +36,11 @@
     border-bottom: 1px solid rgb(146, 146, 147);;
 }
 
+.cateDiv.mobile{
+    width: 100%;
+    margin:0 auto;
+    padding: 0;
+}
 
 
 .cateMenu{
@@ -230,6 +239,10 @@
     box-shadow: 0 0 1rem rgb(0 0 0 / 7%);
     box-sizing: border-box;
     overflow-y: scroll;
+}
+
+.resDetailedDiv.mobile{
+    width: 100%;
 }
 
 .resDetailedDiv::-webkit-scrollbar {width: 6px;}

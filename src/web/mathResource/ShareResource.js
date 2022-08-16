@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserView, MobileView } from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import RoundButtonList from 'web/common/RoundButtonList';
@@ -140,6 +141,7 @@ const ShareResource = ()=>{
     }
 return (
     <>    
+    <BrowserView>
      <ResourceMenuBar></ResourceMenuBar>
      <div className='cateDiv'>
         <RoundButtonList id="category" className="cateMenu" tabList={mainCate} dataId="mainCateNo" mainKey="mainCateName"  ></RoundButtonList>
@@ -172,6 +174,41 @@ return (
      {errContentsNo !== 0 &&
             <ErrorReportForMathCon title="컨텐츠 오류 신고" errType={2} parentMethod={errorReportClose} conNo={errContentsNo} />
         }
+    </BrowserView>
+    <MobileView>
+    <ResourceMenuBar></ResourceMenuBar>
+     <div className='cateDiv mobile'>
+        <RoundButtonList id="category" className="cateMenu" tabList={mainCate} dataId="mainCateNo" mainKey="mainCateName"  ></RoundButtonList>
+     </div>
+     <div className='resWrap'>
+        {resourceList}
+     </div>
+     <div id="resDetailedWrap" className='blindBox hide'>
+        <div className="resDetailedDiv mobile">
+            <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
+            <div id="resDetailedTitle" className='resDetailedTitle'></div>
+            <div id="resDetailedCate" className='resDetailedCate'></div>
+            <div className='resDetailedDesc'>
+                ※ 미리보기 슬라이드는 실제 파일과 다소 차이가 날 수 있으며 낮은 화질로 보여집니다.<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div id="customImgSliderErrBtn" className='errBtn customImgSliderErrBtn' onClick={(event)=>{errorReportOpen(event.target.dataset.resourceNo)}}></div>
+            <div className='overflowHidden'>
+                <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
+            </div>
+            <div className="relative">
+                <div id="customImgSliderBtnDiv" className="customImgSliderBtnDiv">
+            </div>
+            </div>
+            <div className='resDowwBtnWrap'>
+                <div id="resDetailedPPtDownBtn" className='resDetailedPPtDownBtn' onClick={(event)=>{downPptFile("resourcePpt", event.target.dataset.pptName)}}>ppt파일 다운</div>
+            </div>
+        </div>
+     </div>
+     
+     {errContentsNo !== 0 &&
+            <ErrorReportForMathCon title="컨텐츠 오류 신고" errType={2} parentMethod={errorReportClose} conNo={errContentsNo} />
+        }
+    </MobileView>
     </>
     )
 }
