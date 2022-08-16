@@ -145,6 +145,8 @@
 }
 
 .pptPageCnt{
+    font-weight: bold;
+    font-family: 'GowunDodum-Regular';
     position: absolute;
     top:5px;
     right: 5px;
@@ -267,6 +269,12 @@
     font-size: 13px;
     padding: 0 0 10px 10px;
     line-height: 140%;
+}
+
+.resDetailedDesc.mobile{
+    padding: 0;
+    margin-left:10px;
+    width: 85%;
 }
 
 .resDetailedPPtDownBtn{

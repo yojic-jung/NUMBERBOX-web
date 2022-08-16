@@ -247,6 +247,8 @@
 }
 
 .closeBtn{
+    font-weight: bold;
+    font-family: 'GowunDodum-Regular';
     display: inline-block;
     float: right;
     clear:right;
@@ -259,7 +261,8 @@
 }
 
 .closeBtn2{
-    font-weight: normal;
+    font-weight: bold;
+    font-family: 'GowunDodum-Regular';
     position: absolute;
     top:5px;
     right:5px;
