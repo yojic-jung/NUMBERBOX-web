@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import {Link} from "react-router-dom";
 import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import "css/common/common.css";
 import "css/common/nbFormula.css";
@@ -44,7 +45,6 @@ const MyProfile = ()=>{
   
         if (success) {
           let returnData = await nb_dataFetch("/certifications/"+response.imp_uid, true);
-          console.log(returnData);
           let formData = new FormData();
           formData.append("userName", returnData.name);
           formData.append("birth", returnData.birth);
@@ -77,7 +77,6 @@ const MyProfile = ()=>{
         let formData = new FormData();
         formData.append("password", document.getElementById("confirmPassword").value);
         let isCertified = await nb_formDataFetch("/confirmPassword", formData, true);
-        console.log(isCertified);
         if(isCertified.isCertified){
             setCertified(true);
             window.history.pushState("", "나의 프로필 사항", '/myProfileDetail');
@@ -107,13 +106,17 @@ const MyProfile = ()=>{
         let returnObj = await nb_formDataFetch("/changePassword", formData, true);
         if(returnObj.isPassChanged){
             nb_fadeInOutA("비밀번호가 변경 되었습니다.", 2000);
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("newPasswordConfirm").value = "";
             document.getElementById("memberInfoConfirmBtn").click();
         }else{
             nb_fadeInOutB("현재 비밀번호가 틀렸습니다. 다시 시도 해주세요.", 2000);
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("newPasswordConfirm").value = "";
         }
-        document.getElementById("currentPassword").value = "";
-        document.getElementById("newPassword").value = "";
-        document.getElementById("newPasswordConfirm").value = "";
+        
         
     }
 
@@ -167,8 +170,8 @@ const MyProfile = ()=>{
                         </tr>
                     </tbody>
                 </table>
-                <div className='alignRight'><span className='customBtn2'>회원탈퇴</span></div>
-                <div className='alignCenter'><span id='memberInfoConfirmBtn' className='customBtn2' onClick={()=>{navigate("/myProfile");setCertified(false);}}>뒤로가기</span></div>
+                <div className='alignRight'><span className='customBtn2'><Link className='linkNoneCss' to="/myAccountDrop">회원탈퇴</Link></span></div>
+                <div className='alignCenter'><span id='memberInfoConfirmBtn' className='customBtn2' onClick={()=>{navigate(-1);setCertified(false);}}>뒤로가기</span></div>
                 </>
                 : <>
                 <div className='myProfileTitle'>회원정보 확인</div>

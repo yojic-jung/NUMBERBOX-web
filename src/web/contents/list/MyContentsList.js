@@ -202,6 +202,37 @@ const MyContentsList = ({isMine, userNo})=>{
 
             let contents = returnObj.myContents;
 
+            if(contents.contentsClassify === 1){
+                let profileImgPath=defaultProfile;
+                if(contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null){
+                    profileImgPath=contents.membersProfile.profileImgPath+contents.membersProfile.profileImgName;
+                }
+                document.getElementById("detailedConImg").classList.remove("hide");
+                document.getElementById("detailedConImg").src = profileImgPath;
+                document.getElementById("userNickname").innerHTML = contents.membersProfile.nickname;
+                document.getElementById("nicknamewrap").classList.remove('manager');
+                document.getElementById("nicknamewrap").dataset.userNo = contents.membersProfile.userNo;
+                await nb_licenseUiCheck(contents.mathContentsLicense[0]);
+            }else{
+                document.getElementById("detailedConImg").classList.add("hide");
+                document.getElementById("userNickname").innerHTML = "N명의수학";
+                document.getElementById("nicknamewrap").classList.add('manager');
+                document.getElementById("nicknamewrap").dataset.userNo = 0;
+                await nb_licenseUiCheck();
+            }
+            await nb_multiChoiceGridSet("quesDetailedConMultiShow");
+
+            if(contents.contentsClassify === 3){
+                document.getElementById("workContentsDetailedDiv").classList.add("hide");
+                document.getElementById("workContentsDetailedDiv2").classList.remove("hide");
+                document.getElementById("detailedLicenseTable2").classList.add("hide");
+                return;
+            }else{
+                document.getElementById("workContentsDetailedDiv").classList.remove("hide");
+                document.getElementById("workContentsDetailedDiv2").classList.add("hide");
+                document.getElementById("detailedLicenseTable2").classList.remove("hide");
+            }
+            
             document.getElementById("detailedContentsLike").dataset.contentsNo = contents.contentsNo;
             document.getElementById("detailedContentsRepo").dataset.contentsNo = contents.contentsNo;
 
@@ -257,27 +288,6 @@ const MyContentsList = ({isMine, userNo})=>{
             if(contents.choiceAnswer !== null && contents.choiceAnswer !== undefined){
                 document.getElementById("answerDetailedSheet").innerHTML = contents.choiceAnswer;
             }
-
-
-            if(contents.contentsClassify === 1){
-                let profileImgPath=defaultProfile;
-                if(contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null){
-                    profileImgPath=contents.membersProfile.profileImgPath+contents.membersProfile.profileImgName;
-                }
-                document.getElementById("detailedConImg").classList.remove("hide");
-                document.getElementById("detailedConImg").src = profileImgPath;
-                document.getElementById("userNickname").innerHTML = contents.membersProfile.nickname;
-                document.getElementById("nicknamewrap").classList.remove('manager');
-                document.getElementById("nicknamewrap").dataset.userNo = contents.membersProfile.userNo;
-                await nb_licenseUiCheck(contents.mathContentsLicense[0]);
-            }else{
-                document.getElementById("detailedConImg").classList.add("hide");
-                document.getElementById("userNickname").innerHTML = "N명의수학";
-                document.getElementById("nicknamewrap").classList.add('manager');
-                document.getElementById("nicknamewrap").dataset.userNo = 0;
-                await nb_licenseUiCheck();
-            }
-            await nb_multiChoiceGridSet("quesDetailedConMultiShow");
 
         }
 
@@ -417,7 +427,9 @@ const MyContentsList = ({isMine, userNo})=>{
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span className='delBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}></span>
+                                                {isMine && 
+                                                    <span className='delBtn' onClick={()=>{ setDelTargetConNo(contentsMap.contentsNo); nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.")}}></span>
+                                                }
                                             </td>
                                         </tr>
                                     </tbody>

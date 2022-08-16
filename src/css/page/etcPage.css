@@ -364,3 +364,31 @@
 .confirmPassword.detail{
     margin-left: 10px;
 }
+
+.myAccountDropDiv{
+    border: 1px solid black;
+    padding:15px 20px;
+}
+
+.myAccountDropTitle{
+    font-weight: bold;
+}
+
+.myAccountDropAgree{
+    border: 1px solid black;
+    background: rgb(234, 234, 234);
+    padding: 10px;
+}
+
+.myAccountDropDiv2{
+    font-weight: bold;
+    margin: 30px 0;
+    background-color: #e4f0ff;
+    border: 1px solid black;
+    padding: 15px;
+    line-height: 200%;
+}
+
+.myAccountDropTb{
+    border-spacing: 20px;
+}

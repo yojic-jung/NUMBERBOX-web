@@ -22,6 +22,7 @@ const GraphMake = ()=>{
         document.getElementsByClassName("MyCanvasButton")[1].classList.add("force-hide");
         document.getElementsByClassName("MyCanvasButton")[2].classList.add("force-hide");
         document.getElementsByClassName("MyCanvasButton")[12].classList.add("force-hide");
+        document.getElementsByClassName("MyCanvasButton")[14].classList.add("force-hide");
         document.getElementsByClassName("TitleBarClassic ")[0].classList.add("force-hide");
         document.getElementsByClassName("zoomPanel")[0].classList.add("force-hide");
     } 

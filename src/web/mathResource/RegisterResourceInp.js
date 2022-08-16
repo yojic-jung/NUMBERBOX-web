@@ -210,7 +210,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
             document.getElementById("mainCate").classList.add("bageText");
             document.getElementById("midCate").classList.add("bageText");
             for(let i=0; i<alreadyCateBtn.length; i++){
-                cateList = alreadyCateBtn[i].remove();
+                cateList = alreadyCateBtn[i].parentElement.remove();
             }
         }else{
             if(!returnVal.existMsg){

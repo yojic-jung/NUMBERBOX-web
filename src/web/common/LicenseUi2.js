@@ -4,7 +4,7 @@ const LicenseUi2 = ()=>{
 return (
                 <>
                     <div className='licenseUiTitle2'>라이선스 범위</div>
-					<table className='licenseTable2'>
+					<table id="detailedLicenseTable2" className='licenseTable2'>
 						<tbody>
 							<tr>
 								<td><span id='platformShareSttsUi'></span>&nbsp;공&#183;사교육기관에서 상업용 목적 없는 학습자료로 사용</td>

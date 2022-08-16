@@ -12,6 +12,7 @@ import RegisterResource from 'web/mathResource/RegisterResource'
 import ShareResource from 'web/mathResource/ShareResource'
 import ContentsList from 'web/contents/list/ContentsList'
 import MyProfile from 'web/contents/list/MyProfile'
+import MyAccountDrop from 'web/contents/list/MyAccountDrop'
 import MyPageWrap from 'web/contents/list/MyPageWrap'
 import UserProfileWrap from 'web/contents/list/UserProfileWrap'
 import WorkContentsList from 'web/contents/list/WorkContentsList'
@@ -51,6 +52,7 @@ const App = ()=>{
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
                 <Route exact path="/contentsList" element={<ContentsList /> } />
                 <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
+                <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/myMathDocs" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />

@@ -41,6 +41,11 @@ const MathDocsMaker = ()=>{
     const [errType, setErrType] = useState(0);
     const [showMathPaper, setShowMathPaper] = useState(false);
 
+
+    const removeAddedEvent = async ()=>{
+        window.removeEventListener('popstate', gotoPreviousStep);
+    }
+
     useEffect(() => {
         let param = nb_getParameterByName("docsNo")
         if(currentPath === location.pathname && subjectList.length !== 0) { //url 같은 경우
@@ -50,7 +55,7 @@ const MathDocsMaker = ()=>{
         currentPath = location.pathname;
 
         const asyncUseEffect = async function(){
-            window.addEventListener('popstate', () => {gotoPreviousStep();});
+            window.addEventListener('popstate', gotoPreviousStep);
             let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectList(jsonObj["mathSubjectInfo"])
             unitListSetFunction(jsonObj["mathSubjectInfo"], jsonObj["mathSecUnitInfo"], jsonObj["mathThrUnitInfo"]);
@@ -63,6 +68,7 @@ const MathDocsMaker = ()=>{
             }
         }
         asyncUseEffect();
+        return ()=>removeAddedEvent();
     }, [location]);
 
     const showMathDocsByMyMathDocsPage = async (mathDocsNo) => {
@@ -215,6 +221,7 @@ const MathDocsMaker = ()=>{
 
         let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitUniqNoAndTypeNoList='+unitUniqNoAndTypeNo+"&quesLevel="+quesLevel+"&conCnt="+conCntInput, true);
         let mathContentsList = jsonObj["mathContentsList"];
+        console.log(mathContentsList);
         let lv1Len=0;
         let lv2Len=0;
         let lv3Len=0;

@@ -61,6 +61,7 @@
     position: relative;
     border: 0.5px dashed gray;
     padding:15px 0;
+    min-height: 120px;
 }
 .resWrap{
     display: grid;

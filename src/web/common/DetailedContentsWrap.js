@@ -135,6 +135,11 @@ return (
                                     </tbody>
                                 </table>
                             </div>
+                            <div id="workContentsDetailedDiv2" className='workContentsDetailedDiv2 hide'>
+                                사용자가 삭제한 문제입니다.<br/>
+                                사용자가 삭제한 경우에도 라이선스는 삭제한 사용자의 것이니<br/>
+                                사용을 중지 해주시기 바랍니다.
+                            </div>
                         </div>
                         </div>
     )

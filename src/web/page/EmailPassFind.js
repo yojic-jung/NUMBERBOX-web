@@ -79,7 +79,7 @@ const EmailPassFind = ()=>{
         let email =  document.getElementById("emailForPassFind").value;
         let returnObj = await nb_dataFetch("/findPassword?email="+email, true);
         if(returnObj.isExist){
-            alert("해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시비밀번호를 통해 로그인 후 비밀번호를 변경하여 주시기 바랍니다.");
+            alert("해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 로그인 후 비밀번호를 변경하여 주시기 바랍니다.");
             document.getElementById("emailForPassFind").value = "";
         }else{
             alert("해당 이메일의 계정이 존재하지 않습니다.\n만일, 계정이 존재 함에도 이 경고가 뜨는 경우 고객센터로 문의 해주시면 감사하겠습니다.");

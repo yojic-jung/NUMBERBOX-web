@@ -1688,3 +1688,9 @@ height: 1.6em;
 .nbCustomSelVal .nbRootBase{
     box-shadow: 0px -0.5px white, inset 0px 0.5px white;
 }
+
+.workContentsDetailedDiv2{
+    padding: 10px;
+    border: 1px solid rgb(222, 222, 222);
+    width: 600px;
+}

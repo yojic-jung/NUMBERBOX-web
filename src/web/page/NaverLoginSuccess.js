@@ -16,7 +16,7 @@ const NaverLoginSuccess = ()=>{
                     callbackUrlNaver = "https://nsoohak.com/loginCallBackNaver";
                 }
 
-                //callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
+                callbackUrlNaver = "http://localhost:3000/loginCallBackNaver";
 
                 const naverLogin = new naver.LoginWithNaverId({
                     clientId: "nHyzlpf4lzeLBMbSC5VL",
@@ -85,6 +85,9 @@ const NaverLoginSuccess = ()=>{
                                 window.location.href = "/";
                             }else if(returObj.isSuccess === "existsPhone"){
                                 alert("이미 가입된 휴대폰 번호입니다. ");
+                                window.history.back();
+                            }else if(returObj.isSuccess === "dropAccount"){
+                                alert("탈퇴한 회원입니다. 새로운 계정으로 회원가입해 주시기 바랍니다. ");
                                 window.history.back();
                             }else{
                                 alert("에러 ["+returObj.error+"]");
