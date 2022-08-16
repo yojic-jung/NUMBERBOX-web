@@ -139,13 +139,11 @@ return (
                             {!isLogin && <tr>
                                 <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
                                 <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
-                                <td><Link className='linkNoneCss' to="/makeContents">문제<br/>만들기</Link></td>
                                 <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
                             </tr>}
                             {isLogin && <tr>
                                 <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
                                 <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
-                                <td><Link className='linkNoneCss' to="/makeContents">문제<br/>만들기</Link></td>
                                 <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
                                 <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
                                     {imgPath === null ?

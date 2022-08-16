@@ -1080,6 +1080,12 @@ height: 1.6em;
 
 .workListUnitType.mobile{
     width:90%;
+    margin:0 auto;
+}
+
+
+.workList.mobile{
+    border-top: 1px solid rgb(153, 153, 153);
 }
 
 .workListUnitWrap{
@@ -1203,7 +1209,7 @@ height: 1.6em;
     border-radius: 0px;
     border:unset;
     border-top:3px solid rgb(255, 174, 0);
-    padding: 20px 0;
+    padding: 10px 0;
     font-size: 20px;
 }
 
