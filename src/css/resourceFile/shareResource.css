@@ -323,7 +323,7 @@
   }
   @media screen and (max-width: 580px){
     .customSliderImg{
-        width: 100%;
+        width: 100% !important
       }
   }
   
