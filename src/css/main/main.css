@@ -419,7 +419,7 @@
 }
 
 .mainSubDesc.mobile{
-    font-size: 14px;
+    font-size: 16px;
     word-break: keep-all;
 }
 
@@ -462,7 +462,7 @@
 .mainSubDiv2Desc.mobile{
     width: 90%;
     display: block;
-    font-size: 14px;
+    font-size: 16px;
     margin:30px auto 0px auto;
 }
 
@@ -543,8 +543,14 @@
     z-index: 3;
 }
 
-.mainSubDiv3 .mainSubBox.second{
+.mainSubDiv3.mobile .mainSubBox.first{
+    width: 55%;
+}
+
+
+.mainSubDiv3.mobile .mainSubBox.second{
     width: 60%;
+    z-index: 4;
 }
 
 .mainSubDiv1 .mainSubBox.mobile{
@@ -563,7 +569,7 @@
 
 .mainSubDescTitle.mobile{
     font-size: 18px;
-    margin:10px 0 10px 25px;
+    margin:20px 0 10px 25px;
 }
 
 
