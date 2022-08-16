@@ -1720,48 +1720,7 @@ return (
                 </div>
                 <div className="mathDocsSubjectListDiv mobile"></div>
                 <div className='bottomFixed'>
-                <div className='mathDocsLevelDiv mobile'>
-                    <div className='inBlock'>
-                        <table className='levelSelTb'>
-                            <tbody>
-                                <tr>
-                                    <td>난이도</td>
-                                        <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
-                                        <label htmlFor='level1'>
-                                            <input type="radio" id="level1" name="level" value="1" className='hide' /> 하
-                                        </label>
-                                        </td>
-                                    <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
-                                        <label htmlFor='level3'>
-                                            <input type="radio" id="level3" name="level" value="3" className='hide' /> 중
-                                        </label>
-                                    </td>
-                                    <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
-                                        <label htmlFor='level5'>
-                                            <input type="radio" id="level5" name="level" value="5" className='hide' /> 상
-                                        </label>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br/>
-                    <div className='inBlock'>
-                        <table className='levelSelTb'>
-                            <tbody>
-                                <tr>
-                                    <td>문항 수</td>
-                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>10</td>
-                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>20</td>
-                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>50</td>
-                                    <td className='conCntSelTd' onClick={(event)=>{conCntSelect(event)}}>100</td>
-                                    <td><input id="conCntInput" className='conCnt mobile' type="text" onKeyUp={(event)=>{conCntKeyUp(event)}} /></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className='inBlock orangeBtn mobile' onClick={(event)=>{firstStepCheck()}}>&gt;</div>
-                </div>
+                    <div className='inBlock orangeBtn mobile' onClick={(event)=>{firstStepCheck()}}>다음단계</div>
                 </div>
             </div>
         </div>

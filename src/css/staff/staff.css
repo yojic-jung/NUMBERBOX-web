@@ -1196,8 +1196,15 @@ height: 1.6em;
 }
 
 .orangeBtn.mobile{
-    margin: 0;
+    margin-left: auto;
     vertical-align: bottom;
+    width: 100%;
+    text-align: center;
+    border-radius: 0px;
+    border:unset;
+    border-top:3px solid rgb(255, 174, 0);
+    padding: 20px 0;
+    font-size: 20px;
 }
 
 .orangeBorderBtn{

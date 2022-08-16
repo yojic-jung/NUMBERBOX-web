@@ -52,6 +52,7 @@
     border:unset;
     border-top: 0.5px solid rgb(206, 206, 206);
     border-bottom: 0.5px solid rgb(206, 206, 206);
+    padding-bottom: 20vh;
 }
 
 .mathDocsLevelDiv{
