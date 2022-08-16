@@ -645,6 +645,10 @@ body {
     display:fixed;
     top:0px;
   }
+
+  .container.mobile{
+    background: linear-gradient(white 0%, white 25%, rgba(230, 241, 255, 0.5) 50%, rgba(202, 221, 252, 0.5));
+  }
   
   .confetti-container {
     perspective: 700px;
