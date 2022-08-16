@@ -322,8 +322,11 @@
     width: 580px;
   }
   @media screen and (max-width: 580px){
+    .customImgSliderContainerDiv{
+        width: 100% !important;
+    }
     .customSliderImg{
-        width: 100% !important
+        width:100% !important
       }
   }
   
