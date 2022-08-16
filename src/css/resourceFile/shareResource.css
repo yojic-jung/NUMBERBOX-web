@@ -242,7 +242,7 @@
 }
 
 .resDetailedDiv.mobile{
-    width: 100%;
+    width: 95%;
 }
 
 .resDetailedDiv::-webkit-scrollbar {width: 6px;}
@@ -320,6 +320,11 @@
 
   .customSliderImg{
     width: 580px;
+  }
+  @media screen and (max-width: 580px){
+    .customSliderImg{
+        width: 100%;
+      }
   }
   
   .customImgSliderBtnDiv{
