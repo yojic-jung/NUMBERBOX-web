@@ -11,13 +11,14 @@ const MyProfile = ()=>{
     const navigate = useNavigate ();
 
     const [email, setEmail] = useState("");
-    const [certified, setCertified] = useState(false);
+    const [certified, setCertified] = useState(true);
 
     const [merchantUid, setMerchantUid] = useState(0);
     const [merchantIdCode, setMerchantIdCode] = useState(0);
     
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
+    const [birth, setBirth] = useState("");
 
 
     function onClickCertification() {
@@ -69,6 +70,13 @@ const MyProfile = ()=>{
 
             let myEmail = await nb_dataFetch("/takeMyEmail", true);
             setEmail(myEmail.email);
+
+            //임시 구현
+            let returnMap = await nb_dataFetch("/takeMyPrivateTmp", true);
+            console.log(returnMap);
+            setName(returnMap.myPrivate.userName);
+            setPhone(returnMap.myPrivate.phoneNumber);
+            setBirth(returnMap.myPrivate.birth);
         }
         asyncUseEffect();
     },[]);
@@ -82,6 +90,7 @@ const MyProfile = ()=>{
             window.history.pushState("", "나의 프로필 사항", '/myProfileDetail');
             setName(isCertified.memberInfo.userName);
             setPhone(isCertified.memberInfo.phoneNumber);
+            setBirth(isCertified.memberInfo.birth);
         }else{
             setCertified(false);
             nb_fadeInOutB("비밀번호가 일치하지 않습니다.", 2000);
@@ -137,6 +146,12 @@ const MyProfile = ()=>{
                         <tr>
                             <td>이름</td>
                             <td className='bolder'>{name}</td>
+                        </tr>
+                        <tr>
+                            <td>생년월일</td>
+                            <td>
+                                <span className='bolder'>{birth}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>휴대폰 번호</td>
