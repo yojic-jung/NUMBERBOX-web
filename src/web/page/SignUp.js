@@ -301,18 +301,6 @@ return (
                         비밀번호 확인<br/>
                         <input  id="passwordChk" name="passwordChk" className="login-input" type="password" placeholder='비밀번호를 다시 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event);enterKeyEv(event);}} />
                     </div>
-                    <div className='login-input-div'>
-                        이름<br/>
-                        <input  id="" name="" className="login-input" type="text" placeholder='이름을 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event);enterKeyEv(event);}} />
-                    </div>
-                    <div className='login-input-div'>
-                        생년월일<br/>
-                        <input  id="" name="" className="login-input" type="text" placeholder='생년월일(ex.930727)을 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event);enterKeyEv(event);}} />
-                    </div>
-                    <div className='login-input-div'>
-                        휴대폰번호<br/>
-                        <input  id="" name="" className="login-input" type="text" placeholder='휴대폰번호를 -없이 번호만 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event);enterKeyEv(event);}} />
-                    </div>
                     <div id="passChkValDesc" className='loginValDesc'></div>
                     <div className='login-input-div'>
                         <div id="phoneCertifyBtn" className='phoneCertifyBtn' onClick={()=>{onClickCertification()}}>휴대폰 본인인증</div>
@@ -331,8 +319,8 @@ return (
                         
                     </div>
                     <div className='login-btn'  onClick={()=>{sigupRequest()}}>가입완료</div>
-                    <div className="grid-naver alignCenter" id='naverIdLogin'></div>
-                    <div className="naver-customize hide" onClick={()=>{naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
+                    <div className="grid-naver hide" id='naverIdLogin'></div>
+                    <div className="naver-customize" onClick={()=>{naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
                         네이버 아이디로 회원가입
                     </div>
                 </form>

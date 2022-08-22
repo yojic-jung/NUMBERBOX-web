@@ -111,8 +111,8 @@ return (
                     <div id="passChkValDesc" className='loginValDesc'></div>
                     <div id="loginErrMsg" className='loginErrMsg hide'></div>
                     <div id="login-btn" className='login-btn disabled' onClick={(event)=>{fLoginBtnUiVal(event)}}>로그인</div>
-                    <div className="grid-naver alignCenter" id='naverIdLogin'></div>
-                    <div className="naver-customize hide" onClick={()=>{if(document.getElementById("emailSave").checked){ window.localStorage.setItem("loginState", "keep");}else{window.localStorage.setItem("loginState", null)} naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
+                    <div className="grid-naver hide" id='naverIdLogin'></div>
+                    <div className="naver-customize" onClick={()=>{if(document.getElementById("emailSave").checked){ window.localStorage.setItem("loginState", "keep");}else{window.localStorage.setItem("loginState", null)} naverLogin.init();window.location.href = naverLogin.generateAuthorizeUrl();}}>
                         네이버 아이디로 로그인
                     </div>
                     <div className='login-etc-info'>
