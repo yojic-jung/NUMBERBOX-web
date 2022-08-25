@@ -300,7 +300,7 @@ const WorkContentsList = ()=>{
         }
 
         const makeOrgSrcRef = async function() {
-            return '<option value="0">유사 교재</option><option value="쎈수학">쎈수학</option><option value="RPM">RPM</option><option value="수학의 힘(베타)">수학의 힘(베타)</option><option value="교과서">교과서</option><option value="창작">창작</option>'
+            return '<option value="0">유사 교재</option><option value="쎈수학">쎈수학</option><option value="RPM">RPM</option><option value="수학의 힘(베타)">수학의 힘(베타)</option><option value="해결의법칙">해결의법칙</option><option value="교과서">교과서</option><option value="창작">창작</option>'
         }
 
         const makeMathTypeClassify = async function() {
@@ -320,7 +320,7 @@ const WorkContentsList = ()=>{
                     alert((i+1)+"번째 행의 유사 교재를 선택해주세요.");
                     return false;
                 }
-                if(orgSrcRef.value === "쎈수학" || orgSrcRef.value === "RPM" || orgSrcRef.value === "수학의 힘(베타)" ){
+                if(orgSrcRef.value === "쎈수학" || orgSrcRef.value === "RPM" || orgSrcRef.value === "수학의 힘(베타)"  || orgSrcRef.value === "해결의법칙" ){
                     if(orgSrcNo.value.length===0){
                         alert((i+1)+"번째 행의 유사 문제번호를 적어주세요.");
                         return false;

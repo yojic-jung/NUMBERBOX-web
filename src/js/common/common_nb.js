@@ -647,7 +647,7 @@ export const nb_contentsSrcVal = async function(event, isUpdtMode) {
   if(event === null) srcRef = document.getElementById("orgSrcRef").value;
   else srcRef = event.target.dataset.value;
   
-  if(srcRef === "수학의 힘(베타)" || srcRef === "쎈수학" || srcRef === "RPM"){
+  if(srcRef === "수학의 힘(베타)" || srcRef === "쎈수학" || srcRef === "RPM" || srcRef === "해결의법칙"){
     //참고서인 경우 문제번호, 출판연도, 문제 유형
       document.getElementById("orgSrcNo").classList.remove("hide");
       document.getElementById("copyrightYear").classList.remove("hide");

@@ -150,7 +150,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 				return false;
 			}
 	
-			if(orgSrcRef.value === "쎈수학" || orgSrcRef.value === "RPM" || orgSrcRef.value === "수학의 힘(베타)" ){
+			if(orgSrcRef.value === "쎈수학" || orgSrcRef.value === "RPM" || orgSrcRef.value === "수학의 힘(베타)" || orgSrcRef.value === "해결의법칙" ){
 				if(orgSrcNo.value.length===0){
 					alert("유사 문제번호를 적어주세요.");
 					return false;
@@ -353,12 +353,13 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 					
 					{contentsClassify === 0 &&
 					<>
-						<CustomSelBoxDown value={[{"value":"쎈수학", "originVal":"쎈수학"}, {"value":"RPM", "originVal":"RPM"},{"value":"수학의 힘(베타)", "originVal":"수학의 힘(베타)"},{"value":"교과서", "originVal":"교과서"},{"value":"창작", "originVal":"창작"}]} cusSelId="cusOrgRefSel" originSel="orgSrcRef" title="유사 문제 교재"></CustomSelBoxDown>
+						<CustomSelBoxDown value={[{"value":"쎈수학", "originVal":"쎈수학"}, {"value":"RPM", "originVal":"RPM"},{"value":"수학의 힘(베타)", "originVal":"수학의 힘(베타)"},{"value":"해결의법칙", "originVal":"해결의법칙"},{"value":"교과서", "originVal":"교과서"},{"value":"창작", "originVal":"창작"}]} cusSelId="cusOrgRefSel" originSel="orgSrcRef" title="유사 문제 교재"></CustomSelBoxDown>
 						<select id="orgSrcRef" name="orgSrcRef" className="hide" >
 							<option value="0">유사 문제 교재</option>
 							<option value="쎈수학">쎈수학</option>
 							<option value="RPM">RPM</option>
 							<option value="수학의 힘(베타)">수학의 힘(베타)</option>
+							<option value="해결의법칙">해결의법칙</option>
 							<option value="교과서">교과서</option>
 							<option value="창작">창작</option>
 						</select>
