@@ -351,7 +351,7 @@
 /** 문제 출력 사이즈 대략 387px(테스트 필요) **/
 #ques-show, #sol-show, #ans-show{
     width: 387px;
-    margin-left: 25px;
+    margin: auto;
     word-break: keep-all;
 }
 #ques-show{
