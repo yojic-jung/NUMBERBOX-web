@@ -273,7 +273,11 @@
        
     }
 
-    #root > div:not(.mathDocsA4Frame):not(.mathDocsWrap){
+    #root > div:not(.mathDocsBrowserView){
+        display: none !important;
+    }
+
+    .mathDocsBrowserView > div:not(.mathDocsA4Frame):not(.mathDocsWrap){
         display: none !important;
     }
 }

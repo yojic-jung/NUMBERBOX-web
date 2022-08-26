@@ -1365,7 +1365,7 @@ const MathDocsMaker = ()=>{
 return (
     <>
     <Outlet />
-    <BrowserView>
+    <BrowserView className='mathDocsBrowserView'>
         <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
         <div className='noSelect mathDocsRootDiv'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
