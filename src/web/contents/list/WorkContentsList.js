@@ -724,7 +724,7 @@ const WorkContentsList = ()=>{
                                                     <div><button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button></div>
                                                     <div>
                                                         [{contentsMap.mathContentsComp[0].orgSrcRef}] {contentsMap.mathContentsComp[0].orgSrcNo}번({quesLevel}, {contentsMap.mathContentsComp[0].mathTypeClassify})<br/>
-                                                        <span className=''>(유형: {contentsMap.mathTypeInfo.quesType})</span>
+                                                        유형 : <span dangerouslySetInnerHTML={{__html: contentsMap.mathTypeInfo.quesType}}></span>
                                                     </div>
                                                 </div>
                                             </td>
