@@ -333,7 +333,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 	  }
   return (
     <>
-		<div className="blindBox hide"></div>
+		<div id="formulaEditBlindBox" className="blindBox hide"></div>
 		<div id="contentsInfo" className="contentsInfo hide">
 				<div className="closeBtn" onClick={ () => nb_closeBtn("contentsInfo")}>&#88;</div>
 				<div className="mini-title3">문제 단원 및 유형 정보를 입력해 주세요.</div>

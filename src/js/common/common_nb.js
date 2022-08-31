@@ -446,7 +446,10 @@ export const nb_getCheckedVal = async function(event){
 */
 export const nb_closeBtn = async function(targetId){
   document.getElementById(targetId).classList.add("hide");
-  document.getElementsByClassName("blindBox")[0].classList.add("hide");
+  let blindBox = document.getElementsByClassName("blindBox");
+  for(let i=0; i<blindBox.length; i++){
+    document.getElementsByClassName("blindBox")[i].classList.add("hide");
+  }
 }
 
 

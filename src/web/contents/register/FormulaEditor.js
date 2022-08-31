@@ -632,8 +632,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		}
 		//문제 validation [end]
 
-		document.getElementsByClassName("blindBox")[0].classList.remove("hide");
-		document.getElementsByClassName("contentsInfo")[0].classList.remove("hide");
+		document.getElementById("formulaEditBlindBox").classList.remove("hide");
+		document.getElementById("contentsInfo").classList.remove("hide");
 	}
 
 	const formularTabSelect = async function(event){

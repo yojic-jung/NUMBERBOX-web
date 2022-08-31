@@ -673,6 +673,9 @@ export const reg_preventKeyEvent = async (event) => {
 	// 수식 셀렉트 한 상태에서 글자 입력하면 해당 div 밑이 모두 span으로 바뀜
 	await reg_convertSpanToNoTag()
 
+	// P태그 DIV태그로 변환
+	await reg_convertPtagToDivTag();
+
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -3150,6 +3153,36 @@ export const reg_convertSpanToNoTag = (targetId) => {
 			if(spanTag[i].classList.length === 0){
 				spanTag[i].outerHTML = spanTag[i].innerHTML
 			}
+		}
+	}
+}
+
+/*
+* 정의 : 수식 에디터에서 P태그 허용 안함(html 구조 더러워지면 각종 버그 및 에러 관리하기 어려움)
+* 		 문단 태그는 모두 div태그로 변환
+*/
+export const reg_convertPtagToDivTag = () => {
+	if(window.getSelection().isCollapsed){
+		//워드, 한컴 복붙 하는 경우 p태그 생겨남
+		let pTag = document.getElementsByTagName("P");
+		
+
+		if(pTag.length>0){
+			let tmpNode = document.createElement("img");
+			tmpNode.className = "tmpPositionDetect";
+			window.getSelection().getRangeAt(0).insertNode(tmpNode);
+			window.getSelection().collapseToStart();
+
+			while(pTag.length > 0){
+				let divTag = document.createElement("DIV");
+				divTag.innerHTML = pTag[0].innerHTML;
+				pTag[0].after(divTag);
+				pTag[0].remove();
+			}
+
+			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpPositionDetect")[0]);
+			window.getSelection().collapseToStart();
+			document.getElementsByClassName("tmpPositionDetect")[0].remove();
 		}
 	}
 }
