@@ -10,7 +10,7 @@ import UnitSelBox from 'web/common/UnitSelBox';
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
 import {nb_isLogin, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, nb_closeBtn, nb_detectScrollPosition, nb_moveToScroll,
     nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_getParameterByName, nb_topMenuFixed2} from 'js/common/common_nb.js';
-import {reg_unitTypeChange} from 'js/contents/register/contents_reg.js';
+import {reg_unitTypeChange, reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
 import defaultProfile from 'img/defaultProfileWhite.png';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
@@ -62,6 +62,7 @@ const ContentsList = ()=>{
 
 
     const modalPopupClose = async (event, isSearch) =>{
+        window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
 

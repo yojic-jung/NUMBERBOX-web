@@ -5,6 +5,7 @@ import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import EmptyList from 'web/common/EmptyList';
 import {nb_dataFetch, nb_fadeInOut, nb_multiChoiceGridSet, nb_modalScrollStrt, nb_licenseUiCheck, nb_modalScrollEnd,
     nb_closeBtn, nb_promptBox, nb_detectScrollPosition, nb_moveToScroll} from 'js/common/common_nb.js';
+import { reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import defaultProfile from 'img/defaultProfileWhite.png';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
@@ -56,6 +57,7 @@ const MyRepository = ()=>{
         }, [contentsList]);
 
         const modalPopupClose = async (event, isSearch) =>{
+            window.removeEventListener('click', reg_eraseEditTbUI);
             await nb_closeBtn("outerFormulaEditor"); 
             await setModalState(false);
     

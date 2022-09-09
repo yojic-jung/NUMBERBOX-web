@@ -1,9 +1,9 @@
 import React, {useState, useEffect } from 'react';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
-import {nb_dataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import "css/common/nbScreen.css";
-import {nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
+import {nb_dataFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
     , nb_detectScrollPosition, nb_moveToScroll} from 'js/common/common_nb.js';
+import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import EmptyList from 'web/common/EmptyList';
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
@@ -40,6 +40,7 @@ const MyContentsList = ({isMine, userNo})=>{
 
 
     const modalPopupClose = async (event, isSearch) =>{
+        window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
 
@@ -131,6 +132,12 @@ const MyContentsList = ({isMine, userNo})=>{
                 event.target.classList.remove("active2");
             }else{
                 event.target.classList.add("active");
+
+                //(사용자 프로필 페이지) 2초 뒤에 active를 active2로 변환, 변환하지 않으면 정렬기능 사용시에 계속 저장소에 저장됬다는 문구 계속 나타남
+                setTimeout(()=>{
+                    event.target.classList.remove("active");
+                    event.target.classList.add("active2");
+                }, 2000);
             }
             nb_dataFetch('/mathInfo/putInMyRepo?contentsno='+contentsno, false);
         }
@@ -458,7 +465,7 @@ const MyContentsList = ({isMine, userNo})=>{
                         </>
                         : <EmptyList msg={emptyListMsg} imgName="myContentEmpty"  addImgClass="miniSize" /> }
                         </div>
-                        <DetailedContentsWrap isBasedParent={false}/>
+                        <DetailedContentsWrap isBasedParent={false} modalRepoChange={()=>{}} modalLikeChange={()=>{}} />
                     </div>
                 </div>
             }

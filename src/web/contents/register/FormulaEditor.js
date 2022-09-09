@@ -7,7 +7,7 @@ import NbWebEditor from 'web/contents/register/NbWebEditor'
 import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
 import {nb_isLogin, nb_formDataFetch, nb_topMenuFixed, nb_dataFetch, nb_addClass, nb_extensionCheck, nb_extensionCheck2, nb_getCheckedVal, 
 	nb_licenseUiCheck, nb_imgFileDel, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload} from 'js/common/common_nb.js';
-import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_eraseEditTbUI ,reg_mDownTdWidthChange, reg_mUpTdWidthChange, 
+import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_mUpTdWidthChange, 
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
 		reg_selectFormulaElement, reg_keyEvSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp

@@ -44,8 +44,8 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
     let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
     const jsonObj = await nb_dataFetch('/mathInfo/typeInfo?unitUniqNo='+unitUniqNo, true);
     setQuesTypeBox(jsonObj["mathTypeInfo"]);
+    i++;
     setQuesTypeKey(i);
-      i++;
   }
 
   useEffect((event) => {
