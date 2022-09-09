@@ -121,6 +121,7 @@ return (
                         <tr>
                             <td><Link className='manager-link' to="/workContentsList">작업내역</Link></td>
                             <td><Link className='manager-link' to="/registerContents">문제만들기</Link></td>
+                            {isAdmin && <td><Link className='manager-link' to="/mathTypeCategory">유형카테고리</Link></td>}
                             {isAdmin && <td><Link className='manager-link' to="/adminSvcCenter">관리자센터</Link></td>}
                         </tr>
                     </tbody>

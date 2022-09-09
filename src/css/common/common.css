@@ -1,5 +1,9 @@
 .hide{display:none !important;}
 
+.hidden{
+    visibility: hidden;
+}
+
 .inBlock{
     display:inline-block;
 }
@@ -564,10 +568,6 @@
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     perspective: 1000px;
-}
-
-.hidden{
-    visibility:hidden 
 }
 
 .pointer{

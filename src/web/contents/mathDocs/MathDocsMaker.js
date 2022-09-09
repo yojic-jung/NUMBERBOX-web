@@ -329,7 +329,7 @@ const MathDocsMaker = ()=>{
         document.getElementById("mathDocsThrStep").classList.remove("hide");
     }
 
-    const unitSelct = async (event) => {
+    const unitSelect = async (event) => {
         let subjectBtnWrap = document.getElementsByClassName("subjectBtnWrap");
         for(let i=0; i<subjectBtnWrap.length; i++){
             if(!event.target.classList.contains("active")){
@@ -390,6 +390,23 @@ const MathDocsMaker = ()=>{
         }
     }
 
+
+    const foldClickFunction = (event, btnWrapClass) => {
+        let btnWrap = event.target.parentElement.querySelectorAll(btnWrapClass);
+        if(event.target.classList.contains("active")){
+            event.target.classList.remove("active");
+            for(let i=0; i<btnWrap.length; i++){
+                btnWrap[i].classList.add("hide");
+            }
+        }else{
+            event.target.classList.add("active");
+            for(let i=0; i<btnWrap.length; i++){
+                btnWrap[i].classList.remove("hide");
+            }
+        }
+    }
+
+
     const subjectClickFunction = (event) => {
         let secUnitBtn = event.target.parentElement.querySelectorAll(".secUnitBtn");
         let thrUnitBtn = event.target.parentElement.querySelectorAll(".thrUnitBtn");
@@ -419,22 +436,7 @@ const MathDocsMaker = ()=>{
         }
     }
 
-    const subjectClickFoldFunction = (event) => {
-        let secUnitBtn = event.target.parentElement.querySelectorAll(".secUnitBtnWrap");
-        if(event.target.classList.contains("active")){
-            event.target.classList.remove("active");
-            for(let i=0; i<secUnitBtn.length; i++){
-                secUnitBtn[i].classList.add("hide");
-            }
-        }else{
-            event.target.classList.add("active");
-            for(let i=0; i<secUnitBtn.length; i++){
-                secUnitBtn[i].classList.remove("hide");
-            }
-        }
-    }
-
-
+   
     const secUnitClickFunction = (event) => {
         let thrUnitBtn = event.target.parentElement.querySelectorAll(".thrUnitBtn");
         let typeBtn = event.target.parentElement.querySelectorAll(".typeBtn");
@@ -469,27 +471,9 @@ const MathDocsMaker = ()=>{
                 event.target.closest(".subjectBtnWrap").querySelector(".subjectBtn").classList.add("active");
             }
         }
-
         
     }
 
-    const secUnitFoldClickFunction = (event)=>{
-        let thrUnitBtnWrap = event.target.parentElement.querySelectorAll(".thrUnitBtnWrap");
-        if(event.target.classList.contains("active")){
-            event.target.classList.remove("active");
-            for(let i=0; i<thrUnitBtnWrap.length; i++){
-                thrUnitBtnWrap[i].classList.add("hide");
-            }
-        }else{
-            event.target.classList.add("active");
-            for(let i=0; i<thrUnitBtnWrap.length; i++){
-                thrUnitBtnWrap[i].classList.remove("hide");
-            }
-            
-        }
-    }
-
-    
 
     const thrUnitClickFunction = (event) => {
         let typeBtn = event.target.parentElement.querySelectorAll(".typeBtn");
@@ -535,21 +519,7 @@ const MathDocsMaker = ()=>{
         }
     }
 
-    const thrUnitFoldClickFunction = (event)=>{
-        let typeBtnWrap = event.target.parentElement.querySelectorAll(".typeBtnWrap");
-        if(event.target.classList.contains("active")){
-            event.target.classList.remove("active");
-            for(let i=0; i<typeBtnWrap.length; i++){
-                typeBtnWrap[i].classList.add("hide");
-            }
-        }else{
-            event.target.classList.add("active");
-            for(let i=0; i<typeBtnWrap.length; i++){
-                typeBtnWrap[i].classList.remove("hide");
-            }
-            
-        }
-    }
+    
 
     const typeClickFunction = (event) => {
         if(event.target.classList.contains("active")){
@@ -611,7 +581,7 @@ const MathDocsMaker = ()=>{
             let tmpSpanFoldBtn = document.createElement("span");
             tmpSpanFoldBtn.innerHTML = "&#10095;";
             tmpSpanFoldBtn.className="subjectFoldBtn active"
-            tmpSpanFoldBtn.addEventListener("click", subjectClickFoldFunction);
+            tmpSpanFoldBtn.addEventListener("click", (event)=> foldClickFunction(event, ".secUnitBtnWrap"));
             tmpDiv.append(tmpSpanFoldBtn);
             let tmpSpan = document.createElement("span");
             tmpSpan.innerHTML = subjectList[i].mainVal;
@@ -631,7 +601,7 @@ const MathDocsMaker = ()=>{
                     let tmpSpanFoldBtn = document.createElement("span");
                     tmpSpanFoldBtn.innerHTML = "&#10095;";
                     tmpSpanFoldBtn.className="secUnitFoldBtn"
-                    tmpSpanFoldBtn.addEventListener('click', secUnitFoldClickFunction);
+                    tmpSpanFoldBtn.addEventListener('click', (event)=> foldClickFunction(event, ".thrUnitBtnWrap"));
                     tmpDiv.append(tmpSpanFoldBtn);
                     let tmpSpan = document.createElement("span");
                     tmpSpan.innerHTML = secUnitList[j].mainVal;
@@ -653,7 +623,7 @@ const MathDocsMaker = ()=>{
                     let tmpSpanFoldBtn = document.createElement("span");
                     tmpSpanFoldBtn.innerHTML = "&#10095;";
                     tmpSpanFoldBtn.className="thrUnitFoldBtn"
-                    tmpSpanFoldBtn.addEventListener("click", thrUnitFoldClickFunction);
+                    tmpSpanFoldBtn.addEventListener("click",  (event)=> foldClickFunction(event, ".typeBtnWrap"));
                     tmpDiv.append(tmpSpanFoldBtn);
                     let tmpSpan = document.createElement("span");
                     tmpSpan.innerHTML = thrUnitList[j].mainVal;
@@ -1103,16 +1073,16 @@ const MathDocsMaker = ()=>{
             if( subjectInfo.mainVal.includes("1-1")){
                 return <span key={subjectInfo.unitUniqNo}>
                             <span className="mathDocsGrade">중등</span>
-                            <span className="mathDocsUnitBtn" data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelct(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
+                            <span className="mathDocsUnitBtn" data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
                        </span>
             }
             if( subjectInfo.mainVal.includes("3-2")){
                 return <span key={subjectInfo.unitUniqNo}>
-                            <span className="mathDocsUnitBtn" data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelct(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
+                            <span className="mathDocsUnitBtn" data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
                             <br/>
                        </span>
             }
-            return <span className="mathDocsUnitBtn" key={subjectInfo.unitUniqNo} data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelct(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
+            return <span className="mathDocsUnitBtn" key={subjectInfo.unitUniqNo} data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
         }
     });
 
