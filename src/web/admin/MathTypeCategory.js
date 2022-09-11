@@ -513,7 +513,7 @@ return (
                                                         <td><span className='popupTypeOrderNo'>{idx+1}.</span></td>
                                                         <td>
                                                             <span id={mathConCntId} className='conCntByTypeNo'>{contents.conCnt}</span>
-                                                            <div id={mathTypeId} className='mathTypeContents' dangerouslySetInnerHTML={{__html:contents.typeContents}}></div>
+                                                            <div id={mathTypeId} className='mathTypeContents' dangerouslySetInnerHTML={{__html:contents.typeContents}} onKeyUp={(event)=>{tagStyleRemove(event)}}></div>
                                                         </td>
                                                         <td className='typeChngBtnRootWrap'>
                                                             <div className='typeChngBtnWrap'>
