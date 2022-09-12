@@ -908,6 +908,10 @@ height: 1.6em;
     background-size:15px;
     color:white;
 }
+
+.nbCustomSelected .nbCondBase{
+    border: 1px solid white;
+}
 /** nbCustomSel 박스 끝. **/
 
 .formulaTabButton{
