@@ -909,9 +909,7 @@ height: 1.6em;
     color:white;
 }
 
-.nbCustomSelected .nbCondBase{
-    border: 1px solid white;
-}
+
 /** nbCustomSel 박스 끝. **/
 
 .formulaTabButton{
@@ -1736,6 +1734,10 @@ height: 1.6em;
 
 .nbCustomSelVal .nbRootBase{
     box-shadow: 0px -0.5px white, inset 0px 0.5px white;
+}
+
+.nbCustomSelVal .nbCondBase{
+    border: 1px solid white;
 }
 
 .workContentsDetailedDiv2{
