@@ -1736,7 +1736,7 @@ height: 1.6em;
     box-shadow: 0px -0.5px white, inset 0px 0.5px white;
 }
 
-.nbCustomSelVal .nbCondBase{
+.nbCustomSelVal .nbCondBase, .nbOptItem:hover .nbCondBase{
     border: 1px solid white;
 }
 
