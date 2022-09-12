@@ -51,7 +51,7 @@ const MathTypeCategory = ()=>{
         let contents = new Array();
         for(let i=0; i<typeBtn.length; i++){
             let conCnt =0;
-            for(let j=0; j<jsonObj.length; j++){
+            for(let j=0; j<jsonObj.length; j++) {
                 if(parseInt(typeBtn[i].dataset.unitUniqNo) === jsonObj[j].unitUniqNo && parseInt(typeBtn[i].dataset.typeNo) === jsonObj[j].typeNo){
                     conCnt = jsonObj[j].cnt;
                 }
@@ -312,8 +312,10 @@ const MathTypeCategory = ()=>{
         await mathTypeChangeCncl();
         document.getElementById("mathTypeAddPopupBtn").classList.add("hidden");
         document.getElementById("mathTypeOrderChngBtn").classList.add("hidden");
-        
-        event.target.closest(".typeChngBtnWrap").classList.add("hide");
+        let typeChngBtnWrap = document.getElementsByClassName("typeChngBtnWrap");
+        for(let i=0; i<typeChngBtnWrap.length; i++){
+            typeChngBtnWrap[i].classList.add("hide");
+        }
         event.target.closest(".typeChngBtnRootWrap").querySelector(".typeConChngBtnWrap").classList.remove("hide");
         document.getElementById(mathTypeId).setAttribute("contentEditable", true);
         document.getElementById(mathTypeId).classList.add("active");
@@ -371,6 +373,17 @@ const MathTypeCategory = ()=>{
             await nb_fadeInOutB("잘못 입력하였습니다.\n문제 이동을 원할 경우 다시 입력해주세요.", 2500);
         }
 
+    }
+
+    const mathTypeChngInit = async (event) => {
+        let unitUniqNo = event.target.dataset.unitUniqNo;
+        let typeNo = event.target.dataset.typeNo;
+        let typeBtn = document.getElementsByClassName("typeBtn");
+        for(let i=0; i<typeBtn.length; i++){
+            if(typeBtn[i].dataset.unitUniqNo === unitUniqNo && typeBtn[i].dataset.typeNo === typeNo){
+                document.getElementById("mathType-"+unitUniqNo+"-"+typeNo).innerHTML = typeBtn[i].innerHTML;
+            }
+        }
     }
 
     const mathTypeChangeCncl = async ()=>{
@@ -522,7 +535,7 @@ return (
                                                                 <span className='typeDelBtn' data-unit-uniq-no={contents.unitUniqNo} data-type-no={contents.typeNo} onClick={(event)=>{mathContentsMoveSel(event)}}>문제이동</span>
                                                             </div>
                                                             <div className='typeConChngBtnWrap hide'>
-                                                                <span className='typeConCnclBtn' data-unit-uniq-no={contents.unitUniqNo} data-type-no={contents.typeNo} onClick={()=>{mathTypeChangeCncl()}}>취소</span>
+                                                                <span className='typeConCnclBtn' data-unit-uniq-no={contents.unitUniqNo} data-type-no={contents.typeNo} onClick={(event)=>{mathTypeChangeCncl();mathTypeChngInit(event)}}>취소</span>
                                                                 <span className='typeConChngBtn' data-unit-uniq-no={contents.unitUniqNo} data-type-no={contents.typeNo} onClick={(event)=>{mathTypeChangeApply(event, mathTypeId)}}>적용</span>
                                                             </div>
                                                             <div className='conMoveCnclBtnWrap hide'>
