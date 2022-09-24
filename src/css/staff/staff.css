@@ -1301,8 +1301,9 @@ height: 1.6em;
 #outerFormulaEditor .closeBtn{
     position: absolute;
     top: 10px;
-    right: 30px;
+    right: 50px;
     text-align: right;
+    padding: 0;
 }
 
 #outerFormulaEditor .rightAbsolBox{
