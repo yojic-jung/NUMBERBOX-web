@@ -9,7 +9,7 @@
 .quesDiv, .ansSolDiv{
     width: 387px;
     margin-left: 30px;
-    word-break: keep-all;
+    word-break: break-all;
     position: relative;
 }
 .quesNumber {

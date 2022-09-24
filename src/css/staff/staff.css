@@ -352,7 +352,7 @@
 #ques-show, #sol-show, #ans-show{
     width: 387px;
     margin: auto;
-    word-break: keep-all;
+    word-break: break-all;
 }
 #ques-show{
     margin-top:20px;
@@ -1031,7 +1031,7 @@ height: 1.6em;
 .workSolShow{
     width: 356px;
     margin: auto;
-    word-break: keep-all;
+    word-break: break-all;
     position: relative;
 }
 
