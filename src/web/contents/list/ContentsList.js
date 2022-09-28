@@ -452,12 +452,12 @@ const ContentsList = ()=>{
                     return false;
             }
             */
-            if(customSecUnit.innerText=="중단원" || secUnit.selectedIndex==0){
-                alert("중단원을 선택해주세요.");
+            if(customSecUnit.innerText==="대단원" || secUnit.selectedIndex===0){
+                alert("대단원을 선택해주세요.");
                 return false;
             }
-            if(customThrUnit.innerText=="소단원" || thrUnit.selectedIndex==0){
-                alert("소단원을 선택해주세요.");
+            if(customThrUnit.innerText==="중단원" || thrUnit.selectedIndex===0){
+                alert("중단원을 선택해주세요.");
                 return false;
             }
 
