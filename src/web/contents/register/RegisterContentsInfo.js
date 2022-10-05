@@ -127,26 +127,18 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 		 }
 		 */
 
-		console.log(customSecUnit.innerText==="대단원");
-		console.log(secUnit.selectedIndex===0);
 		if(customSecUnit.innerText==="대단원" || secUnit.selectedIndex===0){
 			alert("대단원을 선택해주세요.");
 			return false;
 		}
-		console.log(customThrUnit.innerText==="중단원");
-		console.log(thrUnit.selectedIndex===0);
 		if(customThrUnit.innerText==="중단원" || thrUnit.selectedIndex===0){
 			alert("중단원을 선택해주세요.");
 			return false;
 		}
-		console.log(customQuesType.innerText === "유형정보");
-		console.log(quesType.selectedIndex===0);
 		if(customQuesType.innerText === "유형정보" || quesType.selectedIndex===0){
 			alert("유형정보를 선택해주세요.");
 			return false;
 		}
-		console.log(cusQuesLevel.innerText === "문제 난이도");
-		console.log( quesLevel.selectedIndex===0);
 		if(cusQuesLevel.innerText === "문제 난이도" || quesLevel.selectedIndex===0){
 			alert("문제 난이도를 선택해주세요.");
 			return false;

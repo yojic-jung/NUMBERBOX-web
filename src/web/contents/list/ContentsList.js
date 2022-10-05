@@ -466,7 +466,6 @@ const ContentsList = ()=>{
             // FormData의 값 확인
             /*
             for (var pair of formData.entries()) {
-                console.log(pair[0]+ ': ' + pair[1]);
             }
             */
                 

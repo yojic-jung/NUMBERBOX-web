@@ -201,7 +201,6 @@ export const reg_brFocusBugFix = async(userKeyCode)=>{
 			//비어있는 텍스트 노드이면 아닌 노드가 나올때까지 루프
 			while(previouseNode.nodeName === "#text" && previouseNode.nodeValue === ""){
 				previouseNode=previouseNode.previousSibling;
-				console.log(previouseNode);
 				if(previouseNode === null){	//br태그 뒤가 아니면 리턴
 					window.getSelection().collapseToStart();
 					tmpNode.remove();
@@ -211,7 +210,6 @@ export const reg_brFocusBugFix = async(userKeyCode)=>{
 			if(previouseNode.nodeName === "BR"){
 				window.getSelection().getRangeAt(0).selectNode(previouseNode);
 			}
-			console.log(previouseNode);
 			window.getSelection().collapseToStart();
 			tmpNode.remove();
 		}
@@ -434,6 +432,7 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 	if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
 		isLeftDir =false
 	}
+	
 /*
 	셀렉트 영역을 span으로 감싸고 감싼 span 좌우에 공백을 추가하여 재생성 버그를 없애는 방식은
 	두개 이상 라인을 선택한 상태에서 삭제, 복붙, 글자입력을 하면 라인이 끊어지는 현상 발생, 사용 불가
@@ -516,8 +515,8 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 					tmpNodeEnd.className = "tmpReGenerBugFix"
 					
 					lastNbBox.after(tmpNodeEnd);
-					//selection.removeAllRanges();
-					//selection.addRange(range);
+					selection.removeAllRanges();
+					selection.addRange(range);
 
 					let isNbBoxLast = true;
 					//마지막 수식요소 뒤에 공백을 추가하고 공백이 셀렉트 영역에 추가되어있는지 없는지 여부로 셀렉트 마지막 부분이 수식인지 판단
@@ -532,6 +531,9 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 					//수식요소가 마지막일 경우 수식 뒤에 공백 추가 로직[end]
 
 
+					range = selection.getRangeAt(0);
+					strtContainer = range.startContainer;
+					strtOffset = range.startOffset;
 					//수식요소가 첫번째일 경우 수식 앞에 공백 추가 로직[start]
 					let firstNbBox = null;
 					for(let i=0; i<nbBoxes.length; i++){
@@ -550,6 +552,8 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 					tmpNodeStrt.innerHTML = "&#65279;";
 					tmpNodeStrt.className = "tmpReGenerBugFix";
 					firstNbBox.before(tmpNodeStrt);
+					selection.removeAllRanges();
+					selection.addRange(range);
 
 					let isNbBoxFirst = true;
 					//첫번째 수식요소 앞에 공백을 추가하고 공백이 셀렉트 영역에 추가되어있는지 없는지 여부로 셀렉트 첫번째 부분이 수식인지 판단
@@ -568,8 +572,6 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 						else window.getSelection().setBaseAndExtent(tmpNodeStrt, 0, tmpNodeNewEnd, 1);
 					}
 					//수식요소가 첫번째일 경우 수식 뒤에 공백 추가 로직[end]
-
-
 				}
 			}
 		}
@@ -879,7 +881,7 @@ export const reg_preventKeyEvent = async (event) => {
 			await reg_makeUndoRedoByCtrlKey("ctrlZ");
 		}
 	}
-	
+
 	//ctrl+y구현
 	if(userKeyCode===89 && event.ctrlKey 
 	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
@@ -1845,9 +1847,6 @@ export const reg_preventKeyEvent = async (event) => {
 				
 			}
 		}
-
-		console.log(undoArr);
-		
 
 		//previouseKeyCode는 이전 키코드와 현재 키코드만 가지고 있을 수 있도록 셋팅
 		if(previouseKeyCode.length > 1) previouseKeyCode.splice(0, previouseKeyCode.length-1);
