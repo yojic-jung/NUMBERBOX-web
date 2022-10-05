@@ -421,6 +421,14 @@ export const reg_lineMoveBugFixEnd = async () =>{
 * 추가 : 마지막 뿐만 아니라 첫번째에 수식 있는 경우 한글 입력은 재생성 버그 및 한글 자음 모음 분리되는 버그 해결
 */
 export const reg_reGenerFormulBugFix = async (event) =>{
+	if(event.keyCode === 229){
+		//한글 자모음 분리 현상 임시 해결
+		//but, 라인 두개 이상 셀렉트 후 한글 입력시 라인 끊어 지는 현상 발생
+		window.getSelection().getRangeAt(0).deleteContents();
+		await reg_nbFormulaDelBugFix();
+		window.getSelection().collapseToStart();
+		return
+	}
 	//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
 	//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
 	let selection = window.getSelection();
@@ -515,11 +523,12 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 					tmpNodeEnd.className = "tmpReGenerBugFix"
 					
 					lastNbBox.after(tmpNodeEnd);
-					selection.removeAllRanges();
-					selection.addRange(range);
+					selection.removeAllRanges();		//removeAllRanges사용시 한글 자모음 끊어짐, 따라서 위에서 한글 처리는 구현함
+					selection.addRange(range);			
 
 					let isNbBoxLast = true;
 					//마지막 수식요소 뒤에 공백을 추가하고 공백이 셀렉트 영역에 추가되어있는지 없는지 여부로 셀렉트 마지막 부분이 수식인지 판단
+					//공백 추가하지 않고 nextSibling, previousSibling 사용시 정확하게 안나옴
 					if(window.getSelection().containsNode(tmpNodeEnd)){
 						isNbBoxLast = false;
 					}
@@ -1834,7 +1843,7 @@ export const reg_preventKeyEvent = async (event) => {
 								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarotEnd")[0], 1,
 									document.getElementsByClassName("tmpUndoCarot")[0], 0);
 							}
-							if(undoArr[i].positionByHangulInput === undefined){
+							if(undoArr[i].positionByHangulInput === undefined){ 
 								//캐럿 제거, 캐럿 남아있으면 안됨.
 								document.getElementsByClassName("tmpUndoCarot")[0].remove();
 								document.getElementsByClassName("tmpUndoCarotEnd")[0].remove();
