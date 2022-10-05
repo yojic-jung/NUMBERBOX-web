@@ -182,17 +182,52 @@ export const reg_threeDivGridChk = async () => {
 }
 
 /*
+* 정의 : 아래로 화살표 눌렀을 때, 포커스가 br태그 뒤로 간 경우 br태그 앞으로 이동시켜주기 
+* 설명 : 아래로 화살표 눌렀을 때, br태그 뒤로 포커스가 가면 수식 입력시 밑에 줄에 수식 입력됨, 한글 입력시 자음이 두번 입력됨
+*/
+export const reg_brFocusBugFix = async(userKeyCode)=>{
+	if(window.getSelection().isCollapsed){		//드래그 하지 않은 경우에만 적용
+		if(userKeyCode === 40){
+			let tmpNode= document.createElement('span');
+			tmpNode.className = "tmpBrFocusBugFix";
+			tmpNode.innerHTML = "&#65279;";
+			window.getSelection().getRangeAt(0).insertNode(tmpNode);
+			let previouseNode = tmpNode.previousSibling;
+			if(previouseNode === null){	//br태그 뒤가 아니면 리턴
+				window.getSelection().collapseToStart();
+				tmpNode.remove();
+				return;
+			}
+			//비어있는 텍스트 노드이면 아닌 노드가 나올때까지 루프
+			while(previouseNode.nodeName === "#text" && previouseNode.nodeValue === ""){
+				previouseNode=previouseNode.previousSibling;
+				console.log(previouseNode);
+				if(previouseNode === null){	//br태그 뒤가 아니면 리턴
+					window.getSelection().collapseToStart();
+					tmpNode.remove();
+					return;
+				}
+			}
+			if(previouseNode.nodeName === "BR"){
+				window.getSelection().getRangeAt(0).selectNode(previouseNode);
+			}
+			console.log(previouseNode);
+			window.getSelection().collapseToStart();
+			tmpNode.remove();
+		}
+	}
+}
+
+
+/*
 * 정의 : 에디터 모드 포커스 yellowBox 클래스 추가 함수(onKeyUp, onClick)
 *			+ activeElement 비어있는 경우 div 로직 추가 
 * 대상 : 문제, 해설, 객관식보기(5개), 주관식 정답
 */
 export const reg_dressYellowBox = async()=>{
-
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
-		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
-			document.activeElement.innerHTML = "<div><br></div>";
-			window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
-		}
+	if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+		document.activeElement.innerHTML = "<div><br></div>";
+		window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
 	}
 
 	//드래그 없이 포커스만 하나 있는 경우
@@ -385,34 +420,89 @@ export const reg_lineMoveBugFixEnd = async () =>{
 
 /*
 * 정의 : 셀렉트 상태에서 글자 입력, 삭제, cut, 수식키 입력, ctrl+v 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
+* 추가 : 마지막 뿐만 아니라 첫번째에 수식 있는 경우 한글 입력은 재생성 버그 및 한글 자음 모음 분리되는 버그 해결
 */
 export const reg_reGenerFormulBugFix = async (event) =>{
-		//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
-		//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
-		let selection = window.getSelection();
-		let range = selection.getRangeAt(0);
-		let strtContainer = range.startContainer;
-		let strtOffset = range.startOffset;
-		
+	//수식이 셀렉트 영역의 마지막에 있는 경우 삭제, ctrl+x 또는 글자 입력하면 수식이 재생성 되는 버그 해결
+	//분수 마지막 또는 처음에 있을때 삭제하면 가운데 정렬로 되는 버그 해결 위해 각각 앞 뒤에 공백 붙여줌
+	let selection = window.getSelection();
+	let range = selection.getRangeAt(0);
+	let strtContainer = range.startContainer;
+	let strtOffset = range.startOffset;
 
-		let isLeftDir = true;
-		if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
-			isLeftDir =false
+	let isLeftDir = true;
+	if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
+		isLeftDir =false
+	}
+/*
+	셀렉트 영역을 span으로 감싸고 감싼 span 좌우에 공백을 추가하여 재생성 버그를 없애는 방식은
+	두개 이상 라인을 선택한 상태에서 삭제, 복붙, 글자입력을 하면 라인이 끊어지는 현상 발생, 사용 불가
+	if(strtContainer.classList === undefined) strtContainer = strtContainer.parentElement.closest('.nbBox');
+	else strtContainer = strtContainer.closest('.nbBox');
+	if(strtContainer !== null && window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+		let tmpNodeStrt = document.createElement('span');
+		tmpNodeStrt.innerHTML = "&#65279;";
+		tmpNodeStrt.className = "tmpReGenerBugFix";
+		let tmpNodeEnd = document.createElement('span');
+		tmpNodeEnd.innerHTML = "&#65279;";
+		tmpNodeEnd.className = "tmpReGenerBugFix";
+		strtContainer.before(tmpNodeStrt);
+		strtContainer.after(tmpNodeEnd);
+		if(isLeftDir){
+			window.getSelection().setBaseAndExtent(tmpNodeEnd, 1, tmpNodeStrt, 0);
+		}else{
+			window.getSelection().setBaseAndExtent(tmpNodeStrt, 0, tmpNodeEnd, 1);
 		}
+	}else{
+		let tmpNode = document.createElement('span');
+		tmpNode.appendChild(window.getSelection().getRangeAt(0).extractContents());
+		window.getSelection().getRangeAt(0).insertNode(tmpNode);
+		window.getSelection().getRangeAt(0).selectNode(tmpNode);
+		let tmpNodeStrt = document.createElement('span');
+		tmpNodeStrt.innerHTML = "&#65279;";
+		tmpNodeStrt.className = "tmpReGenerBugFix";
+		let tmpNodeEnd = document.createElement('span');
+		tmpNodeEnd.innerHTML = "&#65279;";
+		tmpNodeEnd.className = "tmpReGenerBugFix";
+		tmpNode.before(tmpNodeStrt);
+		tmpNode.after(tmpNodeEnd);
+		if(isLeftDir){
+			window.getSelection().setBaseAndExtent(tmpNodeEnd, 1, tmpNodeStrt, 0);
+		}else{
+			window.getSelection().setBaseAndExtent(tmpNodeStrt, 0, tmpNodeEnd, 1);
+		}
+		
+	}
+
+	let nbBox = document.activeElement.querySelectorAll(".nbBox");
+		for(let i=0; i<nbBox.length; i++){
+			let borderBox = nbBox[i].querySelector(".borderBox");
+			if(borderBox === null){
+				//조건 박스는 borderBox가 없으므로 조건박스 제외하고 나머지 수식 요소
+				//테이블 태그만 남고, borderBox제거 되면 수식 테이블 태그 제거
+				if(!nbBox[i].classList.contains("nbCondBox")) nbBox[i].remove();
+			}
+		}
+*/
 
 		if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList !== undefined){
 			if(window.getSelection().getRangeAt(0).commonAncestorContainer.classList.contains("nbBox")){
-				let tmpNode = document.createElement('span');
-				tmpNode.innerHTML = "&#65279;"
-				tmpNode.className = "tmpReGenerBugFix"
-				window.getSelection().getRangeAt(0).commonAncestorContainer.after(tmpNode);
-				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode, 1, strtContainer, strtOffset);
-				else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
+				let tmpNodeEnd = document.createElement('span');
+				tmpNodeEnd.innerHTML = "&#65279;";
+				tmpNodeEnd.className = "tmpReGenerBugFix";
+				let tmpNodeStrt = document.createElement('span');
+				tmpNodeStrt.innerHTML = "&#65279;";
+				tmpNodeStrt.className = "tmpReGenerBugFix";
+				window.getSelection().getRangeAt(0).commonAncestorContainer.before(tmpNodeStrt);
+				window.getSelection().getRangeAt(0).commonAncestorContainer.after(tmpNodeEnd);
+				if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNodeEnd, 1, tmpNodeStrt, 0);
+				else window.getSelection().setBaseAndExtent(tmpNodeStrt, 0, tmpNodeEnd, 1);
 			}
 			else{
 				let nbBoxes = window.getSelection().getRangeAt(0).commonAncestorContainer.querySelectorAll(".nbBox");
 				if(nbBoxes.length !== 0){
-					let lastNbBox =null;
+					//수식요소가 마지막일 경우 수식 뒤에 공백 추가 로직[start]
+					let lastNbBox = null;
 					for(let i=0; i<nbBoxes.length; i++){
 						if(window.getSelection().containsNode(nbBoxes[i])) lastNbBox = nbBoxes[i];
 					}
@@ -420,20 +510,66 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 					while(lastNbBox.parentElement !== null && lastNbBox.parentElement.closest(".nbBox") !== null && window.getSelection().containsNode(lastNbBox.parentElement.closest(".nbBox"))){
 						lastNbBox = lastNbBox.parentElement.closest(".nbBox");
 					}
-					let tmpNode = document.createElement('span');
-					tmpNode.innerHTML = "&#65279;"
-					tmpNode.className = "tmpReGenerBugFix"
-					lastNbBox.after(tmpNode);
-					selection.removeAllRanges();
-					selection.addRange(range);
-					let isNbBoxLast = false;
-					if(window.getSelection().containsNode(tmpNode)){
-						isNbBoxLast = true;
+					
+					let tmpNodeEnd = document.createElement('span');
+					tmpNodeEnd.innerHTML = "&#65279;"
+					tmpNodeEnd.className = "tmpReGenerBugFix"
+					
+					lastNbBox.after(tmpNodeEnd);
+					//selection.removeAllRanges();
+					//selection.addRange(range);
+
+					let isNbBoxLast = true;
+					//마지막 수식요소 뒤에 공백을 추가하고 공백이 셀렉트 영역에 추가되어있는지 없는지 여부로 셀렉트 마지막 부분이 수식인지 판단
+					if(window.getSelection().containsNode(tmpNodeEnd)){
+						isNbBoxLast = false;
 					}
-					if(!isNbBoxLast){
-						if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNode, 1, strtContainer, strtOffset);
-						else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNode, 1);
+
+					if(isNbBoxLast){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNodeEnd, 1, strtContainer, strtOffset);
+						else window.getSelection().setBaseAndExtent(strtContainer, strtOffset, tmpNodeEnd, 1);
 					}
+					//수식요소가 마지막일 경우 수식 뒤에 공백 추가 로직[end]
+
+
+					//수식요소가 첫번째일 경우 수식 앞에 공백 추가 로직[start]
+					let firstNbBox = null;
+					for(let i=0; i<nbBoxes.length; i++){
+						if(window.getSelection().containsNode(nbBoxes[i])){
+							firstNbBox = nbBoxes[i];
+							break;
+						} 
+					}
+					if(firstNbBox === null) return;
+
+					while(firstNbBox.parentElement !== null && firstNbBox.parentElement.closest(".nbBox") !== null && window.getSelection().containsNode(firstNbBox.parentElement.closest(".nbBox"))){
+						firstNbBox = firstNbBox.parentElement.closest(".nbBox");
+					}
+
+					let tmpNodeStrt = document.createElement('span');
+					tmpNodeStrt.innerHTML = "&#65279;";
+					tmpNodeStrt.className = "tmpReGenerBugFix";
+					firstNbBox.before(tmpNodeStrt);
+
+					let isNbBoxFirst = true;
+					//첫번째 수식요소 앞에 공백을 추가하고 공백이 셀렉트 영역에 추가되어있는지 없는지 여부로 셀렉트 첫번째 부분이 수식인지 판단
+					if(window.getSelection().containsNode(tmpNodeStrt)){
+						isNbBoxFirst = false;
+					}
+
+					//셀렉트의 앞부분에 요소를 추가하였으므로 endContainer의 위치정보가 처음과 달라질 수 있음
+					if(isNbBoxFirst){
+						window.getSelection().collapseToEnd();
+						let tmpNodeNewEnd = document.createElement('span');
+						tmpNodeNewEnd.innerHTML = "&#65279;";
+						tmpNodeNewEnd.className = "tmpReGenerBugFix";
+						window.getSelection().getRangeAt(0).insertNode(tmpNodeNewEnd);
+						if(isLeftDir) window.getSelection().setBaseAndExtent(tmpNodeNewEnd, 1, tmpNodeStrt, 0);
+						else window.getSelection().setBaseAndExtent(tmpNodeStrt, 0, tmpNodeNewEnd, 1);
+					}
+					//수식요소가 첫번째일 경우 수식 뒤에 공백 추가 로직[end]
+
+
 				}
 			}
 		}
@@ -613,6 +749,41 @@ export const reg_makeUndoRedoByCtrlKey = async (evType) =>{
 			
 }
 
+
+/*
+*	정의 : 빈 div 제거
+*	설명 : 포커스가 존재하는 div와 수식이 첫번째에 존재하는 아랫줄 div 사이에 존재하면 del 누를시 아랫줄이 윗 줄로 올라오지 않음, 
+*		   빈 div 모두 제거하여 버그 해결
+* 		   뿐만 아니라 빈 div는 여러 버그를 생성해 키 입력시 제거되는게 좋음
+*/
+export const reg_delVacantDiv = async () =>{
+	//
+	let div = document.activeElement.querySelectorAll("DIV");
+	for(let i=0; i<div.length; i++){
+		if(div[i].childNodes.length === 0){
+			div[i].remove();
+		}else {
+			let divChild = div[i].childNodes;
+			let isVacantDiv = true;
+			for(let j=0; j<divChild.length; j++){
+				if(divChild[j].nodeName !== "#text"){
+					isVacantDiv = false;
+					break;
+				}else{
+					if(divChild[j].nodeValue !== ""){
+						isVacantDiv = false;
+						break;
+					}
+				}
+			}
+			if(isVacantDiv){
+				div[i].remove();
+			}
+		}
+	}
+} 
+
+
 /*
 *	정의 : 키값 입력 제어 이벤트
 *	설명 : 제거(백스페이스, Del), 입력불가 수식요소(입력 불가 기능과 백스페이스 및 del 시 전체선택기능),
@@ -642,22 +813,21 @@ export const reg_preventKeyEvent = async (event) => {
 			reg_removeResizeFrame();	
 		}
 	 }
+
+	 await reg_delVacantDiv();
 	
 
 	let activeId = document.activeElement.id;
 	let userKeyCode = event.keyCode;
 	previouseKeyCode.push(userKeyCode);
 
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
-		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
-			document.activeElement.innerHTML = "<div><br></div>";
-			window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
-		}
+	if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+		document.activeElement.innerHTML = "<div><br></div>";
+		window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
 	}
 
 	//DIV 태그 안 들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
 	//한줄은 무조건 div로 구분
-	//객관식은 아직 결함 남아있음
 	/*
 	* div 깨지는 경우
 	* 1. 윗줄에서 수식이 마지막이고 아래줄에 텍스트 입력하고 backspace로 텍스트 다 지우고 윗줄까지 올려오면 div가 깨짐)
@@ -691,7 +861,13 @@ export const reg_preventKeyEvent = async (event) => {
 		await reg_removeSelectionBackColor();
 	}
 
-
+	//한글 입력시 ctlr+z 스택 메모리에 하나도 저장된 것 없는 경우 최초 하나는 저장
+	let undoPositionByHangulInput;
+	let activeStack = undoArr.filter(v => v.activeId === document.activeElement.id)
+	if(activeStack.length === 0 && event.keyCode === 229){
+		undoHTML = document.activeElement.innerHTML;
+		undoPositionByHangulInput= window.getSelection().getRangeAt(0).getBoundingClientRect();
+	}
 	//ctrl+z 구현
 	if(!(event.ctrlKey && userKeyCode === 90) && event.keyCode !== 229 
 	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
@@ -703,7 +879,7 @@ export const reg_preventKeyEvent = async (event) => {
 			await reg_makeUndoRedoByCtrlKey("ctrlZ");
 		}
 	}
-
+	
 	//ctrl+y구현
 	if(userKeyCode===89 && event.ctrlKey 
 	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
@@ -716,7 +892,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//1번 validation
 	//셀렉트 상태에서 글자 입력, 삭제, cut, 수식키 입력, ctrl+v 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
-	//수식이 마지막 요소 일때 붙여넣기 하면 수식 재생성 및 라인 끝어짐 (ctrl+c에서 수식 마지막 요소 공백 추가)
+	//수식이 마지막 요소 일때 붙여넣기 하면 수식 재생성 및 라인 끊어짐 (ctrl+c에서 수식 마지막 요소 공백 추가)
 	//셀렉트 마지막에 공백 추가
 	if( (!document.getSelection().isCollapsed 
 		&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
@@ -908,6 +1084,19 @@ export const reg_preventKeyEvent = async (event) => {
 		window.getSelection().setBaseAndExtent(window.getSelection().focusNode, window.getSelection().focusOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
 	}
 	
+
+
+	//컨트롤 및 시프트 키를 누르지 않고 드래그된 상태에서 키보드 위아래 버튼 누른 경우
+	//위로 버튼 누르면 셀렉트 시작 포커스로, 아래로 버튼 누르면 셀렉트 마지막 포커스로 이동
+	//여기에서 셀렉트 없애줘야 아래 로직에서 셀렉트 된 상태에서도 키보드 위아래 이동 가능
+	//셀렉트 됬을 때, 커서 라인 이동 버그 해결
+	if((userKeyCode===38 || userKeyCode===40) && !event.ctrlKey && !event.shiftKey && !window.getSelection().isCollapsed){
+		if(userKeyCode===38){
+			window.getSelection().collapseToStart();
+		}else{
+			window.getSelection().collapseToEnd();
+		}
+	}
 	//키보드 상하 화살표 누른 경우(커서 라인 이동)
 	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed ){
 		if(document.activeElement.firstChild === null) return;
@@ -1433,6 +1622,7 @@ export const reg_preventKeyEvent = async (event) => {
 					if(nbDenomStrt !== null && nbDenomEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert");
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
 						}
 					}
 				}
@@ -1444,9 +1634,32 @@ export const reg_preventKeyEvent = async (event) => {
 					if(nbDenomStrt !== null && nbDenomEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
 						}
 					}
 				}
+
+
+				/* 조건 박스는 단축키가 없어서 해당 로직에서 구현될 일 없음.
+				//nbConvert 분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
+				if(nbGrammer.indexOf("nbCondBox") > -1){
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbCondBoxInFracDenomConvert");
+						}
+					}
+
+					let nbNumerStrt = strtElement.closest(".nbNumer");
+					let nbNumerEnd = endElement.closest(".nbNumer");
+					if(nbNumerStrt !== null && nbNumerEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbNumerEnd.closest(".nbFracBox").classList.add("nbCondBoxInFracNumerConvert");
+						}
+					}
+				}
+				*/
 
 				//nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
 				//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
@@ -1458,6 +1671,8 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	setTimeout(function(){
+		//아래로 화살표 눌렀을 때, 포커스가 br태그 뒤로 간 경우 br태그 앞으로 이동시켜주기 
+		reg_brFocusBugFix(userKeyCode);
 		//입력불가 요소 한글 입력시 제거한 포커스 다시 찾아주기
 		if(document.getElementById(activeId).querySelector(".hangulWriteDiable") !== null){
 			let position = document.getElementById(activeId).querySelector(".hangulWriteDiable").getBoundingClientRect();
@@ -1495,12 +1710,45 @@ export const reg_preventKeyEvent = async (event) => {
 		if(userKeyCode ===13 && willExecuteFormBlock){
 			let tmpEnterBugCaret = document.getElementsByClassName("tmpEnterBugCaret");
 			while (tmpEnterBugCaret.length > 0) {
+				// 라인의 처음에 수식있을 때 엔터시 줄바꿈 안되는 버그 해결
+				// 한 줄을 br이 아닌 div로 분기하기 위해 img태그 추가하고 추후에 제거하는 방식으로 인해 빈 div만 생겨 안되고 있었음
+				// div에 이미지만 있을 때, br 추가하여 빈 div만 생성되는게 아니라 한 줄 추가되도록 수정
+				if(tmpEnterBugCaret[0].parentElement !== null && tmpEnterBugCaret[0].parentElement !== undefined){
+					if(tmpEnterBugCaret[0].parentElement.nodeName === "DIV" && tmpEnterBugCaret[0].parentElement.childNodes.length === 1 && tmpEnterBugCaret[0].parentElement.childNodes[0].classList.contains("tmpEnterBugCaret")){
+						let tmpDom = document.createElement("br");
+						tmpEnterBugCaret[0].after(tmpDom);
+					}
+				}
 				tmpEnterBugCaret[0].remove();
 			}
 		}
 
-		//ctrl+z 자체 구현
-		if(!(userKeyCode === 90 && event.ctrlKey)){	//ctrl+z stack 메모리에 데이터 추가
+
+
+		//한글 입력시 ctlr+z 스택 메모리에 하나도 저장된 것 없는 경우 최초 하나는 저장
+		let activeStack = undoArr.filter(v => v.activeId === document.activeElement.id)
+		if(activeStack.length === 0 && event.keyCode === 229){
+			let tmpUndoHtml = document.createElement('div');
+			tmpUndoHtml.innerHTML = undoHTML;
+			if(tmpUndoHtml.innerHTML !== document.activeElement.innerHTML){
+				let currentData = new Object();
+				currentData.activeId = document.activeElement.id;		//현재 입력창 id
+				currentData.innerHTML = undoHTML;	
+				currentData.isSpaceOrEnter = false;
+				currentData.isCollapsed=false;							//셀렉트 여부
+				currentData.rangeDirection = "right";					//셀렉션 방향 여부
+				currentData.positionByHangulInput = undoPositionByHangulInput;
+				//undo 스택 메모리에 키 입력 전 데이터 추가
+				undoArr.push(currentData);	
+				redoArr = [];
+			}
+		}
+
+
+		//ctrl+z 자체 구현, ctrl+z stack 메모리에 데이터 추가
+		if(!(userKeyCode === 90 && event.ctrlKey) 
+		&& event.keyCode !== 229  
+		&& event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40){
 			let tmpUndoHtml = document.createElement('div');
 			tmpUndoHtml.innerHTML = undoHTML;
 			if(tmpUndoHtml.querySelector(".tmpUndoCarot") !== null) tmpUndoHtml.querySelector(".tmpUndoCarot").remove();
@@ -1559,7 +1807,7 @@ export const reg_preventKeyEvent = async (event) => {
 						undoArr.push(currentData);	
 						redoArr = [];
 			}
-		}else{	//ctrl+z 실행
+		}else if(userKeyCode === 90 && event.ctrlKey){	//ctrl+z 실행
 			if(undoArr.length > 0){							//데이터가 있는 경우에만 실행
 				for(let i=undoArr.length-1; i>=0; i--){
 					if(undoArr[i].activeId === document.activeElement.id) {			//현재 입력창의 마지막 undo 데이터 가져오기
@@ -1571,15 +1819,24 @@ export const reg_preventKeyEvent = async (event) => {
 							document.getElementsByClassName("tmpUndoCarot")[0].remove();
 						}else{
 							if(undoArr[i].rangeDirection === "right"){
-								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 1,
-									document.getElementsByClassName("tmpUndoCarotEnd")[0], 0);
+								if(undoArr[i].positionByHangulInput !== undefined){
+									//한글 입력은 캐럿 넣어서 위치파악하면 자모음 깨짐,
+									//좌표로 위치 파악하는 것도 에러 날 수 있음(좌표 대입하면 브라우저가 셀렉트 범위에 맞는 요소를 셀렉트하여 수식 규칙에 안맞게 설정될 수 있음, 이에따른 에러 발생)
+									let firstChild = document.getElementById(undoArr[i].activeId).firstChild;
+									window.getSelection().setBaseAndExtent(firstChild, 0, firstChild, 0);
+								}else{
+									window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarot")[0], 1,
+										document.getElementsByClassName("tmpUndoCarotEnd")[0], 0);
+								}
 							}else{
 								window.getSelection().setBaseAndExtent(document.getElementsByClassName("tmpUndoCarotEnd")[0], 1,
 									document.getElementsByClassName("tmpUndoCarot")[0], 0);
 							}
-							//캐럿 제거, 캐럿 남아있으면 안됨.
-							document.getElementsByClassName("tmpUndoCarot")[0].remove();
-							document.getElementsByClassName("tmpUndoCarotEnd")[0].remove();
+							if(undoArr[i].positionByHangulInput === undefined){
+								//캐럿 제거, 캐럿 남아있으면 안됨.
+								document.getElementsByClassName("tmpUndoCarot")[0].remove();
+								document.getElementsByClassName("tmpUndoCarotEnd")[0].remove();
+							}
 						}
 						undoArr.splice(i, 1);				//현재 실행된 undo데이터 스택에서 제거
 						break;
@@ -1588,6 +1845,9 @@ export const reg_preventKeyEvent = async (event) => {
 				
 			}
 		}
+
+		console.log(undoArr);
+		
 
 		//previouseKeyCode는 이전 키코드와 현재 키코드만 가지고 있을 수 있도록 셋팅
 		if(previouseKeyCode.length > 1) previouseKeyCode.splice(0, previouseKeyCode.length-1);
@@ -2800,13 +3060,31 @@ export const reg_tbPastePrevent = async (event)=>{
 
 
 /*
+* 정의 : 수식 안에 있는 수식 삭제시 버그
+* 설명 : 수식 안에 있는 수식 삭제할 때 사용자 입장에서는 삭제되어 보이지만 태그가 남는 경우가 있음
+*/
+export const reg_nbFormulaDelBugFix = async (event) => {
+	let nbBox = document.activeElement.querySelectorAll(".nbBox");
+	for(let i=0; i<nbBox.length; i++){
+		let borderBox = nbBox[i].querySelector(".borderBox");
+		if(borderBox === null){
+			//조건 박스는 borderBox가 없으므로 조건박스 제외하고 나머지 수식 요소
+			//테이블 태그만 남고, borderBox제거 되면 수식 테이블 태그 제거
+			if(!nbBox[i].classList.contains("nbCondBox")) nbBox[i].remove();
+		}
+	}
+}
+
+/*
 * 정의 : 수식 컴파일 방식 구현
 * 설명 : 루트 안의 분수, 분수 없을 때 컴파일 클래스 제거
 *		 분수 안의 분수, 루트, 순환소수, 악센트, 직선, 선분
 */
 export const reg_nbComplie = async (event) => {
+	await reg_nbFormulaDelBugFix();
 	//ctrl+v로 들어 오는 경우 컴파일
-	if(event.ctrlKey && event.keyCode === 86){
+	//if(event.ctrlKey && event.keyCode === 86){
+	if(event.keyCode === 86){	//event.ctrlKey && event.keyCode === 86로 진행하면 ctrl키를 더 늦게 누른 경우 적용 안됨
 		//복붙시 수식요소에 style 속성 입혀지는 버그 해결
 		let borderBox = document.querySelectorAll(".borderBox");
 		for(let i=0; i<borderBox.length; i++){
@@ -2823,6 +3101,7 @@ export const reg_nbComplie = async (event) => {
 		document.querySelectorAll(".nbRootBox").forEach((item, index, arr)=>{
 			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInRoot"))) nbRootBoxes.push(item);
 		});
+
 		for(let i=0; i<nbRootBoxes.length; i++){
 			if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
 				nbRootBoxes[i].querySelector(".nbRootBase").classList.add("nbConvert");
@@ -2838,11 +3117,16 @@ export const reg_nbComplie = async (event) => {
 		let nbFracLineConvert = [];
 		//직선, 선분
 		let nbFracLineConvert2 = [];
+		//분수 안 조건박스
+		let nbFracCondBoxConvert = [];
+
 		document.querySelectorAll(".nbFracBox").forEach((item, index, arr)=>{
 			if(!item.classList.contains("nbFracInDenom") || !item.classList.contains("nbFracInNumer")) nbFracInFracBoxes.push(item);
 			if(!item.classList.contains("nbFracLineConvert")) nbFracLineConvert.push(item);
 			if(!item.classList.contains("nbFracLineConvert2")) nbFracLineConvert2.push(item);
+			if(!item.classList.contains("nbCondBoxInFracAllConvert")) nbFracCondBoxConvert.push(item);
 		});
+
 		for(let i=0; i<nbFracInFracBoxes.length; i++){
 			if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length !== 0) {
 				nbFracInFracBoxes[i].classList.add("nbFracInDenom");
@@ -2858,8 +3142,12 @@ export const reg_nbComplie = async (event) => {
 		for(let i=0; i<nbFracLineConvert.length; i++){
 			let children = await nb_querySelctorBFS(nbFracLineConvert[i], "nbDenom");
 			if(children!==null){
-				children = Array.from(children).filter(ele => ele.classList.contains("nbRootBox") || ele.classList.contains("nbOverDotBox") || ele.classList.contains("nbAccentBox"));
-				if(children.length !==0) nbFracLineConvert[i].classList.add("nbFracLineConvert");
+				if(children.querySelectorAll(".nbRootBox").length !== 0
+				|| children.querySelectorAll(".nbOverDotBox").length !== 0
+				|| children.querySelectorAll(".nbAccentBox").length !== 0){
+					nbFracLineConvert[i].classList.add("nbConvert");
+					nbFracLineConvert[i].classList.add("nbFracLineConvert");
+				}
 			}
 		}
 
@@ -2867,9 +3155,32 @@ export const reg_nbComplie = async (event) => {
 		for(let i=0; i<nbFracLineConvert2.length; i++){
 			let children = await nb_querySelctorBFS(nbFracLineConvert2[i], "nbDenom");
 			if(children!==null){
-				children = Array.from(children).filter(ele => ele.classList.contains("nbOverlineBox") || ele.classList.contains("nbArrowBox"));
-				if(children.length !==0) nbFracLineConvert2[i].classList.add("nbFracLineConvert2");
+				if(children.querySelectorAll(".nbOverlineBox").length !== 0
+				|| children.querySelectorAll(".nbArrowBox").length !== 0){
+					nbFracLineConvert2[i].classList.add("nbConvert");
+					nbFracLineConvert2[i].classList.add("nbFracLineConvert2");
+				}
 			}
+		}
+
+
+		///분모 밑에 조건박스 있는 경우
+		for(let i=0; i<nbFracCondBoxConvert.length; i++){
+			let denomChildren = await nb_querySelctorBFS(nbFracCondBoxConvert[i], "nbDenom");
+			let numerChildren = await nb_querySelctorBFS(nbFracCondBoxConvert[i], "nbNumer");
+			if(denomChildren!==null){
+				if(denomChildren.querySelectorAll(".nbCondBox").length !==0){
+					nbFracCondBoxConvert[i].classList.add("nbConvert");
+					nbFracCondBoxConvert[i].classList.add("nbCondBoxInFracDenomConvert");
+				}
+			}
+			if(numerChildren!==null){
+				if(numerChildren.querySelectorAll(".nbCondBox").length !==0){
+					nbFracCondBoxConvert[i].classList.add("nbConvert");
+					nbFracCondBoxConvert[i].classList.add("nbCondBoxInFracNumerConvert");
+				}
+			}
+
 		}
 	}
 
@@ -2884,7 +3195,7 @@ export const reg_nbComplie = async (event) => {
 		}
 	}
 	//분수 안 분수
-	let nbFracInFracBoxes = document.querySelectorAll(".nbFracBox.nbConvert");
+	let nbFracInFracBoxes = document.querySelectorAll(".nbFracBox.nbFracInDenom, .nbFracBox.nbFracInNumer");
 	for(let i=0; i<nbFracInFracBoxes.length; i++){
 		if(nbFracInFracBoxes[i].querySelectorAll(".nbDenom .nbFracBox").length === 0 
 		&& nbFracInFracBoxes[i].querySelectorAll(".nbNumer .nbFracBox").length === 0){
@@ -2905,6 +3216,7 @@ export const reg_nbComplie = async (event) => {
 		&& nbFracLineConvert[i].querySelectorAll(".nbDenom .nbOverDotBox").length === 0
 		&& nbFracLineConvert[i].querySelectorAll(".nbDenom .nbAccentBox").length === 0){
 			nbFracLineConvert[i].classList.remove("nbFracLineConvert");
+			nbFracLineConvert[i].classList.remove("nbConvert");
 		}
 	}
 
@@ -2914,6 +3226,30 @@ export const reg_nbComplie = async (event) => {
 		if(nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbOverlineBox").length === 0 
 		&& nbFracLineConvert2[i].querySelectorAll(".nbDenom .nbArrowBox").length === 0){
 			nbFracLineConvert2[i].classList.remove("nbFracLineConvert2");
+			nbFracLineConvert2[i].classList.remove("nbConvert");
+		}
+	}
+
+	//분수 안 조건 박스
+	let nbCondBoxInFracDenom = document.querySelectorAll(".nbFracBox.nbCondBoxInFracDenomConvert");
+	for(let i=0; i<nbCondBoxInFracDenom.length; i++){
+		//분모 밑에 조건박스 제거되면 클래스 제거
+		if(nbCondBoxInFracDenom[i].querySelectorAll(".nbDenom .nbCondBox").length === 0){
+			if(!nbCondBoxInFracDenom[i].classList.contains("nbCondBoxInFracNumerConvert")){
+				nbCondBoxInFracDenom[i].classList.remove("nbConvert");
+			}
+			nbCondBoxInFracDenom[i].classList.remove("nbCondBoxInFracDenomConvert");
+		}
+	}
+
+	let nbCondBoxInFracNumer = document.querySelectorAll(".nbFracBox.nbCondBoxInFracNumerConvert");
+	///분자 밑에 조건박스 있는 경우
+	for(let i=0; i<nbCondBoxInFracNumer.length; i++){
+		if(nbCondBoxInFracNumer[i].querySelectorAll(".nbNumer .nbCondBox").length === 0){
+			if(!nbCondBoxInFracNumer[i].classList.contains("nbCondBoxInFracDenomConvert")){
+				nbCondBoxInFracNumer[i].classList.remove("nbConvert");
+			}
+			nbCondBoxInFracNumer[i].classList.remove("nbCondBoxInFracNumerConvert");
 		}
 	}
 }
@@ -3024,7 +3360,6 @@ export const reg_undoStackByClick = async (activeId) => {
 *	정의 : 한 줄은 한 div로 구분
 */
 export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
-	if(document.activeElement.id === "contentsFormulaEditor" || document.activeElement.id === "solutionFormulaEditor"){
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
 		if(!isShift && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && isCtrlKey) ){
 			let isExcuted = false;
@@ -3092,7 +3427,6 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 			}
 
 		}
-	}
 }
 
 

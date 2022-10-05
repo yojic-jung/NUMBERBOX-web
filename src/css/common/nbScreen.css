@@ -29,11 +29,17 @@
 }
 
 
-.quesContents2, .ansContents2{
+.quesContents2{
     display: block;
     width: 387px;
     margin: auto;
-    ;
+}
+
+.ansContents2{
+    width: 387px;
+    margin: auto;
+    display: flex;
+    align-items:baseline
 }
 
 .quesConMultiShow{

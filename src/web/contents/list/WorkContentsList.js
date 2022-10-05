@@ -413,6 +413,7 @@ const WorkContentsList = ()=>{
                 //comp 모달 상태변화로 유사문제 등록갯수 초기화
                 setWorkListChanged(false);
                 setWorkListChanged(true);
+                await nb_multiChoiceGridSet("quesConMultiShow");
                 await nb_fadeInOut("정상적으로 삭제 되었습니다.", 2000);
             }else if(returnObj.isSuccess === false){
                 await nb_fadeInOutA("삭제가 취소되었습니다.\n유사문제는 최소 1개 이상 등록 되어있어야 합니다.", 2000);
@@ -718,7 +719,6 @@ const WorkContentsList = ()=>{
                 return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                 <table className='workListTable'>
                                     <thead>
-
                                         <tr className='workListTBHead2'>
                                             <td>
                                                 <div className='twoFlexLayout'>
@@ -748,11 +748,11 @@ const WorkContentsList = ()=>{
                                                             <img src={conImgPath} id="contentsImgOutput" alt="" />
                                                         </div>
                                                         <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide}>
-                                                            <div className="firDiv"><span className="firDivContents" dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
-                                                            <div className="secDiv"><span className="secDivContents" dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
-                                                            <div className="thrDiv"><span className="thrDivContents" dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
-                                                            <div className="fourDiv"><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
-                                                            <div className="fifDiv"><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
+                                                            <div className="firDiv"><span className='multiChoiceNo'>&#9312;</span><span className="firDivContents" dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
+                                                            <div className="secDiv"><span className='multiChoiceNo'>&#9313;</span><span className="secDivContents" dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
+                                                            <div className="thrDiv"><span className='multiChoiceNo'>&#9314;</span><span className="thrDivContents" dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
+                                                            <div className="fourDiv"><span className='multiChoiceNo'>&#9315;</span><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
+                                                            <div className="fifDiv"><span className='multiChoiceNo'>&#9316;</span><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
                                                         </div>
                                                     </div>
                                                 </div>

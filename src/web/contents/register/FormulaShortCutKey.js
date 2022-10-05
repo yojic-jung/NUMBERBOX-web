@@ -129,6 +129,7 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 if(nbDenomStrt !== null && nbDenomEnd !== null){
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
                         nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
                     }
                 }
             }
@@ -140,9 +141,32 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 if(nbDenomStrt !== null && nbDenomEnd !== null){
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
                         nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
                     }
                 }
             }
+
+            //nbConvert 분수 안에 조건박스
+            if(nbGrammer.indexOf("nbCondBox") > -1){
+                let nbDenomStrt = strtElement.closest(".nbDenom");
+                let nbDenomEnd = endElement.closest(".nbDenom");
+                if(nbDenomStrt !== null && nbDenomEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbCondBoxInFracDenomConvert");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+
+                let nbNumerStrt = strtElement.closest(".nbNumer");
+                let nbNumerEnd = endElement.closest(".nbNumer");
+                if(nbNumerStrt !== null && nbNumerEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbNumerEnd.closest(".nbFracBox").classList.add("nbCondBoxInFracNumerConvert");
+                        nbNumerEnd.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+            }
+
             //nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
 			//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함
             //사용성이 낮아보여 구현 안함, 현재 줄맞춤 안맞는 에러 존재

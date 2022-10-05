@@ -380,10 +380,17 @@
 .answerFormulaEditor{
     line-height: 160%;
 }
+
+.multiChoiceWrap{
+    display: flex;
+    align-items: center;
+}
+
 .multiChoiceView{
-   /* 인라인 블락시 contentEditable이 enter시에 div를 만들지 않고 <br/>을 만들어 상하 라인 이동 오류
-   display: inline-block;   */
-    width:50%;
+   /* 인라인 블락시 contentEditable이 enter시에 div를 만들지 않고 <br/>을 만들어 상하 라인 이동 오류 */
+    
+   /* display: inline-block;   */
+    width:50%; 
     min-height: 1em;
     background: white;
     color:black;
@@ -392,8 +399,8 @@
     padding:5px;
     position: relative;
     line-height: 160%;
-    display: inline-block;
 }
+
 .multiChoiceView::before{
     display: flex;
     align-items: center;
@@ -410,11 +417,7 @@
 }
 
 .multiChoiceView::after{
-    cursor: pointer;
     content: '';
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width:35px;
     height: 100%;
     border-top:2px solid rgba(8, 32, 80, 0);
@@ -423,9 +426,17 @@
     position: absolute;
     top:-2px;
     right:-37px;
-    color:white;
-    background:rgba(8, 32, 80, 0.5) url("img/imageBlackPlus.png") no-repeat center ;
+}
+
+.multiChoiceImgAddBtn{
+    display: inline-block;
+    width:35px;
+    height: 20px;
+    background:rgba(0, 0, 0, 0) url("img/imageWhitePlus.png") no-repeat center ;
     background-size: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
 }
 
 #firNoFormulaEditor::before{
@@ -1248,15 +1259,24 @@ height: 1.6em;
     border: 3px solid rgb(32, 101, 179);
 }
 
+
+
 .firDiv, .secDiv, .thrDiv, .fourDiv, .fifDiv{
-    display: inline-block;
     position: relative;
-    padding-left:20px;
+    display: inline-grid;
+    grid-template-columns:20px auto;
+    align-items: baseline;
 }
+.multiChoiceNo{
+    width: 20px;
+}
+/*
 .firDivContents, .secDivContents, .thrDivContents, .fourDivContents, .fifDivContents,
 #firNoShow, #secNoShow, #thrNoShow, #fourNoShow, #fifNoShow{
     margin-left:-20px;
 }
+
+
 .firDiv::before{
     content: '\2460\00A0';
     position: relative;
@@ -1282,6 +1302,7 @@ height: 1.6em;
     position: relative;
     left:-20px;
 }
+*/
 
 .fixedBox{
     padding: 0 10px;

@@ -99,11 +99,11 @@ return (
                                                             <img id="contentsDetailedImgOutput" src="" alt="" />
                                                         </div>
                                                         <div id="workMultiDetailedShow" className="quesConMultiShow quesDetailedConMultiShow">
-                                                            <div className="firDiv"><span id="firDetailedDiv" className="firDivContents"></span></div>
-                                                            <div className="secDiv"><span id="secDetailedDiv" className="secDivContents"></span></div>
-                                                            <div className="thrDiv"><span id="thrDetailedDiv" className="thrDivContents"></span></div>
-                                                            <div className="fourDiv"><span id="fourDetailedDiv" className="fourDivContents"></span></div>
-                                                            <div className="fifDiv"><span id="fifDetailedDiv" className="fifDivContents"></span></div>
+                                                            <div className="firDiv"><span className='multiChoiceNo'>&#9312;</span><span id="firDetailedDiv" className="firDivContents"></span></div>
+                                                            <div className="secDiv"><span className='multiChoiceNo'>&#9313;</span><span id="secDetailedDiv" className="secDivContents"></span></div>
+                                                            <div className="thrDiv"><span className='multiChoiceNo'>&#9314;</span><span id="thrDetailedDiv" className="thrDivContents"></span></div>
+                                                            <div className="fourDiv"><span className='multiChoiceNo'>&#9315;</span><span id="fourDetailedDiv" className="fourDivContents"></span></div>
+                                                            <div className="fifDiv"><span className='multiChoiceNo'>&#9316;</span><span id="fifDetailedDiv" className="fifDivContents"></span></div>
                                                         </div>
                                                     </div>
                                                 </div>

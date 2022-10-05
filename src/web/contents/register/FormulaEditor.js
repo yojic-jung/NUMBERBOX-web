@@ -300,11 +300,9 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		}
 	  }
 
-	const multiChoiceImgAdd = (event) =>{
-		if(event.offsetX > event.target.offsetWidth && event.offsetX < event.target.offsetWidth+35){
-			multiImgTargetId = event.target.id;
-			document.getElementById("multiChoiceImageFile").click();
-		}
+	const multiChoiceImgAdd = (targetId) =>{
+		multiImgTargetId = targetId;
+		document.getElementById("multiChoiceImageFile").click();
 	}
 
 	useEffect(() => {
@@ -332,11 +330,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			else window.addEventListener('scroll', topMenuFixed);
 			window.addEventListener('resize', topMenuWidth);
 			window.addEventListener('scroll', reg_removeResizeFrame);
-			document.getElementById("firNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
-			document.getElementById("secNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
-			document.getElementById("thrNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
-			document.getElementById("fourNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
-			document.getElementById("fifNoFormulaEditor").addEventListener('click', multiChoiceImgAdd);
+			
 			//이미지 및 파일 복붙 금지
 			let answerFormulaEditor = document.getElementById('answerFormulaEditor');
 			answerFormulaEditor.addEventListener('paste', pastePreventFile);
@@ -787,11 +781,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 							<img src="" id="contentsImgOutput" className="hide" onDoubleClick={() => {imgFileDel("contentsImgOutput", "contentsImg", {contentsNo});}} alt="" />
 						</div>
 						<div id="multi-show" className="multi-show">
-							<div id="firDiv" className="firDiv hide"><span id="firNoShow" dangerouslySetInnerHTML={{__html:firNo}}></span></div>
-							<div id="secDiv" className="secDiv hide"><span id="secNoShow" dangerouslySetInnerHTML={{__html:secNo}}></span></div>
-							<div id="thrDiv" className="thrDiv hide"><span id="thrNoShow" dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
-							<div id="fourDiv" className="fourDiv hide"><span id="fourNoShow" dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
-							<div id="fifDiv" className="fifDiv hide"><span id="fifNoShow" dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
+							<div id="firDiv" className="firDiv hide"><span className='multiChoiceNo'>&#9312;</span><span id="firNoShow" dangerouslySetInnerHTML={{__html:firNo}}></span></div>
+							<div id="secDiv" className="secDiv hide"><span className='multiChoiceNo'>&#9313;</span><span id="secNoShow" dangerouslySetInnerHTML={{__html:secNo}}></span></div>
+							<div id="thrDiv" className="thrDiv hide"><span className='multiChoiceNo'>&#9314;</span><span id="thrNoShow" dangerouslySetInnerHTML={{__html:thrNo}}></span></div>
+							<div id="fourDiv" className="fourDiv hide"><span className='multiChoiceNo'>&#9315;</span><span id="fourNoShow" dangerouslySetInnerHTML={{__html:fourNo}}></span></div>
+							<div id="fifDiv" className="fifDiv hide"><span className='multiChoiceNo'>&#9316;</span><span id="fifNoShow" dangerouslySetInnerHTML={{__html:fifNo}}></span></div>
 						</div>
 					</div>
 					<div className="mini-title4">정답 및 해설</div>
@@ -839,16 +833,26 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<div className="mini-title">객관식 보기(선택)</div>
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<input id="multiChoiceImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);multiChoiceImageFile(event);}} />
-						<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div data-desc="객관식 복붙 포커스 오류 해결 contenteditable 붙어있으면 정상 작동 안함"></div>
-						<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div></div>
-						<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div></div>
-						<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div></div>
-						<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
-						<div></div>
+						<div className="multiChoiceWrap">
+							<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("firNoFormulaEditor")}}></div>
+						</div>
+						<div className="multiChoiceWrap">
+							<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("secNoFormulaEditor")}}></div>
+						</div>
+						<div className="multiChoiceWrap">
+							<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("thrNoFormulaEditor")}}></div>
+						</div>
+						<div className="multiChoiceWrap">
+							<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fourNoFormulaEditor")}}></div>
+						</div>
+						<div className="multiChoiceWrap">
+							<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fifNoFormulaEditor")}}></div>
+						</div>
 						<div className="hide">
 							&#9312; <textarea className="marginFive" id="firNo" name="firNo" defaultValue={firNo}></textarea><br/>
 							&#9313; <textarea className="marginFive" id="secNo" name="secNo" defaultValue={secNo}></textarea><br/>
