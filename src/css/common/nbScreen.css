@@ -35,6 +35,11 @@
     margin: auto;
 }
 
+.ansContents{
+    display: flex;
+    align-items: baseline;
+}
+
 .ansContents2{
     width: 387px;
     margin: auto;
