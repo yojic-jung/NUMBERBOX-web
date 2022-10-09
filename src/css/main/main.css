@@ -158,8 +158,6 @@
 .myService-wrap{
     cursor: pointer;
     position: relative;
-    background:url("img/defaultProfile.png") no-repeat;
-    background-size: 25px;
     width:25px;
     height:25px;
 }

@@ -8,6 +8,11 @@
     display:inline-block;
 }
 
+.flexAlignBase{
+    display: flex;
+    align-items: baseline;
+}
+
 .center{
     text-align: center;
 }
@@ -1577,4 +1582,27 @@
     background: #b0b0b0;
     color:white;
     cursor: pointer;
+}
+
+.customBtn3{
+    display: inline-block;
+    font-size: 14px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: #b0b0b0;
+    color:white;
+    cursor: pointer;
+    margin:5px 15px
+}
+
+
+.questionMark{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.rightPosition{
+    position: absolute;
+    right: 10px;
 }

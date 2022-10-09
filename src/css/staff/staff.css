@@ -15,10 +15,14 @@
 .left{
     width:470px;
     color:white;
-    display:inline-block;
-    padding:10px 0px;
+    display:flex;
+    padding:0px;
 }
 
+.makeContentsLinkDiv{
+    background-color: rgb(239, 239, 239);
+    height: calc(100% + 15vh);
+}
 
 .right{
     width:50%;
@@ -338,13 +342,11 @@
 
 .quesImg-show{
     text-align: center;
-    width:70%;
     margin:0 auto 0 auto;
 }
 
 .solImg-show{
     text-align: center;
-    width:70%;
     margin:0px auto 0 auto;
 }
 
@@ -369,13 +371,8 @@
 }
 
 #contentsImgOutput, #solutionImgOutput, #contentsDetailedImgOutput, #solutionDetailedImgOutput{
-    width:100%;
-}
-#contentsImgOutput, #contentsDetailedImgOutput{
-    margin-top: 15px;
-}
-#solutionImgOutput, #solutionDetailedImgOutput{
-    margin-bottom: 15px;
+    width:387px;
+    margin:0;
 }
 .answerFormulaEditor{
     line-height: 160%;
@@ -1270,6 +1267,7 @@ height: 1.6em;
 .multiChoiceNo{
     width: 20px;
 }
+
 /*
 .firDivContents, .secDivContents, .thrDivContents, .fourDivContents, .fifDivContents,
 #firNoShow, #secNoShow, #thrNoShow, #fourNoShow, #fifNoShow{
@@ -1766,3 +1764,161 @@ height: 1.6em;
     border: 1px solid rgb(222, 222, 222);
     width: 600px;
 }
+
+
+
+
+.registerForImgWrap{
+    display: grid;
+    grid-template-columns: 40px calc(100% - 40px);
+}
+
+
+.shortCutKeyDivForImgReg{
+    width: 50%;
+    min-width: 620px;
+    display: block;
+    padding: 10px 0px;
+    margin: auto;
+}
+
+.regContensForImgTB{
+    width: 1000px;
+    margin:20px auto 0 auto;
+    font-size: 16px;
+    font-family: 'nbFormulaFont';
+    border-spacing: 0;
+}
+
+.regContensForImgTbHeaderTd.first{
+    width: 100%;
+    border-top: 2px solid dimgray;
+    border-bottom: 1px solid rgb(188, 188, 188);
+}
+
+.regContensForImgTbHeaderTd{
+    background-color: #e6e9eb;
+    padding: 5px;
+    width: 500px;
+}
+
+.regAnswerWrap{
+    display: grid;
+    grid-template-columns: 90px 300px;
+    width: 390px;
+    margin:auto
+}
+
+.answerWrapForImg .answerFormulaEditor{
+    margin: 0;
+    line-height: 160%;
+    background: white;
+    color: black;
+}
+
+.regContentsImg, .regSolutionImg{
+    width: 387px;
+    border: 1px solid gray;
+    cursor: pointer;
+}
+
+.regContensForImgTbContents, .regContensForImgTbSolution{
+    border: 1px solid lightgray;
+    padding: 10px 5px 30px 5px;
+    vertical-align: top;
+}
+
+.regContensForImgTbSolution{
+    border-left: unset
+}
+
+.regContensForImgAddBtnWrap{
+    cursor: pointer;
+    width: 998px;
+    margin: auto;
+    border: 1px solid lightgray;
+    text-align: right;
+}
+
+.regContensForImgAddBtnWrap:hover{
+    background: rgb(236, 236, 236);
+}
+
+.regContensForImgAddBtn{
+    display: inline-block;
+    margin:10px 30px 10px 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: 'Apple SD Gothic Neo','Malgun Gothic';
+    font-weight: bold;
+    color: gray;
+}
+
+.regContentsAddImg{
+    width: 20px;
+    vertical-align: text-bottom;
+}
+
+.answerDistinctDesc{
+    font-size:14px;
+    color:rgb(228, 124, 19);
+    margin:5px 0 5px 50px;
+    display: inline-block;
+}
+
+.imgChangeDesc{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size:15px;
+    color:rgb(228, 134, 19);
+}
+
+.regForImgExampleDiv{
+    font-family: 'jejuGothic';
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 10px;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 0.4);
+    box-sizing: border-box;
+    border-radius: 10px;
+    z-index: 99;
+}
+
+.regForImgExampleWrap{
+    display: flex;
+    align-items: flex-start;
+    gap: 0 30px;
+}
+
+.regForImgExampleImg{
+    width: 387px;
+    box-shadow: 0 0 1rem rgba(231, 158, 80, 0.5);
+    box-sizing: border-box;
+}
+
+.regForImgExTitle{
+    padding: 10px;
+    color:orange;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.regForImgExampleDivTitle{
+    text-align: center;
+    font-size: 20px;
+    padding: 20px 0 20px 0;
+}
+
+.regForImgExampleDivDesc{
+    line-height: 180%;
+    color:dimgray;
+    padding-left: 30px;
+    font-size: 14px;
+    text-align: left;
+}
+
+

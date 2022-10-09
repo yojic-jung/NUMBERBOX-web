@@ -22,6 +22,7 @@ let subjectVal;
 let secUnitVal;
 let thrUnitVal;
 let currentPath = "";
+let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
 const ContentsList = ()=>{
     let location = useLocation();
 
@@ -62,6 +63,7 @@ const ContentsList = ()=>{
 
 
     const modalPopupClose = async (event, isSearch) =>{
+        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
@@ -144,6 +146,13 @@ const ContentsList = ()=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
+        let scrollCheck = await setInterval(()=>{
+            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
+                let contentsDiv = document.getElementById("contentsRepo"+contentsNo);
+                contentsDiv.scrollIntoView({behavior: "auto", block: "center", inline: "center"});
+                clearInterval(scrollCheck);
+            }
+        }, 20)
         
     }
     
@@ -639,6 +648,16 @@ const ContentsList = ()=>{
                 if(contentsMap.membersProfile.profileImgPath !== null && contentsMap.membersProfile.profileImgName !== null){
                     profileImgPath=contentsMap.membersProfile.profileImgPath+contentsMap.membersProfile.profileImgName;
                 }
+
+                //이미지로 등록한 문제 여부
+                let isImgRegContents = false;
+                if(contentsMap.contentsImg !==null && contentsMap.imgPath !==null) {
+                    isImgRegContents = true;
+                }
+
+                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
+                if(contentsList.length-1 === idx) isContentsListInitiated = true;
+                
                 return  <div id="workContentsDiv" className="contentsDiv userSearchPage" key={idx}> 
                                 <table className='workListTable userSearchPage'>
                                     <thead>
@@ -658,13 +677,13 @@ const ContentsList = ()=>{
                                                         :  <Link className='linkNoneCss' to={"/userProfile?userNo="+contentsMap.membersProfile.userNo}><span className='userSearchBtn'><img src={profileImgPath} alt="" className='contentsListProfile'/> {contentsMap.membersProfile.nickname}</span></Link>
                                                         }
                                                     </div>
-                                                    <div className='relative'>
+                                                    {!isImgRegContents && <div className='relative'>
                                                         <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>
                                                             변형문제 만들기
                                                             {contentsMap.transConCnt !==0 &&
                                                                 <span className='transConCntCircle hide'>{contentsMap.transConCnt}</span>}
                                                         </button>
-                                                    </div>
+                                                    </div>}
                                                 </div>
                                             </td>
                                         </tr>

@@ -8,10 +8,11 @@ import licensePrivate from 'img/license-private.png'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, reg_removeStyleAttribute, reg_removeResizeFrame} from 'js/contents/register/contents_reg';
 
-const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify})=>{
+const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg})=>{
 	let urlPath = useLocation().pathname;
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
+		if(isOnlyImgReg){ document.getElementById("transLicenseDesc").classList.add("hide");}
       },[]);
 
 	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈)
@@ -106,15 +107,18 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 		 let cusMathClassifySelTitle = document.getElementById("cusMathClassifySelTitle");
 
 
-		 document.getElementById("contentsFormulaEditor")
-		 if(getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML) > 65000){
-			alert("등록하신 문제 입력란의 용량이 너무 큽니다.\n문제 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
-			return false;
+		 if(!isOnlyImgReg){
+			document.getElementById("contentsFormulaEditor")
+			if(getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML) > 65000){
+			   alert("등록하신 문제 입력란의 용량이 너무 큽니다.\n문제 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
+			   return false;
+			}
+			if(getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML) > 65000){
+			   alert("등록하신 해설 입력란의 용량이 너무 큽니다.\n해설 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
+			   return false;
+			}
 		 }
-		 if(getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML) > 65000){
-			alert("등록하신 해설 입력란의 용량이 너무 큽니다.\n해설 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
-			return false;
-		 }
+		
 
 		 if(customSubject.innerText=="과목" || subject.selectedIndex==0){
 			 alert("과목을 선택해주세요.");
@@ -194,14 +198,16 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 			}
 		}
 		
+		if(!isOnlyImgReg){
+			//이미지 사이즈 변경 틀 제거
+			await reg_removeResizeFrame()
 
-		//이미지 사이즈 변경 틀 제거
-		await reg_removeResizeFrame()
-
-		 // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈, 띄어쓰기)
-		 // style 속성 제거
-		 // span 태그 제거
-		await trimRegisterContents();
+			// 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈, 띄어쓰기)
+			// style 속성 제거
+			// span 태그 제거
+			await trimRegisterContents();
+		}
+		
 
 
 		let formData = new FormData(document.getElementById("contentsForm"));
@@ -229,6 +235,14 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 				let contentsNo = updateModeUniqNo.split(",");
 				formData.delete("contentsNo");
 				formData.append("orgContentsNo", contentsNo[2]);
+			}
+			if(isOnlyImgReg){
+				formData.append("contents", "");
+				formData.append("firNo", "");
+				formData.append("secNo", "");
+				formData.append("thrNo", "");
+				formData.append("fourNo", "");
+				formData.append("fifNo", "");
 			}
 			formData.append("contentsClassify", contentsClassify);
 			returnObj = await nb_formDataFetch("/mathInfo/makeContents",formData, true);
@@ -259,23 +273,28 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 
 			
 			await nb_closeBtn("contentsInfo")
-
-			//문제,해설, 이미지, 객관식 정보 초기화
-			document.getElementById("contentsFormulaEditor").innerHTML = "";
-			document.getElementById("solutionFormulaEditor").innerHTML = "";
-			document.getElementById("firNoFormulaEditor").innerHTML = "";
-			document.getElementById("secNoFormulaEditor").innerHTML = "";
-			document.getElementById("thrNoFormulaEditor").innerHTML = "";
-			document.getElementById("fourNoFormulaEditor").innerHTML = "";
-			document.getElementById("fifNoFormulaEditor").innerHTML = "";
+			
+			if(!isOnlyImgReg){
+				//문제,해설, 이미지, 객관식 정보 초기화
+				document.getElementById("contentsFormulaEditor").innerHTML = "";
+				document.getElementById("solutionFormulaEditor").innerHTML = "";
+				document.getElementById("firNoFormulaEditor").innerHTML = "";
+				document.getElementById("secNoFormulaEditor").innerHTML = "";
+				document.getElementById("thrNoFormulaEditor").innerHTML = "";
+				document.getElementById("fourNoFormulaEditor").innerHTML = "";
+				document.getElementById("fifNoFormulaEditor").innerHTML = "";
+			}
 			document.getElementById("answerFormulaEditor").innerHTML = "";
+			
 			//textarea,input 초기화
 			await parentMethod();
+			
 			//객관식정답 초기화
 			let choiceAnswerChkBox = document.getElementsByName("choiceAnswer")
 			for(let i=0; i< choiceAnswerChkBox.length; i++){
 				choiceAnswerChkBox[i].checked = false;
 			}
+			if(isOnlyImgReg) return;
 
 			//문제,정답 이미지 초기화
 			document.getElementById("contentsImg").value= "";
@@ -386,7 +405,9 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify}
 							<tbody>
 								<tr>
 									<td><label><input id='shareSttsPublic' type="radio" value="1" name="shareStts" className='licensePublicBtn' onChange={()=>{shareSttsChange(true)}} defaultChecked/><img src={licensePublic} className="licensePublicImg" alt="license-public"/><span className='licPublicTitle'>공개</span></label></td>
-									<td><span className='licDesc'>플랫폼 내 모든 사용자에게 공개<br/> 플랫폼 내 '변형문제 만들기' 서비스를 통한 2차 저작물 제작 허용<br/>공교육 및 사교육 기관에서 상업용 판매 목적 없는 학습 자료로서 사용 허용</span></td>
+									<td><span className='licDesc'>플랫폼 내 모든 사용자에게 공개<br/> 
+									<span id="transLicenseDesc">플랫폼 내 '변형문제 만들기' 서비스를 통한 2차 저작물 제작 허용<br/></span>
+									공교육 및 사교육 기관에서 상업용 판매 목적 없는 학습 자료로서 사용 허용</span></td>
 								</tr>
 								<tr>
 									<td><label><input id='shareSttsPrivate' type="radio" value="0" name="shareStts" className='licensePrivateBtn' onChange={()=>{shareSttsChange(false)}}/><img src={licensePrivate} className="licensePrivateImg" alt="license-public"/><span className='licPrivateTitle'>비공개</span></label></td>

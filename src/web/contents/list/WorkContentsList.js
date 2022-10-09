@@ -17,6 +17,7 @@ let subjectVal;
 let secUnitVal;
 let thrUnitVal;
 let currentPath = "";
+let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
 const WorkContentsList = ()=>{
     let location = useLocation();
 
@@ -53,6 +54,7 @@ const WorkContentsList = ()=>{
     }
 
     const modalPopupClose = async (event, isSearch) =>{
+        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
@@ -125,6 +127,19 @@ const WorkContentsList = ()=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
+        let scrollCheck = await setInterval(()=>{
+            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
+                document.getElementById("root").style.overflow = "unset"
+                let svcInspectBtn = document.getElementsByClassName("svcInspectBtn");
+                for(let i=0; i<svcInspectBtn.length; i++){
+                    if(svcInspectBtn[i].dataset.contentsNo === contentsNo){
+                        svcInspectBtn[i].scrollIntoView({behavior: "auto", block: "center", inline: "center"});
+                        break;
+                    }
+                }
+                clearInterval(scrollCheck);
+            }
+        }, 200)
         
     }
     
@@ -716,6 +731,9 @@ const WorkContentsList = ()=>{
                 if(contentsMap.solutionImg===null) solImgPath = "";
                 else solImgPath = contentsMap.solutionImgPath+contentsMap.solutionImg;
                
+                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
+                if(contentsList.length-1 === idx) isContentsListInitiated = true;
+
                 return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                 <table className='workListTable'>
                                     <thead>

@@ -224,7 +224,6 @@ const MathDocsMaker = ()=>{
 
         let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitUniqNoAndTypeNoList='+unitUniqNoAndTypeNo+"&quesLevel="+quesLevel+"&conCnt="+conCntInput, true);
         let mathContentsList = jsonObj["mathContentsList"];
-        console.log(mathContentsList);
         let lv1Len=0;
         let lv2Len=0;
         let lv3Len=0;

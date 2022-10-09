@@ -1,7 +1,8 @@
 import React, {useState, useEffect } from 'react';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
+import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import "css/common/nbScreen.css";
-import {nb_dataFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
+import {nb_dataFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollEnd, nb_modalScrollStrt, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
     , nb_detectScrollPosition, nb_moveToScroll} from 'js/common/common_nb.js';
 import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
@@ -10,15 +11,17 @@ import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
 import defaultProfile from 'img/defaultProfileWhite.png';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
-let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
+let scrollY = 0;       
 let subjectVal;
 let firUnitVal;
 let secUnitVal;
 let thrUnitVal;
+let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
 const MyContentsList = ({isMine, userNo})=>{
     const [contentsList, setContentsList] = useState(new Array());
     const [contentsNo, setContentsNo] = useState("");
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
+    const [imgRegMode, setImgRegMode] = useState(false);        //이미지로 등록한 파일 여부
     const [workListChanged, setWorkListChanged] = useState(false); 
     const [emptyListMsg, setEmptyListMsg] = useState("나의 제작문제가 존재하지 않습니다. \n문제를 만들어 공유해 보세요.");
     const [contentsClassify, setContentsClassify] = useState(null);
@@ -29,21 +32,21 @@ const MyContentsList = ({isMine, userNo})=>{
     const removeAddedEvent = () => {
         window.removeEventListener('scroll', nb_detectScrollPosition);
     }
-    const modalPopupOpen = async (event)  =>{
+    const modalPopupOpen = async (event, isImgRegContents)  =>{
         scrollY=nb_modalScrollStrt();
-        
         document.getElementById("outerFormulaEditor").classList.remove("hide")
-        await setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
+        setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
         setContentsClassify(Number(document.getElementById(event.target.id).dataset.contentsClassify))
+        setImgRegMode(isImgRegContents)
         setModalState(true);
     }
 
 
     const modalPopupClose = async (event, isSearch) =>{
+        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
-        await setModalState(false);
-
+        setModalState(false);
 
         //모달창에서 저장하기 버튼을 누른 경우에만 검색
         //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
@@ -79,7 +82,19 @@ const MyContentsList = ({isMine, userNo})=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
-        
+        let scrollCheck = await setInterval(()=>{
+            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
+                let contentsDiv = document.getElementsByClassName("contentsDiv");
+                for(let i=0; i<contentsDiv.length; i++){
+                    if(contentsDiv[i].dataset.contentsNo === contentsNo){
+                        contentsDiv[i].scrollIntoView({behavior: "auto", block: "center", inline: "center"});
+                        break;
+                    }
+                }
+                clearInterval(scrollCheck);
+            }
+        }, 200)
+       
     }
     
 
@@ -302,7 +317,6 @@ const MyContentsList = ({isMine, userNo})=>{
 
 
         const workContentsList = contentsList.map( (contentsMap, idx) => {
-
                 let isMultiHide= "hide"
                 if(contentsMap.firNo!==""){
                     isMultiHide=""
@@ -342,6 +356,16 @@ const MyContentsList = ({isMine, userNo})=>{
                         shareDesc ="비공개"
                     }
                 }
+
+                //이미지로 등록한 문제 여부
+                let isImgRegContents = false;
+                if(contentsMap.contentsImg !==null && contentsMap.imgPath !==null) {
+                    isImgRegContents = true;
+                }
+
+                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
+                if(contentsList.length-1 === idx) isContentsListInitiated = true;
+
                 return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
                                 <table className='workListTable'>
                                     <thead>
@@ -381,9 +405,15 @@ const MyContentsList = ({isMine, userNo})=>{
                                                 <div className='bi-jutify-align'>
                                                     <div>정답 및 해설</div>
                                                     <div>
-                                                        {isMine && 
+                                                        {isMine && !isImgRegContents &&
                                                         <>
-                                                            <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} data-contents-classify={contentsMap.contentsClassify} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button>
+                                                            <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} data-contents-classify={contentsMap.contentsClassify} className='updateBtn' onClick={(event) => {modalPopupOpen(event, false)}}>수정하기</button>
+                                                            <span className='hide'>유형 : {contentsMap.mathTypeInfo.quesType}</span>
+                                                        </>
+                                                        }
+                                                        {isMine && isImgRegContents &&
+                                                        <>
+                                                            <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} data-contents-classify={contentsMap.contentsClassify} className='updateBtn' onClick={(event) => {modalPopupOpen(event, true)}}>수정하기</button>
                                                             <span className='hide'>유형 : {contentsMap.mathTypeInfo.quesType}</span>
                                                         </>
                                                         }
@@ -473,7 +503,10 @@ const MyContentsList = ({isMine, userNo})=>{
 
             <div id="outerFormulaEditor" className='fixedBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
-                { modalState  && <FormulaEditor contentsNo={contentsNo} contentsClassify={contentsClassify}/>}
+                { modalState && ( imgRegMode ?
+                    <RegisterContentsForImg contentsNo={contentsNo} /> :
+                    <FormulaEditor contentsNo={contentsNo} contentsClassify={contentsClassify}/>
+                    )}
             </div>
             <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
 

@@ -1085,3 +1085,59 @@
     position: relative;
     bottom:-5px;
 }
+
+.makeContentsBtn, .makeContentsForImgBtn{
+    width: 35px;
+    height: 35px;
+    margin:5px 0;
+    cursor: pointer;
+}
+
+.makeContentsBtn{
+    background:  url("img/writeBtn.png") no-repeat center;
+    background-size: 20px;
+}
+.makeContentsBtn.active{
+    background:  url("img/writeBtnBlue.png") no-repeat center;
+    background-size: 20px;
+}
+
+.makeContentsForImgBtn{
+    background:  url("img/screenshotBtn.png") no-repeat center;
+    background-size: 20px;
+}
+
+
+.makeContentsBtn:hover+.makeContentsForImgBtnDesc, .makeContentsForImgBtn:hover+.makeContentsForImgBtnDesc{
+    visibility:visible;
+    animation:opacityTrans 0.3s ;
+}
+
+.makeContentsForImgBtnDesc{
+    font-size: 14px;
+    font-family: 'jejuGothic';
+    display: inline-block;
+    visibility:hidden;
+    width: 115px;
+    text-align: center;
+    background: black;
+    color:white;
+    border-radius: 5px;
+    padding: 8px 3px;
+    opacity: 0.9;
+    position: absolute;
+    top:5px;
+    left: 35px;
+    z-index: 3;
+}
+
+@keyframes opacityTrans{
+	0% {opacity: 0;}
+    50%{opacity: 0.4;}
+	100% {opacity: 0.9;}
+}
+
+.makeContentsForImgBtn.active{
+    background:  url("img/screenshotBtnBlue.png") no-repeat center;
+    background-size: 20px;
+}

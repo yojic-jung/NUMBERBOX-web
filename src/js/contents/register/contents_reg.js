@@ -223,11 +223,13 @@ export const reg_brFocusBugFix = async(userKeyCode)=>{
 * 대상 : 문제, 해설, 객관식보기(5개), 주관식 정답
 */
 export const reg_dressYellowBox = async()=>{
-	if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
-		document.activeElement.innerHTML = "<div><br></div>";
-		window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
+	if(document.activeElement.classList.contains("contentEditClass")){
+		if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+			document.activeElement.innerHTML = "<div><br></div>";
+			window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
+		}
 	}
-
+	
 	//드래그 없이 포커스만 하나 있는 경우
 	if(window.getSelection().isCollapsed && window.getSelection().rangeCount !== 0){
 		let yellowBorderBox = document.getElementsByClassName("yellowBorderBox");

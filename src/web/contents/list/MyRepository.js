@@ -3,13 +3,14 @@ import FormulaEditor from 'web/contents/register/FormulaEditor'
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import EmptyList from 'web/common/EmptyList';
-import {nb_dataFetch, nb_fadeInOut, nb_multiChoiceGridSet, nb_modalScrollStrt, nb_licenseUiCheck, nb_modalScrollEnd,
+import {nb_dataFetch, nb_fadeInOut, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_modalScrollStrt, nb_modalScrollEnd,
     nb_closeBtn, nb_promptBox, nb_detectScrollPosition, nb_moveToScroll} from 'js/common/common_nb.js';
 import { reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import defaultProfile from 'img/defaultProfileWhite.png';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
 let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
+let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
 const MyRepository = ()=>{
     const [contentsList, setContentsList] = useState(new Array());
     const [contentsNo, setContentsNo] = useState("");
@@ -57,6 +58,7 @@ const MyRepository = ()=>{
         }, [contentsList]);
 
         const modalPopupClose = async (event, isSearch) =>{
+            isContentsListInitiated = false;
             window.removeEventListener('click', reg_eraseEditTbUI);
             await nb_closeBtn("outerFormulaEditor"); 
             await setModalState(false);
@@ -102,7 +104,20 @@ const MyRepository = ()=>{
             } 
             await nb_multiChoiceGridSet("quesConMultiShow");
             nb_modalScrollEnd(scrollY)
-            
+            let scrollCheck = await setInterval(()=>{
+                if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
+                    document.getElementById("root").style.overflow = "unset"
+                    let contentsDiv = document.getElementsByClassName("contentsDiv");
+                    for(let i=0; i<contentsDiv.length; i++){
+                        if(contentsDiv[i].dataset.contentsNo === contentsNo){
+                            contentsDiv[i].scrollIntoView({behavior: "auto", block: "center", inline: "center"});
+                            break;
+                        }
+                    }
+                    clearInterval(scrollCheck);
+                }
+            }, 200)
+
         }
 
         const modalPopupOpen = async (event)  =>{
@@ -245,6 +260,16 @@ const MyRepository = ()=>{
             if(contentsMap.membersProfile.profileImgPath !== null && contentsMap.membersProfile.profileImgName !== null){
                 //profileImgPath=contentsMap.membersProfile.profileImgPath+contentsMap.membersProfile.profileImgName;
             }
+
+            //이미지로 등록한 문제 여부
+            let isImgRegContents = false;
+            if(contentsMap.contentsImg !==null && contentsMap.imgPath !==null) {
+                isImgRegContents = true;
+            }
+
+            //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
+            if(contentsList.length-1 === idx) isContentsListInitiated = true;
+
             return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter userSearchPage" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
                             <table className='workListTable userSearchPage'>
                                 <thead>
@@ -258,13 +283,13 @@ const MyRepository = ()=>{
                                                     }
                                                     <span>[{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}</span>
                                                 </div>
-                                                <div className='relative'>
+                                                {!isImgRegContents && <div className='relative'>
                                                     <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>
                                                         변형문제 만들기
                                                         {contentsMap.transConCnt !==0 &&
                                                             <span className='transConCntCircle hide'>{contentsMap.transConCnt}</span>}
                                                     </button>
-                                                </div>
+                                                </div>}
                                             </div>
                                         </td>
                                     </tr>

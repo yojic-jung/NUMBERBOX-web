@@ -48,7 +48,7 @@ const NbWebEditor = ({parentMethod})=>{
 			if(file !== undefined){
 				let img=document.createElement("img");
 				let reader  = new FileReader();
-				img.style.width=100+"px";
+				img.style.width=367+"px";
 				//포커스가 문제입력창 또는 해설 입력창에 있으면 포커스 위치에 이미지 삽입
 				if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
 				&& (window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") || window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")) ){

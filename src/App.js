@@ -8,6 +8,7 @@ import SignUp from 'web/page/SignUp'
 import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker'
 import RegisterQuestion from 'web/contents/register/RegisterQuestion'
 import RegisterContents from 'web/contents/register/RegisterContents'
+import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import RegisterResource from 'web/mathResource/RegisterResource'
 import ShareResource from 'web/mathResource/ShareResource'
 import ContentsList from 'web/contents/list/ContentsList'
@@ -51,6 +52,7 @@ const App = ()=>{
                 <Route exact path="/" element={<Main />} />
                 <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
+                <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
                 <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
                 <Route exact path="/contentsList" element={<ContentsList /> } />
                 <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
