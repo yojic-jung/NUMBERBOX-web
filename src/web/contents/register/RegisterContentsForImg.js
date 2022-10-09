@@ -384,7 +384,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
 				<div className='regForImgExampleDivTitle'>이미지로 등록하여 학습지에 사용하거나 다른 사용자와 공유해보세요!</div>
 				<div className='regForImgExampleDivDesc'>
 					tip1. 문제 번호와 여백을 제거하고 등록하면 학습지 제작시 다른 문제들과 함께 출력하기 용이합니다.<br/>
-					tip2. 문서파일에 있는 수학문제를 캡쳐하는 경우 확대하여 캡쳐하면 화질이 더욱 깔끔합니다.
+					tip2. 문서파일에 있는 문제를 캡쳐하여 등록하는 경우 확대 후 캡쳐하면 화질이 더욱 깔끔합니다.
 				</div>
 				<div className='regForImgExampleWrap'>
 					<div>
