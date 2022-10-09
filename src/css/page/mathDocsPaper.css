@@ -21,7 +21,6 @@
     margin:auto;
     width: 210mm;
     height: 297mm;
-    border-bottom: 0.5mm solid rgb(130, 130, 130);
 }
 
 
@@ -153,6 +152,7 @@
     font-size: 18px;
     background: rgb(208, 225, 255);
     padding: 8px 0 8px 15px;
+    margin-top:15px
 }
 
 .mathDocsPaperAnswer, .mathDocsPaperAnswer.rightLayer{
