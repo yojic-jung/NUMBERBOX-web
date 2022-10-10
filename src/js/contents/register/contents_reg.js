@@ -3690,6 +3690,12 @@ export const reg_removeResizeFrame = function () {
 		imgWidthInput.id="imgWidthSet";
 		imgWidthInput.className = 'imgWidthSet';
 
+		imgWidthInput.addEventListener('change', (event) => {
+			if(document.getElementById("imgWidthFixChkBtn").checked){
+				let ratio = event.target.value/orgWidth;
+				document.getElementById("imgHeightSet").value = ratio*orgHeight;
+			}
+		});
 		imgWidthInput.addEventListener('keyup', (event) => {
 			if(document.getElementById("imgWidthFixChkBtn").checked){
 				let ratio = event.target.value/orgWidth;
