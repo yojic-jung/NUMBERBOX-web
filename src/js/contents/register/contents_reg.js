@@ -3621,7 +3621,10 @@ export const reg_removeResizeFrame = function () {
 		  return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
 	  };
 	  var clickImage = function (img) {
-          window.getSelection().setBaseAndExtent(img, 0, img, 0);
+		let orgWidth = img.offsetWidth;
+		let orgHeight = img.offsetHeight;
+
+		window.getSelection().setBaseAndExtent(img, 0, img, 0);
 		  img.classList.add("imgSelection");
 		  window.getSelection().getRangeAt(0).selectNode(img);
 		  reg_removeResizeFrame();
@@ -3646,6 +3649,35 @@ export const reg_removeResizeFrame = function () {
 		imgWidthHeightDiv.contentEditable = false;
 		imgWidthHeightDiv.classList.add("hide");
 
+		let imgWidthFixDiv = createDOM('div', '', {
+			margin: '0 2px',
+			});
+
+		let imgWidthFixLabelBtn = createDOM('label', '', {
+			});
+		imgWidthFixLabelBtn.innerHTML = "가로 세로 비율 유지";
+		imgWidthFixLabelBtn.htmlFor ="imgWidthFixChkBtn";
+
+		let imgWidthFixChkBtn = createDOM('input', '', {
+			margin: '0 2px',
+			width:'unset',
+			verticalAlign:'text-top'
+		});
+		imgWidthFixChkBtn.id="imgWidthFixChkBtn";
+		imgWidthFixChkBtn.setAttribute("type","checkBox");
+		imgWidthFixChkBtn.checked = true;
+		imgWidthFixChkBtn.addEventListener('click', (event) => {
+			if(event.target.checked){
+				document.getElementById("imgHeightSet").disabled = true;
+			}else{
+				document.getElementById("imgHeightSet").disabled = false;
+			}
+		})
+
+		imgWidthFixDiv.append(imgWidthFixChkBtn);
+		imgWidthFixDiv.append(imgWidthFixLabelBtn);
+		
+
 		let imgWidthTitle = createDOM('span', '', {
 			margin: '0 2px',
 			});
@@ -3658,6 +3690,13 @@ export const reg_removeResizeFrame = function () {
 		imgWidthInput.id="imgWidthSet";
 		imgWidthInput.className = 'imgWidthSet';
 
+		imgWidthInput.addEventListener('keyup', (event) => {
+			if(document.getElementById("imgWidthFixChkBtn").checked){
+				let ratio = event.target.value/orgWidth;
+				document.getElementById("imgHeightSet").value = ratio*orgHeight;
+			}
+		});
+
 		let imgHeighTitle = createDOM('span', '', {
 			margin: '0 2px',
 			});
@@ -3669,12 +3708,15 @@ export const reg_removeResizeFrame = function () {
 		imgHeightInput.type="number";
 		imgHeightInput.id="imgHeightSet";
 		imgHeightInput.className = 'imgHeightSet';
+		imgHeightInput.disabled = true;
 
 		let imgWidthHeightSetBtn = createDOM('span', 'imgWidthHeightSetBtn', {
 			width:"20px",
 			height:"20px",
 			margin: '0 2px',
 			});
+		
+		imgWidthHeightDiv.append(imgWidthFixDiv);
 		imgWidthHeightDiv.append(imgWidthTitle);
 		imgWidthHeightDiv.append(imgWidthInput);
 		imgWidthHeightDiv.append(imgHeighTitle);

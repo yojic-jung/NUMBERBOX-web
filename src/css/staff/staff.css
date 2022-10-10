@@ -1654,6 +1654,17 @@ height: 1.6em;
     width:50px;
 }
 
+.imgWidthHeightDiv input:disabled{
+    background: rgb(227, 227, 227);
+    border: 1px solid rgb(193, 193, 193);
+}
+
+#imgWidthFixChkBtn:checked+label{
+    background: unset;
+    border: unset;
+    color: unset;
+}
+
 .imgWidthHeightSetBtn{
     cursor: pointer;
     background:  url('img/undo-button.png') center no-repeat;
