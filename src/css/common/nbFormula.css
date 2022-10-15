@@ -180,11 +180,285 @@
     display:inline-block;
 }
 
-.nbIntegralBox {
-    border-spacing: 0px;
+.nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox {
     position: relative;
-    vertical-align: -0.9em;
-    margin: 5px 0;
+    vertical-align: middle;
+    border-spacing: 0px;
+    line-height: 160%;
+}
+
+.nbIntegralTbody, .nbIntegralTbody2{
+    display: inline-block;
+}
+
+
+.nbIntSign, .nbDoubleIntSign, .nbTripleIntSign {
+    font-family: 'MJXc-TeX-size2-Rw'; 
+    min-width: 1.2em;
+}
+.nbDoubleIntSign{
+    min-width: 1.6em;
+}
+
+.nbTripleIntSign {
+    min-width: 2em;
+}
+.nbIntBase, .nbDoubleIntBase, .nbTripleIntBase {
+    line-height: 110%;
+    min-width: 0.5em;
+    position: relative;
+    left: -0.2em;
+    top:2px
+}
+
+.nbIntegralBox.nbFracInIntegral .nbIntBase, .nbDoubleIntegralBox.nbFracInIntegral .nbDoubleIntBase,
+ .nbTripleIntegralBox.nbFracInIntegral .nbTripleIntBase{
+    position: relative;
+    top:0px
+}
+
+.nbDoubleIntBase{
+    left: 0em;
+}
+
+.nbTripleIntBase {
+    left: 0;
+}
+
+.nbIntSup, .nbDoubleIntSup, .nbTripleIntSup {
+    text-align: left;
+    line-height: 110%;
+    padding: 0px;
+    font-size: 0.3em;
+    position: relative;
+    vertical-align: top;
+    top: 0em;
+    left: -0.8em;
+}
+
+.nbDoubleIntSup{
+    left: -0.3em;
+}
+
+.nbTripleIntSup{
+    left: 0em;
+}
+
+
+.onlyEdit:focus .nbIntSup.yellowBorderBox:before,
+.onlyEdit:focus .nbDoubleIntSup.yellowBorderBox:before,
+.onlyEdit:focus .nbTripleIntSup.yellowBorderBox:before{
+    top: -2px;
+    border: 2px dashed rgb(255, 196, 1) !important
+}
+
+
+
+.onlyEdit:focus .nbIntSup:before, .onlyEdit:focus .nbDoubleIntSup:before,
+.onlyEdit:focus .nbTripleIntSup:before{
+    content: '';
+    border: 1px dashed gray;
+    width: 100%;
+    height: 40%;
+    display: block;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+}
+
+.onlyEdit:focus .nbIntSup:before, 
+.onlyEdit:focus .nbDoubleIntSup:before, 
+.onlyEdit:focus .nbTripleIntSup:before{
+    height: 40%;
+}
+
+
+.nbIntSup.borderBox, .nbDoubleIntSup.borderBox, .nbTripleIntSup.borderBox{
+    border: unset !important;
+}
+.onlyEdit:focus .nbIntSup.yellowBorderBox, 
+.onlyEdit:focus .nbDoubleIntSup.yellowBorderBox, 
+.onlyEdit:focus .nbTripleIntSup.yellowBorderBox{
+    border: unset !important;
+}
+
+
+.nbIntSub, .nbDoubleIntSub, .nbTripleIntSub {
+    line-height: 110%;
+    padding: 0px;
+    font-size: 0.3em;
+    text-align: left;
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0em;
+    left: -2em;
+}
+
+.nbTripleIntSub {
+    left: -1.8em;
+}
+
+.onlyEdit:focus .nbIntSup, .onlyEdit:focus .nbIntSub,
+.onlyEdit:focus .nbDoubleIntSup, .onlyEdit:focus .nbDoubleIntSub,
+.onlyEdit:focus .nbTripleIntSup, .onlyEdit:focus .nbTripleIntSub{
+    min-width: 1em;
+}
+
+.nbIntTR, .nbDoubleIntTR, .nbTripleIntTR{
+    height: 2em;
+}
+
+/** 시그마합 표현 **/
+.nbSigmaSumBox {
+    position: relative;
+    vertical-align: middle;
+    border-spacing: 0;
+    text-align: center;
+    line-height: 110%;
+}
+
+.nbSigmaSumTbody, .nbSigmaSumTbody2{
+    display: inline-block;
+}
+
+.nbSigmaSumSub {
+    bottom: -0.5em;
+}
+
+.nbSigmaSumSign, .nbSigmaSumSign2 {
+    font-family: 'MJXc-TeX-size2-Rw';
+    line-height: 110%;
+}
+
+.nbSigmaSumSup, .nbSigmaSumSub {
+    font-size: 0.3em;
+    line-height: 110%;
+    position: relative;
+    
+}
+
+.nbSigmaSumBase {
+    line-height: 110%;
+    position: relative;
+    top: 2px;
+}
+
+.nbSigmaSumBox.nbFracInSigmaSum .nbSigmaSumBase{
+    position: relative;
+    top:0px;
+
+}
+
+.onlyEdit:focus .nbSigmaSumBase {
+    min-width: 0.5em;
+}
+
+
+/** 로그 **/
+.nbLogBox {
+    position: relative;
+    vertical-align: middle;
+    border-spacing: 0;
+    margin-top: 4px;
+}
+
+.nbLogSign.writeDisable {
+    position: relative;
+    left: 0.1em;
+}
+
+.nbLogBase {
+    min-width: 0.5em;
+}
+
+.nbLogSubBase {
+    font-size: 0.3em;
+    line-height: 110%;
+    vertical-align: bottom;
+    position: relative;
+}
+
+
+.nbFracInLog .nbLogBase {
+    position: relative;
+    top:-2px
+}
+.nbFracInLog .nbLogSubBase {
+    top:-3px
+}
+
+.onlyEdit:focus .nbLogSubBase:before{
+    content: '';
+    border: 1px dashed gray;
+    width: 100%;
+    height: 35%;
+    display: block;
+    position: absolute;
+    bottom: 1px;
+    left: -1px;
+}
+
+.onlyEdit:focus .nbLogSubBase{
+    min-width: 0.5em;
+}
+
+.onlyEdit:focus .nbLogSubBase.yellowBorderBox:before{
+    bottom: 2px;
+    border: 2px dashed rgb(255, 196, 1) !important
+}
+
+.nbLogSubBase.borderBox{
+    border: unset !important;
+}
+.onlyEdit:focus .nbLogSubBase.yellowBorderBox{
+    border: unset !important;
+}
+
+
+/** limit 박스 **/
+.nbLimBox {
+    position: relative;
+    line-height: 110%;
+    border-spacing: 0px;
+    vertical-align: -0.45em;
+}
+
+.nbLimTbody{
+    display: inline-block;
+}
+.nbLimTbody2 {
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* lim 안 분수 */
+.nbLimBox.nbFracInLim .nbLimTbody2 {
+    vertical-align: bottom;
+}
+/* lim 안 시그마 안 분수 */
+.nbLimBox.nbFracInLim.nbSigmaSumInLim .nbLimTbody2{
+    vertical-align: -0.6em;
+}
+/* lim 안 시그마 */
+.nbLimBox.nbSigmaSumInLim .nbLimTbody2{
+    vertical-align: -0.65em;
+}
+
+.nbLimSign {
+    line-height: 110%;
+    text-align: center;
+}
+
+.nbLimBase {
+    min-width: 0.5em;
+    line-height: 110%;
+}
+.nbLimSubBase {
+    font-size: 0.3em;
+    min-width: 1em;
+    line-height: 80%;
+    position: relative;
+    top: -4px;
 }
 
 /** 지수 표현 **/
@@ -350,19 +624,27 @@
     bottom:0.2em;
 }
 
-/** 삼각함수, 삼각함수는 글꼴이 달라 line-heigth가 다른 수식 요소와 다름 **/
-.nbTrigonBox{
+/** 삼각함수, ln함수는 글꼴이 달라 line-heigth가 다른 수식 요소와 다름 **/
+.nbTrigonBox, .nbLnBox{
     line-height: 110%; 
     vertical-align:text-bottom;
     border-spacing: 0px;
     padding: 0;
 }
-.nbTrigon{
+.nbTrigon, .nbLnSign{
     padding:0px;
     font-family: "STIXTwoText-Medium";
 }
+.nbLnBox{
+    vertical-align: -0.35em;
+}
+.onlyEdit:focus .nbLnBase {
+    min-width: 0.5em;
+}
 
-
+.nbLnBox.nbFracInLn {
+    vertical-align: middle;
+}
 
 /** 윗점 **/
 .nbOverDotBox{
@@ -440,6 +722,10 @@
     border-spacing: 0px;
 }
 
+.nbRootBox.expRootType{
+    padding-left: 0.4em;
+}
+
 
 .nbRootBase{
     font-size:1em;
@@ -448,6 +734,7 @@
     min-width: 1em; 
     text-align: center;
     line-height: 110%;
+    position: relative;
 }
 
 .nbRootBase::before{
@@ -455,7 +742,7 @@
     position: absolute;
     font-size:1.4em;
     top:0.1em;
-    left:0.08em;
+    left:-0.5em;
 }
 .nbRootBox .nbRootBox{
     vertical-align:middle !important;
@@ -466,6 +753,50 @@
     vertical-align: middle !important;
     position: relative;
     top:2.5px !important;
+}
+
+
+.nbRootExpBase {
+    vertical-align: top;
+    position: relative;
+    top: -2px;
+    left: -5px;
+    min-width: 1em;
+    line-height: 110%;
+    padding: 0px;
+    font-size: 0.3em;
+    text-align: center;
+}
+
+.nbRootBox.nbFracInRoot .nbRootExpBase{
+    top: 0px;
+}
+
+.onlyEdit:focus .nbRootExpBase:before{
+    content: '';
+    border: 1px dashed gray;
+    width: 100%;
+    height: 40%;
+    display: block;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+}
+
+.onlyEdit:focus .nbFracInRoot .nbRootExpBase:before{
+    height: 20%;
+}
+
+.onlyEdit:focus .nbRootExpBase.yellowBorderBox:before{
+    top: -2px;
+    border: 2px dashed rgb(255, 196, 1) !important
+}
+
+.expRootType .nbRootExpBase.borderBox{
+    border: unset !important;
+}
+.onlyEdit:focus .nbRootExpBase.yellowBorderBox{
+    border: unset !important;
 }
 
 /** 루트 안 순환소수 **/
@@ -651,7 +982,7 @@
     position: relative;
 }
 
-.nbBinomCoBox tbody::before {
+.nbBinomCoBox .nbBinomCoTBody::before {
     content: "(";
     position: absolute;
     left: -0.1em;
@@ -661,7 +992,7 @@
     font-weight: 100;
 }
 
-.nbBinomCoBox tbody::after {
+.nbBinomCoBox .nbBinomCoTBody::after {
     content: ")";
     position: absolute;
     right: -0.1em;
@@ -731,7 +1062,13 @@
     border: 1px solid black;
     text-align: center;
 }
-
+.onlyEdit:focus .nbCondBase.borderBox{
+    border: 1px solid black !important;
+}
+.onlyEdit:focus .nbCondBase.yellowBorderBox{
+    padding: 3px 8px 0 8px !important;
+    border: 1px solid black !important;
+}
 /** 단축키 Ui에서만 사용 **/
 .nbUiSmallAbsVal{
     font-size:12px;
@@ -911,31 +1248,35 @@
 /* nbConvert 방식 */
 
 /* 루트 안의 분수 */
-.nbRootBox.nbConvert.nbFracInRoot{
+.nbRootBox.nbFracInRoot{
     vertical-align: middle;
     padding-left: 1.4em;
 }
 
-.nbRootBase.nbConvert.nbFracInRoot {
+.nbRootBox.nbFracInRoot.expRootType {
+    padding-left: 0.8em;
+}
+
+.nbRootBase.nbFracInRoot {
     padding: 0px 1px 0px 2px;
     line-height:unset
 }
 
-.nbRootBase.nbConvert.nbFracInRoot::before{
+.nbRootBase.nbFracInRoot::before{
     content: '\221A';
     position: absolute;
     font-family: 'rootFracFont';
     font-size: 2.4em;
     font-weight: 100;
     top: 0.26em;
-    left: 0.06em;
+    left: -0.5em;
 }
 
-.nbRootBox.nbConvert.nbFracInRoot .nbNumer{
+.nbRootBox.nbFracInRoot .nbNumer{
     padding: 4px 2px 0 2px;
 }
 
-.nbFracBox .nbRootBase.nbConvert.nbFracInRoot::before {
+.nbFracBox .nbRootBase.nbFracInRoot::before {
     top: 0.35em;
 }
 
@@ -956,17 +1297,17 @@
 }
 
 /* 분자 안의 분수 */
-.nbFracBox.nbConvert.nbFracInNumer{
+.nbFracBox.nbFracInNumer{
     vertical-align: -0.9em;
 }
 /* 분모 안의 분수 */
-.nbFracBox.nbConvert.nbFracInDenom{
+.nbFracBox.nbFracInDenom{
     vertical-align: -2.3em;
 }
 
 
 /* 분모, 분자 안의 분수 */
-.nbFracBox.nbConvert.nbFracInNumer.nbFracInDenom{
+.nbFracBox.nbFracInNumer.nbFracInDenom{
     vertical-align: middle;
 }
 

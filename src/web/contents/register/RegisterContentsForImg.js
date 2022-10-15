@@ -11,12 +11,12 @@ import "css/common/common.css";
 import "css/common/nbFormula.css";
 import "css/staff/staff.css";
 import {nb_isLogin, nb_formDataFetch, nb_dataFetch, nb_addClass, nb_fadeInOut, nb_extensionCheck2, nb_imgFileDel} from 'js/common/common_nb.js';
-import {reg_preventKeyEvent,  reg_dressYellowBox,  reg_keyEvSelectFormulaElement, reg_selectCheck, reg_selectUnitOrTypeData,
-    reg_dressSelectionBackColor, reg_tbPastePrevent, reg_nbComplie, reg_removeResizeFrame, reg_unitTypeChange} from 'js/contents/register/contents_reg';
+import {reg_preventKeyEvent,  reg_dressYellowBox,  reg_newSelectFormulaElement, reg_selectCheck, reg_selectUnitOrTypeData,
+    reg_dressSelectionBackColor, reg_tbPastePrevent, reg_nbComplie, reg_removeResizeFrame, reg_unitTypeChange, reg_formulaTapMoveEv} from 'js/contents/register/contents_reg';
 
 let conImgName="N";	//컨텐츠 이미지 존재 여부
 let solImgName="N";	//해설 이미지 존재 여부
-const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호', className:"formulaTap"}];
+const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식(alt+shift 단축키)', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호(alt+shift+ctrl 단축키)', className:"formulaTap"}];
 let shortCutKeyList;
 const RegisterContentsForImg = ({contentsNo})=>{
     const[isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
@@ -26,7 +26,9 @@ const RegisterContentsForImg = ({contentsNo})=>{
 	
 
 	const removeAddedEvent = () => {
+		window.removeEventListener('mouseup', reg_newSelectFormulaElement);
 		window.removeEventListener('scroll',reg_removeResizeFrame);
+		window.removeEventListener("keydown", reg_formulaTapMoveEv)
 		/*
 		document.getElementById("firNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
 		document.getElementById("secNoFormulaEditor").removeEventListener('click', multiChoiceImgAdd);
@@ -50,8 +52,12 @@ const RegisterContentsForImg = ({contentsNo})=>{
 			setIsFetchShotCutKey(true);
 			shortCutKeyList = jsonObj["shortCutKey"]
 			window.shortCutKeyList = shortCutKeyList;
-			console.log("useEffect");
+			window.shortCutKeyHigh1 = jsonObj["shortCutKeyHigh1"];
+			window.shortCutKeyEtc = jsonObj["shortCutKeyEtc"];
 			window.addEventListener('scroll', reg_removeResizeFrame);
+			window.addEventListener("keydown", reg_formulaTapMoveEv)
+			//수식요소 마우스 셀렉트 규칙
+			window.addEventListener('mouseup', await reg_newSelectFormulaElement);
 			let myContents;
 			if(contentsNo!==undefined){
 				document.getElementById("makeContentsLinkDiv").classList.add("hidden");
@@ -160,6 +166,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
     
 
     const formulaConvert = async (event) => {
+		await reg_dressYellowBox();
         setAnswerText(document.getElementById(event.target.id).innerHTML);
 	}
 
@@ -229,7 +236,6 @@ const RegisterContentsForImg = ({contentsNo})=>{
 		  output.src = reader.result;
 		};
 
-		console.log(event.target.files[0] );
 		if(event.target.files[0] === undefined ){
 			if(contentsNo === undefined) document.getElementById(outputId).src = imgPlus2;
 			return false;     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
@@ -329,7 +335,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
 									<div className='regAnswerWrap'>
 										<div className="mini-title2">주관식 정답 &nbsp;&nbsp;</div>
 										<div className='answerWrapForImg'>
-											<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit forImg" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event);reg_keyEvSelectFormulaElement(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+											<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit forImg" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 											<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 										</div>
 									</div>

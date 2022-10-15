@@ -6,7 +6,10 @@ import {nb_querySelctorBFS, nb_multiChoiceGridSet} from 'js/common/common_nb';
 
 
 //수식 box 비어있는 경우에서 백스페이스 및 del 버튼 시 전체 선택되야하는데 안되는 요소 별도 처리
-const vacantDomAllSel = ["nbCaseBrckBox", "nbThrCasekBox"];
+const vacantDomAllSel = ["nbCaseBrckBox", "nbThrCasekBox", "nbSigmaSumBox", "nbLimBox", "nbLogBox", "nbIntegralBox", "nbDoubleIntegralBox", "nbTripleIntegralBox"];
+const vacantDomAllSel2 = ["nbLnBox"];
+const vacantDomAllSel3 = ["nbLimBox", "nbLogBox"];
+
 //위로 키보드 이벤트 미적용 대상
 const noApplyUpKeyList = ["nbDenom", "nbBinomCoSec", "nbCaseSec", "nbThrCaseSec", "nbThrCaseThr"];
 //아래로 키보드 이벤트 미적용 대상
@@ -18,6 +21,39 @@ const lineMoveBugEleFont = ["nbL-R-Brck ", "nbR-R-Brck" , "nbL-C-Brck ", "nbR-C-
 const lineMoveBugTbElePosition = ["nbExpBox", "nbSubBox"];
 const lineMoveBugTdElePosition = ["nbExpTmp", "nbSubTmp", "nbFracExpTmp","nbLeftSub", "nbRightSub"];
 
+//적분, 시그마 위아래 다이렉트 이동
+const directMoveToAboveDom = [{focusDom:"nbSigmaSumSub", targetDom:"nbSigmaSumSup"}, {focusDom:"nbSigmaSumSign", targetDom:"nbSigmaSumSup"}, {focusDom:"nbIntSub", targetDom:"nbIntSup"}, {focusDom:"nbDoubleIntSub", targetDom:"nbDoubleIntSup"}, {focusDom:"nbTripleIntSub", targetDom:"nbTripleIntSup"}];
+const directMoveToBelowDom = [{focusDom:"nbSigmaSumSup", targetDom:"nbSigmaSumSub"}, {focusDom:"nbSigmaSumSign", targetDom:"nbSigmaSumSub"}, {focusDom:"nbIntSup", targetDom:"nbIntSub"}, {focusDom:"nbDoubleIntSup", targetDom:"nbDoubleIntSub"}, {focusDom:"nbTripleIntSup", targetDom:"nbTripleIntSub"}];
+
+//수식 전체 셀렉트 규칙
+/*
+const allSelSigmaRule = ["nbSigmaSumSup", "nbSigmaSumSign", "nbSigmaSumBase", "nbSigmaSumSub"];
+const allSelLogRule = ["nbLogSign", "nbLogSubBase", "nbLogBase"];
+const allSelIntegralRule = ["nbIntSign", "nbIntSub", "nbIntBase", "nbIntSup"];
+const allSelLimRule = ["nbLimSign", "nbLimBase", "nbLimSubBase"];
+const allSelTripleIntegralRule = ["nbTripleIntSign", "nbTripleIntSub", "nbTripleIntBase", "nbTripleIntSup"];
+const allSelDoubleIntegralRule = ["nbDoubleIntSign", "nbDoubleIntSub", "nbDoubleIntBase", "nbDoubleIntSup"];
+*/
+
+//수식 전체 셀렉트
+//텍스트 전체 선택하는 경우 수식 요소 전체 선택하는 경우
+const allSelDom = ["nbExpTmp", "nbSubTmp", "nbOverDotBase", "nbAccentBase", "nbRootBase", "nbOverlineBase"
+, "nbRightArrowBase", "nbArcBase", "nbBiDirArrowBase" ]
+//보더박스 다르게 선택한 경우 수식 요소 전체 선택하는 경우
+const allSelDom2 = 
+				[{boxType:"nbFracBox", borderType: ["nbDenom","nbNumer"]},
+				{boxType:"nbBinomCoBox", borderType: ["nbBinomCoFir","nbBinomCoSec"]},
+				{boxType:"nbCaseBrckBox", borderType: ["nbCaseBrck", "nbCaseFir","nbCaseSec"]},
+				{boxType:"nbThrCasekBox", borderType: ["nbThrCaseBrck", "nbThrCaseFir","nbThrCaseSec","nbThrCaseThr"]},
+				{boxType:"nbIntegralBox", borderType: ["nbIntSign","nbIntSup","nbIntSub","nbIntBase"]},
+				{boxType:"nbDoubleIntegralBox", borderType: ["nbDoubleIntSign","nbDoubleIntSup","nbDoubleIntSub","nbDoubleIntBase"]},
+				{boxType:"nbTripleIntegralBox", borderType: ["nbTripleIntSign","nbTripleIntSup","nbTripleIntSub","nbTripleIntBase"]},
+				{boxType:"nbLogBox", borderType: ["nbLogSign","nbLogSubBase","nbLogBase"]},
+				{boxType:"nbLnBox", borderType: ["nbLnSign","nbLnBase"]},
+				{boxType:"nbLimBox", borderType: ["nbLimSign","nbLimSubBase","nbLimBase"]},
+				{boxType:"nbRootBox", borderType: ["nbRootExpBase","nbRootBase"]},
+				{boxType:"nbBiDirSubBox", borderType: ["nbLeftSub","nbBiDirSubBase","nbRightSub"]},
+				{boxType:"nbSigmaSumBox", borderType: ["nbSigmaSumSign","nbSigmaSumSup","nbSigmaSumSub", "nbSigmaSumBase"]}]
 /*
  * 정의 : 과목, 대단원, 중단원, 소단원, 유형 콤보박스 onChange 이벤트 함수
  * 설명 : childElement는 자식 요소, isUnitBubbleEv는 연쇄 이벤트 실행 여부
@@ -326,6 +362,10 @@ export const reg_writeDisableDom = async (event) =>{
 		return true;
 	}
 
+	if(isDisableBox && event.altKey && event.ctrlKey && event.shiftKey  && event.keyCode===90){
+		return true;	//alt+ctrl+shift+z 사용금지
+	}
+
 	//tab, ctrl+z, esc, F1-F12, Insert, Home, Caps Lock, 윈도우 키 등 상관 없는 키는 가능
 	if(isDisableBox && (event.keyCode === 9 || (event.ctrlKey && event.keyCode===90)
 		|| event.keyCode ===19 || event.keyCode ===20 || event.keyCode ===27 || event.keyCode ===45
@@ -333,7 +373,7 @@ export const reg_writeDisableDom = async (event) =>{
 		|| (event.keyCode >= 91 && event.keyCode <= 93) || (event.keyCode >=112 && event.keyCode <=123)) ) {
 		return false;
 	}
-	
+	if(isDisableBox && event.keyCode>=37 && event.keyCode<=40 && event.altKey) return true;	//alt단축키 화살표 입력금지
 	if(isDisableBox && !(event.keyCode>=37 && event.keyCode<=40)) return true;
 	else return false;
 	
@@ -440,7 +480,7 @@ export const reg_reGenerFormulBugFix = async (event) =>{
 
 	let isLeftDir = true;
 	if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
-		isLeftDir =false
+		isLeftDir = false;
 	}
 	
 /*
@@ -796,6 +836,137 @@ export const reg_delVacantDiv = async () =>{
 	}
 } 
 
+/*
+*	정의 : 수식 탭 변경 이벤트
+*	설명 : alt+화살표 좌우로 수식 탭 변경 이벤트
+*/
+export const reg_formulaTapMoveEv = async (event) => {
+	let formulaTap = document.getElementsByClassName("formulaTap");
+	if(!event.shiftKey && event.altKey && event.keyCode=== 39){	//오른쪽으로 이동
+		event.preventDefault();
+		for(let i=0; i<formulaTap.length; i++){
+			if(formulaTap[i].classList.contains("selectedTab")){
+				if(i === formulaTap.length-1){
+					formulaTap[0].click();
+					break;
+				}else{
+					formulaTap[i+1].click();
+					break;
+				}
+			}
+		}
+	}else if(!event.shiftKey && event.altKey && event.keyCode=== 37){		//왼쪽으로 이동
+		event.preventDefault();
+		for(let i=0; i<formulaTap.length; i++){
+			if(formulaTap[i].classList.contains("selectedTab")){
+				if(i === 0){
+					formulaTap[formulaTap.length-1].click();
+					break;
+				}else{
+					formulaTap[i-1].click();
+					break;
+				}
+			}
+		}
+	}
+}
+
+export const directMoveFunction = (event) => {
+	//적분, 시그마 다이렉트 위아래 이동
+	if(!event.shiftKey && !event.altKey && !event.ctrlKey && event.keyCode===38 ){
+		let focusParDom = document.getSelection().getRangeAt(0).startContainer;
+		if(focusParDom.classList === undefined) focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement;
+		if(focusParDom !== undefined){
+			for(let i=0; i<directMoveToAboveDom.length; i++){
+				if(focusParDom.classList.contains(directMoveToAboveDom[i].focusDom)){
+					let nbBox = focusParDom.closest(".nbBox");
+					let targetDom = nbBox.querySelector("."+directMoveToAboveDom[i].targetDom);
+					window.getSelection().setBaseAndExtent(targetDom, 0, targetDom, 0);
+					return true;
+				}
+			}
+		}
+		
+	}else if(!event.shiftKey && !event.altKey && !event.ctrlKey && event.keyCode===40 ){
+		let focusParDom = document.getSelection().getRangeAt(0).startContainer
+		if(focusParDom.classList === undefined) focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement
+		if(focusParDom !==undefined){
+			for(let i=0; i<directMoveToBelowDom.length; i++){
+				if(focusParDom.classList.contains(directMoveToBelowDom[i].focusDom)){
+					let nbBox = focusParDom.closest(".nbBox");
+					let targetDom = nbBox.querySelector("."+directMoveToBelowDom[i].targetDom);
+					window.getSelection().setBaseAndExtent(targetDom, 0, targetDom, 0);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/*
+*	정의 : 제로 스페이스 노드 제거(제로 스페이스 노드는 버그 유발)
+*/
+export const reg_delVacantZeroSpaceNode = async () => {
+	let strtContainer;
+	if(window.getSelection().getRangeAt(0).startContainer.classList === undefined) strtContainer = window.getSelection().getRangeAt(0).startContainer.parentElement;
+	else strtContainer = window.getSelection().getRangeAt(0).startContainer;
+	let strtContainerChildren = strtContainer.childNodes;
+	for(let i=strtContainerChildren.length-1; i>=0; i--){
+		if(strtContainerChildren[i].nodeName === "#text"){
+			for(let len=0; len<5; len++){	//텍스트 노드의 길이가 1부터 4인 것 까지 값이 모두 빈 텍스트 체크하고 삭제
+				if(strtContainerChildren[i].length === len){
+					let idx=0;
+					let isAllZeroSpace = false;
+					while(idx<=len){
+						if(strtContainerChildren[i].nodeValue.charCodeAt(idx) === 65279){
+							isAllZeroSpace = true;
+						}else if(strtContainerChildren[i].nodeValue === ""){
+							isAllZeroSpace = true;
+						}else{
+							isAllZeroSpace = false;
+						}
+						idx++;
+					}
+					if(isAllZeroSpace){
+						strtContainerChildren[i].remove();
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	let endContainer;
+	if(window.getSelection().getRangeAt(0).endContainer.classList === undefined) endContainer = window.getSelection().getRangeAt(0).endContainer.parentElement;
+	else endContainer = window.getSelection().getRangeAt(0).endContainer;
+	let endContainerChildren = endContainer.childNodes;
+	for(let i=endContainerChildren.length-1; i>=0; i--){
+		if(endContainerChildren[i].nodeName === "#text"){
+			for(let len=0; len<5; len++){	//텍스트 노드의 길이가 1부터 4인 것 까지 값이 모두 빈 텍스트 체크하고 삭제
+				if(endContainerChildren[i].length === len){
+					let idx=0;
+					let isAllZeroSpace = false;
+					while(idx<=len){
+						if(endContainerChildren[i].nodeValue.charCodeAt(idx) === 65279){
+							isAllZeroSpace = true;
+						}else if(endContainerChildren[i].nodeValue === ""){
+							isAllZeroSpace = true;
+						}else{
+							isAllZeroSpace = false;
+						}
+						idx++;
+					}
+
+					if(isAllZeroSpace){
+						endContainerChildren[i].remove();
+						break;
+					}
+				}
+			}
+		}
+	}
+}
 
 /*
 *	정의 : 키값 입력 제어 이벤트
@@ -859,6 +1030,9 @@ export const reg_preventKeyEvent = async (event) => {
 	// P태그 DIV태그로 변환
 	await reg_convertPtagToDivTag();
 
+	// 빈 텍스트 태그 제거(빈 텍스트 태그는 버그 유발)
+	await reg_delVacantZeroSpaceNode();
+
 	if(!event.ctrlKey){
 		//테이블 셀렉트 색상 제거
 		let nbSelectionTbTd = document.querySelectorAll(".nbSelectionTbTd");
@@ -881,11 +1055,12 @@ export const reg_preventKeyEvent = async (event) => {
 		undoHTML = document.activeElement.innerHTML;
 		undoPositionByHangulInput= window.getSelection().getRangeAt(0).getBoundingClientRect();
 	}
+
 	//ctrl+z 구현
 	if(!(event.ctrlKey && userKeyCode === 90) && event.keyCode !== 229 
 	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
 		await reg_makeUndoRedoByCtrlKey("userKeyDown");
-	}else if(event.ctrlKey && userKeyCode === 90){
+	}else if(!(event.altKey && event.shiftKey) && event.ctrlKey && userKeyCode === 90){
 		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
 		//undoArr데이터 있는 경우 ctrl+y 스택 메모리에 저장
 		if(undoArr.length >0){
@@ -894,7 +1069,7 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	//ctrl+y구현
-	if(userKeyCode===89 && event.ctrlKey 
+	if(!(event.altKey && event.shiftKey) && userKeyCode===89 && event.ctrlKey 
 	&& (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
 		event.preventDefault();
 		//ctrl+z에 ctrl+y 데이터 넣어주기
@@ -903,6 +1078,13 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 
+	//tbody버그 해결(tbody에 포커스 잡히면 보더박스로 들어가게끔 구현)(tbody 2개인 적분, 로그, 시그마, 리밋에서 에러 발생할 수 있음)
+	if((window.getSelection().anchorNode.tagName !== undefined && window.getSelection().anchorNode.tagName === "TBODY")
+	|| (window.getSelection().focusNode.tagName !== undefined && window.getSelection().focusNode.tagName === "TBODY")){
+		let borderBox = window.getSelection().focusNode.querySelector(".borderBox");
+		window.getSelection().setBaseAndExtent(borderBox, 0, borderBox, 0);
+	}
+	
 	//1번 validation
 	//셀렉트 상태에서 글자 입력, 삭제, cut, 수식키 입력, ctrl+v 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
 	//수식이 마지막 요소 일때 붙여넣기 하면 수식 재생성 및 라인 끊어짐 (ctrl+c에서 수식 마지막 요소 공백 추가)
@@ -910,9 +1092,9 @@ export const reg_preventKeyEvent = async (event) => {
 	if( (!document.getSelection().isCollapsed 
 		&& userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40
 		 && !event.shiftKey && !event.ctrlKey && !event.altKey )
-		 || (userKeyCode === 88 && event.ctrlKey)
-		 || (userKeyCode === 86 && event.ctrlKey)
-		 || (userKeyCode === 67 && event.ctrlKey)
+		 || (!event.altKey && userKeyCode === 88 && event.ctrlKey)
+		 || (!event.altKey && userKeyCode === 86 && event.ctrlKey)
+		 || (!event.altKey && userKeyCode === 67 && event.ctrlKey)
 		 || (userKeyCode !== 18 && event.altKey)){
 
 			await reg_reGenerFormulBugFix(event);
@@ -955,9 +1137,14 @@ export const reg_preventKeyEvent = async (event) => {
 					childTd[i].classList.add('yellowBorderBox');
 				}
 				event.preventDefault();
-			}else if(nbBoxInnerText.length===1 && window.getSelection().isCollapsed){
-				for(let i=0; i<vacantDomAllSel.length; i++){
-					if(nbBoxDom.classList.contains(vacantDomAllSel[i])){
+			}else if(window.getSelection().isCollapsed){
+				let vacantDomAllSelCase = [];
+				if(nbBoxInnerText.length===1) vacantDomAllSelCase = vacantDomAllSel;
+				else if(nbBoxInnerText.length===2) vacantDomAllSelCase = vacantDomAllSel2;
+				else if(nbBoxInnerText.length===3) vacantDomAllSelCase = vacantDomAllSel3;
+				console.log(vacantDomAllSelCase.length);
+				for(let i=0; i<vacantDomAllSelCase.length; i++){
+					if(nbBoxDom.classList.contains(vacantDomAllSelCase[i])){
 						let range = document.createRange();
 						range.setStart(nbBoxDom, 0);
 						range.setEnd(nbBoxDom, 1);
@@ -975,7 +1162,6 @@ export const reg_preventKeyEvent = async (event) => {
 			}
 		}
 	}
-
 
 	//4번, validation 순서 바뀌어도 되는 독립적인 로직
 	//테이블의 셀에 포커스가 있을때 탭 누르면 다음 셀로 이동
@@ -1040,7 +1226,7 @@ export const reg_preventKeyEvent = async (event) => {
 	}
 
 	//shift+위로 또는 shift+아래로 누른 경우(수식 최상위 요소 전체 선택)
-	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
+	if(!event.altKey && ((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40))){
 		let anchorNbBox = window.getSelection().anchorNode.parentElement.closest('.nbBox');
 		let focusNbBox = window.getSelection().focusNode.parentElement.closest('.nbBox');
 
@@ -1092,7 +1278,7 @@ export const reg_preventKeyEvent = async (event) => {
 	* 키보드 화살표 위아래가 이동하는 포커스를 새로운 포커스로 잡아 셀렉션 영역 마지막에 생성 */
 	let anchorNode = window.getSelection().anchorNode
 	let anchorOffset = window.getSelection().anchorOffset;
-	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
+	if(!event.altKey && ((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40))){
 		event.preventDefault();
 		window.getSelection().setBaseAndExtent(window.getSelection().focusNode, window.getSelection().focusOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
 	}
@@ -1111,8 +1297,16 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 	}
 	//키보드 상하 화살표 누른 경우(커서 라인 이동)
-	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed ){
+	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed && !event.altKey ){
 		if(document.activeElement.firstChild === null) return;
+
+		//적분, 시그마 위아래 다이렉트 이동
+		let isDirectMove = await directMoveFunction(event);
+		if(isDirectMove){
+			event.preventDefault();
+			return;
+		}
+
 		//5번, validation 순서 바뀌어도 되는 독립적인 로직
 		await reg_lineMoveBugFixStrt();
 		/*
@@ -1392,7 +1586,7 @@ export const reg_preventKeyEvent = async (event) => {
 		await reg_lineMoveBugFixEnd();
 	}
 
-	if((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40)){
+	if(!event.altKey && ((event.shiftKey && userKeyCode===38) || (event.shiftKey && userKeyCode===40))){
 		window.getSelection().setBaseAndExtent(anchorNode, anchorOffset, window.getSelection().focusNode, window.getSelection().focusOffset);
 	}
 
@@ -1551,7 +1745,14 @@ export const reg_preventKeyEvent = async (event) => {
 
 	//alt 단축키 제어
 	if(event.altKey){
-		const mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyList);
+		let mappingKey;
+		if(event.altKey && event.shiftKey && !event.ctrlKey){
+			mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyHigh1);
+		}else if(event.altKey && event.shiftKey && event.ctrlKey){
+			mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyEtc);
+		}else if(event.altKey && !event.shiftKey && !event.ctrlKey){
+			mappingKey = await reg_getMappingShortCutKey(event, window.shortCutKeyList);
+		}
 		const isWriteDisableDom = await reg_writeDisableDom(event)
 
 		//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
@@ -1626,7 +1827,78 @@ export const reg_preventKeyEvent = async (event) => {
 							}
 						}
 					}
+
+					//리밋 안의 분수 컴파일
+					let nbLimBaseStrt = strtElement.closest(".nbLimBase");
+					let nbLimBaseEnd = endElement.closest(".nbLimBase");
+					if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
+							nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
+						}
+					}
+
+					//적분 안의 분수 컴파일
+					let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+					let nbIntegralEnd = endElement.closest(".nbIntBase");
+					if(nbIntegralStrt === null && nbIntegralEnd === null){
+						nbIntegralStrt = strtElement.closest(".nbDoubleIntBase");
+						nbIntegralEnd = endElement.closest(".nbDoubleIntBase");
+					}
+					if(nbIntegralStrt === null && nbIntegralEnd === null){
+						nbIntegralStrt = strtElement.closest(".nbTripleIntBase");
+						nbIntegralEnd = endElement.closest(".nbTripleIntBase");
+					}
+					if(nbIntegralStrt !== null && nbIntegralEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbIntegralStrt.closest(".nbBox").classList.add("nbConvert");
+							nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
+						}
+					}
+
+					//시그마 안 분수 컴파일
+					let nbSigmaStrt = strtElement.closest(".nbSigmaSumBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+					let nbSigmaEnd = endElement.closest(".nbSigmaSumBase");
+					if(nbSigmaStrt !== null && nbSigmaEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbSigmaStrt.closest(".nbBox").classList.add("nbConvert");
+							nbSigmaStrt.closest(".nbBox").classList.add("nbFracInSigmaSum");
+						}
+					}
+
+					//ln함수 안 분수 컴파일
+					let nbLnStrt = strtElement.closest(".nbLnBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+					let nbLnEnd = endElement.closest(".nbLnBase");
+					if(nbLnStrt !== null && nbLnEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbLnStrt.closest(".nbBox").classList.add("nbConvert");
+							nbLnStrt.closest(".nbBox").classList.add("nbFracInLn");
+						}
+					}
+
+					//로그함수 안 분수 컴파일
+					let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+					let nbLogEnd = endElement.closest(".nbLogBase");
+					if(nbLogStrt !== null && nbLogEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbLogStrt.closest(".nbBox").classList.add("nbConvert");
+							nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
+						}
+					}
 				}
+
+				//리밋 안의 시그마 컴파일
+				if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+					let nbLimBaseStrt = strtElement.closest(".nbLimBase");
+					let nbLimBaseEnd = endElement.closest(".nbLimBase");
+					if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
+							nbLimBaseEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
+						}
+					}
+				}
+				
 
 				//nbConvert 분모 안에 루트, 순환소수, 악센트 들어가는 경우(분모, 분자에 padding:2)
 				if(nbGrammer.indexOf("nbRootBox") > -1 || nbGrammer.indexOf("nbOverDotBox") > -1 || nbGrammer.indexOf("nbAccentBox") > -1 ){
@@ -1684,6 +1956,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 	setTimeout(function(){
+		reg_newSelectFormulaElementForKeyEv(event);
 		//아래로 화살표 눌렀을 때, 포커스가 br태그 뒤로 간 경우 br태그 앞으로 이동시켜주기 
 		reg_brFocusBugFix(userKeyCode);
 		//입력불가 요소 한글 입력시 제거한 포커스 다시 찾아주기
@@ -1759,7 +2032,7 @@ export const reg_preventKeyEvent = async (event) => {
 
 
 		//ctrl+z 자체 구현, ctrl+z stack 메모리에 데이터 추가
-		if(!(userKeyCode === 90 && event.ctrlKey) 
+		if(!(event.altKey && event.shiftKey) && !(userKeyCode === 90 && event.ctrlKey) 
 		&& event.keyCode !== 229  
 		&& event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40){
 			let tmpUndoHtml = document.createElement('div');
@@ -1820,7 +2093,7 @@ export const reg_preventKeyEvent = async (event) => {
 						undoArr.push(currentData);	
 						redoArr = [];
 			}
-		}else if(userKeyCode === 90 && event.ctrlKey){	//ctrl+z 실행
+		}else if(!(event.altKey && event.shiftKey) && userKeyCode === 90 && event.ctrlKey){	//ctrl+z 실행
 			if(undoArr.length > 0){							//데이터가 있는 경우에만 실행
 				for(let i=undoArr.length-1; i>=0; i--){
 					if(undoArr[i].activeId === document.activeElement.id) {			//현재 입력창의 마지막 undo 데이터 가져오기
@@ -1863,7 +2136,7 @@ export const reg_preventKeyEvent = async (event) => {
 		if(previouseKeyCode.length > 1) previouseKeyCode.splice(0, previouseKeyCode.length-1);
 
 		//ctrl+y
-		if(userKeyCode===89 && event.ctrlKey ){
+		if(!event.altKey && userKeyCode===89 && event.ctrlKey ){
 			if(redoArr.length > 0){							//데이터가 있는 경우에만 실행
 				for(let i=redoArr.length-1; i>=0; i--){
 					if(redoArr[i].activeId === document.activeElement.id) {			//현재 입력창의 마지막 undo 데이터 가져오기
@@ -1894,7 +2167,7 @@ export const reg_preventKeyEvent = async (event) => {
 		}
 
 		// ctrl+v
-		if( userKeyCode === 86 && event.ctrlKey){
+		if(!event.altKey && userKeyCode === 86 && event.ctrlKey){
 			let copiedEditInnerTable = document.getElementById(document.activeElement.id).querySelector(".copiedEditInnerTable");
 			if(copiedEditInnerTable !== null){
 				copiedEditInnerTable.classList.remove("copiedEditInnerTable");
@@ -2107,33 +2380,7 @@ export const reg_eraseEditTbUI = async (event ) =>{
 	} 
 }
 
-/*
-* 정의 : reg_selectFormulaElement 함수에서 사용하는 수식요소별 전첵 선택규칙(startContainer 체크)
-*		규칙1 = 루트, 조건(가) 분수는 처음과 끝 선택시 전체선택되야함
-*		규칙2 = 루트 분수, 경우의수, 이항계수는 하나의 수식요소 밑 같은 요소끼리 select시 전체 선택 안함.(다른요소일때는 전체선택)
-*		규칙3 = 윗첨자, 아랫첨자, 순열과조합, 순환소스, 악센트, 선분과 직선, 분수용 지수는 무조건 전체선택
-*/
-export const reg_allSelFormulaAnchorRule = async (isMouseUp) => {
-	//루트, 조건(가) 직사각형
-	let strtConOneDepth = document.getSelection().anchorNode;
-	if(strtConOneDepth.classList === undefined) strtConOneDepth = strtConOneDepth.parentElement.closest('.nbBox');
-	else strtConOneDepth = strtConOneDepth.closest('.nbBox');
-	
-	if(strtConOneDepth.classList.contains("nbRootBox") || strtConOneDepth.classList.contains("nbCondBox") ){
-		return false;
-	}
-	//분수, 루트 분수, 경우의수, 이항계수는  하나의 수식요소 밑 같은 요소끼리 select시 전체 선택 안함.(다른요소일때는 전체선택)
-	else if(strtConOneDepth.classList.contains("nbFracBox") || strtConOneDepth.classList.contains("nbRootFracBox")
-		|| strtConOneDepth.classList.contains("nbCaseBrckBox") || strtConOneDepth.classList.contains("nbThrCasekBox")
-		|| strtConOneDepth.classList.contains("nbBinomCoBox")){
-		return false;
-	}
-	//윗첨자, 아랫첨자, 순열과조합, 순환소스, 악센트, 선분과 직선, 분수용 지수는 무조건 전체선택
 
-	//셀렉트 선택없이 포커스 하나만 있는 경우는 이벤트 적용X
-	if(isMouseUp && window.getSelection().isCollapsed) return false;
-	return true;
-}
 /*
 * 정의 : reg_allSelFormulaRuleEnd 함수에서 사용하는 규칙(endContainer 체크)
 *		규칙1 = 루트, 조건(가) 분수는 처음과 끝 선택시 전체선택되야함
@@ -2223,329 +2470,277 @@ export const reg_dressSelectionBackColor = async () => {
 	}
 	
 }
-/*
-* 정의 : 수식요소 셀렉트(드래그)시 걸쳐서 셀렉트 안되고 table 요소 전체 셀렉트 되게끔 구현(마우스up 이벤트에 적용)
-*/
-export const reg_selectFormulaElement = async (event) => {
+
+
+export const reg_newSelectFormulaElement = async () => {
 	if(!document.activeElement.classList.contains("contentEditClass")) return;
-	let anchorNbBox = document.getSelection().anchorNode
-	if(anchorNbBox.classList === undefined) anchorNbBox = anchorNbBox.parentElement.closest('.nbBox');
-	else anchorNbBox = anchorNbBox.closest('.nbBox');
+	let anchorNbBorderBox = document.getSelection().anchorNode
+	if(anchorNbBorderBox.classList === undefined) anchorNbBorderBox = anchorNbBorderBox.parentElement.closest('.borderBox');
+	else anchorNbBorderBox = anchorNbBorderBox.closest('.borderBox');
 
-	let focusNbBox = document.getSelection().focusNode;
-	if(focusNbBox.classList === undefined) focusNbBox = focusNbBox.parentElement.closest('.nbBox');
-	else focusNbBox = focusNbBox.closest('.nbBox');
-	
-	//셀렉션의 앵커와 포커스에 수식요소 있는 경우
-	if(anchorNbBox !== null && focusNbBox !== null){
-		while(anchorNbBox.parentElement.closest('.nbBox')!==null){
-			anchorNbBox = anchorNbBox.parentElement.closest('.nbBox');
-		}
-		while(focusNbBox.parentElement.closest('.nbBox')!==null){
-			focusNbBox = focusNbBox.parentElement.closest('.nbBox');
-		}
-		//최상위 수식요소가 같은 경우
-		if(anchorNbBox === focusNbBox){
-			//하나의 수식요소 밑에서 같은 요소끼리 select한 경우
-			if( document.getSelection().getRangeAt(0).startContainer === document.getSelection().getRangeAt(0).endContainer){
-				if(await reg_allSelFormulaAnchorRule(true)){
-					focusNbBox = document.getSelection().focusNode.parentElement.closest('.nbBox');
-					let orgRange = window.getSelection()
-					let focusNode = window.getSelection().focusNode;
-					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-					orgRange.removeAllRanges();
-					if(focusNode === strtContainer){
-						orgRange.setBaseAndExtent(focusNbBox, 1, focusNbBox, 0);
-					}else{
-						orgRange.setBaseAndExtent(focusNbBox, 0, focusNbBox, 1);
-					}
-					await reg_dressSelectionBackColor();
-					return;
-				}else{
-					//예외 케이스 중 분수, 경우의 수, 이항계수는 하나의 수식요소를 선택하는 경우에 전체 선택이 아님
-					let anchorNbRootBox = document.getSelection().anchorNode;
-					let focusNbRootBox = document.getSelection().focusNode;
-					if(anchorNbRootBox.classList !== undefined) anchorNbRootBox = anchorNbRootBox.closest(".nbBox");
-					else anchorNbRootBox = anchorNbRootBox.parentElement.closest(".nbBox");
-					if(focusNbRootBox.classList !== undefined) focusNbRootBox = focusNbRootBox.closest(".nbBox");
-					else focusNbRootBox = focusNbRootBox.parentElement.closest(".nbBox");
+	if(anchorNbBorderBox === null){
+		if(document.getSelection().anchorNode.classList === undefined) anchorNbBorderBox = document.getSelection().anchorNode.parentElement.closest('.writeDisable');
+		else anchorNbBorderBox = document.getSelection().anchorNode.closest('.writeDisable');
+	}
 
-					//루트 예외 케이스1) 루트, 조건 직사각형인 경우 처음과 끝 선택하면 루트, 조건 직사각형 전체 선택
-					if( focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox") 
-					|| anchorNbRootBox.classList.contains("nbRootBox") || anchorNbRootBox.classList.contains("nbCondBox") ){
-						if(document.getSelection().getRangeAt(0).startOffset===0
-						&& document.getSelection().getRangeAt(0).startContainer.previousSibling === null 
-						&& (document.getSelection().getRangeAt(0).endContainer.nextSibling === null || document.getSelection().getRangeAt(0).endContainer.nextSibling.nodeValue === "") ){
-							if(document.getSelection().getRangeAt(0).endContainer.nodeName === "#text" 
-							&& document.getSelection().getRangeAt(0).endContainer.length !== document.getSelection().getRangeAt(0).endOffset){
-								return;
-							}
-							if(window.getSelection().isCollapsed ) return;	// 비어있는 요소 클릭시 전체 선택되는 문제 해결
-							
-							let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-							let focusNode = window.getSelection().focusNode;
-							let orgRange = window.getSelection()
-							orgRange.removeAllRanges();
-							if(focusNode === strtContainer){
-								if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 1, focusNbRootBox, 0);
-								else orgRange.setBaseAndExtent(anchorNbRootBox, 1, anchorNbRootBox, 0);
-							}else{
-								if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 0, focusNbRootBox, 1);
-								else orgRange.setBaseAndExtent(anchorNbRootBox, 0, anchorNbRootBox, 1);
-							}
-							await reg_dressSelectionBackColor();
-							return;
-						}
-					}
-				}
-			//하나의 수식요소 밑에서 다른 요소끼리 select한 경우
-			}else{
-				let isAllSel = false;
-				let strtParElement = document.getSelection().getRangeAt(0).startContainer.parentElement;
-				let endParElement = document.getSelection().getRangeAt(0).endContainer.parentElement;
-				let strtContainer = document.getSelection().getRangeAt(0).startContainer;
-				let endContainer = document.getSelection().getRangeAt(0).endContainer;
-				//분수, 루트분수의 경우 분모분자 다르면 전체선택
-				if(strtParElement.closest('.nbNumer') !== null
-				&& endParElement.closest('.nbDenom') !== null) {
-					isAllSel=true;
-				}else if(strtParElement.closest('.nbNumer') !== null && endContainer.classList !== undefined && endContainer.classList.contains('nbDenom')){
-					isAllSel=true;
-				}else if(strtContainer.classList !== undefined && strtContainer.classList.contains('nbNumer') && endParElement.closest('.nbDenom')!== null ){
-					isAllSel=true;
-				}else if(strtContainer.classList !== undefined && endContainer.classList !== undefined &&
-					strtContainer.classList.contains('nbNumer') && endContainer.classList.contains('nbDenom')){
-						isAllSel=true;
-				}
-				//순열과 조합 선택요소 다르면 전체 선택
-				else if( (strtParElement.closest('.nbLeftSub') !== null && endParElement.closest('.nbBiDirSubBase') !== null) 
-				|| (strtParElement.closest('.nbLeftSub') !== null && endParElement.closest('.nbRightSub') !== null)
-				|| (strtParElement.closest('.nbBiDirSubBase') !== null && endParElement.closest('.nbRightSub') !== null) ){
-					isAllSel=true;
-				}
-				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
-					(  (strtContainer.classList.contains('nbLeftSub') && endContainer.classList.contains('nbBiDirSubBase'))
-					|| (strtContainer.classList.contains('nbLeftSub') && endContainer.classList.contains('nbRightSub'))
-					|| (strtContainer.classList.contains('nbBiDirSubBase') && endContainer.classList.contains('nbRightSub')) ) ){
-						isAllSel=true;
-				}
-				//이항계수 케이스 다르면 전체 선택
-				else if(strtParElement.closest('.nbBinomCoFir') !== null && endParElement.closest('.nbBinomCoSec') !== null){
-					isAllSel=true;
-				}
-				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
-					  (strtContainer.classList.contains('nbBinomCoFir') && endContainer.classList.contains('nbBinomCoSec')) ){
-						isAllSel=true;
-				}
-				//경우의 수 케이스 다르면 전체 선택
-				else if(strtParElement.closest('.nbCaseFir') !== null && endParElement.closest('.nbCaseSec') !== null){
-					isAllSel=true;
-				}
-				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
-					(  (strtContainer.classList.contains('nbCaseFir') && endContainer.classList.contains('nbCaseSec'))) ){
-						isAllSel=true;
-				}
-				//세가지 경우의 수 케이스 다르면 전체 선택
-				else if( (strtParElement.closest('.nbThrCaseFir') !== null && endParElement.closest('.nbThrCaseSec') !== null)
-				|| (strtParElement.closest('.nbThrCaseFir') !== null && endParElement.closest('.nbThrCaseThr') !== null)
-				|| (strtParElement.closest('.nbThrCaseSec') !== null && endParElement.closest('.nbThrCaseThr') !== null)){
-					isAllSel=true;
-				}
-				else if( (strtContainer.classList !== undefined && endContainer.classList !== undefined) &&
-					(  (strtContainer.classList.contains('nbThrCaseFir') && endContainer.classList.contains('nbThrCaseSec'))
-					|| (strtContainer.classList.contains('nbThrCaseFir') && endContainer.classList.contains('nbThrCaseThr'))
-					|| (strtContainer.classList.contains('nbThrCaseSec') && endContainer.classList.contains('nbThrCaseThr')) ) ){
-						isAllSel=true;
-				}
+	let focusNbBorderBox = document.getSelection().focusNode;
+	if(focusNbBorderBox.classList === undefined) focusNbBorderBox = focusNbBorderBox.parentElement.closest('.borderBox');
+	else focusNbBorderBox = focusNbBorderBox.closest('.borderBox');
 
-				let anchorNbRootBox = document.getSelection().anchorNode;
-				let focusNbRootBox = document.getSelection().focusNode;
-				if(anchorNbRootBox.classList !== undefined) anchorNbRootBox = anchorNbRootBox.closest(".nbBox");
-				else anchorNbRootBox = anchorNbRootBox.parentElement.closest(".nbBox");
-				if(focusNbRootBox.classList !== undefined) focusNbRootBox = focusNbRootBox.closest(".nbBox");
-				else focusNbRootBox = focusNbRootBox.parentElement.closest(".nbBox");
+	if(focusNbBorderBox === null){
+		if(document.getSelection().focusNode.classList === undefined) focusNbBorderBox = document.getSelection().focusNode.parentElement.closest('.writeDisable');
+		else focusNbBorderBox = document.getSelection().focusNode.closest('.writeDisable');
+	}
 
-				//루트 예외 케이스1) 루트, 조건 직사각형인 경우 처음과 끝 선택하면 루트, 조건 직사각형 전체 선택
-				if((focusNbRootBox=== anchorNbRootBox) && (focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")
-				|| anchorNbRootBox.classList.contains("nbRootBox") || anchorNbRootBox.classList.contains("nbCondBox")) ){
-					if(document.getSelection().getRangeAt(0).startOffset===0
-					&& document.getSelection().getRangeAt(0).startContainer.previousSibling === null 
-					&& (document.getSelection().getRangeAt(0).endContainer.nextSibling === null || document.getSelection().getRangeAt(0).endContainer.nextSibling.nodeValue === "") ){
+	let isLeftDir = true;
+	if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
+		isLeftDir = false;
+	}
+	if(window.getSelection().isCollapsed ) return;
+
+	//앵커와 포커스 모두 수식요소 선택한 경우
+	if(anchorNbBorderBox !== null && focusNbBorderBox !== null){
+		let anchorNbBox = anchorNbBorderBox.closest(".nbBox");
+		let focusNbBox = focusNbBorderBox.closest(".nbBox");
+		//보더 박스 같은 경우
+		if(anchorNbBorderBox === focusNbBorderBox){
+			for(let i=0; i<allSelDom.length; i++){
+				// 지수, 아랫첨자, 순환소수, 악센트, 벡터, 직선, 선분, 루트
+				// 앵커, 포커스 보더 박스 같고 안에 내용 전체 셀렉트 한 경우 수식 셀렉트
+				if(anchorNbBorderBox.classList.contains(allSelDom[i])){
+					//빈 텍스트 노드 제거(빈 텍스트는 버그 유발)
+					await reg_delVacantZeroSpaceNode();
+					//안에 텍스트 전체 셀렉트시 수식 요소 전체 셀렉트
+					if(document.getSelection().getRangeAt(0).startOffset===0 && (document.getSelection().getRangeAt(0).startContainer.previousSibling === null )
+					&& (document.getSelection().getRangeAt(0).endContainer.nextSibling === null ||  document.getSelection().getRangeAt(0).endContainer.nextSibling.tagName === "BR") ){
 						if(document.getSelection().getRangeAt(0).endContainer.nodeName === "#text" 
 						&& document.getSelection().getRangeAt(0).endContainer.length !== document.getSelection().getRangeAt(0).endOffset){
 							return;
 						}
-						
-						if(window.getSelection().isCollapsed ) return;	// 비어있는 요소 클릭시 전체 선택되는 문제 해결
-						let strtContainer = window.getSelection().getRangeAt(0).startContainer
-						let focusNode = window.getSelection().focusNode
-						let orgRange = window.getSelection()
-						orgRange.removeAllRanges();
-						if(focusNode === strtContainer){
-							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 1, focusNbRootBox, 0);
-							else orgRange.setBaseAndExtent(anchorNbRootBox, 1, anchorNbRootBox, 0);
-						}else{
-							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 0, focusNbRootBox, 1);
-							else orgRange.setBaseAndExtent(anchorNbRootBox, 0, anchorNbRootBox, 1);
-						}
+						if(isLeftDir) window.getSelection().setBaseAndExtent(anchorNbBox, 1, focusNbBox, 0);
+						else window.getSelection().setBaseAndExtent(anchorNbBox, 0, focusNbBox, 1);
 						await reg_dressSelectionBackColor();
 						return;
-					}
-
-				//루트 예외 케이스2) 루트 끝에 지수있고 지수에서 루트 선택할때
-				} else if( (focusNbRootBox.contains(window.getSelection().anchorNode)
-				&& (focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) )
-				|| (anchorNbRootBox.contains(window.getSelection().focusNode)
-				&& (anchorNbRootBox.classList.contains("nbRootBox") || anchorNbRootBox.classList.contains("nbCondBox")) ) ){
-					if(document.getSelection().getRangeAt(0).startOffset===0
-					&& document.getSelection().getRangeAt(0).startContainer.previousSibling === null 
-					&& (document.getSelection().getRangeAt(0).endContainer.nextSibling === null || document.getSelection().getRangeAt(0).endContainer.nextSibling.nodeValue === "") ){
-						
-						if(document.getSelection().getRangeAt(0).endContainer.nodeName === "#text" 
-						&& document.getSelection().getRangeAt(0).endContainer.length !== document.getSelection().getRangeAt(0).endOffset){
-							return;
-						}
-						if(window.getSelection().isCollapsed ) return;	// 비어있는 요소 클릭시 전체 선택되는 문제 해결
-						let strtContainer = window.getSelection().getRangeAt(0).startContainer
-						let focusNode = window.getSelection().focusNode
-						let orgRange = window.getSelection()
-						orgRange.removeAllRanges();
-						if(focusNode === strtContainer){
-							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 1, focusNbRootBox, 0);
-							else orgRange.setBaseAndExtent(anchorNbRootBox, 1, anchorNbRootBox, 0);
-						}else{
-							if(focusNbRootBox.classList.contains("nbRootBox") || focusNbRootBox.classList.contains("nbCondBox")) orgRange.setBaseAndExtent(focusNbRootBox, 0, focusNbRootBox, 1);
-							else orgRange.setBaseAndExtent(anchorNbRootBox, 0, anchorNbRootBox, 1);
-						}
-						await reg_dressSelectionBackColor();
-						return;
-					}
-				}
-			
-				if(isAllSel){
-					let orgRange = window.getSelection()
-					let focusNode = window.getSelection().focusNode;
-					let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-					orgRange.removeAllRanges();
-					if(focusNode === strtContainer){
-						orgRange.setBaseAndExtent(focusNbBox, 1, focusNbBox, 0);
-					}else{
-						orgRange.setBaseAndExtent(focusNbBox, 0, focusNbBox, 1);
-					}
-					await reg_dressSelectionBackColor();
-					return;
-				}else{
-					let anchorNodeOneDepth = document.getSelection().anchorNode;
-					if(anchorNodeOneDepth.classList !== undefined){
-						anchorNodeOneDepth = anchorNodeOneDepth.closest('.nbBox')
-					}else{
-						anchorNodeOneDepth = anchorNodeOneDepth.parentElement.closest('.nbBox')
-					}
-					
-					let focusNodeOneDepth = document.getSelection().focusNode;
-					if(focusNodeOneDepth.classList !== undefined){
-						focusNodeOneDepth = focusNodeOneDepth.closest('.nbBox')
-					}else{
-						focusNodeOneDepth = focusNodeOneDepth.parentElement.closest('.nbBox')
-					}
-
-					//셀렉션의 앵커와 포커스에 수식요소 있으며 수식요소가 최상위 요소가 아닌 경우
-					if(anchorNodeOneDepth !== anchorNbBox && focusNodeOneDepth !== focusNbBox){
-						let orgRange = window.getSelection()
-						let focusNode = window.getSelection().focusNode;
-						let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-						orgRange.removeAllRanges();
-						if(focusNode === strtContainer){
-							orgRange.setBaseAndExtent(anchorNodeOneDepth, 1, focusNodeOneDepth, 0);
-						}else{
-							orgRange.setBaseAndExtent(anchorNodeOneDepth, 0, focusNodeOneDepth, 1);
-						}
-						await reg_dressSelectionBackColor();
-						return;
-					}
-					//셀렉션의 앵커에 수식요소 있으며 수식요소가 최상위 요소가 아닌 경우
-					else if(anchorNodeOneDepth !== anchorNbBox){
-						if(await reg_allSelFormulaAnchorRule(true)){
-							let orgRange = window.getSelection()
-							let focusNode = window.getSelection().focusNode;
-							let focusOffset = window.getSelection().focusOffset;
-							let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-							orgRange.removeAllRanges();
-							if(focusNode === strtContainer){
-								orgRange.setBaseAndExtent(anchorNodeOneDepth, 1, focusNode, focusOffset);
-							}else{
-								orgRange.setBaseAndExtent(anchorNodeOneDepth, 0, focusNode, focusOffset);
-							}
-							await reg_dressSelectionBackColor();
-							return;
-						}
-					}
-					//셀렉션의 포커스에 수식요소 있으며 수식요소가 최상위 요소가 아닌 경우
-					else if(focusNodeOneDepth !== focusNbBox){
-						if(await reg_allSelFormulaFocusRule(true)){
-							let orgRange = window.getSelection()
-							let focusNode = window.getSelection().focusNode;
-							let anchorNode = window.getSelection().anchorNode;
-							let anchorOffset = window.getSelection().anchorOffset;
-							let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-							orgRange.removeAllRanges();
-							if(focusNode === strtContainer){
-								orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNodeOneDepth, 0);
-							}else{
-								orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNodeOneDepth, 1);
-							}
-							await reg_dressSelectionBackColor();
-							return;
-						}
 					}
 				}
 			}
-		//최상위 수식요소가 다른 경우
+		//보더박스 다른 경우
 		}else{
-			let orgRange = window.getSelection()
-			let focusNode = window.getSelection().focusNode;
-			let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-			orgRange.removeAllRanges();
-			if(focusNode === strtContainer){
-				orgRange.setBaseAndExtent(anchorNbBox, 1, focusNbBox, 0);
-			}else{
-				orgRange.setBaseAndExtent(anchorNbBox, 0, focusNbBox, 1);
+			let rootAnchorNbBox = anchorNbBorderBox;
+			while(rootAnchorNbBox.parentElement.closest('.nbBox')!==null){
+				rootAnchorNbBox = rootAnchorNbBox.parentElement.closest('.nbBox');
 			}
-			await reg_dressSelectionBackColor();
-			return;
+			let rootFocusNbBox = focusNbBorderBox;
+			while(rootFocusNbBox.parentElement.closest('.nbBox')!==null){
+				rootFocusNbBox = rootFocusNbBox.parentElement.closest('.nbBox');
+			}
+
+			//앵커와 포커스 보더박스 다르고 최상위 수식요소 같은 경우
+			if(rootAnchorNbBox === rootFocusNbBox){
+				let isExceptCase = false;
+				let boxTypeIdx = 0;
+
+				let anchorNbBox = anchorNbBorderBox.closest(".nbBox");
+				while(anchorNbBox.parentElement.closest(".nbBox") !== null){
+					anchorNbBox = anchorNbBox.parentElement.closest(".nbBox");
+				}
+				for(let i=0; i<allSelDom2.length;i++){		//루트 수식 뿐만 아니라 걸리는 모든 수식에 대해 체크 해야함
+					if(rootAnchorNbBox.classList.contains(allSelDom2[i].boxType)){
+						isExceptCase = true;
+						boxTypeIdx = i;
+						break;
+					}
+				} 
+
+				//분수, 적분, 시그마, 리밋 등 여러곳에 입력할 수 있는 수식의 경우 서로 다른 보더박스 선택시 전체 셀랙트
+				//(writeDisable은 borderBox 없음)
+				if(isExceptCase){
+					let anchorNbBorderBoxType;
+					let focusNbBorderBoxType;
+					for(let i=0; i<allSelDom2[boxTypeIdx].borderType.length; i++){
+						if(focusNbBorderBox.classList.contains(allSelDom2[boxTypeIdx].borderType[i])){
+							focusNbBorderBoxType = allSelDom2[boxTypeIdx].borderType[i];
+						}
+
+						let focusNbBorderBoxForExcept = focusNbBorderBox;	//focusNbBorderBox 그대로 사용하면 아래 로직에서 제대로 구현 안됨, 새로운 변수로 케이스 확인
+						innerWhile: while(focusNbBorderBoxForExcept.parentElement.closest(".borderBox") !== null || focusNbBorderBoxForExcept.parentElement.closest(".writeDisable")){
+							if(focusNbBorderBoxForExcept.parentElement.closest(".borderBox") === null) focusNbBorderBoxForExcept = focusNbBorderBoxForExcept.parentElement.closest(".writeDisable");
+							else focusNbBorderBoxForExcept = focusNbBorderBoxForExcept.parentElement.closest(".borderBox");
+							if(focusNbBorderBoxForExcept.classList.contains(allSelDom2[boxTypeIdx].borderType[i])){
+								focusNbBorderBoxType = allSelDom2[boxTypeIdx].borderType[i];
+								break innerWhile;
+							}
+						}
+
+						
+						if(anchorNbBorderBox.classList.contains(allSelDom2[boxTypeIdx].borderType[i])){
+							anchorNbBorderBoxType = allSelDom2[boxTypeIdx].borderType[i];
+						}
+
+						let anchorNbBorderBoxForExcept = anchorNbBorderBox;	//anchorNbBorderBox 그대로 사용하면 아래 로직에서 제대로 구현 안됨, 새로운 변수로 케이스 확인
+						innerWhile2: while(anchorNbBorderBoxForExcept.parentElement.closest(".borderBox") !== null || anchorNbBorderBoxForExcept.parentElement.closest(".writeDisable") !== null){
+							if(anchorNbBorderBoxForExcept.parentElement.closest(".borderBox") === null) anchorNbBorderBox = anchorNbBorderBoxForExcept.parentElement.closest(".writeDisable");
+							else anchorNbBorderBoxForExcept = anchorNbBorderBoxForExcept.parentElement.closest(".borderBox");
+							if(anchorNbBorderBoxForExcept.classList.contains(allSelDom2[boxTypeIdx].borderType[i])){
+								anchorNbBorderBoxType = allSelDom2[boxTypeIdx].borderType[i];
+								break innerWhile2;
+							}
+						}
+					}
+
+					if(anchorNbBorderBoxType !== focusNbBorderBoxType){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(rootAnchorNbBox, 1, rootAnchorNbBox, 0);
+						else window.getSelection().setBaseAndExtent(rootAnchorNbBox, 0, rootAnchorNbBox, 1);
+						await reg_dressSelectionBackColor();
+						return;
+					}
+				}
+
+				let rootBelowAnchorNbBox = anchorNbBorderBox;
+				while(rootBelowAnchorNbBox.parentElement.closest(".nbBox") !== rootAnchorNbBox){
+					rootBelowAnchorNbBox = rootBelowAnchorNbBox.parentElement.closest(".nbBox");
+				}
+				let rootBelowFocusNbBox = focusNbBorderBox;
+				while(rootBelowFocusNbBox.parentElement.closest(".nbBox") !== rootFocusNbBox){
+					rootBelowFocusNbBox = rootBelowFocusNbBox.parentElement.closest(".nbBox");
+				}
+				//앵커와 포커스의 최상위 수식요소 제외한 포함관계 여부에 따른 셀렉트 규칙
+				let focusNbBorderBoxChild = focusNbBorderBox.querySelectorAll(".nbBox")
+				for(let i=0; i<focusNbBorderBoxChild.length; i++){
+					//포커스가 최상위 수식의 직계 보더박스이면 포커스는 그대로, 앵커는 최상위 바로 전 수식 요소로 셀렉트
+					if(focusNbBorderBox.closest(".nbBox") === rootFocusNbBox && focusNbBorderBoxChild[i] === anchorNbBorderBox.closest(".nbBox")){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(rootBelowAnchorNbBox, 1, window.getSelection().focusNode, window.getSelection().focusOffset);
+						else window.getSelection().setBaseAndExtent(rootBelowAnchorNbBox, 0, window.getSelection().focusNode, window.getSelection().focusOffset);
+						await reg_dressSelectionBackColor();
+						return;
+					}
+					//포커스가 최상위 수식의 직계 보더박스가 아니고 포커스가 앵커를 포함하는 관계(포커스 전체 셀렉트)
+					else if(focusNbBorderBox.closest(".nbBox") !== rootFocusNbBox && focusNbBorderBoxChild[i] === anchorNbBorderBox.closest(".nbBox")){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(focusNbBorderBox.closest(".nbBox"), 1, focusNbBorderBox.closest(".nbBox"), 0);
+						else window.getSelection().setBaseAndExtent(focusNbBorderBox.closest(".nbBox"), 0, focusNbBorderBox.closest(".nbBox"), 1);
+						await reg_dressSelectionBackColor();
+						return;
+					}
+				}
+
+				let anchorNbBorderBoxChild = anchorNbBorderBox.querySelectorAll(".nbBox")
+				for(let i=0; i<anchorNbBorderBoxChild.length; i++){
+					//앵커가 최상위 수식의 직계 보더박스이면 앵커는 그대로, 포커스는 최상위 바로 전 수식 요소로 셀렉트
+					if(anchorNbBorderBox.closest(".nbBox") === rootAnchorNbBox && anchorNbBorderBoxChild[i] === focusNbBorderBox.closest(".nbBox")){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, rootBelowFocusNbBox, 0);
+						else window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, rootBelowFocusNbBox, 1);
+						await reg_dressSelectionBackColor();
+						return;
+					}
+					//앵커가 최상위 수식의 직계 보더박스가 아니고 앵커가 포커스를 포함하는 관계(앵커 전체 셀렉트)
+					else if(anchorNbBorderBox.closest(".nbBox") !== rootAnchorNbBox && anchorNbBorderBoxChild[i] === focusNbBorderBox.closest(".nbBox")){
+						if(isLeftDir) window.getSelection().setBaseAndExtent(anchorNbBorderBox.closest(".nbBox"), 1, anchorNbBorderBox.closest(".nbBox"), 0);
+						else window.getSelection().setBaseAndExtent(anchorNbBorderBox.closest(".nbBox"), 0, anchorNbBorderBox.closest(".nbBox"), 1);
+						await reg_dressSelectionBackColor();
+						return;
+					}
+				}
+				//앵커와 포커스가 최상위 수식이 아니고 최상위 수식요소를 제외한 포함관계가 없고 앵커와 포커스 최상위 바로 전 노드가 다르면 최상위 바로 전 노드로 셀렉트
+				if(anchorNbBorderBox.closest(".nbBox") !== rootAnchorNbBox && focusNbBorderBox.closest(".nbBox") !== rootFocusNbBox && rootBelowAnchorNbBox !== rootBelowFocusNbBox){
+					if(isLeftDir) window.getSelection().setBaseAndExtent(rootBelowAnchorNbBox, 1, rootBelowFocusNbBox, 0);
+					else window.getSelection().setBaseAndExtent(rootBelowAnchorNbBox, 0, rootBelowFocusNbBox, 1);
+					await reg_dressSelectionBackColor();
+					return;
+				}
+
+				//앵커와 포커스가 최상위 수식이 아니고 최상위 수식요소를 제외한 포함관계가 없고 앵커와 포커스 최상위 바로 전 노드가 같으면 둘 다 포함하는 노드로 셀렉트
+				if(anchorNbBorderBox.closest(".nbBox") !== rootAnchorNbBox && focusNbBorderBox.closest(".nbBox") !== rootFocusNbBox && rootBelowAnchorNbBox === rootBelowFocusNbBox){
+					let anchorFocusIncludeNbBox = focusNbBorderBox;
+					while(anchorFocusIncludeNbBox.parentElement.closest(".nbBox") !== rootFocusNbBox){
+						anchorFocusIncludeNbBox = anchorFocusIncludeNbBox.parentElement.closest(".nbBox");
+						if(anchorFocusIncludeNbBox.contains(anchorNbBorderBox) && anchorFocusIncludeNbBox.contains(focusNbBorderBox)){
+							break;
+						}
+					}
+					if(isLeftDir) window.getSelection().setBaseAndExtent(anchorFocusIncludeNbBox, 1, anchorFocusIncludeNbBox, 0);
+					else window.getSelection().setBaseAndExtent(anchorFocusIncludeNbBox, 0, anchorFocusIncludeNbBox, 1);
+					await reg_dressSelectionBackColor();
+					return;
+				}
+			//최상위 수식요소 다른 경우, 서로 다른 수식 셀렉트
+			}else{
+				let tmpCaret = document.createElement("span");
+				tmpCaret.innerHTML = "&#65279;";
+				let tmpCaret2 = document.createElement("span");
+				tmpCaret2.innerHTML = "&#65279;";
+				
+				if(isLeftDir){
+					//tbody 두개 있는 경우 제대로 셀렉트 안되 캐럿 추가
+					rootAnchorNbBox.after(tmpCaret);
+					rootFocusNbBox.before(tmpCaret2);
+					window.getSelection().setBaseAndExtent(tmpCaret, 1, tmpCaret2, 0);
+					tmpCaret.remove();
+					tmpCaret2.remove();
+				} 
+				else{
+					rootAnchorNbBox.before(tmpCaret);
+					rootFocusNbBox.after(tmpCaret2);
+					window.getSelection().setBaseAndExtent(tmpCaret, 0, tmpCaret2, 1);
+					tmpCaret.remove();
+					tmpCaret2.remove();
+				}
+				await reg_dressSelectionBackColor();
+				return;
+			}
 		}
-	//셀렉션의 포커스에 수식요소 있는 경우
-	}else if(focusNbBox !== null){
-		while(focusNbBox.parentElement.closest('.nbBox')!==null){
-			focusNbBox = focusNbBox.parentElement.closest('.nbBox');
+
+	}//셀렉션의 포커스에 수식요소 있는 경우(앵커는 수식 아닌 경우)
+	else if(focusNbBorderBox !== null){
+		while(focusNbBorderBox.parentElement.closest('.nbBox')!==null){
+			focusNbBorderBox = focusNbBorderBox.parentElement.closest('.nbBox');
 		}
 		let orgRange = window.getSelection()
 		let anchorNode = window.getSelection().anchorNode;
 		let anchorOffset = window.getSelection().anchorOffset;
-		let focusNode = window.getSelection().focusNode;
-		let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-		orgRange.removeAllRanges();
-		if(focusNode === strtContainer){
-			orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 0);
+
+		//tbody 2개 있는 적분, 시그마, 로그, 리밋 같은 수식 요소의 경우 첫번째 방향의 tbody만 셀렉트 색상 입혀지는 문제 해결
+		let tmpCaret = document.createElement("span");
+		tmpCaret.innerHTML = "&#65279;";
+		if(isLeftDir){
+			focusNbBorderBox.before(tmpCaret);
+			window.getSelection().collapseToEnd();
+			let tmpCaret2 = document.createElement("span");	//수식이 마지막인 경우 포커스가 제대로 안 입혀져 캐럿2 추가
+			tmpCaret2.innerHTML = "&#65279;";
+			window.getSelection().getRangeAt(0).insertNode(tmpCaret2);
+			orgRange.setBaseAndExtent(tmpCaret2, 0, tmpCaret, 1);
+			tmpCaret.remove();
+			tmpCaret2.remove();
 		}else{
-			orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 1);
+			//아래 로직은 셀렉트 제대로 입혀져 캐럿2 추가 안함
+			focusNbBorderBox.after(tmpCaret);
+			orgRange.setBaseAndExtent(anchorNode, anchorOffset, tmpCaret, 1);
+			tmpCaret.remove();
 		}
 		await reg_dressSelectionBackColor();
 		return;
-	//셀렉션의 앵커에 수식요소 있는 경우
-	}else if(anchorNbBox !== null){
-		while(anchorNbBox.parentElement.closest('.nbBox')!==null){
-			anchorNbBox = anchorNbBox.parentElement.closest('.nbBox');
+	//셀렉션의 앵커에 수식요소 있는 경우(포커스는 수식 아닌 경우)
+	}else if(anchorNbBorderBox !== null){
+		while(anchorNbBorderBox.parentElement.closest('.nbBox')!==null){
+			anchorNbBorderBox = anchorNbBorderBox.parentElement.closest('.nbBox');
 		}
 		let orgRange = window.getSelection()
-		let focusNode = window.getSelection().focusNode;
-		let focusOffset = window.getSelection().focusOffset;
-		let strtContainer = window.getSelection().getRangeAt(0).startContainer;
-		orgRange.removeAllRanges();
-		if(focusNode === strtContainer){
-			orgRange.setBaseAndExtent(anchorNbBox, 1, focusNode, focusOffset);
+		//tbody 2개 있는 적분, 시그마, 로그, 리밋 같은 수식 요소의 경우 첫번째 방향의 tbody만 셀렉트 색상 입혀지는 문제 해결
+		let tmpCaret = document.createElement("span");
+		tmpCaret.innerHTML = "&#65279;";
+		if(isLeftDir){
+			//아래 로직은 셀렉트 제대로 입혀져 캐럿2 추가 안함
+			anchorNbBorderBox.after(tmpCaret);
+			orgRange.setBaseAndExtent(tmpCaret, 1, window.getSelection().focusNode, window.getSelection().focusOffset);
+			tmpCaret.remove();
 		}else{
-			orgRange.setBaseAndExtent(anchorNbBox, 0, focusNode, focusOffset);
+			window.getSelection().collapseToEnd();
+			let tmpCaret2 = document.createElement("span");	//수식이 마지막인 경우 포커스가 제대로 안 입혀져 캐럿 추가
+			tmpCaret2.innerHTML = "&#65279;";
+			window.getSelection().getRangeAt(0).insertNode(tmpCaret2);
+			anchorNbBorderBox.before(tmpCaret);
+			orgRange.setBaseAndExtent(tmpCaret, 0, tmpCaret2, 1);
+			tmpCaret.remove();
+			tmpCaret2.remove();
 		}
 		await reg_dressSelectionBackColor();
 		return;
@@ -2553,13 +2748,16 @@ export const reg_selectFormulaElement = async (event) => {
 	else{
 		await reg_dressSelectionBackColor();
 	}
+	return;
 }
 
+
+
 /*
-* 정의 : 수식요소셀렉트(드래그)시 걸쳐서 셀렉트 안되고 table 요소 전체 셀렉트 되게끔 구현(키보드up 이벤트에 적용)
-*		 + 밑줄 효과 제어 로직 추가
+*	정의 : 키보드 전용 셀렉트 규칙 
+*   + 밑줄 효과 + div태그 수식 마지막인 경우 br 추가
 */
-export const reg_keyEvSelectFormulaElement = async (event) => {
+export const reg_newSelectFormulaElementForKeyEv = async (event) => {
 	let userKeyCode = event.keyCode;
 	await reg_addBrInLastPosition();    //div 태그 마지막이 수식인 경우 마지막 요소에 br 추가
 	//밑줄 효과 제어
@@ -2594,261 +2792,85 @@ export const reg_keyEvSelectFormulaElement = async (event) => {
 	}
 	
 	//키보드 좌우 화살표 누른 경우(셀렉트)
-	if(event.shiftKey && (userKeyCode===37 || userKeyCode===39)){
-		let strtNbBox = document.getSelection().getRangeAt(0).startContainer;
-		if(strtNbBox.classList !== undefined && strtNbBox.closest(".nbBox") !== null){
-			strtNbBox = strtNbBox.closest(".nbBox")
-		}else{
-			strtNbBox = strtNbBox.parentElement.closest(".nbBox")
+	if(!event.altKey && event.shiftKey && (userKeyCode===37 || userKeyCode===39)){
+		//수식 빠져나오기 별도 구현
+		let isLeftDir = true;
+		if(window.getSelection().getRangeAt(0).endContainer === window.getSelection().focusNode){
+			isLeftDir = false;
+		}
+		//앵커 포커스 같은 노드이면 키보드 전용 셀렉트 건너 뛰기
+		let isGoKeyEv = true;
+		if(window.getSelection().anchorNode === window.getSelection().focusNode){
+			isGoKeyEv = false;
 		}
 
-		let endNbBox = document.getSelection().getRangeAt(0).endContainer;
-		if(endNbBox.classList !== undefined && endNbBox.closest(".nbBox") !== null){
-			endNbBox = endNbBox.closest(".nbBox")
-		}else{
-			endNbBox = endNbBox.parentElement.closest(".nbBox")
-		}
-
-		let rootStrtNbBox = null;
-		if(strtNbBox !== null){
-			while(strtNbBox.parentElement.closest('.nbBox')!==null){
-				strtNbBox = strtNbBox.parentElement.closest('.nbBox');
-			}
-			rootStrtNbBox = strtNbBox;
-		}
-
-		let rootEndNbBox =null;
-		if(endNbBox !== null){
-			while(endNbBox.parentElement.closest('.nbBox')!==null){
-				endNbBox = endNbBox.parentElement.closest('.nbBox');
-			}
-			rootEndNbBox = endNbBox;
-		}
-		//하나의 수식요소 밑(최상위 수식요소가 같은 경우)
-		if(rootStrtNbBox !== null && rootStrtNbBox === rootEndNbBox){
-			let anchorNbBox = window.getSelection().anchorNode;
-			let focusNbBox = window.getSelection().focusNode;
-
-			if(anchorNbBox.nodeName === "#text") anchorNbBox = anchorNbBox.parentElement.closest(".nbBox");
-			else anchorNbBox = anchorNbBox.closest(".nbBox");
-			
-			if(focusNbBox.nodeName === "#text") focusNbBox = focusNbBox.parentElement.closest(".nbBox");
-			else focusNbBox = focusNbBox.closest(".nbBox");
-			//포커스 노드가 최상위 노드가 아닌 경우
-			if(focusNbBox !== rootStrtNbBox){
-				//포커스 노드의 예외케이스 판별
-				if(await reg_allSelFormulaFocusRule(false)){
-					let orgRange = window.getSelection()
-					//앵커노드가 예외케이스인 경우에는 nbBox 아닌 앵커노드 오프셋으로 셀렉션 설정
-					//예외케이스 중 루트가 앵커에 있는 경우 루트 전체 선택되도록 함
-					if(anchorNbBox.classList.contains("nbFracBox") || anchorNbBox.classList.contains("nbRootFracBox")
-					|| anchorNbBox.classList.contains("nbCaseBrckBox") || anchorNbBox.classList.contains("nbThrCasekBox")
-					|| anchorNbBox.classList.contains("nbBinomCoBox")){
-						let anchorNode = window.getSelection().anchorNode;
-						let anchorOffset = window.getSelection().anchorOffset;
-						orgRange.removeAllRanges();
-						if(userKeyCode===37) orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 0)
-						else if(userKeyCode===39) orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 1);
-						return;
-					//포커스노드가 예외케이스가 아닌 수식요소인 경우 포커스노드와 앵커노드  
-					}else{
-						if(window.getSelection().anchorNode.nodeName==="TD" && window.getSelection().focusNode.nodeName !== "TD"){
-							anchorNbBox = focusNbBox;
-						}
-						orgRange.removeAllRanges();
-						if(userKeyCode===37) orgRange.setBaseAndExtent(anchorNbBox, 1, focusNbBox, 0)
-						else if(userKeyCode===39) orgRange.setBaseAndExtent(anchorNbBox, 0, focusNbBox, 1);
-						return;
-
+		let focusNbBox;
+		if(window.getSelection().focusNode.classList !== undefined) focusNbBox = window.getSelection().focusNode.closest(".nbBox");
+		else focusNbBox = window.getSelection().focusNode.parentElement.closest(".nbBox");
+		
+		let anchorNbBox;
+		if(window.getSelection().anchorNode.classList !== undefined) anchorNbBox = window.getSelection().anchorNode.closest(".nbBox");
+		else anchorNbBox = window.getSelection().anchorNode.parentElement.closest(".nbBox");
+		if(isGoKeyEv && isLeftDir && userKeyCode === 39){
+			if(focusNbBox !== null){
+				if(anchorNbBox !== null){
+					let rootAnchorNbBox = anchorNbBox;
+					while(rootAnchorNbBox.parentElement.closest('.nbBox')!==null){
+						rootAnchorNbBox = rootAnchorNbBox.parentElement.closest('.nbBox');
 					}
-				}
-			//하위에 다른 수식요소 없이 단독으로 쓰이는 경우
-			}else{
-				if(await reg_allSelFormulaFocusRule(false)){
-					let orgRange = window.getSelection()
-					let anchorNbBox = window.getSelection().anchorNode;
-					if(anchorNbBox.nodeName === "#text") anchorNbBox = anchorNbBox.parentElement.closest(".nbBox");
-					else anchorNbBox = anchorNbBox.closest(".nbBox");
-
-					let focusNbBox = window.getSelection().focusNode;
-					if(focusNbBox.nodeName === "#text") focusNbBox = focusNbBox.parentElement.closest(".nbBox");
-					else focusNbBox = focusNbBox.closest(".nbBox");
-					orgRange.removeAllRanges();
-					if(userKeyCode===37) orgRange.setBaseAndExtent(anchorNbBox, 1, focusNbBox, 0)
-					else if(userKeyCode===39) orgRange.setBaseAndExtent(anchorNbBox, 0, focusNbBox, 1);
-					return;
-				}
-			}
-
-			//루트 예외 케이스1) 루트, 조건 직사각형인 경우 처음과 끝 선택하면 루트, 조건 직사각형 전체 선택
-			if( (focusNbBox.classList.contains("nbRootBox") || focusNbBox.classList.contains("nbCondBox") ) && focusNbBox === anchorNbBox){
-				if(document.getSelection().getRangeAt(0).startOffset===0
-				&& document.getSelection().getRangeAt(0).startContainer.previousSibling === null 
-				&& (document.getSelection().getRangeAt(0).endContainer.nextSibling === null || document.getSelection().getRangeAt(0).endContainer.nextSibling.nodeValue === "") ){
-					if(document.getSelection().getRangeAt(0).endContainer.nodeName === "#text" 
-					&& document.getSelection().getRangeAt(0).endContainer.length !== document.getSelection().getRangeAt(0).endOffset){
-						return;
+					let rootFocusNbBox = focusNbBox;
+					while(rootFocusNbBox.parentElement.closest('.nbBox')!==null){
+						rootFocusNbBox = rootFocusNbBox.parentElement.closest('.nbBox');
 					}
-					let orgRange = window.getSelection()
-					orgRange.removeAllRanges();
-					if(userKeyCode===37) orgRange.setBaseAndExtent(focusNbBox, 1, focusNbBox, 0)
-					else if(userKeyCode===39) orgRange.setBaseAndExtent(focusNbBox, 0, focusNbBox, 1);
-					return;
+					if(rootAnchorNbBox === rootFocusNbBox){		//수식 요소 안에서 셀렉트 빠지면 셀렉트 없애기
+						window.getSelection().collapseToEnd()
+						await reg_dressSelectionBackColor();
+						return;	
+					} 
 				}
-			//루트 예외 케이스2) 루트, 조건 직사각형이 루트 밖에서 셀렉트 하는 경우 전체 셀렉트
-			}else if((focusNbBox.classList.contains("nbRootBox") || focusNbBox.classList.contains("nbCondBox") ) && focusNbBox !== anchorNbBox){
-				let orgRange = window.getSelection()
-				let anchorNode = window.getSelection().anchorNode
-				let anchorOffset = window.getSelection().anchorOffset;
-				orgRange.removeAllRanges();
-				if(userKeyCode===37) orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 0)
-				else if(userKeyCode===39) orgRange.setBaseAndExtent(anchorNode, anchorOffset, focusNbBox, 1);
+				let tmpCarot = document.createElement("span");
+				tmpCarot.innerHTML = "&#65279;";
+				focusNbBox.after(tmpCarot);
+				window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, tmpCarot, 1)
+				tmpCarot.remove();
+				await reg_dressSelectionBackColor();
 				return;
 			}
-
-			//최상위 예외 케이스1) 분수, 루트 분수인 경우 분모, 분자 선택시 분수 전체 선택
-			let isDepthOneSel = false;
-			let strtParElement = document.getSelection().getRangeAt(0).startContainer.parentElement;
-			let endParElement = document.getSelection().getRangeAt(0).endContainer.parentElement;
-			let strtContainer = document.getSelection().getRangeAt(0).startContainer;
-			let endContainer = document.getSelection().getRangeAt(0).endContainer;
-			if(rootStrtNbBox.classList.contains("nbFracBox") || rootStrtNbBox.classList.contains("nbRootFracBox")){
-				if(strtParElement.closest('.nbNumer') !== null && endParElement.closest('.nbDenom') !== null) {
-					isDepthOneSel = true;
-				}else if(strtParElement.closest('.nbNumer') !== null && endContainer.classList !== undefined && endContainer.classList.contains('nbDenom')){
-					isDepthOneSel = true;
-				}else if(strtContainer.classList !== undefined && strtContainer.classList.contains('nbNumer') && endParElement.closest('.nbDenom')!== null ){
-					isDepthOneSel = true;
-				}else if(strtContainer.classList !== undefined && endContainer.classList !== undefined &&
-				strtContainer.classList.contains('nbNumer') && endContainer.classList.contains('nbDenom')){
-					isDepthOneSel = true;
-				}
-				if(isDepthOneSel){
-					let orgRange = window.getSelection()
-					orgRange.removeAllRanges();
-					if(userKeyCode===37) orgRange.setBaseAndExtent(rootStrtNbBox, 1, rootStrtNbBox, 0)
-					else if(userKeyCode===39) orgRange.setBaseAndExtent(rootStrtNbBox, 0, rootStrtNbBox, 1);
-					return;
-				}
-			}
-			//최상위 예외 케이스2) 경우의수, 이항계수는  하나의 수식요소 밑 같은 요소끼리 select시 전체 선택 안함.(다른요소일때는 전체선택)
-			else if(rootStrtNbBox.classList.contains("nbCaseBrckBox") || rootStrtNbBox.classList.contains("nbThrCasekBox")
-			|| rootStrtNbBox.classList.contains("nbBinomCoBox")){
-				//두가지 경우의 수 케이스 다르면 전체 선택
-				if(strtParElement.closest('.nbCaseFir') !== null && endParElement.closest('.nbCaseSec') !== null){
-					isDepthOneSel = true;
-				}
-				//세가지 경우의 수 케이스 다르면 전체 선택
-				else if( (strtParElement.closest('.nbThrCaseFir') !== null && endParElement.closest('.nbThrCaseSec') !== null)
-				|| (strtParElement.closest('.nbThrCaseFir') !== null && endParElement.closest('.nbThrCaseThr') !== null)
-				|| (strtParElement.closest('.nbThrCaseSec') !== null && endParElement.closest('.nbThrCaseThr') !== null)
-				){
-					isDepthOneSel = true;
-				//경우의 수 각 경우 맨 앞에서 화살표 좌, 맨 뒤에서 화살표 우로 누른 경우 
-				}else if(strtParElement.tagName==="TR" || endParElement.tagName==="TR"){
-					isDepthOneSel = true;
-				}
-
-				if(isDepthOneSel){
-					let orgRange = window.getSelection()
-					orgRange.removeAllRanges();
-					if(userKeyCode===37) orgRange.setBaseAndExtent(rootStrtNbBox, 1, rootStrtNbBox, 0)
-					else if(userKeyCode===39) orgRange.setBaseAndExtent(rootStrtNbBox, 0, rootStrtNbBox, 1);
-					return;
-				}
-					
-			}
-			return;
 		}
-			
-				
-		if(userKeyCode === 37){
-			//셀렉션 먹을때, 수식요소 하나의 덩어리로 추가
-			//셀렉션 빠질때, 수식요소 하나의 덩어리로 빼기
-			let focusContainer = window.getSelection().focusNode.parentElement.closest(".nbBox");
-			if(focusContainer !== null){
-				while(focusContainer.parentElement.closest(".nbBox")!==null){
-					focusContainer=focusContainer.parentElement.closest(".nbBox")
-				}
-				let selection1 = document.getSelection();
-				let anchorNode= selection1.anchorNode; 
-				let anchorOffset = selection1.anchorOffset;
-				selection1.removeAllRanges();
-				selection1.setBaseAndExtent(anchorNode, anchorOffset, focusContainer, 0);
-			}
-			let selection1 = document.getSelection();
-			let anchorNode= selection1.anchorNode; 
-			let focusNode= selection1.focusNode; 
-			let focusOffset= selection1.focusOffset; 
-			if(anchorNode.nodeName === "#text") anchorNode = anchorNode.parentElement.closest(".nbBox");
-			else anchorNode = anchorNode.closest(".nbBox");
 
-			if(anchorNode !== null){
-				//셀렉션 먹을때
-				if(document.getSelection().focusNode === document.getSelection().getRangeAt(0).startContainer){
-					selection1.removeAllRanges();
-					selection1.setBaseAndExtent(anchorNode, 1, focusNode, focusOffset);
-				//셀렉션 빠질때
-				}else{
-					selection1.removeAllRanges();
-					selection1.setBaseAndExtent(anchorNode, 0, focusNode, focusOffset);
-				}
-				
-			}
+		if(isGoKeyEv && !isLeftDir && userKeyCode === 37){
+			if(focusNbBox !== null){
+				if(anchorNbBox !== null){
 
-		}else if(userKeyCode === 39){
-
-			let focusContainer = window.getSelection().focusNode.parentElement.closest(".nbBox");
-			if(focusContainer !== null){
-				while(focusContainer.parentElement.closest(".nbBox")!==null){
-					focusContainer=focusContainer.parentElement.closest(".nbBox")
+					let rootAnchorNbBox = anchorNbBox;
+					while(rootAnchorNbBox.parentElement.closest('.nbBox')!==null){
+						rootAnchorNbBox = rootAnchorNbBox.parentElement.closest('.nbBox');
+					}
+					let rootFocusNbBox = focusNbBox;
+					while(rootFocusNbBox.parentElement.closest('.nbBox')!==null){
+						rootFocusNbBox = rootFocusNbBox.parentElement.closest('.nbBox');
+					}
+					if(rootAnchorNbBox === rootFocusNbBox){		//수식 요소 안에서 셀렉트 빠지면 셀렉트 없애기
+						window.getSelection().collapseToStart()
+						await reg_dressSelectionBackColor();
+						return;	
+					} 
 				}
-				let selection1 = document.getSelection();
-				let anchorNode= selection1.anchorNode; 
-				let anchorOffset = selection1.anchorOffset;
-				selection1.removeAllRanges();
-				selection1.setBaseAndExtent(anchorNode, anchorOffset, focusContainer, 1);
-			}
-			let selection1 = document.getSelection();
-			let anchorNode= selection1.anchorNode; 
-			let focusNode= selection1.focusNode; 
-			let focusOffset= selection1.focusOffset; 
-			if(anchorNode.nodeName === "#text") anchorNode = anchorNode.parentElement.closest(".nbBox");
-			else anchorNode = anchorNode.closest(".nbBox");
 
-			if(anchorNode !== null){
-				//셀렉션 먹을때
-				if(document.getSelection().focusNode === document.getSelection().getRangeAt(0).startContainer){
-					selection1.removeAllRanges();
-					selection1.setBaseAndExtent(anchorNode, 0, focusNode, focusOffset);
-				//셀렉션 빠질때
-				}else{
-					selection1.removeAllRanges();
-					selection1.setBaseAndExtent(anchorNode, 1, focusNode, focusOffset);
-				}
-				
+				let tmpCarot = document.createElement("span");
+				tmpCarot.innerHTML = "&#65279;";
+				focusNbBox.before(tmpCarot);
+				window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, tmpCarot, 0);
+				tmpCarot.remove();
+				await reg_dressSelectionBackColor();
+				return;
 			}
 		}
-		return;
+		await reg_newSelectFormulaElement();	
 	}
+}
 
-	//키보드 상하 화살표 누른 경우(셀렉트)
-	if( (userKeyCode===38 || userKeyCode===40) ){
-		let focusEle = window.getSelection().focusNode;
-		if(!window.getSelection().isCollapsed){
-			if(focusEle.classList === undefined) focusEle = focusEle.parentElement;
-			if(focusEle.closest(".nbBox") !== null){
-				while(focusEle.parentElement.closest(".nbBox")!== null){
-					focusEle = focusEle.parentElement.closest(".nbBox");
-				}
-				if(userKeyCode===38) window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 0);
-				else window.getSelection().setBaseAndExtent(window.getSelection().anchorNode, window.getSelection().anchorOffset, focusEle, 1);
-			}
-			
-		}
-	}
 
-} 
 
 
 export const reg_selectCheck = () => {
@@ -2941,7 +2963,7 @@ export const reg_tbCellMouseMove = async () =>{
 let isTbSelExecuted = false;
 let firstAnchor = null;
 export const reg_tbCellKeyUp = async (event) =>{
-	if(event.shiftKey && (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) ){
+	if(!event.altKey && event.shiftKey && (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) ){
 		let anchorInnerTbTd = window.getSelection().anchorNode;
 		if(anchorInnerTbTd.classList === undefined) anchorInnerTbTd = anchorInnerTbTd.parentElement;
 		anchorInnerTbTd = anchorInnerTbTd.closest(".innerTbTd");
@@ -3106,9 +3128,85 @@ export const reg_nbComplie = async (event) => {
 			nbBox[i].style={};
 		}
 
+
+		//적분 안 분수
+		let nbFracInIntegralBoxes = [];
+		document.activeElement.querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntegral"))) nbFracInIntegralBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracInIntegralBoxes.length; i++){
+			if(nbFracInIntegralBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracInIntegralBoxes[i].classList.add("nbConvert");
+				nbFracInIntegralBoxes[i].classList.add("nbFracInIntegral");
+			}
+		}
+
+		//시그만 안 분수
+		let nbFracInSigmaSumBoxes = [];
+		document.activeElement.querySelectorAll(".nbSigmaSumBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInSigmaSum"))) nbFracInSigmaSumBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracInSigmaSumBoxes.length; i++){
+			if(nbFracInSigmaSumBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracInSigmaSumBoxes[i].classList.add("nbConvert");
+				nbFracInSigmaSumBoxes[i].classList.add("nbFracInSigmaSum");
+			}
+		}
+
+
+		//리밋 안 분수, 시그마
+		let nbFracINLimBoxes = [];
+		let nbSigmaInLimBoxes = [];
+		document.activeElement.querySelectorAll(".nbLimBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLim"))) nbFracINLimBoxes.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbSigmaSumInLim"))) nbSigmaInLimBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracINLimBoxes.length; i++){
+			if(nbFracINLimBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracINLimBoxes[i].classList.add("nbConvert");
+				nbFracINLimBoxes[i].classList.add("nbFracInLim");
+			}
+		}
+
+		for(let i=0; i<nbSigmaInLimBoxes.length; i++){
+			if(nbSigmaInLimBoxes[i].querySelectorAll(".nbSigmaSumBox").length !== 0) {
+				nbSigmaInLimBoxes[i].classList.add("nbConvert");
+				nbSigmaInLimBoxes[i].classList.add("nbSigmaSumInLim");
+			}
+		}
+
+		//log함수 안 분수
+		let nbLogBox = [];
+		document.activeElement.querySelectorAll(".nbLogBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLog"))) nbLogBox.push(item);
+		});
+
+		for(let i=0; i<nbLogBox.length; i++){
+			if(nbLogBox[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbLogBox[i].classList.add("nbConvert");
+				nbLogBox[i].classList.add("nbFracInLog");
+			}
+		}
+
+		//ln함수 안 분수
+		let nbLnBox = [];
+		document.activeElement.querySelectorAll(".nbLnBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLn"))) nbLnBox.push(item);
+		});
+
+		for(let i=0; i<nbLnBox.length; i++){
+			if(nbLnBox[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbLnBox[i].classList.add("nbConvert");
+				nbLnBox[i].classList.add("nbFracInLn");
+			}
+		}
+
 		//루트 안 분수
 		let nbRootBoxes = [];
-		document.querySelectorAll(".nbRootBox").forEach((item, index, arr)=>{
+		document.activeElement.querySelectorAll(".nbRootBox").forEach((item, index, arr)=>{
 			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInRoot"))) nbRootBoxes.push(item);
 		});
 
@@ -3194,8 +3292,62 @@ export const reg_nbComplie = async (event) => {
 		}
 	}
 
+	//ln 안 분수
+	let nbFracInLnBoxes = document.querySelectorAll(".nbLnBox.nbFracInLn");
+	for(let i=0; i<nbFracInLnBoxes.length; i++){
+		if(nbFracInLnBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbFracInLnBoxes[i].classList.remove("nbConvert");
+			nbFracInLnBoxes[i].classList.remove("nbFracInLn");
+		}
+	}
+
+	//log 안 분수
+	let nbFracInLogBoxes = document.querySelectorAll(".nbLogBox.nbFracInLog");
+	for(let i=0; i<nbFracInLogBoxes.length; i++){
+		if(nbFracInLogBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbFracInLogBoxes[i].classList.remove("nbConvert");
+			nbFracInLogBoxes[i].classList.remove("nbFracInLog");
+		}
+	}
+
+	//시그마 안 분수
+	let nbFracInSigmaBoxes = document.querySelectorAll(".nbSigmaSumBox.nbFracInSigmaSum");
+	for(let i=0; i<nbFracInSigmaBoxes.length; i++){
+		if(nbFracInSigmaBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbFracInSigmaBoxes[i].classList.remove("nbConvert");
+			nbFracInSigmaBoxes[i].classList.remove("nbFracInSigmaSum");
+		}
+	}
+
+	//적분 안 분수
+	let nbFracInIntegralBoxes = document.querySelectorAll(".nbIntegralBox.nbFracInIntegral, .nbDoubleIntegralBox.nbFracInIntegral, .nbTripleIntegralBox.nbFracInIntegral");
+	for(let i=0; i<nbFracInIntegralBoxes.length; i++){
+		if(nbFracInIntegralBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbFracInIntegralBoxes[i].classList.remove("nbConvert");
+			nbFracInIntegralBoxes[i].classList.remove("nbFracInIntegral");
+		}
+	}
+
+	//리밋 안 분수
+	let nbFracInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInLim");
+	for(let i=0; i<nbFracInLimBoxes.length; i++){
+		if(nbFracInLimBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+			nbFracInLimBoxes[i].classList.remove("nbConvert");
+			nbFracInLimBoxes[i].classList.remove("nbFracInLim");
+		}
+	}
+
+	//리밋 안 시그마
+	let nbSigmaInLimBoxes = document.querySelectorAll(".nbLimBox.nbSigmaSumInLim");
+	for(let i=0; i<nbSigmaInLimBoxes.length; i++){
+		if(nbSigmaInLimBoxes[i].querySelectorAll(".nbSigmaSumBox").length === 0) {
+			nbSigmaInLimBoxes[i].classList.remove("nbConvert");
+			nbSigmaInLimBoxes[i].classList.remove("nbSigmaSumInLim");
+		}
+	}
+
 	//루트 안 분수
-	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbConvert.nbFracInRoot");
+	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbFracInRoot");
 	for(let i=0; i<nbRootBoxes.length; i++){
 		if(nbRootBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
 			nbRootBoxes[i].querySelector(".nbRootBase").classList.remove("nbConvert");

@@ -44,7 +44,14 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 return;
             }
         }
- 
+        
+        //tbody버그 해결(tbody에 포커스 잡히면 보더박스로 들어가게끔 구현)(tbody 2개인 적분, 로그, 시그마, 리밋에서 에러 발생할 수 있음)
+        if((window.getSelection().anchorNode.tagName !== undefined && window.getSelection().anchorNode.tagName === "TBODY")
+        || (window.getSelection().focusNode.tagName !== undefined && window.getSelection().focusNode.tagName === "TBODY")){
+            let borderBox = window.getSelection().focusNode.querySelector(".borderBox");
+            window.getSelection().setBaseAndExtent(borderBox, 0, borderBox, 0);
+        }
+
         await reg_undoStackByClick(document.activeElement.id);      //ctrl+z undo 스택 메모리에 데이터 추가
 
          //셀렉트 상태에서 수식 입력시 셀렉트 안의 수식이 마지막 요소인 경우 재생성 버그
@@ -120,8 +127,77 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                         }
                     }
                 }
+
+                //lim 안의 분수 컴파일
+                let nbLimBaseStrt = strtElement.closest(".nbLimBase");
+                let nbLimBaseEnd = endElement.closest(".nbLimBase");
+                if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
+                    }
+                }
+
+                //적분 안의 분수 컴파일
+                let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+                let nbIntegralEnd = endElement.closest(".nbIntBase");
+                if(nbIntegralStrt === null && nbIntegralEnd === null){
+                    nbIntegralStrt = strtElement.closest(".nbDoubleIntBase");
+                    nbIntegralEnd = endElement.closest(".nbDoubleIntBase");
+                }
+                if(nbIntegralStrt === null && nbIntegralEnd === null){
+                    nbIntegralStrt = strtElement.closest(".nbTripleIntBase");
+                    nbIntegralEnd = endElement.closest(".nbTripleIntBase");
+                }
+                if(nbIntegralStrt !== null && nbIntegralEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbIntegralStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
+                    }
+                }
+
+                //시그마 안 분수 컴파일
+                let nbSigmaStrt = strtElement.closest(".nbSigmaSumBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+                let nbSigmaEnd = endElement.closest(".nbSigmaSumBase");
+                if(nbSigmaStrt !== null && nbSigmaEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbSigmaStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbSigmaStrt.closest(".nbBox").classList.add("nbFracInSigmaSum");
+                    }
+                }
+                //ln함수 안 분수 컴파일
+                let nbLnStrt = strtElement.closest(".nbLnBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+                let nbLnEnd = endElement.closest(".nbLnBase");
+                if(nbLnStrt !== null && nbLnEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbLnStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbLnStrt.closest(".nbBox").classList.add("nbFracInLn");
+                    }
+                }
+
+                //로그함수 안 분수 컴파일
+                let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+                let nbLogEnd = endElement.closest(".nbLogBase");
+                if(nbLogStrt !== null && nbLogEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbLogStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
+                    }
+                }
             }
 
+            //lim 안의 시그마 컴파일
+            if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+                let nbLimBoxStrt = strtElement.closest(".nbLimBase");
+                let nbLimBoxEnd = endElement.closest(".nbLimBase");
+                if(nbLimBoxStrt !== null && nbLimBoxEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbLimBoxStrt.closest(".nbBox").classList.add("nbConvert");
+                        nbLimBoxEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
+                    }
+                }
+            }
+            
             //nbConvert 분모 안에 루트, 순환소수, 악센트 들어가는 경우(분모, 분자에 padding:2)
             if(nbGrammer.indexOf("nbRootBox") > -1 || nbGrammer.indexOf("nbOverDotBox") > -1 || nbGrammer.indexOf("nbAccentBox") > -1 ){
                 let nbDenomStrt = strtElement.closest(".nbDenom");
@@ -196,9 +272,21 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         let domId = "shortCut"+keyLabel.id;
         let formulaBtnId = compId +"Id"+idx;
         if(keyLabel.lineChange == 1  ) brtagVal = <br/>;
-        if(componentId=="shortKeyBoard"){
+        let arrowKeyClass="";
+        if(keyLabel.formulUi === "&#8593;" || keyLabel.formulUi === "&#8657;"){
+            arrowKeyClass=" shortCutKeyTop"
+        }
+        if(keyLabel.formulUi === "&#8592;" || keyLabel.formulUi === "&#8656;"){
+            arrowKeyClass=" shortCutKeyLeft"
+        }
+        if(keyLabel.formulUi === "&#8595;" || keyLabel.formulUi === "&#8659;"){
+            arrowKeyClass=" shortCutKeyBelow"
+        }
+        if(keyLabel.formulUi === "&#8594;" || keyLabel.formulUi === "&#8658;"){
+            arrowKeyClass=" shortCutKeyRight"
+        }
             return <span key={idx}>
-                    <button type="button" className="keySpan" id={formulaBtnId} title={keyLabel.formulName} data-formula-id={keyLabel.id} onClick={(event)=>addFormulaKey(event)}>
+                    <button type="button" className={"keySpan"+arrowKeyClass} id={formulaBtnId} title={keyLabel.formulName} data-formula-id={keyLabel.id} onClick={(event)=>addFormulaKey(event)}>
                         <sup className="supShortCut" >{keyLabel.shortcutKey}</sup>
                         <span className="shortCutKey" id={domId} >
                                 <span dangerouslySetInnerHTML={{ __html:keyLabel.formulUi}} />
@@ -206,17 +294,7 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                     </button>
                     {brtagVal}
                     </span>
-        }else{
-            if(keyLabel.lineChange == 1  ) brtagVal = <br/>;
-            return <span key={idx}>
-                    <button type="button" className="keySpan" id={formulaBtnId} title={keyLabel.formulName} data-formula-id={keyLabel.id} onClick={(event)=>addFormulaKey(event)}>
-                        <span className="shortCutKey shortCutKeyEtc" id={domId} >
-                                <span dangerouslySetInnerHTML={{ __html:keyLabel.formulUi}} />
-                        </span>
-                    </button>
-                    {brtagVal}
-                    </span>
-        }
+        
     });
 
     if(componentId=="shortKeyBoard"){

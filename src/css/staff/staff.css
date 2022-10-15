@@ -26,7 +26,7 @@
 
 .right{
     width:50%;
-    min-width: 620px;
+    min-width: 670px;
     display:inline-block;
     padding:10px 0px;
 }
@@ -165,7 +165,8 @@
     background:#3e6599;
     margin:auto;
     text-align: center;
-    padding-top:5px;
+    padding: 5px 0 0 0;
+    position: relative;
     border:none;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -179,8 +180,7 @@
     display:inline-block;
     min-width: 35px;
     position: relative;
-    left: -3px;
-    vertical-align: -0.5em;
+    vertical-align: -0.6em;
 }
 .shortCutKey.shortCutKeyEtc{
     left: unset;
@@ -190,23 +190,32 @@
     vertical-align: 0em;
     padding:3px 0px;
 }
+
 .supShortCut{
-    font-size: 0.7em;
-    position: relative;
-    left:5px;
-    top:-1px;
+    font-size: 1em;
+    position: absolute;
+    left:4px;
+    top:2px;
+    opacity: 0.4;
 }
+
+.shortCutKeyTop .supShortCut, .shortCutKeyBelow .supShortCut, .shortCutKeyLeft .supShortCut, .shortCutKeyRight .supShortCut{
+    left:1px;
+    top:-3px;
+}
+
 
 .keySpan{
     display: inline-block;
-    padding:3px 0 1px 0;
-    margin:2px;
+    padding:1px 0 0 0 ;
+    margin:2px 3px;
     border:2px solid white;
     background:#3e6599;
     border-radius: 10px;
     color:white;
     font-family: "nbFormulaFont";
     min-height:40px;
+    position: relative;
 }
 .keySpan:hover{
     background:white;
@@ -230,8 +239,8 @@
 
 .shortCutKey .nbRootBase::before{
     font-size: 1.3em;
-    top:0.2em;
-    left:0.08em;
+    top: 0.1em;
+    left: -0.5em;
 }
 
 .shortCutKey .nbRootFracBase{
@@ -274,18 +283,18 @@
 }
 
 .shortCutKey .nbCondBox{
-    margin:0 2px
+    margin:0 8px
 }
 .shortCutKey .nbCondBase{
     line-height: 140%;
     font-size: 10px;
-    padding: 2px 5px 0 5px;
+    padding: 2px 2px 0 2px;
     min-width: unset;
     border: 2px solid white;
     text-align: center;
 }
 
-.shortCutKey .nbBinomCoBox tbody::before {
+.shortCutKey .nbBinomCoBox .nbBinomCoTBody::before {
     content: "(";
     position: absolute;
     left: 0em;
@@ -295,7 +304,7 @@
     font-weight: 100;
 }
 
-.shortCutKey .nbBinomCoBox tbody::after {
+.shortCutKey .nbBinomCoBox .nbBinomCoTBody::after {
     content: ")";
     position: absolute;
     right: 0em;
@@ -303,6 +312,35 @@
     font-size: 10px;
     font-family: 'MJXc-TeX-size2-Rw';
     font-weight: 100;
+}
+
+.shortCutKeyTop .shortCutKey, .shortCutKeyLeft .shortCutKey, .shortCutKeyBelow .shortCutKey, .shortCutKeyRight .shortCutKey{
+    min-width: unset;
+    width: 30px;
+    left: 0;
+}
+
+.shortCutKeyTop, .shortCutKeyLeft, .shortCutKeyBelow, .shortCutKeyRight{
+    min-height: 28px;
+    position: absolute;
+    bottom: 0em;
+}
+
+.shortCutKeyTop{
+    bottom: 2.3em;
+    right: 2.8em;
+}
+
+.shortCutKeyLeft{
+    right: 5.6em;
+}
+
+.shortCutKeyBelow{
+    right: 2.8em;
+}
+
+.shortCutKeyRight{
+    right: 0;
 }
 
 .tabTable{
@@ -485,6 +523,11 @@
 .keySpan:hover .shortCutKey .nbRootBase{
     border-top: 1px solid rgb(20, 71, 101);
     box-shadow: unset;
+}
+
+.shortCutKey .nbRootBox.expRootType .nbRootExpBase{
+    top:-0.7em;
+    left:-0.7em;    
 }
 
 
