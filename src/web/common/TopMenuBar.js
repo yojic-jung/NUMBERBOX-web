@@ -3,12 +3,14 @@ import { BrowserView, MobileView } from 'react-device-detect';
 import {Link} from "react-router-dom";
 import {nb_isLogin, nb_isManger, nb_isAdmin, nb_dataFetch} from 'js/common/common_nb.js';
 import defaultProfileImg from 'img/defaultProfile.png';
+import warningImg from 'img/warning.png';
 import { Outlet } from "react-router";
 import ServiceCenter from 'web/common/ServiceCenter';
 
 const TopMenuBar = (isMain)=>{
     const [imgPath, setImgPath] = useState(null);
     const [myNickName, setMyNickName] = useState(null);
+    const [notApplyBrowser, setNotApplyBrowser] = useState(false);
 
     let isLogin = nb_isLogin();
     //매니저 권한 임시 구현
@@ -16,6 +18,10 @@ const TopMenuBar = (isMain)=>{
     let isAdmin = nb_isAdmin();
 
     useEffect(() => {
+        if (!(window.navigator.userAgent.toLocaleLowerCase().indexOf("chrome")>-1 ||
+        window.navigator.userAgent.toLocaleLowerCase().indexOf("edge")>-1)) {
+            setNotApplyBrowser(true);
+        }
         window.addEventListener("click", closeMyServiceTap);
         if(isLogin){
             const asyncUseEffect = async function(){
@@ -69,6 +75,13 @@ const TopMenuBar = (isMain)=>{
 return (
     <>
     <BrowserView>
+    {notApplyBrowser && <div className='browserWarningDiv'>
+        <img src={warningImg} className="browserWarningImg" alt="warningImg" />
+        <div className='browserWarningDesc'>
+        n명의 수학은 크롬, 엣지, 오페라 브라우저에서 최적화 되어있습니다. <br/>
+        <b>크롬 또는 엣지 또는 오페라 브라우저로 접속하여 주시기 바랍니다.</b>
+        </div>
+        </div>}
     <div  id="topMenuBar" className='top-div'>
         <div className='bi-jutify-align'>
             <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
@@ -109,7 +122,6 @@ return (
             </div>
         </div>
     </div>
-    
     <ServiceCenter myNickName={myNickName} />
     
     {isManger && <div className='manager-menu'>

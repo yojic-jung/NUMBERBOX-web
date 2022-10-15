@@ -8,6 +8,24 @@
     padding: 5px 0;
 }
 
+.browserWarningDiv{
+    text-align: center;
+    padding: 15px 0;
+    font-family: 'jejuGothic';
+    background: rgb(243, 232, 174);
+}
+
+.browserWarningImg{
+    width: 50px;
+    vertical-align: bottom;
+    margin-right: 20px;
+}
+.browserWarningDesc{
+    line-height: 160%;
+    display: inline-block;
+}
+
+
 .bi-jutify-align, .bi-jutify-align2{
     max-width: 900px;
     margin: auto;

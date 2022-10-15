@@ -108,14 +108,18 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 
 
 		 if(!isOnlyImgReg){
-			document.getElementById("contentsFormulaEditor")
-			if(getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML) > 65000){
-			   alert("등록하신 문제 입력란의 용량이 너무 큽니다.\n문제 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
-			   return false;
-			}
-			if(getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML) > 65000){
-			   alert("등록하신 해설 입력란의 용량이 너무 큽니다.\n해설 입력란의 텍스트(또는 텍스트와 이미지)의 전체 용량이 65KB를 넘는 경우 입력이 불가합니다.\n이미지 파일의 경우 내부적으로 압축이 진행이 되어 고화질 이미지의 경우 50KB 이내 용량으로 압축이 진행됩니다.\n고화질 이미지를 두 개이상 등록하신 경우 등록이 불가할 수 있습니다.");
-			   return false;
+			let totalFileSize = getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("firNoFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("secNoFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("thrNoFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("fourNoFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("fifNoFormulaEditor").innerHTML)
+				+getByteLengthOfString(document.getElementById("answerFormulaEditor").innerHTML)
+				console.log(totalFileSize/1000);
+			if(totalFileSize/1000 > 5000){
+				alert("등록하신 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트 및 이미지는 최대 5MB까지 등록가능합니다.\n고화질 이미지를 등록한 경우 문제 등록이 불가할 수 있습니다.");
+				return false;
 			}
 		 }
 		

@@ -477,9 +477,12 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 	
 		
 		//문제 validation [start]
-		if(contentsDomLength<10){
-			alert("문제를 최소 10글자 이상 입력해주시기 바랍니다.");
-			return false;
+		if(contentsDomLength<5){
+			//이미지 등록한 경우는 글자 입력 가능하지만 이미지 등록 안 한 경우 최소 5글자 이상 
+			if(document.getElementById("contentsFormulaEditor").querySelector("img") === null){
+				alert("문제를 최소 5글자 이상 입력해주시기 바랍니다.");
+				return false;
+			}
 		} 
 
 		//객관식 하나라도 입력되어 있는지 체크

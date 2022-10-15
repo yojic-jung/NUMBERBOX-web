@@ -49,6 +49,15 @@
     <!-- naver login APi -->
     <script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+       if (window.navigator.userAgent.match(/MSIE|Internet Explorer|Trident/i)) {
+       
+        alert("N명의 수학은 인터넷 익스플로러를 지원하지 않습니다.\n크롬 또는 엣지로 접속하여 주시기 바랍니다.")
+        window.open( "microsoft-edge:" + window.location.href);
+        window.location = 'https://go.microsoft.com/fwlink/?linkid=2135547';
+      
+    }
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
