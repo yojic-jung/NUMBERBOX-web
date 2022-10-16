@@ -108,6 +108,11 @@
     border-radius:3px;
 }
 
+.makeContentsWidthDesc{
+    font-size: 13px;
+    text-align: center;
+    background: rgb(214, 214, 214);
+}
 
 .contents-show{
     font-size:16px;
@@ -217,6 +222,34 @@
     min-height:40px;
     position: relative;
 }
+
+.shortCutBugWarn{
+    background: rgb(221, 111, 111);
+}
+
+.shortcutBugBtn::before{
+    display: inline-block;
+    vertical-align: bottom;
+    content: '!';
+    background-color: rgb(208, 61, 61);
+    opacity: 0.7;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 10px;
+}
+
+.keySpan:hover .shortcutBugBtn::before{
+    color: white;
+    opacity: 1;
+}
+
+.etcShotcutDesc{
+    position: absolute;
+    top:5px;
+    right: 5px;
+}
+
 .keySpan:hover{
     background:white;
     color:rgb(20, 71, 101);
@@ -607,6 +640,7 @@ height: 1.6em;
 
 /** 에디터 시작 **/
 .editorToolBar{
+    position: relative;
     background: rgb(235, 235, 235);
     border:1px solid rgb(206, 205, 205);
     border-top-right-radius: 3px;
@@ -811,6 +845,20 @@ height: 1.6em;
 .onlyEdit .imgSelection::selection{
     background:unset;
 }
+
+.asistDescBtn{
+    position: absolute;
+    top:5px;
+    right: 5px;
+    cursor:pointer;
+    vertical-align:text-top;
+    border: none;
+    width: 20px;
+    height: 20px;
+    background: url("img/ggb_guide.png") no-repeat;
+    background-size: 20px;
+}
+
 /** 에디터 끝 **/
 /** nbCustomSel 박스 시작 **/
 .nbCustomSel * { 
@@ -1975,4 +2023,107 @@ height: 1.6em;
     text-align: left;
 }
 
+.etcShortCutDiv, .asistDiv{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    font-family: 'jejuGothic';
+    font-size: 14px;
+    background-color: white;
+    padding:20px 10px;
+    border-radius: 10px;
+    z-index: 99;
+    line-height: 200%;
+    box-shadow: 0 0 2rem rgb(0 0 0 / 50%);
+    box-sizing: border-box;
+}
 
+.asistDiv{
+    width: 600px;
+}
+
+.etcShortCutTitle, .asistTitle{
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.asistTitle{
+    margin:10px;
+}
+
+.etcShortCutKeyDiv{
+    width: 300px;
+    line-height: 250%;
+    margin: auto;
+    text-align: left;
+}
+
+.etcEditOutpuScreenImg{
+    width: 550px;
+}
+
+.formulaFocusAsistDesc{
+    width: 220px;
+    display: block;
+    margin:auto;
+}
+
+
+.asistDescWrap{
+    width: 570px;
+    text-align: left;
+    margin: auto;
+    padding: 0 10px;
+}
+
+.bugUiDescDiv{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 550px;
+    font-family: 'jejuGothic';
+    font-size: 14px;
+    background-color: white;
+    padding:20px 10px;
+    border-radius: 10px;
+    z-index: 99;
+    box-shadow: 0 0 2rem rgb(0 0 0 / 50%);
+    box-sizing: border-box;
+}
+.bugUiTitle{
+    font-size: 18px;
+    color: rgb(233, 129, 125);
+    margin-bottom: 15px;
+}
+.bugUiDesc{
+    text-align: left;
+    line-height: 160%;
+    margin-bottom: 10px;
+    width: 500px;
+    margin:auto;
+}
+
+.bugUiImg{
+    width: 400px;
+}
+
+.keyboardUI{
+    line-height: 160%;
+    display: inline-block;
+    color: white;
+    background-color: #60748d;
+    border-radius: 3px;
+    padding: 0px 5px;
+    margin:0 2px;
+}
+
+.bugUiImgWrap{
+    width: 410px;
+    margin:10px 0 0 40px;
+    text-align: left;
+    line-height: 160%;
+    color:rgb(235, 41, 41);
+}

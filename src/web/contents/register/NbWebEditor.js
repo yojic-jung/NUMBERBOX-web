@@ -2,6 +2,8 @@ import React from 'react';
 import EditTableInnerUi from 'web/contents/register/EditTableInnerUi'
 import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/contents/register/contents_reg';
 import {nb_extensionCheck2, nb_module_handleImageUpload} from 'js/common/common_nb.js';
+import editOutputScreen from 'img/editOutputScreen.PNG';
+import formulaFocusAsistDesc from 'img/formulaFocusAsistDesc.PNG';
 const NbWebEditor = ({parentMethod})=>{
 
 	const tableUiShow = async function(event){
@@ -319,7 +321,11 @@ const NbWebEditor = ({parentMethod})=>{
 		event.stopPropagation();
 	}
 
-  return (
+	const asistDesc = async (event) => {
+		document.getElementById("asistRootDiv").classList.remove('hide');
+	}
+
+  return (<>
     <div className="editorToolBar">
 		<button className="editInsertImage editorBtn" title="이미지 추가" onClick={(event)=>{event.preventDefault();document.getElementById("webEditImageFile").click()}}></button>	
 
@@ -357,6 +363,8 @@ const NbWebEditor = ({parentMethod})=>{
             <span className="editTableArrow">&#129171;</span>
         </button>
 
+		<div className="asistDescBtn" title="도움말" onClick={(event) => asistDesc(event)}></div>
+
 		<input id="webEditImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);textEditor(event, 'insertImage');}} />
 
         <div id="editTableUi" className="editTableUi hide">
@@ -364,6 +372,19 @@ const NbWebEditor = ({parentMethod})=>{
                 
             </div>
     </div>
+		<div id="asistRootDiv" className="blindBox hide">
+		<div className="asistDiv">
+			<div className="closeBtn2" onClick={()=>{document.getElementById("asistRootDiv").classList.add('hide');}}>X</div>
+				<div className="asistTitle">도움말</div>
+				<div className="asistDescWrap">
+					<div className="marginTenAuto">1. 사용자의 포커스가 위치하는 수식에는 노란색 점선으로 표시됩니다.<br/> 회색 굵은 점선 안의 영역은 수식을 표현하는 UI로 수식 UI가 변경되지 않게 입력이 불가합니다.</div>
+					<div><img src={formulaFocusAsistDesc} className="formulaFocusAsistDesc" alt=""/></div>
+					<div className="marginTenAuto">2. 편집화면은 수식의 테두리에 점선이 추가되어 미리보기 화면과 너비가 다를 수 있습니다.</div>
+					<div><img src={editOutputScreen} className="etcEditOutpuScreenImg" alt=""/></div>
+				</div>
+		</div>
+	</div>
+	</>
   );
 }
 

@@ -1,6 +1,9 @@
 import {React, useEffect, useState} from "react";
 import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix, reg_undoStackByClick, 
     reg_undoArrPop, reg_addBrInLastPosition} from 'js/contents/register/contents_reg';
+import shortCutButExImg1 from 'img/shortCutButExImg1.PNG';
+import shortCutButExImg2 from 'img/shortCutButExImg2.PNG';
+
 
 const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod}) => {
     const [shortCutKey, setShortCutKey] = useState(new Array());
@@ -29,6 +32,16 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
     const addFormulaKey = async (event)=>{
         //포커스를 한번도 주지 않은 경우
 		if(document.getSelection().focusNode==null) return;
+
+        if(event.target.classList.contains("shortcutBugBtn") || event.target.querySelector(".shortcutBugBtn") !== null){
+            document.getElementById("bugUiRootDiv").classList.remove('hide');
+        }
+
+        if(event.currentTarget.classList.contains("etcShotcutDesc")){
+            window.getSelection().setBaseAndExtent(event.currentTarget, 0, event.currentTarget, 0);
+            document.getElementById("etcShortCutRootDiv").classList.remove('hide');
+        }
+        
 
         let targetId = event.currentTarget.id;
         let focusId = document.activeElement.id;
@@ -273,6 +286,14 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         let formulaBtnId = compId +"Id"+idx;
         if(keyLabel.lineChange == 1  ) brtagVal = <br/>;
         let arrowKeyClass="";
+        if(keyLabel.formulUi === "="){
+            arrowKeyClass=" shortCutBugWarn"
+        }
+
+        if(keyLabel.formulUi === "etc."){
+            arrowKeyClass=" etcShotcutDesc"
+        }
+
         if(keyLabel.formulUi === "&#8593;" || keyLabel.formulUi === "&#8657;"){
             arrowKeyClass=" shortCutKeyTop"
         }
@@ -298,9 +319,60 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
     });
 
     if(componentId=="shortKeyBoard"){
-        return <div type="button" id={compId} className="shortKeyBoard" onMouseDown={(event)=>keepFocus(event)}>{shortCutKey}</div>
+        return <>
+                <div type="button" id={compId} className="shortKeyBoard" onMouseDown={(event)=>keepFocus(event)}>{shortCutKey}</div>
+                
+                <div id="etcShortCutRootDiv" className="blindBox hide">
+                    <div className="etcShortCutDiv">
+                        <div className="closeBtn2" onClick={()=>{document.getElementById("etcShortCutRootDiv").classList.add('hide');}}>X</div>
+                            <div className="etcShortCutTitle">기타 단축키</div>
+                            <div className="etcShortCutKeyDiv">
+                                <div><span className="keyboardUI">shift</span>+<span className="keyboardUI">space</span> : 띄어쓰기 다섯칸</div>
+                                <div><span className="keyboardUI">alt</span>+<span className="keyboardUI">→</span> : 수식 단축키 탭 오른쪽으로 이동</div>
+                                <div><span className="keyboardUI">alt</span>+<span className="keyboardUI">←</span> : 수식 단축키 탭 왼쪽으로 이동</div>
+                            </div>
+                    </div>
+                </div>
+
+                <div id="bugUiRootDiv" className="blindBox hide">
+                    <div className="bugUiDescDiv">
+                        <div className="closeBtn2" onClick={()=>{document.getElementById("bugUiRootDiv").classList.add('hide');}}>X</div>
+                        <div className="bugUiTitle"><span className="keyboardUI">alt</span>+<span className="keyboardUI">=</span> 단축키 버그 유의</div>
+                        <div className="bugUiDesc">
+                            alt+'=' 키는 인터넷 브라우저 자체 버그로 아래와 같은 현상이 발생할 수 있습니다.<br/>
+                            해당 버그 발생시 한번 더 alt+'=' 키를 다시 누르고 글을 입력하면 정상 출력 됩니다.
+                        </div>
+                        <div className="bugUiImgWrap">
+                            <div>alt+'=' 키 입력 후 텍스트 입력 화면</div>
+                            <div><img src={shortCutButExImg1} className="bugUiImg" alt=""/></div>
+                            <div className="greenText">정상 화면</div>
+                            <div><img src={shortCutButExImg2} className="bugUiImg" alt=""/></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </>
     }else{
-        return <div type="button" id={compId} className="shortKeyBoard hide" onMouseDown={(event)=>keepFocus(event)}>{shortCutKey}</div>
+        return <>
+            <div type="button" id={compId} className="shortKeyBoard hide" onMouseDown={(event)=>keepFocus(event)}>{shortCutKey}</div>
+            
+            <div id="bugUiRootDiv" className="blindBox hide">
+                    <div className="bugUiDescDiv">
+                        <div className="closeBtn2" onClick={()=>{document.getElementById("bugUiRootDiv").classList.add('hide');}}>X</div>
+                        <div className="bugUiTitle"><span className="keyboardUI">alt</span>+<span className="keyboardUI">=</span> 단축키 버그 유의</div>
+                        <div className="bugUiDesc">
+                            alt+'=' 키는 브라우저 자체 버그로 아래와 같은 현상이 발생할 수 있습니다.<br/>
+                            해당 버그 발생시 한번 더 alt+'=' 키를 다시 누르고 글을 입력하면 정상 출력 됩니다.
+                        </div>
+                        <div className="bugUiImgWrap">
+                            <div>alt+'=' 키 입력 후 텍스트 입력 화면</div>
+                            <div><img src={shortCutButExImg1} className="bugUiImg" alt=""/></div>
+                            <div>정상 화면</div>
+                            <div><img src={shortCutButExImg2} className="bugUiImg" alt=""/></div>
+                        </div>
+                    </div>
+                </div>
+        </>
     }
 }
 

@@ -79,7 +79,7 @@ return (
         <img src={warningImg} className="browserWarningImg" alt="warningImg" />
         <div className='browserWarningDesc'>
         n명의 수학은 크롬, 엣지, 오페라 브라우저에서 최적화 되어있습니다. <br/>
-        <b>크롬 또는 엣지 또는 오페라 브라우저로 접속하여 주시기 바랍니다.</b>
+        <b>크롬이나 엣지 또는 오페라 브라우저로 접속하여 주시기 바랍니다.</b>
         </div>
         </div>}
     <div  id="topMenuBar" className='top-div'>

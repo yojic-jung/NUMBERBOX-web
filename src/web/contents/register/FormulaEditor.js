@@ -658,6 +658,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					</Link>
 				</div>
 				<div id="contents-show" className="contents-show">
+					<div className="makeContentsWidthDesc">학습지 출력 미리보기 화면</div>
 					<div className="mini-title4">문제</div>
 					<div id="ques-show">
 						<div id="ques-show-contents" dangerouslySetInnerHTML={{__html:contentsText}} onDragStart={ev=>ev.preventDefault()}></div> 
