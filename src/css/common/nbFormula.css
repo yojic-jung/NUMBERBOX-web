@@ -661,7 +661,8 @@
     text-align: center;
     position: absolute;
     top:-0.6em;
-    left:0.15em; 
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nbDenom .nbOverDotBase::before{
@@ -684,7 +685,8 @@
     text-align: center;
     position: absolute;
     top:-0.2em;
-    left:0.14em;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nbDenom .nbAccentBase::before{

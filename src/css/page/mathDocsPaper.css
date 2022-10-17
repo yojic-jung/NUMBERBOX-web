@@ -14,7 +14,6 @@
 }
 
 .tmpHideDivForPrint{
-    display: none;
 }
 
 .mathDocsPaperWrap{
@@ -292,9 +291,7 @@
     .nbOverDotBox, .nbAccentBox {
         vertical-align: -0.4em !important;
     }
-    .nbRootBase .nbOverDotBox, .nbRootBase .nbAccentBox {
-        margin-top: 0.3em !important;;
-    }
+    
     /* 루트, 선분, 직선 옆에 실선 생기는 버그 */
     .nbRootBase {
         box-shadow:unset !important;
