@@ -2,6 +2,8 @@ import {React, useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import FormulaShortCutKey from './FormulaShortCutKey';
+
+
 import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
@@ -13,6 +15,7 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_m
 		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
 		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting, reg_enableImageResizeInDiv, reg_removeResizeFrame, reg_imageCopy} from 'js/contents/register/contents_reg';
+import { event } from "jquery";
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -175,6 +178,15 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		document.getElementById("multiChoiceImageFile").click();
 	}
 
+
+	const errReportBy = ()=>{
+		window.errType = 4;		//수학 문제 만들기 errType;
+		document.getElementById("serviceCenter").classList.remove("hide")
+		document.getElementById("serviceCenterQnADesc").innerHTML ="기호 추가, 오류, 제안사항이 있으시면 적어주세요.<br/>빠르게 개선하여 더 좋은 서비스를 제공해 드리겠습니다."
+		document.getElementById("serviceQuestionTab").click();
+		document.getElementById("serviceQuestion").scrollTo(0, 0)
+	}
+
 	useEffect(() => {
 		const asyncUseEffect = async function(){
 			if(nb_isLogin()){
@@ -202,7 +214,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			else window.addEventListener('scroll', topMenuFixed);
 			window.addEventListener('resize', topMenuWidth);
 			window.addEventListener('scroll', reg_removeResizeFrame);
-			window.addEventListener("keydown", reg_formulaTapMoveEv)
+			window.addEventListener("keydown", reg_formulaTapMoveEv);
+			
 			//이미지 및 파일 복붙 금지
 			let answerFormulaEditor = document.getElementById('answerFormulaEditor');
 			answerFormulaEditor.addEventListener('paste', pastePreventFile);
@@ -693,6 +706,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				</div>
 			</div>
 			<div className="right">
+				<div onClick={()=>{errReportBy("makeContents")}} className="errBtn makeContents"></div>
 				<div id="topShortkeyDiv">
 				<TabButton className="formulaTabButton" tabList={formulaTabList} clickEv={formularTabSelect}></TabButton>
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoard" keyName="shortCutKey" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}

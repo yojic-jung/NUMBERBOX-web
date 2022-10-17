@@ -38,7 +38,7 @@
     margin:0 auto 0 auto;
     padding:10px;
     border: 0.5px solid rgb(206, 206, 206);
-    min-height: 350px;
+    min-height: calc(100vh - 330px);    /*padding-bottom과 위에 요소 높이만큼 빼주기*/
     line-height: 160%;
     font-family: 'jejuGothic';
     color:gray;

@@ -143,8 +143,7 @@
     max-height: 75%;
     position: fixed;
     top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
+    left: calc(50% - 520px);
     overflow-x:hidden;
     overflow-y: auto;
     padding: 15px 20px;

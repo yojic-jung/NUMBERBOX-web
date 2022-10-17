@@ -982,6 +982,7 @@ let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인
 //redo 변수
 let redoArr = [];
 export const reg_preventKeyEvent = async (event) => {
+	
 	//이미지 사이즈 변경 틀 제거
 	if(window.getSelection().anchorNode.classList !== undefined && window.getSelection().anchorNode.classList.contains("imgWidthHeightDiv") ){
 		if(event.keyCode === 13){
@@ -1460,7 +1461,7 @@ export const reg_preventKeyEvent = async (event) => {
 		let moveStrtContainer = null;
 		if(moveRange.startContainer.classList !== undefined) moveStrtContainer =moveRange.startContainer;
 		else if(moveRange.startContainer.parentElement.classList !== undefined) moveStrtContainer =moveRange.startContainer.parentElement;
-		
+
 		//테이블 맨 윗줄 밑 맨 아랫줄 라인 이동 구현
 		let isTbMove = true;
 		if(isTable){
@@ -4246,3 +4247,5 @@ export const reg_removeResizeFrame = function () {
 			}
 			
   }
+
+  

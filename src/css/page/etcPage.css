@@ -355,6 +355,43 @@
     padding: 10px 0;
 }
 
+.sendPassForProfileBtn{
+    cursor: pointer;
+    padding: 2px 5px;
+    float: right;
+    clear: both;
+    background: #3e6599;
+    color:white;
+    border-radius: 5px;
+    text-align: center;
+    text-indent: 0;
+    position: relative;
+}
+
+.sendPassForProfileBtn:hover .sendPasswordForProfileDesc{
+    visibility:visible;
+}
+
+.sendPasswordForProfileDesc{
+    line-height: 130%;
+    font-size: 14px;
+    font-family: 'jejuGothic';
+    display: inline-block;
+    visibility: hidden;
+    width: 340px;
+    text-align: center;
+    background: black;
+    color: white;
+    border-radius: 5px;
+    padding: 8px 3px;
+    opacity: 0.9;
+    position: absolute;
+    top: -2px;
+    transform: translateY(-100%);
+    right: 0;
+    z-index: 3;
+}
+
 
 .confirmPassword{
     width: 200px;

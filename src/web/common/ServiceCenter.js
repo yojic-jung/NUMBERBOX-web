@@ -108,6 +108,10 @@ const ServiceCenter = ({myNickName})=>{
     }
 
     const registerError = async () => {
+        if(!(window.errType>=0 && window.errType<5)){   //사용자가 errType 조작한 경우
+            window.errType=0;
+        }
+        console.log(window.errType);
         if (document.getElementById("questionText").value.length < 10){
             nb_fadeInOutB("문의 내용은 최소 10글자 이상 작성하여 주시기 바랍니다.", 2000);
             return;
@@ -117,7 +121,7 @@ const ServiceCenter = ({myNickName})=>{
             return;
         }
         let formData = new FormData(document.getElementById("oneToOneQuestion"));
-        formData.append("errType", 0);
+        formData.append("errType", window.errType);
         let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
         if(returnVal.isSuccess === true){
             await nb_fadeInOutA("1:1 문의가 정상적으로 등록되었습니다.", 1500);
@@ -125,6 +129,7 @@ const ServiceCenter = ({myNickName})=>{
             document.getElementById("firstImgShow").src=image;
             document.getElementById("secondImgShow").src=image;
             document.getElementById("thirdImgShow").src=image;
+            document.getElementById("errCloseBtn").click();
         }
       }
 
@@ -160,7 +165,7 @@ return (
                     <span id="serviceQuestionTab" className='serviceCenterTab' onClick={(event)=>{serviceCenterMenuClick(event, "serviceQuestion")}}>1:1 문의</span>
                     <span className='serviceCenterTab' onClick={(event)=>{serviceCenterMenuClick(event, "myQnA")}}>나의 문의내역</span>
                 </div>
-                <div id="errCloseBtn" className='closeBtn errCloseBtn' onClick={()=>{document.getElementById("serviceCenter").classList.add("hide")}}>X</div>
+                <div id="errCloseBtn" className='closeBtn errCloseBtn' onClick={()=>{document.getElementById("serviceCenter").classList.add("hide");document.getElementById("serviceCenterQnADesc").innerHTML = "";window.errType = 0;}}>X</div>
                 <div>
                    <div id="servicePolicy" className='serviceCenterMenuCon'>
                         <div className='mini-title9'>N명의수학 이용시 지켜주세요!</div>
@@ -179,6 +184,7 @@ return (
                         </div>
                    </div>
                    <div id="serviceQuestion" className='serviceCenterMenuCon hide'>
+                        <div id="serviceCenterQnADesc" className="serviceCenterQnADesc"></div>
                         <div className='alignCenter'>
                             <form method="post" id="oneToOneQuestion" encType="multipart/form-data">
                                 <textarea id="questionText" name="reportContents" className='questionText' placeholder='문의 사항을 남겨주세요...' />

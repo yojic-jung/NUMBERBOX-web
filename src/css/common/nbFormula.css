@@ -740,7 +740,7 @@
 .nbRootBase::before{
     content:'\221A';
     position: absolute;
-    font-size:1.4em;
+    font-size:1.3em;
     top:0.1em;
     left:-0.5em;
 }

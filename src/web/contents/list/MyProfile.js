@@ -74,6 +74,16 @@ const MyProfile = ()=>{
         asyncUseEffect();
     },[]);
 
+    const sendPassword = async () => {
+        let returnObj = await nb_dataFetch("/findPassword?email="+email, true);
+        if(returnObj.isExist){
+            alert("해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 새로운 비밀번호로 변경하여 주시기 바랍니다.");
+            document.getElementById("emailForPassFind").value = "";
+        }else{
+            alert("해당 이메일의 계정이 존재하지 않습니다.\n만일, 계정이 존재 함에도 이 경고가 뜨는 경우 고객센터로 문의 해주시면 감사하겠습니다.");
+        }
+    }
+
     const confirmPassword = async () => {
         let formData = new FormData();
         formData.append("password", document.getElementById("confirmPassword").value);
@@ -185,7 +195,13 @@ const MyProfile = ()=>{
                         </tr>
                         <tr>
                             <td>비밀번호</td>
-                            <td><input id="confirmPassword" className='confirmPassword' type="password" onKeyDown={(event)=>{if(event.keyCode === 13) document.getElementById("memberInfoDetailBtn").click();}}/></td>
+                            <td>
+                                <input id="confirmPassword" className='confirmPassword' type="password" onKeyDown={(event)=>{if(event.keyCode === 13) document.getElementById("memberInfoDetailBtn").click();}}/>
+                                <span className='sendPassForProfileBtn' onClick={()=>{sendPassword()}}>
+                                    이메일로 임시비밀번호 받기
+                                    <div className='sendPasswordForProfileDesc'>sns 로그인 이용자는 이메일로 임시 비밀번호를 발급하여<br/>인증 후 사용해주세요.</div>
+                                </span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

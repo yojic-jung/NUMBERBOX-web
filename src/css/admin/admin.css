@@ -1,14 +1,16 @@
 .errReportCnt{
-    position:relative;
+    position: absolute;
+    right: -10px;
     display: inline-block;
-    min-width:30px;
-    height: 30px;
-    border-radius: 15px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
     background-color: rgb(252, 99, 22);
     text-align: center;
-    color:white;
-    line-height: 30px;
-    margin:0 3px;
+    color: white;
+    line-height: 20px;
+    margin: 0 3px;
+    font-size: 10px;
 }
 
 
@@ -23,6 +25,7 @@
 
 
 .adminErrReportTbDiv{
+    position: relative;
     cursor: pointer;
     vertical-align: middle;
     height: 30px;

@@ -253,13 +253,13 @@
     table:not(.nbBox):not(.editInnerTable) {
         border: solid white !important;
         border-width: 0 0 0 0 !important;
-        border-bottom-style: none;
+        border-bottom-style: none !important;;
     }
 
     img{
         border: solid white !important;
         border-width: 0 0 0 0 !important;
-        border-bottom-style: none;
+        border-bottom-style: none !important;;
     }
 
     .mathDocsA4Frame {
@@ -280,13 +280,37 @@
     .mathDocsBrowserView > div:not(.mathDocsA4Frame):not(.mathDocsWrap){
         display: none !important;
     }
+
+    /* 수식 버그 */
+    
+    /* 분수 분모 분자 실선 떨어지는 버그, 실선 너무 두꺼운 문제 해결*/
+    .nbDenom::before{
+        border-top: 1px solid rgba(255, 255, 255, 0) !important; /*border를 없애면 공간이 없어져 분모의 수가 보더에 너무 붙어 있음*/
+    }
+    
+    /* 순환소수 악센트 수직 정렬 안맞음*/
+    .nbOverDotBox, .nbAccentBox {
+        vertical-align: -0.4em !important;
+    }
+    .nbRootBase .nbOverDotBox, .nbRootBase .nbAccentBox {
+        margin-top: 0.3em !important;;
+    }
+    /* 루트, 선분, 직선 옆에 실선 생기는 버그 */
+    .nbRootBase {
+        box-shadow:unset !important;
+        border-top:1px solid black;
+    }
+    .nbOverlineBase, .nbRightArrowBase, .nbArcBase, .nbBiDirArrowBase{
+        box-shadow:unset !important;
+        border-top: 1px solid black;
+    }
 }
 
 
 
 /*
 *   학습지 페이지 수식 버그 해결
-*/
+
 
 .mathDocsA4Frame .nbRootBase{
     box-shadow:none;
@@ -300,3 +324,4 @@
 .mathDocsA4Frame .nbRootBase::before{
     top:0.14em;
 }
+*/
