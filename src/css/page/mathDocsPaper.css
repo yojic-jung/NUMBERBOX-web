@@ -289,7 +289,7 @@
     
     /* 순환소수 악센트 수직 정렬 안맞음*/
     .nbOverDotBox, .nbAccentBox {
-        vertical-align: -0.4em !important;
+        vertical-align: -0.375em !important;
     }
     
     /* 루트, 선분, 직선 옆에 실선 생기는 버그 */
