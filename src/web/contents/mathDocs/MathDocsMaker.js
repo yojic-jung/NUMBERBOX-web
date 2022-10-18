@@ -986,6 +986,9 @@ const MathDocsMaker = ()=>{
             mathDocsA4Frame[i].remove();
         }
 
+        //프린트 전 프린트시 달라지는 수식 속성 입히기
+        document.getElementById("mathContents").classList.add("mathDocsTmpDivForHeightBugFix");
+
         setMathDocsGrade(document.getElementById("docsGrade").value);
         setMathDocsTitle(document.getElementById("docsTitle").value);
         await reg_removeStyleAttribute("mathContents");
@@ -1031,6 +1034,7 @@ const MathDocsMaker = ()=>{
     }
 
     const registerMathDocsPaper= async () => {
+        document.title="N명의수학";
         let formData = new FormData();
 
         let contentsNoList;
@@ -1065,6 +1069,17 @@ const MathDocsMaker = ()=>{
         }
         
     }
+
+   
+
+    
+    const registerMathDocsPaperPopClose = async () => {
+        document.getElementById("confirmBoxScreen").classList.add("hide");
+        document.title="N명의수학";
+        //프린트 후 프린트시 입혀진 속성 다시 제거하기
+        document.getElementById("mathContents").classList.remove("mathDocsTmpDivForHeightBugFix");
+    }
+   
 
     const subjectInfoList = subjectList.map( (subjectInfo) => {
         //중등인 경우 
@@ -1651,11 +1666,11 @@ return (
 
         <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
             <div id="confirmBox" className='confirmBox'>
-                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");document.title="N명의수학";}}>X</span></div>
+                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{registerMathDocsPaperPopClose();}}>X</span></div>
                 <div id="confirmMsg" className="confirmMsg"></div>
                 <div className='alignCenter'>
-                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");document.title="N명의수학"}}>아니오</span>
-                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{registerMathDocsPaper();document.title="N명의수학"}}>네</span>
+                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{registerMathDocsPaperPopClose();}}>아니오</span>
+                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{registerMathDocsPaper();}}>네</span>
                 </div>
             </div>
         </div>

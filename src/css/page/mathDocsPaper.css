@@ -255,6 +255,9 @@
         border-bottom-style: none !important;;
     }
 
+    /* 박스 쉐도우 실선 나타나는 현상은 transform:translate: ; 속성에 의해 나타남
+    window.print 사용시 나타나는 인쇄 팝업창에 transform:translate: ; 속성 사용되는 걸로 추정
+    실제 출력시 회색 실선 나타나지 않음 */
     img{
         border: solid white !important;
         border-width: 0 0 0 0 !important;
@@ -280,8 +283,17 @@
         display: none !important;
     }
 
+    /* 수학문제 높이 여백 버그
+       모든 수학문제에 대하여 20mm의 여백을 주어 각 문제 마다 여백을 포함한 높이로 계산하여
+       학습지가 생성되지만 여백이 상위 div의 높이를 넘어가는 경우 있어 프린트시 높이제거
+        (높이 unset으로 설정해도 학습지 생성시에는 여백 포함한 높이 계산하니 상관없음 )
+    */
+    .mathDocsMinPadding{
+        height: unset;
+    }
+
     /* 수식 버그 */
-    
+
     /* 분수 분모 분자 실선 떨어지는 버그, 실선 너무 두꺼운 문제 해결*/
     .nbDenom::before{
         border-top: 1px solid rgba(255, 255, 255, 0) !important; /*border를 없애면 공간이 없어져 분모의 수가 보더에 너무 붙어 있음*/
@@ -292,33 +304,62 @@
         vertical-align: -0.375em !important;
     }
     
-    /* 루트, 선분, 직선 옆에 실선 생기는 버그 */
+    /* 루트, 선분, 직선 옆에 실선 생기는 버그  */
     .nbRootBase {
         box-shadow:unset !important;
         border-top:1px solid black;
     }
-    .nbOverlineBase, .nbRightArrowBase, .nbArcBase, .nbBiDirArrowBase{
+    .nbOverlineBase, .nbRightArrowBase, .nbBiDirArrowBase{
         box-shadow:unset !important;
         border-top: 1px solid black;
+    }
+
+    /*직선 화살표 위치 버그*/
+    .nbBiDirArrowBase::after, .nbBiDirArrowBase::before, .nbRightArrowBase::after{
+        top:-0.88em !important;
     }
 }
 
 
 
-/*
-*   학습지 페이지 수식 버그 해결
+/* 프린트 수식 버그 */
+/* 프린트 전 수식 속성 입혀 학습지 생성시 높이 속성 정확하게 계산할 수 있도록 구현 */
+.mathDocsTmpDivForHeightBugFix table:not(.nbBox):not(.editInnerTable) {
+    border: solid white !important;
+    border-width: 0 0 0 0 !important;
+    border-bottom-style: none !important;;
+}
+
+.mathDocsTmpDivForHeightBugFix img{
+    border: solid white !important;
+    border-width: 0 0 0 0 !important;
+    border-bottom-style: none !important;;
+}
 
 
-.mathDocsA4Frame .nbRootBase{
-    box-shadow:none;
+.mathDocsTmpDivForHeightBugFix .nbDenom::before{
+    border-top: 1px solid rgba(255, 255, 255, 0) !important; /*border를 없애면 공간이 없어져 분모의 수가 보더에 너무 붙어 있음*/
+}
+
+/* 순환소수 악센트 수직 정렬 안맞음*/
+.mathDocsTmpDivForHeightBugFix .nbOverDotBox, .mathDocsTmpDivForHeightBugFix .nbAccentBox {
+    vertical-align: -0.375em !important;
+}
+
+/* 루트, 선분, 직선 옆에 실선 생기는 버그 
+박스 쉐도우 실선 나타나는 현상은 transform:translate: ; 속성에 의해 나타남
+window.print 사용시 나타나는 인쇄 팝업창에 transform:translate: ; 속성 사용되는 걸로 추정
+실제 출력시 회색 실선 나타나지 않음 */
+.mathDocsTmpDivForHeightBugFix .nbRootBase {
+    box-shadow:unset !important;
     border-top:1px solid black;
 }
-
-.mathDocsA4Frame .nbRootBox{
-    vertical-align: text-top;
+.mathDocsTmpDivForHeightBugFix .nbOverlineBase, .mathDocsTmpDivForHeightBugFix .nbRightArrowBase, .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase{
+    box-shadow:unset !important;
+    border-top: 1px solid black;
 }
 
-.mathDocsA4Frame .nbRootBase::before{
-    top:0.14em;
+/*직선 화살표 위치 버그*/
+.mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::after, .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::before, .mathDocsTmpDivForHeightBugFix .nbRightArrowBase::after{
+    top:-0.88em !important;
 }
-*/
