@@ -52,11 +52,14 @@
     <script>
        if (window.navigator.userAgent.match(/MSIE|Internet Explorer|Trident/i)) {
        
-        alert("N명의 수학은 인터넷 익스플로러를 지원하지 않습니다.\n크롬 또는 엣지로 접속하여 주시기 바랍니다.")
-        window.open( "microsoft-edge:" + window.location.href);
-        window.location = 'https://go.microsoft.com/fwlink/?linkid=2135547';
-      
-    }
+          alert("N명의 수학은 인터넷 익스플로러를 지원하지 않습니다.\n크롬 또는 엣지로 접속하여 주시기 바랍니다.")
+          window.open( "microsoft-edge:" + window.location.href);
+          window.location = 'https://go.microsoft.com/fwlink/?linkid=2135547';
+        }
+
+        if(navigator.userAgent.toLowerCase().indexOf("mac")>-1 && navigator.userAgent.toLowerCase().indexOf("chrome")>-1){
+          window.onload=()=>{ document.getElementById("root").classList.add("macChrome");};
+        }
     </script>
     <div id="root"></div>
     <!--
