@@ -1284,12 +1284,24 @@
     left: -0.5em;
 }
 
+.macChrome .nbRootBase.nbFracInRoot::before{
+    top: 0.205em;
+}
+
 .nbRootBox.nbFracInRoot .nbNumer{
     padding: 4px 2px 0 2px;
 }
 
 .nbFracBox .nbRootBase.nbFracInRoot::before {
     top: 0.35em;
+}
+
+.macChrome .nbFracBox .nbRootBase.nbFracInRoot::before {
+    top: 0.33em;
+}
+
+.nbFracBox .nbDenom .nbRootBase.nbFracInRoot .nbFracBox{
+    margin-top: 3px;
 }
 
 /* 분모 안의 조건 박스 */
