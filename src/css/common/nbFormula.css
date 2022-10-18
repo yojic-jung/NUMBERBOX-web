@@ -592,13 +592,17 @@
 .nbNumer:after {
     content: "";
     display: block;
-    width: 100%;
+    width: calc(100% + 4px);
+    position: relative;
+    left: -2px;
     border-bottom: 1px solid black;
   }
 .nbDenom:before {
     content: "";
     display: block;
-    width: 100%;
+    width: calc(100% + 4px);
+    position: relative;
+    left: -2px;
     border-top: 1px solid black;
   }
 
@@ -743,9 +747,15 @@
     content:'\221A';
     position: absolute;
     font-size:1.3em;
-    top:0.1em;
-    left:-0.5em;
+    top:0.105em;
+    left:-0.505em;
 }
+
+/* 맥북 크롬으로 접속한 경우*/
+.macChrome .nbRootBase::before{
+    top:0.155em;
+}
+
 .nbRootBox .nbRootBox{
     vertical-align:middle !important;
     position: relative;
@@ -1302,9 +1312,52 @@
 .nbFracBox.nbFracInNumer{
     vertical-align: -0.9em;
 }
+
+/* 최상위 분모 분자는 padding 양옆 +3px 및 구분선 너비 양옆 +3px*/
+.nbFracBox.nbFracInNumer .nbNumer, .nbFracBox.nbFracInNumer .nbDenom{
+    padding: 0 3px 0 3px;
+}
+
+.nbFracBox.nbFracInNumer .nbNumer::after, .nbFracBox.nbFracInNumer .nbDenom::before{
+    width: calc(100% + 6px);
+    left: -3px;
+}
+
+
+/* 하위 분모 분자는 그대로 (padding 양옆 +2px 및 구분선 너비 양옆 +2px)*/
+.nbFracBox .nbNumer .nbFracBox .nbNumer, .nbFracBox .nbNumer .nbFracBox .nbDenom{
+    padding: 0 2px 0 2px;
+}
+.nbFracBox .nbNumer .nbFracBox .nbNumer::after, .nbFracBox .nbNumer .nbFracBox .nbDenom::before{
+    width: calc(100% + 4px);
+    left: -2px;
+}
+
+
+
 /* 분모 안의 분수 */
 .nbFracBox.nbFracInDenom{
     vertical-align: -2.3em;
+}
+
+/* 최상위 분모 분자는 padding 양옆 +3px 및 구분선 너비 양옆 +3px*/
+.nbFracBox.nbFracInDenom .nbNumer, .nbFracBox.nbFracInDenom .nbDenom{
+    padding: 0 3px 0 3px;
+}
+
+.nbFracBox.nbFracInDenom .nbNumer::after, .nbFracBox.nbFracInDenom .nbDenom::before{
+    width: calc(100% + 6px);
+    left: -3px;
+}
+
+.nbFracBox .nbDenom .nbFracBox .nbNumer, .nbFracBox .nbDenom .nbFracBox .nbDenom{
+    padding: 0 2px 0 2px;
+}
+
+
+.nbFracBox .nbDenom .nbFracBox .nbNumer::after, .nbFracBox .nbDenom .nbFracBox .nbDenom::before{
+    width: calc(100% + 4px);
+    left: -2px;
 }
 
 
@@ -1343,7 +1396,9 @@
 .nbFracBox.nbFracLineConvert .nbNumer:after, .nbFracBox.nbFracLineConvert2 .nbNumer:after {
     content: "";
     display: block;
-    width: 100%;
+    width: calc(100% + 4px);
+    position: relative;
+    left: -2px;
     border-bottom: 1px solid black;
     position: relative;
     bottom:-2px;
@@ -1355,7 +1410,9 @@
 .nbFracBox.nbFracLineConvert .nbDenom:before, .nbFracBox.nbFracLineConvert2 .nbDenom:before{
     content: "";
     display: block;
-    width: 100%;
+    width: calc(100% + 4px);
+    position: relative;
+    left: -2px;
     border-top: 1px solid black;
     position: relative;
     top:-2px;
