@@ -1651,11 +1651,11 @@ return (
 
         <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
             <div id="confirmBox" className='confirmBox'>
-                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");}}>X</span></div>
+                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");document.title="N명의수학";}}>X</span></div>
                 <div id="confirmMsg" className="confirmMsg"></div>
                 <div className='alignCenter'>
-                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide")}}>아니오</span>
-                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{registerMathDocsPaper()}}>네</span>
+                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");document.title="N명의수학"}}>아니오</span>
+                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={()=>{registerMathDocsPaper();document.title="N명의수학"}}>네</span>
                 </div>
             </div>
         </div>

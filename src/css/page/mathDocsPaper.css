@@ -150,8 +150,8 @@
     font-family: 'CookieRun-Regular';
     font-size: 18px;
     background: rgb(208, 225, 255);
-    padding: 8px 0 8px 15px;
-    margin-top:15px
+    padding: 6px 0 6px 15px;
+    margin-top: 4px;
 }
 
 .mathDocsPaperAnswer, .mathDocsPaperAnswer.rightLayer{

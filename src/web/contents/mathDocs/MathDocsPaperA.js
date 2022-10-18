@@ -685,6 +685,15 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                 window.isMathDocsSuccess = true;
                 document.getElementById("page-transit").classList.add("hide");
                 document.getElementById("page-transit-img").classList.add("hide");
+                let today = new Date();   
+
+                let year = today.getFullYear(); // 년도
+                let month = today.getMonth() + 1;  // 월
+                let date = today.getDate();  // 날짜
+                let hours = today.getHours(); // 시
+                let minutes = today.getMinutes();  // 분
+                let seconds = today.getSeconds();  // 초
+                document.title = "[N명의수학]"+document.getElementById("docsTitle").value+"_"+year+"_"+month+"_"+date+"_"+hours+minutes+seconds;
                 window.print();
                 parentMethod();
             }, 500);
