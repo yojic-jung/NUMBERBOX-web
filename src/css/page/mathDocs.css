@@ -243,6 +243,11 @@
     box-shadow: 0px -0.5px gray, inset 0px 0.5px gray;
 }
 
+.mathDocsRootDiv .contents-show  .nbRootBase{
+    box-shadow:  -0.5px 0 white, 0.5px 0 white, 0px -0.5px 0 0 black, inset 0px 0.5px 0 0 black;
+}
+
+
 .mathDocsRootDiv .active .nbRootBase{
     box-shadow: 0px -0.5px rgb(23, 104, 196), inset 0px 0.5px rgb(23, 104, 196);
 }
@@ -255,6 +260,15 @@
 .mathDocsRootDiv .nbDenom:before {
     border-top: 1px solid gray;
 }
+
+.mathDocsRootDiv .contents-show .nbNumer:after {
+    border-bottom: 1px solid black;
+}
+
+.mathDocsRootDiv .contents-show .nbDenom:before {
+    border-top: 1px solid black;
+}
+
 
 .mathDocsRootDiv .active .nbNumer:after {
     border-bottom: 1px solid rgb(23, 104, 196);
@@ -621,7 +635,7 @@
 .mathDocsMyProdDiv::-webkit-scrollbar-thumb:hover , .mathDocsMyRepoDiv::-webkit-scrollbar-thumb:hover {background: #504f4f;}
 
 .mathDocsMyProdWrap .mathDocsMyProdDiv .nbRootBase, .mathDocsMyRepoWrap .mathDocsMyRepoDiv .nbRootBase{
-    box-shadow: 0px -0.5px black, inset 0px 0.5px black;
+    box-shadow:  -0.5px 0 white, 0.5px 0 white, 0px -0.5px 0 0 black, inset 0px 0.5px 0 0 black;
 }
 
 .mathDocsMyProdDiv .contents-show img, .workQuesShow img, .mathDocsMyRepoDiv .contents-show img, .workQuesShow img{

@@ -266,8 +266,8 @@
     }
 
     .mathDocsA4Frame {
+        print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
-        -print-color-adjust: exact;
         margin: 0;
         border: initial;
         width: initial;
@@ -300,21 +300,13 @@
         border-top: 1px solid rgba(255, 255, 255, 0) !important; /*border를 없애면 공간이 없어져 분모의 수가 보더에 너무 붙어 있음*/
     }
     
-    /* 순환소수 악센트 수직 정렬 안맞음*/
-    .nbOverDotBox, .nbAccentBox {
-        vertical-align: -0.375em !important;
+    /* 순환소수, 악센트, 루트, 직선, 선분, 삼각함수, 이항계수 수직 정렬 안맞음*/
+    .mathDocsA4Frame  .nbOverDotBox, .mathDocsA4Frame  .nbAccentBox,
+     .mathDocsA4Frame .nbRootBox, .mathDocsA4Frame .nbOverlineBox, .mathDocsA4Frame .nbArrowBox, 
+     .mathDocsA4Frame .nbBiDirSubBox, .mathDocsA4Frame .nbTrigonBox {
+        vertical-align: -0.375em ;
     }
     
-    /* 루트, 선분, 직선 옆에 실선 생기는 버그  */
-    .nbRootBase {
-        box-shadow:unset !important;
-        border-top:1px solid black;
-    }
-    .nbOverlineBase, .nbRightArrowBase, .nbBiDirArrowBase{
-        box-shadow:unset !important;
-        border-top: 1px solid black;
-    }
-
     /*직선 화살표 위치 버그*/
     .nbBiDirArrowBase::after, .nbBiDirArrowBase::before, .nbRightArrowBase::after{
         top:-0.88em !important;
@@ -347,18 +339,6 @@
     vertical-align: -0.375em !important;
 }
 
-/* 루트, 선분, 직선 옆에 실선 생기는 버그 
-박스 쉐도우 실선 나타나는 현상은 transform:translate: ; 속성에 의해 나타남
-window.print 사용시 나타나는 인쇄 팝업창에 transform:translate: ; 속성 사용되는 걸로 추정
-실제 출력시 회색 실선 나타나지 않음 */
-.mathDocsTmpDivForHeightBugFix .nbRootBase {
-    box-shadow:unset !important;
-    border-top:1px solid black;
-}
-.mathDocsTmpDivForHeightBugFix .nbOverlineBase, .mathDocsTmpDivForHeightBugFix .nbRightArrowBase, .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase{
-    box-shadow:unset !important;
-    border-top: 1px solid black;
-}
 
 /*직선 화살표 위치 버그*/
 .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::after, .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::before, .mathDocsTmpDivForHeightBugFix .nbRightArrowBase::after{
