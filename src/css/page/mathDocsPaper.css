@@ -244,6 +244,11 @@
     html, body {
         width: 210mm;
         height: 297mm;
+        /* print-color-adjust, filter 속성은 html, body에 선언해야 버그가 가장 안 일어남 */
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        filter:opacity(1);
+        -webkit-filter:opacity(1);  /*제거하면 루트 box-shadow 실선 나타남*/
     }
     
     .tmpHideDivForPrint{
@@ -266,9 +271,6 @@
     }
 
     .mathDocsA4Frame {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-        margin: 0;
         border: initial;
         width: initial;
         min-height: initial;
@@ -293,7 +295,6 @@
         height: unset;
     }
 
-    /* 수식 버그 */
 
     /* 분수 분모 분자 실선 떨어지는 버그, 실선 너무 두꺼운 문제 해결*/
     .nbDenom::before{
