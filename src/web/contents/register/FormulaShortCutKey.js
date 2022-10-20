@@ -139,7 +139,25 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                             nbFracBoxStrt.classList.add("nbFracInNumer");
                         }
                     }
+
+                    //nbFracInDenom위에 리밋 있는 경우
+                    let nbFracBoxInLimStrt = nbFracBoxStrt.closest(".nbLimBase");
+                    let nbFracBoxInLimEnd = nbFracBoxEnd.closest(".nbLimBase");
+                    if(nbFracBoxInLimStrt !== null && nbFracBoxInLimEnd !== null){
+                        if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                            if(nbFracBoxStrt.classList.contains("nbFracInDenom") && nbFracBoxStrt.classList.contains("nbFracInNumer")){
+                                nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+                                nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+                                nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInFracInLim");
+                            }
+                            else if(nbFracBoxStrt.classList.contains("nbFracInDenom")){
+                                nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+                                nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+                            }
+                        }
+                    }
                 }
+                
 
                 //lim 안의 분수 컴파일
                 let nbLimBaseStrt = strtElement.closest(".nbLimBase");
@@ -199,14 +217,33 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 }
             }
 
-            //lim 안의 시그마 컴파일
+            //시그마 컴파일
             if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+                //리밋 안 시그마
                 let nbLimBoxStrt = strtElement.closest(".nbLimBase");
                 let nbLimBoxEnd = endElement.closest(".nbLimBase");
                 if(nbLimBoxStrt !== null && nbLimBoxEnd !== null){
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
                         nbLimBoxStrt.closest(".nbBox").classList.add("nbConvert");
                         nbLimBoxEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
+                    }
+                }
+                //분모 안의 시그마 컴파일
+                let nbDenomStrt = strtElement.closest(".nbDenom");
+                let nbDenomEnd = endElement.closest(".nbDenom");
+                if(nbDenomStrt !== null && nbDenomEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbSigmaSumInDenom");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+                //분자 안의 시그마 컴파일
+                let nbNumerStrt = strtElement.closest(".nbNumer");
+                let nbNumerEnd = endElement.closest(".nbNumer");
+                if(nbNumerStrt !== null && nbNumerEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
                     }
                 }
             }
@@ -223,6 +260,27 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                 }
             }
 
+            //nbConvert 분모 안에 리밋 들어가는 경우
+            if(nbGrammer.indexOf("nbLimBox") > -1){
+                let nbDenomStrt = strtElement.closest(".nbDenom");
+                let nbDenomEnd = endElement.closest(".nbDenom");
+                if(nbDenomStrt !== null && nbDenomEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbLimInDenom");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+
+                let nbNumerStrt = strtElement.closest(".nbNumer");
+                let nbNumerEnd = endElement.closest(".nbNumer");
+                if(nbNumerStrt !== null && nbNumerEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbLimInNumer");
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+            }
+            
             //nbConvert 분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
             if(nbGrammer.indexOf("nbArrowBox") > -1 || nbGrammer.indexOf("nbOverlineBox") > -1){
                 let nbDenomStrt = strtElement.closest(".nbDenom");
@@ -252,6 +310,27 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
                     if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
                         nbNumerEnd.closest(".nbFracBox").classList.add("nbCondBoxInFracNumerConvert");
                         nbNumerEnd.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+            }
+
+            //분모, 분자 안에 적분 들어가는 경우
+            if(nbGrammer.indexOf("nbIntegralBox") > -1 || nbGrammer.indexOf("nbDoubleIntegralBox") > -1 || nbGrammer.indexOf("nbTripleIntegralBox") > -1){
+                let nbDenomStrt = strtElement.closest(".nbDenom");
+                let nbDenomEnd = endElement.closest(".nbDenom");
+                if(nbDenomStrt !== null && nbDenomEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbIntegralInDenom");
+                        nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+                    }
+                }
+
+                let nbNumerStrt = strtElement.closest(".nbNumer");
+                let nbNumerEnd = endElement.closest(".nbNumer");
+                if(nbNumerStrt !== null && nbNumerEnd !== null){
+                    if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbIntegralInNumer");
+                        nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
                     }
                 }
             }

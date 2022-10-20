@@ -1827,6 +1827,23 @@ export const reg_preventKeyEvent = async (event) => {
 								nbFracBoxStrt.classList.add("nbFracInNumer");
 							}
 						}
+
+						//nbFracInDenom위에 리밋 있는 경우
+						let nbFracBoxInLimStrt = nbFracBoxStrt.closest(".nbLimBase");
+						let nbFracBoxInLimEnd = nbFracBoxEnd.closest(".nbLimBase");
+						if(nbFracBoxInLimStrt !== null && nbFracBoxInLimEnd !== null){
+							if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+								if(nbFracBoxStrt.classList.contains("nbFracInDenom") && nbFracBoxStrt.classList.contains("nbFracInNumer")){
+									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInFracInLim");
+								}
+								else if(nbFracBoxStrt.classList.contains("nbFracInDenom")){
+									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+								}
+							}
+						}
 					}
 
 					//리밋 안의 분수 컴파일
@@ -1888,14 +1905,54 @@ export const reg_preventKeyEvent = async (event) => {
 					}
 				}
 
-				//리밋 안의 시그마 컴파일
+				//시그마 컴파일
 				if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+					//리밋 안의 시그마 컴파일
 					let nbLimBaseStrt = strtElement.closest(".nbLimBase");
 					let nbLimBaseEnd = endElement.closest(".nbLimBase");
 					if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 							nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
 							nbLimBaseEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
+						}
+					}
+					//분모 안의 시그마 컴파일
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbSigmaSumInDenom");
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+						}
+					}
+					//분자 안의 시그마 컴파일
+					let nbNumerStrt = strtElement.closest(".nbNumer");
+					let nbNumerEnd = endElement.closest(".nbNumer");
+					if(nbNumerStrt !== null && nbNumerEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+						}
+					}
+				}
+
+				//nbConvert 분모, 분자 안에 리밋 들어가는 경우
+				if(nbGrammer.indexOf("nbLimBox") > -1){
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbLimInDenom");
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+						}
+					}
+
+					let nbNumerStrt = strtElement.closest(".nbNumer");
+					let nbNumerEnd = endElement.closest(".nbNumer");
+					if(nbNumerStrt !== null && nbNumerEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbLimInNumer");
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
 						}
 					}
 				}
@@ -1921,6 +1978,27 @@ export const reg_preventKeyEvent = async (event) => {
 						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
 							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+						}
+					}
+				}
+
+				//분모, 분자 안에 적분 들어가는 경우
+				if(nbGrammer.indexOf("nbIntegralBox") > -1 || nbGrammer.indexOf("nbDoubleIntegralBox") > -1 || nbGrammer.indexOf("nbTripleIntegralBox") > -1){
+					let nbDenomStrt = strtElement.closest(".nbDenom");
+					let nbDenomEnd = endElement.closest(".nbDenom");
+					if(nbDenomStrt !== null && nbDenomEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbIntegralInDenom");
+							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+						}
+					}
+
+					let nbNumerStrt = strtElement.closest(".nbNumer");
+					let nbNumerEnd = endElement.closest(".nbNumer");
+					if(nbNumerStrt !== null && nbNumerEnd !== null){
+						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbIntegralInNumer");
+							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
 						}
 					}
 				}
@@ -3155,29 +3233,7 @@ export const reg_nbComplie = async (event) => {
 				nbFracInSigmaSumBoxes[i].classList.add("nbFracInSigmaSum");
 			}
 		}
-
-
-		//리밋 안 분수, 시그마
-		let nbFracINLimBoxes = [];
-		let nbSigmaInLimBoxes = [];
-		document.activeElement.querySelectorAll(".nbLimBox").forEach((item, index, arr)=>{
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLim"))) nbFracINLimBoxes.push(item);
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbSigmaSumInLim"))) nbSigmaInLimBoxes.push(item);
-		});
-
-		for(let i=0; i<nbFracINLimBoxes.length; i++){
-			if(nbFracINLimBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
-				nbFracINLimBoxes[i].classList.add("nbConvert");
-				nbFracINLimBoxes[i].classList.add("nbFracInLim");
-			}
-		}
-
-		for(let i=0; i<nbSigmaInLimBoxes.length; i++){
-			if(nbSigmaInLimBoxes[i].querySelectorAll(".nbSigmaSumBox").length !== 0) {
-				nbSigmaInLimBoxes[i].classList.add("nbConvert");
-				nbSigmaInLimBoxes[i].classList.add("nbSigmaSumInLim");
-			}
-		}
+		
 
 		//log함수 안 분수
 		let nbLogBox = [];
@@ -3228,12 +3284,27 @@ export const reg_nbComplie = async (event) => {
 		let nbFracLineConvert2 = [];
 		//분수 안 조건박스
 		let nbFracCondBoxConvert = [];
+		//분수 안 리밋
+		let nbLimInDenom = [];
+		let nbLimInNumer = [];
+		//분수 안 시그마
+		let nbSigmaSumInDenom = [];
+		let nbSigmaSumInNumer = [];
+		//분수 안 시그마
+		let nbIntegralInDenom = [];
+		let nbIntegralInNumer = [];
 
 		document.querySelectorAll(".nbFracBox").forEach((item, index, arr)=>{
 			if(!item.classList.contains("nbFracInDenom") || !item.classList.contains("nbFracInNumer")) nbFracInFracBoxes.push(item);
 			if(!item.classList.contains("nbFracLineConvert")) nbFracLineConvert.push(item);
 			if(!item.classList.contains("nbFracLineConvert2")) nbFracLineConvert2.push(item);
 			if(!item.classList.contains("nbCondBoxInFracAllConvert")) nbFracCondBoxConvert.push(item);
+			if(!item.classList.contains("nbLimInDenom")) nbLimInDenom.push(item);
+			if(!item.classList.contains("nbLimInNumer")) nbLimInNumer.push(item);
+			if(!item.classList.contains("nbSigmaSumInDenom")) nbSigmaSumInDenom.push(item);
+			if(!item.classList.contains("nbSigmaSumInNumer")) nbSigmaSumInNumer.push(item);
+			if(!item.classList.contains("nbIntegralInDenom")) nbIntegralInDenom.push(item);
+			if(!item.classList.contains("nbIntegralInNumer")) nbIntegralInNumer.push(item);
 		});
 
 		for(let i=0; i<nbFracInFracBoxes.length; i++){
@@ -3290,6 +3361,143 @@ export const reg_nbComplie = async (event) => {
 				}
 			}
 
+		}
+
+		//분수 분모 안 적분
+		for(let i=0; i<nbIntegralInDenom.length; i++){
+			if(nbIntegralInDenom[i].querySelectorAll(".nbDenom .nbIntegralBox, .nbDenom .nbDoubleIntegralBox, .nbDenom .nbTripleIntegralBox").length !== 0) {
+				nbIntegralInDenom[i].classList.add("nbIntegralInDenom");
+				nbIntegralInDenom[i].classList.add("nbConvert");
+			}
+		}
+
+		//분수 분자 안 적분
+		for(let i=0; i<nbIntegralInNumer.length; i++){
+			if(nbIntegralInNumer[i].querySelectorAll(".nbNumer .nbIntegralBox, .nbNumer .nbDoubleIntegralBox, .nbNumer .nbTripleIntegralBox").length !== 0) {
+				nbIntegralInNumer[i].classList.add("nbIntegralInNumer");
+				nbIntegralInNumer[i].classList.add("nbConvert");
+			}
+		}
+
+		//분수 분모 안 리밋
+		for(let i=0; i<nbLimInDenom.length; i++){
+			if(nbLimInDenom[i].querySelectorAll(".nbDenom .nbLimBox").length !== 0) {
+				nbLimInDenom[i].classList.add("nbLimInDenom");
+				nbLimInDenom[i].classList.add("nbConvert");
+			}
+		}
+
+		//분수 분자 안 리밋
+		for(let i=0; i<nbLimInNumer.length; i++){
+			if(nbLimInNumer[i].querySelectorAll(".nbNumer .nbLimBox").length !== 0) {
+				nbLimInNumer[i].classList.add("nbLimInNumer");
+				nbLimInNumer[i].classList.add("nbConvert");
+			}
+		}
+
+		//분수 분모 안 시그마
+		for(let i=0; i<nbSigmaSumInDenom.length; i++){
+			if(nbSigmaSumInDenom[i].querySelectorAll(".nbDenom .nbSigmaSumBox").length !== 0) {
+				nbSigmaSumInDenom[i].classList.add("nbSigmaSumInDenom");
+				nbSigmaSumInDenom[i].classList.add("nbConvert");
+			}
+		}
+
+		//분수 분자 안 시그마
+		for(let i=0; i<nbSigmaSumInNumer.length; i++){
+			if(nbSigmaSumInNumer[i].querySelectorAll(".nbNumer .nbSigmaSumBox").length !== 0) {
+				nbSigmaSumInNumer[i].classList.add("nbSigmaSumInNumer");
+				nbSigmaSumInNumer[i].classList.add("nbConvert");
+			}
+		}
+
+		//리밋 안 분수, 시그마
+		let nbFracINLimBoxes = [];
+		let nbFracInFracInLimBoxes = [];
+		let nbFracIDenomInLimBoxes = [];
+		let nbSigmaInLimBoxes = [];
+		document.activeElement.querySelectorAll(".nbLimBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLim"))) nbFracINLimBoxes.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInDenomInLim"))) nbFracIDenomInLimBoxes.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInFracInLim"))) nbFracInFracInLimBoxes.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbSigmaSumInLim"))) nbSigmaInLimBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracINLimBoxes.length; i++){
+			if(nbFracINLimBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracINLimBoxes[i].classList.add("nbConvert");
+				nbFracINLimBoxes[i].classList.add("nbFracInLim");
+			}
+		}
+
+		for(let i=0; i<nbFracInFracInLimBoxes.length; i++){
+			if(nbFracInFracInLimBoxes[i].querySelectorAll(".nbFracInDenom.nbFracInNumer").length !== 0) {
+				nbFracInFracInLimBoxes[i].classList.add("nbConvert");
+				nbFracInFracInLimBoxes[i].classList.add("nbFracInFracInLim");
+			}
+		}
+
+		for(let i=0; i<nbFracIDenomInLimBoxes.length; i++){
+			if(nbFracIDenomInLimBoxes[i].querySelectorAll(".nbFracInDenom").length !== 0) {
+				nbFracIDenomInLimBoxes[i].classList.add("nbConvert");
+				nbFracIDenomInLimBoxes[i].classList.add("nbFracInDenomInLim");
+			}
+		}
+
+		for(let i=0; i<nbSigmaInLimBoxes.length; i++){
+			if(nbSigmaInLimBoxes[i].querySelectorAll(".nbSigmaSumBox").length !== 0) {
+				nbSigmaInLimBoxes[i].classList.add("nbConvert");
+				nbSigmaInLimBoxes[i].classList.add("nbSigmaSumInLim");
+			}
+		}
+	}
+
+	//분수 안 시그마
+	let nbIntergralInDenomBoxes = document.querySelectorAll(".nbFracBox.nbIntegralInDenom");
+	for(let i=0; i<nbIntergralInDenomBoxes.length; i++){
+		if(nbIntergralInDenomBoxes[i].querySelectorAll(".nbDenom .nbIntegralBox, .nbDenom .nbDoubleIntegralBox, .nbDenom .nbTripleIntegralBox").length === 0) {
+			nbIntergralInDenomBoxes[i].classList.remove("nbConvert");
+			nbIntergralInDenomBoxes[i].classList.remove("nbIntegralInDenom");
+		}
+	}
+	let nbIntergralInNumerBoxes = document.querySelectorAll(".nbFracBox.nbIntegralInNumer");
+	for(let i=0; i<nbIntergralInNumerBoxes.length; i++){
+		if(nbIntergralInNumerBoxes[i].querySelectorAll(".nbNumer .nbIntegralBox, .nbNumer .nbDoubleIntegralBox, .nbNumer .nbTripleIntegralBox").length === 0) {
+			nbIntergralInNumerBoxes[i].classList.remove("nbConvert");
+			nbIntergralInNumerBoxes[i].classList.remove("nbIntegralInNumer");
+		}
+	}
+
+
+	//분수 안 시그마
+	let nbSigmaSumInDenomBoxes = document.querySelectorAll(".nbFracBox.nbSigmaSumInDenom");
+	for(let i=0; i<nbSigmaSumInDenomBoxes.length; i++){
+		if(nbSigmaSumInDenomBoxes[i].querySelectorAll(".nbDenom .nbSigmaSumBox").length === 0) {
+			nbSigmaSumInDenomBoxes[i].classList.remove("nbConvert");
+			nbSigmaSumInDenomBoxes[i].classList.remove("nbSigmaSumInDenom");
+		}
+	}
+	let nbSigmaSumInNumerBoxes = document.querySelectorAll(".nbFracBox.nbSigmaSumInNumer");
+	for(let i=0; i<nbSigmaSumInNumerBoxes.length; i++){
+		if(nbSigmaSumInNumerBoxes[i].querySelectorAll(".nbNumer .nbSigmaSumBox").length === 0) {
+			nbSigmaSumInNumerBoxes[i].classList.remove("nbConvert");
+			nbSigmaSumInNumerBoxes[i].classList.remove("nbSigmaSumInNumer");
+		}
+	}
+
+	//분수 안 리밋
+	let nbLimInDenomBoxes = document.querySelectorAll(".nbFracBox.nbLimInDenom");
+	for(let i=0; i<nbLimInDenomBoxes.length; i++){
+		if(nbLimInDenomBoxes[i].querySelectorAll(".nbDenom .nbLimBox").length === 0) {
+			nbLimInDenomBoxes[i].classList.remove("nbConvert");
+			nbLimInDenomBoxes[i].classList.remove("nbLimInDenom");
+		}
+	}
+	let nbLimInNumerBoxes = document.querySelectorAll(".nbFracBox.nbLimInNumer");
+	for(let i=0; i<nbLimInNumerBoxes.length; i++){
+		if(nbLimInNumerBoxes[i].querySelectorAll(".nbNumer .nbLimBox").length === 0) {
+			nbLimInNumerBoxes[i].classList.remove("nbConvert");
+			nbLimInNumerBoxes[i].classList.remove("nbLimInNumer");
 		}
 	}
 
@@ -3413,6 +3621,22 @@ export const reg_nbComplie = async (event) => {
 				nbCondBoxInFracNumer[i].classList.remove("nbConvert");
 			}
 			nbCondBoxInFracNumer[i].classList.remove("nbCondBoxInFracNumerConvert");
+		}
+	}
+
+	//리밋 안 분수 분의 분수, 분수 안의 분모 안의 분수
+	let nbFracInDenomInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInDenomInLim");
+	for(let i=0; i<nbFracInDenomInLimBoxes.length; i++){
+		if(nbFracInDenomInLimBoxes[i].querySelectorAll(".nbFracInDenom").length === 0) {
+			nbFracInDenomInLimBoxes[i].classList.remove("nbConvert");
+			nbFracInDenomInLimBoxes[i].classList.remove("nbFracInDenomInLim");
+		}
+	}
+	let nbFracInFracInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInFracInLim");
+	for(let i=0; i<nbFracInFracInLimBoxes.length; i++){
+		if(nbFracInFracInLimBoxes[i].querySelectorAll(".nbFracInDenom.nbFracInNumer ").length === 0) {
+			nbFracInFracInLimBoxes[i].classList.remove("nbConvert");
+			nbFracInFracInLimBoxes[i].classList.remove("nbFracInFracInLim");
 		}
 	}
 }

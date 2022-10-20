@@ -1124,7 +1124,6 @@ height: 1.6em;
     background-color: #e6e9eb;
     padding: 10px;
     border-right:1px solid lightgray;
-    border-bottom:1px solid lightgray;
 }
 
 /** 문제 출력 사이즈 대략 356px(테스트 필요) **/
@@ -1140,7 +1139,6 @@ height: 1.6em;
     padding: 20px 0 50px 0;
     border-spacing: 0px;
     border-right:1px solid lightgray;
-    border-bottom:1px solid lightgray;
     vertical-align: top;
 }
 
@@ -1167,7 +1165,7 @@ height: 1.6em;
 .contentsDiv thead > tr >:first-child, .contentsDiv thead > tr >:nth-child(2){
     width:400px;
     min-width: 370px;
-    border-top: 2px solid dimgray;
+    box-shadow: 0 1px dimgrey, 0 -1px dimgrey;
 }
 .contentsDiv thead > tr >:nth-child(3){
     width:150px;

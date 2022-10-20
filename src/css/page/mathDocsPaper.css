@@ -124,6 +124,7 @@
     width:387px;
     height: 50%;
     clear:both;
+    border-top: 1px solid white; /* border-top:1px 있어야 원본 문제와 비슷하게 출력됨, 문제 만들기, 검색 페이지에도 border-top 속성 정의됨*/
 }
 
 .paperContentsRight .fourArrPageCon, .paperContentsRight .sixArrPageCon, .paperContentsRight .eightArrPageCon{
@@ -305,13 +306,96 @@
     .mathDocsA4Frame  .nbOverDotBox, .mathDocsA4Frame  .nbAccentBox,
      .mathDocsA4Frame .nbRootBox, .mathDocsA4Frame .nbOverlineBox, .mathDocsA4Frame .nbArrowBox, 
      .mathDocsA4Frame .nbBiDirSubBox, .mathDocsA4Frame .nbTrigonBox {
-        vertical-align: -0.375em ;
+        vertical-align: -0.375em;
     }
     
     /*직선 화살표 위치 버그*/
     .nbBiDirArrowBase::after, .nbBiDirArrowBase::before, .nbRightArrowBase::after{
         top:-0.88em !important;
     }
+
+    /* 로그 함수(자연로그 포함) */
+    .mathDocsA4Frame .nbLogBox{
+        vertical-align: -0.685em;
+    }
+    .mathDocsA4Frame .nbLogBox.nbFracInLog{
+        vertical-align: middle;
+    }
+
+    .mathDocsA4Frame .nbDenom .nbLogBox {
+        margin-top: 0;
+        vertical-align: -0.405em;
+    }
+
+    
+    .mathDocsA4Frame .nbNumer .nbLogBox {
+        margin: 0;
+        vertical-align: -0.399em;
+    }
+    
+    .mathDocsA4Frame .nbLnBox{
+        vertical-align: -0.405em;
+    }
+
+    .mathDocsA4Frame .nbIntegralTbody2 .nbLogBox {
+        vertical-align: -0.405em;
+    }
+    
+    .mathDocsA4Frame .nbIntegralTbody2 .nbNumer .nbLogBox {
+        vertical-align: -0.49em;
+    }
+    
+    .mathDocsA4Frame .nbIntegralTbody2 .nbDenom .nbLogBox {
+        vertical-align: -0.47em;
+    }
+
+    .mathDocsA4Frame .nbDenom .nbLnBox ,
+    .mathDocsA4Frame .nbIntegralTbody2 .nbDenom .nbLnBox {
+        vertical-align: -0.435em;
+    }
+    .mathDocsA4Frame .nbNumer .nbLnBox,
+    .mathDocsA4Frame .nbIntegralTbody2 .nbNumer .nbLnBox {
+        vertical-align: -0.435em;
+    }
+
+    .mathDocsA4Frame .nbLnBox.nbFracInLn .nbLnSign {
+        position: relative;
+        top: 3px;
+    }
+
+    .mathDocsA4Frame .nbIntBase .nbLnBox,
+    .mathDocsA4Frame .nbDoubleIntBase .nbLnBox,
+    .mathDocsA4Frame .nbTripleIntBase .nbLnBox {
+        vertical-align: -0.41em;
+    }
+
+
+    /* 시그마 */
+    .mathDocsA4Frame .nbSigmaSumBox {
+        vertical-align: -0.04em
+    }
+
+    .mathDocsA4Frame .nbSigmaSumBox .nbSigmaSumBox {
+        vertical-align: 0.951em;
+    }
+
+    .mathDocsA4Frame .nbLimBox.nbSigmaSumInLim .nbLimTbody2{
+        vertical-align: -0.755em;
+    }
+
+    /* 적분 */
+    .mathDocsA4Frame .nbIntegralBox, .mathDocsA4Frame .nbDoubleIntegralBox, .mathDocsA4Frame .nbTripleIntegralBox {
+        vertical-align: -0.04em
+    }
+
+    .mathDocsA4Frame .nbIntegralBox.nbFracInIntegral .nbIntBase, 
+    .mathDocsA4Frame .nbDoubleIntegralBox.nbFracInIntegral .nbDoubleIntBase, 
+    .mathDocsA4Frame .nbTripleIntegralBox.nbFracInIntegral .nbTripleIntBase {
+        position: relative;
+        top: -0.5px;
+    }
+
+    
 }
 
 
@@ -335,13 +419,53 @@
     border-top: 1px solid rgba(255, 255, 255, 0) !important; /*border를 없애면 공간이 없어져 분모의 수가 보더에 너무 붙어 있음*/
 }
 
-/* 순환소수 악센트 수직 정렬 안맞음*/
-.mathDocsTmpDivForHeightBugFix .nbOverDotBox, .mathDocsTmpDivForHeightBugFix .nbAccentBox {
+ /* 순환소수, 악센트, 루트, 직선, 선분, 삼각함수, 이항계수 수직 정렬 안맞음*/
+.mathDocsTmpDivForHeightBugFix  .nbOverDotBox, .mathDocsTmpDivForHeightBugFix  .nbAccentBox,
+.mathDocsTmpDivForHeightBugFix .nbRootBox, .mathDocsTmpDivForHeightBugFix .nbOverlineBox, .mathDocsTmpDivForHeightBugFix .nbArrowBox, 
+.mathDocsTmpDivForHeightBugFix .nbBiDirSubBox, .mathDocsTmpDivForHeightBugFix .nbTrigonBox {
     vertical-align: -0.375em !important;
 }
 
 
 /*직선 화살표 위치 버그*/
-.mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::after, .mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::before, .mathDocsTmpDivForHeightBugFix .nbRightArrowBase::after{
+.mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::after, 
+.mathDocsTmpDivForHeightBugFix .nbBiDirArrowBase::before, 
+.mathDocsTmpDivForHeightBugFix .nbRightArrowBase::after{
     top:-0.88em !important;
+}
+
+/* 로그 함수 */
+.mathDocsTmpDivForHeightBugFix  .nbLogBox{
+    vertical-align: -0.685em;
+}
+.mathDocsTmpDivForHeightBugFix .nbLogBox.nbFracInLog{
+    vertical-align: middle;
+}
+
+.mathDocsTmpDivForHeightBugFix .nbDenom .nbLogBox {
+    margin-top: 0;
+    vertical-align: -0.405em;
+}
+
+.mathDocsTmpDivForHeightBugFix .nbNumer .nbLogBox {
+    margin: 0;
+    vertical-align: -0.399em;
+}
+
+.mathDocsTmpDivForHeightBugFix .nbLnBox{
+    vertical-align: -0.405em;
+}
+
+/* 시그마 */
+.mathDocsTmpDivForHeightBugFix .nbSigmaSumBox {
+    vertical-align: -0.04em
+}
+
+.mathDocsTmpDivForHeightBugFix .nbSigmaSumBox .nbSigmaSumBox {
+    vertical-align: 0.951em;
+}
+
+
+.mathDocsTmpDivForHeightBugFix .nbLimBox.nbSigmaSumInLim .nbLimTbody2{
+    vertical-align: -0.755em;
 }

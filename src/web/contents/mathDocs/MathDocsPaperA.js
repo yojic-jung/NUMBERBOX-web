@@ -100,8 +100,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                 let paddingHeight = ((arrPageContents[j].offsetHeight+arrPageContents[j-1].offsetHeight)
                                                     -(contentsShow[i].offsetHeight+contentsShow[i-1].offsetHeight+50));     //50은 문제 번호 높이
                                 if(paddingHeight>0) {
-                                    arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2))+"px";
-                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
+                                    arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                 }else{
                                      //case.1)왼쪽 아래 (오른쪽에 추가)
                                     if(arrPageContents[j].classList.contains("leftBelow")){
@@ -113,8 +113,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                             let paddingHeight = ((arrPageContents[j].offsetHeight+arrPageContents[j+1].offsetHeight)
                                                                 -(contentsShow[i].offsetHeight+contentsShow[i+1].offsetHeight+50));    //50은 문제 번호 높이
                                             if(paddingHeight>0) {
-                                                arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2))+"px";
-                                                arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
+                                                arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                                arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                             }else{  
                                                 //공간 남지 않으면 오른쪽 공간 하나 더 제거해서 한 줄 다 차지
                                                 arrPageContents[j].remove();  
@@ -133,8 +133,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                             let paddingHeight = ((mathPaper.querySelectorAll(".leftAbove")[0].offsetHeight+mathPaper.querySelectorAll(".leftBelow")[0].offsetHeight)
                                                                     -(contentsShow[i].offsetHeight+contentsShow[i+1].offsetHeight+50));
                                             if(paddingHeight>0) {
-                                                mathPaper.querySelectorAll(".leftAbove")[0].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
-                                                mathPaper.querySelectorAll(".leftBelow")[0].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2))+"px";
+                                                mathPaper.querySelectorAll(".leftAbove")[0].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                                mathPaper.querySelectorAll(".leftBelow")[0].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                             }else{   
                                                 //공간 남지 않으면 오른쪽 공간 하나 더 제거해서 한 줄 다 차지
                                                 mathPaper.querySelectorAll(".leftAbove")[0].remove();
@@ -151,8 +151,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                     let paddingHeight = ((arrPageContents[j].offsetHeight+arrPageContents[j+1].offsetHeight)
                                                         -(contentsShow[i].offsetHeight+contentsShow[i+1].offsetHeight+50));
                                     if(paddingHeight>0){
-                                        arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2))+"px";
-                                        arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
+                                        arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                        arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                     }else{
                                         arrPageContents[j].remove();
                                     }
@@ -211,8 +211,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                             //위에 두 공간 공간 똑같이 나누기
                             let contentsHeight = contentsShow[i-2].offsetHeight+contentsShow[i-1].offsetHeight+50;   //(50은 문제 번호 공간 높이)
                             let paddingHeight = (halfPageSpace.offsetHeight-contentsHeight);
-                            arrPageContents[j-2].style.height = (contentsShow[i-2].offsetHeight+(paddingHeight/2))+"px";
-                            arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2))+"px";
+                            arrPageContents[j-2].style.height = (contentsShow[i-2].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                            arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
 
                             if(i!==contentsShow.length-1){    //맨 마지막 컨텐츠가 아닐 때
                                 let nextContentsHeight = contentsShow[i].offsetHeight+contentsShow[i+1].offsetHeight+50;   //(50은 문제 번호 공간 높이)
@@ -223,8 +223,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                     let paddingHeight = (halfPageSpace.offsetHeight-contentsHeight);
 
                                     //남은 두 공간 공간 나누기
-                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
-                                    arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2))+"px";
+                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                    arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                 }else{
                                     arrPageContents[j+1].remove();      //오른쪽(또는 새 패이지) 가운데 제거
                                     arrPageContents[j].remove();        //오른쪽(또는 새 패이지) 위 제거
@@ -239,8 +239,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                             let paddingHeight = (halfPageSpace.offsetHeight-contentsHeight);
                             if(paddingHeight > 0) {
                                 arrPageContents[j].remove();
-                                arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2))+"px";
-                                arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
+                                arrPageContents[j-1].style.height = (contentsShow[i-1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                             }else{
                                 //오른쪽이면 페이지 추가하는 로직 필요, 
                                 if(arrPageContents[j].classList.contains("rightCenter")){
@@ -269,8 +269,8 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                 let paddingHeight = (halfPageSpace.offsetHeight-contentsHeight);
                                 if(paddingHeight > 0) {
                                     arrPageContents[j].remove();
-                                    arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2))+"px";
-                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2))+"px";
+                                    arrPageContents[j+1].style.height = (contentsShow[i+1].offsetHeight+(paddingHeight/2)-1)+"px";  //border-top:1px 속성 만큼 1빼주기
+                                    arrPageContents[j].style.height = (contentsShow[i].offsetHeight+(paddingHeight/2)-1)+"px";      //border-top:1px 속성 만큼 1빼주기
                                 }else {
                                     arrPageContents[j+1].remove();
                                     arrPageContents[j].remove();
@@ -320,12 +320,12 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                             let multipleVal = contentsShow[i].offsetHeight/arrPageContents[j].offsetHeight;
                             //문제 높이가 공간 높이의 1배수 이상 2배수 미만인 경우
                             if(multipleVal<2 && multipleVal>=1){
-                                arrPageContents[j+1].style.height = arrPageContents[j+1].offsetHeight*2+"px";
+                                arrPageContents[j+1].style.height = (arrPageContents[j+1].offsetHeight*2-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                 arrPageContents[j].remove();
 
                             //문제 높이가 공간 높이의 2배수 이상 3배수 미만인 경우
                             }else if(multipleVal<3 && multipleVal>=2){
-                                arrPageContents[j+2].style.height = arrPageContents[j+2].offsetHeight*2+"px";
+                                arrPageContents[j+2].style.height = (arrPageContents[j+2].offsetHeight*2-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                 arrPageContents[j+1].remove();
                                 arrPageContents[j].remove();
 
@@ -386,7 +386,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                 if(arrPageContents[j].classList.contains("leftFourth") ){
                                     arrPageContents[j].remove();        //왼쪽 마지막 제거
                                     //문제 들어갈 공간 높이*3
-                                    arrPageContents[j+2].style.height = arrPageContents[j+2].offsetHeight*3+"px";
+                                    arrPageContents[j+2].style.height = (arrPageContents[j+2].offsetHeight*3-1)+"px";  //border-top:1px 속성 만큼 1빼주기
                                     arrPageContents[j+1].remove();        //오른쪽 두번째 제거
                                     arrPageContents[j].remove();        //오른쪽 첫번째 제거
                                    
@@ -399,7 +399,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                     mathPaper.querySelector(".leftFirst").remove();
                                     mathPaper.querySelector(".leftSecond").remove();
                                     document.getElementById("mathDocsPaper").append(mathPaper);
-                                    mathPaper.querySelector(".leftThird").style.height = mathPaper.querySelector(".leftThird").offsetHeight*3+"px";
+                                    mathPaper.querySelector(".leftThird").style.height = (mathPaper.querySelector(".leftThird").offsetHeight*3-1)+"px";
                                 }
                             //문제 높이가 공간 높이의 3배수 이상인 경우
                             }else if(multipleVal>3){
@@ -433,7 +433,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                 if(arrPageContents[j].classList.contains("leftFourth") ){
                                     arrPageContents[j].remove();        //왼쪽 마지막 제거
                                     //문제 들어갈 공간 높이*2
-                                    arrPageContents[j+1].style.height = arrPageContents[j+1].offsetHeight*2+"px";
+                                    arrPageContents[j+1].style.height = (arrPageContents[j+1].offsetHeight*2-1)+"px";
                                     arrPageContents[j].remove();        //오른쪽 첫번째 제거
                                     
                                 //오른쪽 사이드인 경우 새 페이지 왼쪽 공간 2개 더 제거
@@ -444,7 +444,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                     mathPaper.innerHTML = contentsPaperEight;
                                     mathPaper.querySelector(".leftFirst").remove();
                                     document.getElementById("mathDocsPaper").append(mathPaper);
-                                    mathPaper.querySelector(".leftSecond").style.height = mathPaper.querySelector(".leftSecond").offsetHeight*2+"px";
+                                    mathPaper.querySelector(".leftSecond").style.height = (mathPaper.querySelector(".leftSecond").offsetHeight*2-1)+"px";
                                 }
 
                             //문제 높이가 공간 높이의 2배수 이상 3배수 미만인 경우
@@ -453,7 +453,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                 if(arrPageContents[j].classList.contains("leftFourth") ){
                                     arrPageContents[j].remove();        //왼쪽 마지막 제거
                                     //문제 들어갈 공간 높이*3
-                                    arrPageContents[j+2].style.height = arrPageContents[j+2].offsetHeight*3+"px";
+                                    arrPageContents[j+2].style.height = (arrPageContents[j+2].offsetHeight*3-1)+"px";
                                     arrPageContents[j+1].remove();
                                     arrPageContents[j].remove();
                                 }else{
@@ -464,7 +464,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                                     mathPaper.querySelector(".leftFirst").remove();
                                     mathPaper.querySelector(".leftSecond").remove();
                                     document.getElementById("mathDocsPaper").append(mathPaper);
-                                    mathPaper.querySelector(".leftThird").style.height = mathPaper.querySelector(".leftThird").offsetHeight*3+"px";
+                                    mathPaper.querySelector(".leftThird").style.height = (mathPaper.querySelector(".leftThird").offsetHeight*3-1)+"px";
                                 }
 
                             //문제 높이가 공간 높이의 3배수 이상인 경우

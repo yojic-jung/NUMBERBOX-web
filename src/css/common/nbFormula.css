@@ -195,6 +195,7 @@
 .nbIntSign, .nbDoubleIntSign, .nbTripleIntSign {
     font-family: 'MJXc-TeX-size2-Rw'; 
     min-width: 1.2em;
+    text-align: left;
 }
 .nbDoubleIntSign{
     min-width: 1.6em;
@@ -308,6 +309,34 @@
     height: 2em;
 }
 
+.nbIntBase .nbRootBase.nbFracInRoot::before,
+.nbDoubleIntBase .nbRootBase.nbFracInRoot::before,
+.nbTripleIntBase .nbRootBase.nbFracInRoot::before,
+.nbLimBase .nbRootBase.nbFracInRoot::before{
+    top: 0.368em;
+}
+
+
+.nbFracBox.nbIntegralInDenom{
+    vertical-align: -2.45em;
+}
+
+.nbFracBox.nbIntegralInNumer{
+    vertical-align: -0.85em;
+}
+
+.nbFracBox.nbIntegralInDenom.nbFracInDenom {
+    vertical-align: -2.45em;
+}
+
+.nbFracBox.nbIntegralInNumer.nbFracInNumer {
+    vertical-align: -0.86em;
+}
+
+.nbFracBox.nbIntegralInNumer.nbIntegralInDenom{
+    vertical-align: middle;
+}
+
 /** 시그마합 표현 **/
 .nbSigmaSumBox {
     position: relative;
@@ -315,6 +344,10 @@
     border-spacing: 0;
     text-align: center;
     line-height: 110%;
+}
+
+.nbSigmaSumBox .nbSigmaSumBox {
+    vertical-align: 1em;
 }
 
 .nbSigmaSumTbody, .nbSigmaSumTbody2{
@@ -353,13 +386,22 @@
     min-width: 0.5em;
 }
 
+.nbFracBox.nbSigmaSumInDenom, .nbFracBox.nbSigmaSumInDenom.nbFracInDenom {
+    vertical-align: -2.7em;
+}
+.nbFracBox.nbSigmaSumInNumer {
+    vertical-align: -0.9em;
+}
+
+.nbFracBox.nbSigmaSumInDenom.nbSigmaSumInNumer{
+    vertical-align: middle;
+}
 
 /** 로그 **/
 .nbLogBox {
     position: relative;
-    vertical-align: middle;
+    vertical-align: -0.608em;
     border-spacing: 0;
-    margin-top: 4px;
 }
 
 .nbLogSign.writeDisable {
@@ -370,7 +412,9 @@
 .nbLogBase {
     min-width: 0.5em;
 }
-
+.nbLogBase .nbRootBase.nbFracInRoot::before {
+    top: 0.265em;
+}
 .nbLogSubBase {
     font-size: 0.3em;
     line-height: 110%;
@@ -379,12 +423,9 @@
 }
 
 
-.nbFracInLog .nbLogBase {
-    position: relative;
-    top:-2px
-}
+
 .nbFracInLog .nbLogSubBase {
-    top:-3px
+    top:-6px
 }
 
 .onlyEdit:focus .nbLogSubBase:before{
@@ -414,6 +455,24 @@
     border: unset !important;
 }
 
+.nbDenom .nbLogBox {
+    margin-top: 0;
+    vertical-align: -0.348em;
+}
+
+.nbNumer .nbLogBox {
+    margin: 0;
+    vertical-align: -0.36em;
+}
+
+.nbLogBox.nbFracInLog{
+    vertical-align: middle;
+}
+.nbIntBase .nbLogBox,
+.nbDoubleIntBase .nbLogBox,
+.nbTripleIntBase .nbLogBox{
+    vertical-align: -0.37em;
+}
 
 /** limit 박스 **/
 .nbLimBox {
@@ -441,7 +500,21 @@
 }
 /* lim 안 시그마 */
 .nbLimBox.nbSigmaSumInLim .nbLimTbody2{
-    vertical-align: -0.65em;
+    vertical-align: -0.695em;
+}
+/* lim 안 분수(분수 안 분모 또는 분모, 분자 모두 분수 들어가는 경우) */
+.nbLimBox.nbFracInFracInLim, .nbLimBox.nbFracInFracInLim.nbFracInDenomInLim {
+    vertical-align: middle;
+}
+.nbLimBox.nbFracInFracInLim .nbLimTbody, .nbLimBox.nbFracInFracInLim.nbFracInDenomInLim .nbLimTbody {
+    vertical-align: 1.15em;
+}
+.nbLimBox.nbFracInDenomInLim {
+    vertical-align: -2.12em;
+}
+
+.nbLimBox.nbFracInDenomInLim .nbLimTbody{
+    vertical-align: 1.15em;
 }
 
 .nbLimSign {
@@ -460,7 +533,20 @@
     position: relative;
     top: -4px;
 }
+.nbFracBox.nbLimInNumer {
+    vertical-align: -0.9em;
+}
+.nbFracBox.nbBox.nbLimInDenom {
+    vertical-align: -1.65em;
+}
 
+.nbFracBox.nbLimInDenom.nbFracInDenom {
+    vertical-align: -2.5em;
+}
+
+.nbFracBox.nbLimInDenom.nbSigmaSumInDenom {
+    vertical-align: -2.8em;
+}
 /** 지수 표현 **/
 .nbExpBox{
     border-spacing: 0px;
@@ -650,6 +736,24 @@
     vertical-align: middle;
 }
 
+.nbLnBox.nbFracInLn .nbLnSign {
+    position: relative;
+    top: 2.5px;
+}
+
+.nbDenom .nbLnBox {
+    vertical-align: -0.315em;
+}
+.nbNumer .nbLnBox {
+    vertical-align: -0.395em;
+}
+
+.nbIntBase .nbLnBox,
+.nbDoubleIntBase .nbLnBox,
+.nbTripleIntBase .nbLnBox {
+    vertical-align: -0.36em;
+}
+
 /** 윗점 **/
 .nbOverDotBox{
     vertical-align:text-bottom;
@@ -773,8 +877,8 @@
 .nbRootExpBase {
     vertical-align: top;
     position: relative;
-    top: -2px;
-    left: -5px;
+    top: -3px;
+    left: -3px;
     min-width: 1em;
     line-height: 110%;
     padding: 0px;
@@ -1292,6 +1396,10 @@
 
 .macChrome .nbRootBase.nbFracInRoot::before{
     top: 0.205em;
+}
+
+.nbLnBase .nbRootBase.nbFracInRoot::before{
+    top: 0.356em;
 }
 
 .nbRootBox.nbFracInRoot .nbNumer{
