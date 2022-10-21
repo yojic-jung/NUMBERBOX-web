@@ -462,7 +462,7 @@
 
 .nbNumer .nbLogBox {
     margin: 0;
-    vertical-align: -0.36em;
+    vertical-align: -0.351em;
 }
 
 .nbLogBox.nbFracInLog{
@@ -473,7 +473,21 @@
 .nbTripleIntBase .nbLogBox{
     vertical-align: -0.37em;
 }
-
+.nbLimBase .nbLogBox {
+    vertical-align: 0em;
+}
+.nbLimBase .nbNumer .nbLogBox {
+    vertical-align: -0.395em;
+}
+.nbLimBase .nbDenom .nbLogBox {
+    vertical-align: -0.39em;
+}
+.nbSigmaSumBase .nbLogBox {
+    vertical-align: -0.362em;
+}
+.nbSigmaSumBase .nbNumer .nbLogBox {
+    vertical-align: -0.338em;
+}
 /** limit 박스 **/
 .nbLimBox {
     position: relative;
@@ -1237,8 +1251,13 @@
     background:rgb(235, 238, 245) !important;
 }
 
-.onlyEdit:focus .borderBox{
+.onlyEdit:focus .borderBox, .onlyEdit:focus .borderBox.writeDisable.nbTrigon{
     border:1px dashed gray;
+    box-shadow: unset;
+}
+
+.onlyEdit:focus .borderBox.writeDisable{
+    border: unset;
     box-shadow: unset;
 }
 

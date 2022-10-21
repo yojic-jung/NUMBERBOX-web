@@ -109,6 +109,7 @@
     width: 50%;
     height: 99%;        
     font-family: 'nbFormulaFont';
+    position: relative;
 }
 
 .paperContentsLeft{
@@ -125,6 +126,7 @@
     height: 50%;
     clear:both;
     border-top: 1px solid white; /* border-top:1px 있어야 원본 문제와 비슷하게 출력됨, 문제 만들기, 검색 페이지에도 border-top 속성 정의됨*/
+    position: relative;
 }
 
 .paperContentsRight .fourArrPageCon, .paperContentsRight .sixArrPageCon, .paperContentsRight .eightArrPageCon{
@@ -146,6 +148,8 @@
 .mathPaperQuesNumber{
     font-family: 'screenNumber';
     font-size: 18px;
+    height: 25px;
+    line-height: 25px;
 }
 
 .mathDocsPaperAnsTitle{
@@ -296,6 +300,7 @@
         height: unset;
     }
 
+    /* 수식 프린트시 ui 다르게 보이는 것 설정, vertical-align 소수 셋째 짜리 까지 설정해야 정확함*/
 
     /* 분수 분모 분자 실선 떨어지는 버그, 실선 너무 두꺼운 문제 해결*/
     .nbDenom::before{
@@ -318,19 +323,26 @@
     .mathDocsA4Frame .nbLogBox{
         vertical-align: -0.685em;
     }
+
+    .mathDocsA4Frame .nbSigmaSumBase .nbLogBox,
+    .mathDocsA4Frame .nbSigmaSumBase .nbDenom .nbLogBox, 
+    .mathDocsA4Frame .nbSigmaSumBase .nbNumer .nbLogBox {
+        vertical-align: -0.415em;
+    }
+
     .mathDocsA4Frame .nbLogBox.nbFracInLog{
         vertical-align: middle;
     }
 
     .mathDocsA4Frame .nbDenom .nbLogBox {
         margin-top: 0;
-        vertical-align: -0.405em;
+        vertical-align: -0.445em;
     }
 
     
     .mathDocsA4Frame .nbNumer .nbLogBox {
         margin: 0;
-        vertical-align: -0.399em;
+        vertical-align: -0.439em;
     }
     
     .mathDocsA4Frame .nbLnBox{
@@ -338,15 +350,18 @@
     }
 
     .mathDocsA4Frame .nbIntegralTbody2 .nbLogBox {
-        vertical-align: -0.405em;
+        vertical-align: -0.465em;
+        top: -0.5px;
     }
     
     .mathDocsA4Frame .nbIntegralTbody2 .nbNumer .nbLogBox {
-        vertical-align: -0.49em;
+        vertical-align: -0.433em;
+        top: 0;
     }
     
     .mathDocsA4Frame .nbIntegralTbody2 .nbDenom .nbLogBox {
-        vertical-align: -0.47em;
+        vertical-align: -0.435em;
+        top: 0;
     }
 
     .mathDocsA4Frame .nbDenom .nbLnBox ,
@@ -366,13 +381,13 @@
     .mathDocsA4Frame .nbIntBase .nbLnBox,
     .mathDocsA4Frame .nbDoubleIntBase .nbLnBox,
     .mathDocsA4Frame .nbTripleIntBase .nbLnBox {
-        vertical-align: -0.41em;
+        vertical-align: -0.451em;
     }
 
 
     /* 시그마 */
     .mathDocsA4Frame .nbSigmaSumBox {
-        vertical-align: -0.04em
+        vertical-align: -0.084em
     }
 
     .mathDocsA4Frame .nbSigmaSumBox .nbSigmaSumBox {
@@ -383,9 +398,35 @@
         vertical-align: -0.755em;
     }
 
+    .mathDocsA4Frame .nbNumer .nbLimBase .nbSigmaSumBox {
+        vertical-align: -0.088em;
+    }
+
+    .mathDocsA4Frame .nbLimBase .nbSigmaSumBox {
+        vertical-align: 0.726em
+    }
+
+
+    .mathDocsA4Frame .nbLimBase .nbSigmaSumBase {
+        top: 0px;
+    }
+
+    .mathDocsA4Frame .nbDenom .nbLimBase .nbSigmaSumBox {
+        vertical-align: -0.205em;
+    }
+    .mathDocsA4Frame .nbDenom .nbLimBase .nbSigmaSumBase {
+        top: 1px;
+    }
+
+    .mathDocsA4Frame .nbNumer .nbLimBase .nbSigmaSumBase {
+        top: 2px;
+    }
+
+   
+
     /* 적분 */
     .mathDocsA4Frame .nbIntegralBox, .mathDocsA4Frame .nbDoubleIntegralBox, .mathDocsA4Frame .nbTripleIntegralBox {
-        vertical-align: -0.04em
+        vertical-align: -0.071em
     }
 
     .mathDocsA4Frame .nbIntegralBox.nbFracInIntegral .nbIntBase, 
@@ -395,7 +436,16 @@
         top: -0.5px;
     }
 
-    
+    /* 극한 */
+    .mathDocsA4Frame .nbLimBox {
+        vertical-align: -0.55em;
+    }
+    .mathDocsA4Frame .nbNumer .nbLimBox {
+        vertical-align: -0.525em;
+    }
+    .mathDocsA4Frame .nbDenom .nbLimBox {
+        vertical-align: -0.525em;
+    }
 }
 
 

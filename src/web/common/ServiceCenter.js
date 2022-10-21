@@ -111,9 +111,8 @@ const ServiceCenter = ({myNickName})=>{
         if(!(window.errType>=0 && window.errType<5)){   //사용자가 errType 조작한 경우
             window.errType=0;
         }
-        console.log(window.errType);
-        if (document.getElementById("questionText").value.length < 10){
-            nb_fadeInOutB("문의 내용은 최소 10글자 이상 작성하여 주시기 바랍니다.", 2000);
+        if (document.getElementById("questionText").value.length < 5){
+            nb_fadeInOutB("문의 내용은 최소 5글자 이상 작성하여 주시기 바랍니다.", 2000);
             return;
         }
         if (document.getElementById("questionText").value.length > 500){
@@ -122,6 +121,43 @@ const ServiceCenter = ({myNickName})=>{
         }
         let formData = new FormData(document.getElementById("oneToOneQuestion"));
         formData.append("errType", window.errType);
+        let userAgent = navigator.userAgent.toLowerCase();
+        if(userAgent.indexOf("windows")>-1){
+            formData.append("osInfo", "windows");
+            if(userAgent.indexOf("opr")>-1){
+                formData.append("browser", "opr");
+            }else if(userAgent.indexOf("edg")>-1){
+                formData.append("browser", "edg");
+            }else if(userAgent.indexOf("whale")>-1){
+                formData.append("browser", "whale");
+            }else if(userAgent.indexOf("firefox")>-1){
+                formData.append("browser", "firefox");
+            }else if(userAgent.indexOf("chrome")>-1){
+                formData.append("browser", "chrome");
+            }else{
+                formData.append("browser", "etc");
+            }
+        }else if(userAgent.indexOf("mac")>-1){
+            formData.append("osInfo", "mac");
+            if(userAgent.indexOf("opr")>-1){
+                formData.append("browser", "opr");
+            }else if(userAgent.indexOf("edg")>-1){
+                formData.append("browser", "edg");
+            }else if(userAgent.indexOf("whale")>-1){
+                formData.append("browser", "whale");
+            }else if(userAgent.indexOf("firefox")>-1){
+                formData.append("browser", "firefox");
+            }else if(!(userAgent.indexOf("chrome")>-1) && userAgent.indexOf("safari")>-1){
+                formData.append("browser", "safari");
+            }else if(userAgent.indexOf("chrome")>-1 && userAgent.indexOf("safari")>-1){
+                formData.append("browser", "chrome");
+            }else{
+                formData.append("browser", "etc");
+            }
+        }else{
+            formData.append("osInfo", "etc");
+            formData.append("browser", "etc");
+        }
         let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
         if(returnVal.isSuccess === true){
             await nb_fadeInOutA("1:1 문의가 정상적으로 등록되었습니다.", 1500);

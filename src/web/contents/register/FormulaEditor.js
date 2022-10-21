@@ -2,8 +2,6 @@ import {React, useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import FormulaShortCutKey from './FormulaShortCutKey';
-
-
 import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
@@ -15,7 +13,6 @@ import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_m
 		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
 		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting, reg_enableImageResizeInDiv, reg_removeResizeFrame, reg_imageCopy} from 'js/contents/register/contents_reg';
-import { event } from "jquery";
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
@@ -482,11 +479,11 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		}
 
 		let contentsDomLength = document.getElementById("contentsFormulaEditor").innerText.length;
-		let isFirNoExist = (document.getElementById("firNoFormulaEditor").innerText.length > 0 || document.getElementById("firNoFormulaEditor").querySelector("img") !== null);
-		let isSecNoExist = (document.getElementById("secNoFormulaEditor").innerText.length > 0 || document.getElementById("secNoFormulaEditor").querySelector("img") !== null);
-		let isThrNoExist = (document.getElementById("thrNoFormulaEditor").innerText.length > 0 || document.getElementById("thrNoFormulaEditor").querySelector("img") !== null);
-		let isFourNoExist = (document.getElementById("fourNoFormulaEditor").innerText.length > 0 || document.getElementById("fourNoFormulaEditor").querySelector("img") !== null);
-		let isFifNoExist = (document.getElementById("fifNoFormulaEditor").innerText.length > 0 || document.getElementById("fifNoFormulaEditor").querySelector("img") !== null);
+		let isFirNoExist = ((!(document.getElementById("firNoFormulaEditor").innerText.length ===1 && document.getElementById("firNoFormulaEditor").innerText === "\n") && document.getElementById("firNoFormulaEditor").innerText.length > 0) || document.getElementById("firNoFormulaEditor").querySelector("img") !== null);
+		let isSecNoExist = ((!(document.getElementById("secNoFormulaEditor").innerText.length ===1 && document.getElementById("secNoFormulaEditor").innerText === "\n") && document.getElementById("secNoFormulaEditor").innerText.length > 0) || document.getElementById("secNoFormulaEditor").querySelector("img") !== null);
+		let isThrNoExist = ((!(document.getElementById("thrNoFormulaEditor").innerText.length ===1 && document.getElementById("thrNoFormulaEditor").innerText === "\n") && document.getElementById("thrNoFormulaEditor").innerText.length > 0) || document.getElementById("thrNoFormulaEditor").querySelector("img") !== null);
+		let isFourNoExist = ((!(document.getElementById("fourNoFormulaEditor").innerText.length ===1 && document.getElementById("fourNoFormulaEditor").innerText === "\n") && document.getElementById("fourNoFormulaEditor").innerText.length > 0) || document.getElementById("fourNoFormulaEditor").querySelector("img") !== null);
+		let isFifNoExist = ((!(document.getElementById("fifNoFormulaEditor").innerText.length ===1 && document.getElementById("fifNoFormulaEditor").innerText === "\n") && document.getElementById("fifNoFormulaEditor").innerText.length > 0) || document.getElementById("fifNoFormulaEditor").querySelector("img") !== null);
 	
 		
 		//문제 validation [start]
@@ -508,6 +505,28 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			return false;
 		}
 		//문제 validation [end]
+
+		if(!isFirNoExist){
+			setFirNo("")
+			document.getElementById("firNoFormulaEditor").innerHTML = "";
+		}
+		if(!isSecNoExist){
+			setSecNo("")
+			document.getElementById("secNoFormulaEditor").innerHTML = "";
+		}
+		if(!isThrNoExist){
+			setThrNo("")
+			document.getElementById("thrNoFormulaEditor").innerHTML = "";
+		}
+		if(!isFourNoExist){
+			setFourNo("")
+			document.getElementById("fourNoFormulaEditor").innerHTML = "";
+		}
+		if(!isFifNoExist){
+			setFifNo("")
+			document.getElementById("fifNoFormulaEditor").innerHTML = "";
+		}
+
 
 		document.getElementById("formulaEditBlindBox").classList.remove("hide");
 		document.getElementById("contentsInfo").classList.remove("hide");

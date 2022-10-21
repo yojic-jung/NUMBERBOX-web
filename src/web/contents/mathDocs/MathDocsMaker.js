@@ -163,6 +163,28 @@ const MathDocsMaker = ()=>{
         event.currentTarget.querySelector("label").click();
     }
 
+    const onlyMyProdOrRepoContents = async ()=>{
+        setShowChart(false);
+        setConTotalCnt(0);
+        setMathContentsList([]);
+        let barArr = [{"labelName":"하", "value": 0 , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+        {"labelName":"중하", "value": 0 , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+        {"labelName":"중", "value": 0 , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+        {"labelName":"중상", "value": 0 , "backgroundColor":"rgb(13, 53, 149)"},
+        {"labelName":"상", "value": 0 , "backgroundColor":"rgb(7, 39, 113)"}];
+        let pieArr = [
+            {"labelName":"객관식", "value":0 ,"className":"multiChoicePieLabel", "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+            {"labelName":"주관식", "value":0 ,"className":"essayPieLabel", "backgroundColor":"rgb(13, 53, 149, 0.7)"}]
+        setConArrByLvOnBar(barArr);
+        setConArrByMultiOnPie(pieArr);
+        setShowChart(true);
+        setIsSearchedMyCon(false);
+        setIsSearchedMyRepo(false);
+        document.getElementById("mathDocsFirstStep").classList.add("hide");
+        document.getElementById("mathDocsDesc").innerHTML = "나의 제작문제 및 저장소 문제를 추가하여 학습지를 만들어 보세요.";
+        window.history.pushState("", "학습지 만들기 2단계", '/makeMathDocsTwoStep');
+    }
+
     const firstStepCheck = async () => {
         if(!nb_isLogin()) {
             if(isBrowser) alert("로그인 이후 사용해 주시기 바랍니다.");
@@ -945,6 +967,45 @@ const MathDocsMaker = ()=>{
             formData.append("errType", 3);
             formData.append("contentsNo", jsonObj.docsNo);
             formData.append("reportContents", document.getElementById("reportContents").value);
+            let userAgent = navigator.userAgent.toLowerCase();
+            if(userAgent.indexOf("windows")>-1){
+                formData.append("osInfo", "windows");
+                if(userAgent.indexOf("opr")>-1){
+                    formData.append("browser", "opr");
+                }else if(userAgent.indexOf("edg")>-1){
+                    formData.append("browser", "edg");
+                }else if(userAgent.indexOf("whale")>-1){
+                    formData.append("browser", "whale");
+                }else if(userAgent.indexOf("firefox")>-1){
+                    formData.append("browser", "firefox");
+                }else if(userAgent.indexOf("chrome")>-1){
+                    formData.append("browser", "chrome");
+                }else{
+                    formData.append("browser", "etc");
+                }
+            }else if(userAgent.indexOf("mac")>-1){
+                formData.append("osInfo", "mac");
+                if(userAgent.indexOf("opr")>-1){
+                    formData.append("browser", "opr");
+                }else if(userAgent.indexOf("edg")>-1){
+                    formData.append("browser", "edg");
+                }else if(userAgent.indexOf("whale")>-1){
+                    formData.append("browser", "whale");
+                }else if(userAgent.indexOf("firefox")>-1){
+                    formData.append("browser", "firefox");
+                }else if(!(userAgent.indexOf("chrome")>-1) && userAgent.indexOf("safari")>-1){
+                    formData.append("browser", "safari");
+                }else if(userAgent.indexOf("chrome")>-1 && userAgent.indexOf("safari")>-1){
+                    formData.append("browser", "chrome");
+                }else{
+                    formData.append("browser", "etc");
+                }
+            }else{
+                formData.append("osInfo", "etc");
+                formData.append("browser", "etc");
+            }
+            
+
             let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
             if(returnVal.isSuccess === true){
                 await nb_fadeInOutA("오류 신고가 정상적으로 등록되었습니다.\n학습지를 재생성하여 다시 시도해주시기 바랍니다.", 1500);
@@ -1350,9 +1411,13 @@ return (
     <>
     <Outlet />
     <BrowserView className='mathDocsBrowserView'>
-        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)</div>
+        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>
+            원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)
+           
+        </div>
         <div className='noSelect mathDocsRootDiv'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
+                <div className='onlyMyProdOrRepoConBtn' onClick={()=>{onlyMyProdOrRepoContents();}}>나의 제작문제로 학습지 만들기</div>
                 <div className="mathDocsSubjectInfoDiv">
                     {subjectInfoList}
                 </div>

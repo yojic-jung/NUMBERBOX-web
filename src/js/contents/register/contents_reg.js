@@ -1143,7 +1143,6 @@ export const reg_preventKeyEvent = async (event) => {
 				if(nbBoxInnerText.length===1) vacantDomAllSelCase = vacantDomAllSel;
 				else if(nbBoxInnerText.length===2) vacantDomAllSelCase = vacantDomAllSel2;
 				else if(nbBoxInnerText.length===3) vacantDomAllSelCase = vacantDomAllSel3;
-				console.log(vacantDomAllSelCase.length);
 				for(let i=0; i<vacantDomAllSelCase.length; i++){
 					if(nbBoxDom.classList.contains(vacantDomAllSelCase[i])){
 						let range = document.createRange();
@@ -2556,7 +2555,6 @@ export const reg_newSelectFormulaElement = async () => {
 	let anchorNbBorderBox = document.getSelection().anchorNode
 	if(anchorNbBorderBox.classList === undefined) anchorNbBorderBox = anchorNbBorderBox.parentElement.closest('.borderBox');
 	else anchorNbBorderBox = anchorNbBorderBox.closest('.borderBox');
-
 	if(anchorNbBorderBox === null){
 		if(document.getSelection().anchorNode.classList === undefined) anchorNbBorderBox = document.getSelection().anchorNode.parentElement.closest('.writeDisable');
 		else anchorNbBorderBox = document.getSelection().anchorNode.closest('.writeDisable');
@@ -2577,11 +2575,14 @@ export const reg_newSelectFormulaElement = async () => {
 	}
 	if(window.getSelection().isCollapsed ) return;
 
+
 	//앵커와 포커스 모두 수식요소 선택한 경우
 	if(anchorNbBorderBox !== null && focusNbBorderBox !== null){
 		let anchorNbBox = anchorNbBorderBox.closest(".nbBox");
 		let focusNbBox = focusNbBorderBox.closest(".nbBox");
 		//보더 박스 같은 경우
+		
+		
 		if(anchorNbBorderBox === focusNbBorderBox){
 			for(let i=0; i<allSelDom.length; i++){
 				// 지수, 아랫첨자, 순환소수, 악센트, 벡터, 직선, 선분, 루트

@@ -109,6 +109,7 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
 
       if(data !== ""){
         returnVal = JSON.parse(data)
+        console.log(returnVal);
         if(returnVal.existMsg){
           alert(returnVal.serverMsg);
         }

@@ -18,7 +18,6 @@ const AdminSvcCenter = ()=>{
         const asyncUseEffect = async () =>{
             let returnVal = await nb_dataFetch("/serviceCenter/takeErrReportCount?reportStts=0", true);
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportByAdmin?reportStts=0", true);
-            console.log(returnVal);
             setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
             setmMathDocsErrCnt(returnVal.mathDocsErrCnt);
             setMakeContentsErrCnt(returnVal.makeContentsErrCnt);
@@ -32,7 +31,6 @@ const AdminSvcCenter = ()=>{
 
     const showErrReport = async (event, errType) => {
         let errorList = document.getElementsByClassName("errListErrType");
-        console.log(errorList);
         for(let i=0; i<errorList.length; i++){
             if(!errorList[i].classList.contains(errType)){
                 errorList[i].classList.add("hide");
@@ -51,8 +49,6 @@ const AdminSvcCenter = ()=>{
 
     const showReportCompleteList = async (targetId, errType) => {
         let reportStts =  document.getElementById(targetId).value;
-        console.log(reportStts !== "-1");
-        console.log(errType);
         let returnVal = await nb_dataFetch("/serviceCenter/takeErrReportCount?reportStts="+reportStts, true);
         if(reportStts !== "-1"){
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportByAdmin?reportStts="+reportStts, true);
@@ -63,15 +59,9 @@ const AdminSvcCenter = ()=>{
             setResErrCnt(returnVal.resErrCnt);
             setErrList(returnObj.errReportList);
         }else{
-            console.log(reportStts);
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportSearchBySttsAndTypeByAdmin?reportStts="+reportStts+"&errType="+errType, true);
-            console.log(returnObj);
             setErrList(returnObj.errReportList);
         }
-       
-
-       
-       
     }
 
     const showDetailedErrReport = async (errReport) => {
@@ -158,6 +148,9 @@ const AdminSvcCenter = ()=>{
         }else{
             document.getElementById("detailedThirdImgShowAdmin").classList.add("hide");
         }
+
+        //운영체제 정보 및 브라우저 정보
+        document.getElementById("userOsAndBrowser").innerHTML = errReport.osInfo+"/"+errReport.browser;
 
         if(errReport.replyContents !== null){
             document.getElementById("questionReply").innerHTML = errReport.replyContents;
@@ -277,6 +270,7 @@ return (
                     <span id="detailedReportSttsAdmin" className='detailedReportStts'></span>
                     <span id="detailedSysCreateDateAdmin" className='detailedSysCreateDateAdmin'></span>
                 </div>
+                <div className='alignLeft'>사용자 브라우저 : <span id="userOsAndBrowser"></span></div>
                 <div id="detailedErrReportConNoAdmin" className='detailedErrReportConNoAdmin hide'></div>
                 <div className='alignLeft'>
                     <a id="orgContentsLink" href="/" target='_blank'>문제 열기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

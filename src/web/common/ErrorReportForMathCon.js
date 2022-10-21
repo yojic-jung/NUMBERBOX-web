@@ -20,6 +20,43 @@ const ErrorReportForMathCon = ({title, errType, parentMethod, conNo})=>{
       let formData = new FormData(document.getElementById("erroReportForConForm"));
       formData.append("errType", errType);
       formData.append("contentsNo", conNo);
+      let userAgent = navigator.userAgent.toLowerCase();
+      if(userAgent.indexOf("windows")>-1){
+          formData.append("osInfo", "windows");
+          if(userAgent.indexOf("opr")>-1){
+              formData.append("browser", "opr");
+          }else if(userAgent.indexOf("edg")>-1){
+              formData.append("browser", "edg");
+          }else if(userAgent.indexOf("whale")>-1){
+              formData.append("browser", "whale");
+          }else if(userAgent.indexOf("firefox")>-1){
+              formData.append("browser", "firefox");
+          }else if(userAgent.indexOf("chrome")>-1){
+              formData.append("browser", "chrome");
+          }else{
+              formData.append("browser", "etc");
+          }
+      }else if(userAgent.indexOf("mac")>-1){
+          formData.append("osInfo", "mac");
+          if(userAgent.indexOf("opr")>-1){
+              formData.append("browser", "opr");
+          }else if(userAgent.indexOf("edg")>-1){
+              formData.append("browser", "edg");
+          }else if(userAgent.indexOf("whale")>-1){
+              formData.append("browser", "whale");
+          }else if(userAgent.indexOf("firefox")>-1){
+              formData.append("browser", "firefox");
+          }else if(!(userAgent.indexOf("chrome")>-1) && userAgent.indexOf("safari")>-1){
+              formData.append("browser", "safari");
+          }else if(userAgent.indexOf("chrome")>-1 && userAgent.indexOf("safari")>-1){
+              formData.append("browser", "chrome");
+          }else{
+              formData.append("browser", "etc");
+          }
+      }else{
+          formData.append("osInfo", "etc");
+          formData.append("browser", "etc");
+      }
       let returnVal = await nb_formDataFetch("/serviceCenter/registerError", formData, true);
       if(returnVal.isSuccess === true){
           await nb_fadeInOutA("오류 신고가 정상적으로 등록되었습니다.", 1500);

@@ -116,7 +116,6 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				+getByteLengthOfString(document.getElementById("fourNoFormulaEditor").innerHTML)
 				+getByteLengthOfString(document.getElementById("fifNoFormulaEditor").innerHTML)
 				+getByteLengthOfString(document.getElementById("answerFormulaEditor").innerHTML)
-				console.log(totalFileSize/1000);
 			if(totalFileSize/1000 > 5000){
 				alert("등록하신 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트 및 이미지는 최대 5MB까지 등록가능합니다.\n고화질 이미지를 등록한 경우 문제 등록이 불가할 수 있습니다.");
 				return false;

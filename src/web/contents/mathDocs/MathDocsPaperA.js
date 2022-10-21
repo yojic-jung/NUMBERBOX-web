@@ -1,5 +1,4 @@
 import React, {useState, useEffect } from 'react';
-import {nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox} from 'js/common/common_nb.js';
 import "css/page/mathDocsPaper.css";
 
 const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSubTitle, mathDocsGrade, mathDocsOwner, parentMethod})=>{
@@ -528,6 +527,107 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
         }
     }
 
+
+    //학습지 수식 UI 정확도 높이기
+    //문제 및 해설 절대좌표로 셋팅(position:relative로 되어있으면 위에 컨텐츠에 영향을 받아 수식 줄간격이 정상적이지 않음)
+    const convertAllConAndSolSpaceToAbsolute = async () =>{
+        let pageArrClassName;
+        if(perPageCnt=== 6){
+            pageArrClassName="sixArrPageCon";
+        }else if(perPageCnt=== 8){
+            pageArrClassName="eightArrPageCon";
+        }else{
+            pageArrClassName="fourArrPageCon";
+        }
+        //해설은 학습지 넘김시 끊길 수 있어 구현 안함
+
+        //문제 절대좌표로 셋팅(역순으로 셋팅하여 좌표 제대로 찍히도록 구현)
+        let quesContents =  document.querySelectorAll(".mathDocsA4Frame .quesDiv");
+        let quesOffsetTop;
+        let quesOffsetLeft;
+        for(let i=quesContents.length-1; i>=0;i--){
+            quesOffsetTop = quesContents[i].offsetTop;
+            quesOffsetLeft = quesContents[i].offsetLeft;
+            quesContents[i].style.position = "absolute";
+            quesContents[i].style.top = quesOffsetTop+"px";
+            quesContents[i].style.left = quesOffsetLeft+"px";
+        }
+
+        //문제 번호
+        let quesNumContents =  document.querySelectorAll(".mathDocsA4Frame .mathPaperQuesNumber");
+        let quesNumOffsetTop;
+        let quesNumOffsetLeft;
+        for(let i=quesNumContents.length-1; i>=0;i--){
+            quesNumOffsetTop = quesNumContents[i].offsetTop;
+            quesNumOffsetLeft = quesNumContents[i].offsetLeft;
+            quesNumContents[i].style.position = "absolute";
+            quesNumContents[i].style.top = quesNumOffsetTop+"px";
+            quesNumContents[i].style.left = quesNumOffsetLeft+"px";
+        }
+
+        //문제 배열
+        let quesArrContents =  document.querySelectorAll(".mathDocsA4Frame ."+pageArrClassName);
+        let quesArrOffsetTop;
+        let quesArrOffsetLeft;
+        for(let i=quesArrContents.length-1; i>=0;i--){
+            quesArrOffsetTop = quesArrContents[i].offsetTop;
+            quesArrOffsetLeft = quesArrContents[i].offsetLeft;
+            quesArrContents[i].style.position = "absolute";
+            quesArrContents[i].style.top = quesArrOffsetTop+"px";
+            quesArrContents[i].style.left = quesArrOffsetLeft+"px";
+        }
+
+
+        /* 안에 컨텐츠 내용까지 절대좌표 찍으면 window.print 실행시 출력물 A4로 만들며 다음줄로 컨텐츠가 넘어가게 되는 경우 생기는데
+        이 경우 다음 줄 컨텐츠와 겹쳐서 나타날 수 있음
+        //객관식, 이미지, 문제 컨텐츠 안 div 아래 로직 순서 지켜야함 뒤에서부터 절대좌표 찍어야 제대로된 위치에 찍힘
+        let workMultiShowContents =  document.querySelectorAll(".mathDocsA4Frame .quesDiv .quesConMultiShow");
+        let workMultiShowOffsetWidth;
+        let workMultiShowOffsetTop;
+        let workMultiShowOffsetLeft;
+        for(let i=workMultiShowContents.length-1; i>=0;i--){
+            workMultiShowOffsetWidth = workMultiShowContents[i].offsetWidth;
+            workMultiShowOffsetTop = workMultiShowContents[i].offsetTop;
+            workMultiShowOffsetLeft = workMultiShowContents[i].offsetLeft;
+            workMultiShowContents[i].style.position = "absolute";
+            workMultiShowContents[i].style.width = workMultiShowOffsetWidth+"px";
+            workMultiShowContents[i].style.top = workMultiShowOffsetTop+"px";
+            workMultiShowContents[i].style.left = workMultiShowOffsetLeft+"px";
+        }
+
+        
+        let quesImgShowContents =  document.querySelectorAll(".mathDocsA4Frame .quesContents .quesImg-show");
+        let quesImgShowContentsOffsetWidth;
+        let quesImgShowContentsOffsetTop;
+        let quesImgShowContentsOffsetLeft;
+        for(let i=quesImgShowContents.length-1; i>=0;i--){
+            quesImgShowContentsOffsetWidth = quesImgShowContents[i].offsetWidth;
+            quesImgShowContentsOffsetTop = quesImgShowContents[i].offsetTop;
+            quesImgShowContentsOffsetLeft = quesImgShowContents[i].offsetLeft;
+            quesImgShowContents[i].style.position = "absolute";
+            quesImgShowContents[i].style.width = quesImgShowContentsOffsetWidth+"px";
+            quesImgShowContents[i].style.top = quesImgShowContentsOffsetTop+"px";
+            quesImgShowContents[i].style.left = quesImgShowContentsOffsetLeft+"px";
+        }
+       
+       
+
+        let quesDetailContents =  document.querySelectorAll(".mathDocsA4Frame .quesContents > div");
+        let quesDetailOffsetWidth;
+        let quesDetailOffsetTop;
+        let quesDetailOffsetLeft;
+        for(let i=quesDetailContents.length-1; i>=0;i--){
+            quesDetailOffsetWidth = quesDetailContents[i].offsetWidth;
+            quesDetailOffsetTop = quesDetailContents[i].offsetTop;
+            quesDetailOffsetLeft = quesDetailContents[i].offsetLeft;
+            quesDetailContents[i].style.position = "absolute";
+            quesDetailContents[i].style.width = quesDetailOffsetWidth+"px";
+            quesDetailContents[i].style.top = quesDetailOffsetTop+"px";
+            quesDetailContents[i].style.left = quesDetailOffsetLeft+"px";
+        }
+        */
+    }
+
   useEffect(() => {
         const asyncUseEffect = async function(){
             window.isMathDocsSuccess = false;
@@ -676,11 +776,10 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                 document.getElementById("mathoDocsSolution").append(tmpSpan);
             }
 
-            let mathDocsA4Frame = document.getElementsByClassName("mathDocsA4Frame");
-            for(let i=0; i<mathDocsA4Frame.length; i++){
-                mathDocsA4Frame[i].classList.add("tmpHideDivForPrint");
-            }
-           
+            document.getElementById("mathDocsPaperPdf").classList.remove("tmpHideDivForPrint"); //절대 좌표 계산하려면 공간 차지해야함
+            await convertAllConAndSolSpaceToAbsolute(perPageCnt);
+            document.getElementById("mathDocsPaperPdf").classList.add("tmpHideDivForPrint");
+
             setTimeout(function(){
                 window.isMathDocsSuccess = true;
                 document.getElementById("page-transit").classList.add("hide");
