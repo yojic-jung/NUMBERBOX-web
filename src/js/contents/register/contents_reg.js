@@ -418,6 +418,7 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 export const reg_oldNbFormulToNewNbFormul = async (pageType) => {
 	if(pageType === "makeContents"){
 		//writeDisable 요소 적용 안된 것들 적용 시켜주기
+		//직선, 선분, 루트, 순환소수, 악센트 컨버트 적용 안된 것 적용 시켜주기
 		let contentEditClass = document.getElementsByClassName("contentEditClass");
 		for(let idx = 0; idx<contentEditClass.length; idx++){
 			let writeDisable = contentEditClass[idx].querySelectorAll(".nbL-R-Brck");
@@ -463,6 +464,81 @@ export const reg_oldNbFormulToNewNbFormul = async (pageType) => {
 			for(let i=0; i<writeDisable.length; i++){
 				writeDisable[i].classList.add("writeDisable");
 				writeDisable[i].classList.add("borderBox");
+			}
+			//올드 방법 수정
+			//선분
+			let innerOverLineBox = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbOverlineBox ");
+			let outerOverLineBox = [];
+			for(let i=0; i<innerOverLineBox.length; i++){
+				outerOverLineBox.push(innerOverLineBox[i].parentElement.closest(".nbFracBox"));
+			}
+
+			for(let i=0; i<outerOverLineBox.length; i++){
+				if(!outerOverLineBox[i].classList.contains("nbFracLineConvert2")){
+					outerOverLineBox[i].classList.add("nbFracLineConvert2");
+				}
+			}
+
+			//직선
+			let innerOldBox2 = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbArrowBox ");
+			let outerOldBox2 = [];
+			for(let i=0; i<innerOldBox2.length; i++){
+				outerOldBox2.push(innerOldBox2[i].parentElement.closest(".nbFracBox"));
+			}
+
+			for(let i=0; i<contentEditClass[idx].length; i++){
+				if(!outerOldBox2[i].classList.contains("nbFracLineConvert2")){
+					outerOldBox2[i].classList.add("nbFracLineConvert2");
+				}
+			}
+
+			//루트
+			let innerOldBox3 = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbRootBox ");
+			let outerOldBox3 = [];
+			for(let i=0; i<innerOldBox3.length; i++){
+				outerOldBox3.push(innerOldBox3[i].parentElement.closest(".nbFracBox"));
+			}
+
+			for(let i=0; i<outerOldBox3.length; i++){
+				if(!outerOldBox3[i].classList.contains("nbFracLineConvert")){
+					outerOldBox3[i].classList.add("nbFracLineConvert");
+				}
+			}
+
+			//순환소수
+			let innerOldBox4 = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbOverDotBox ");
+			let outerOldBox4 = [];
+			for(let i=0; i<innerOldBox4.length; i++){
+				outerOldBox4.push(innerOldBox4[i].parentElement.closest(".nbFracBox"));
+			}
+			for(let i=0; i<outerOldBox4.length; i++){
+				if(!outerOldBox4[i].classList.contains("nbFracLineConvert")){
+					outerOldBox4[i].classList.add("nbFracLineConvert");
+				}
+			}
+
+			//악센트
+			let innerOldBox5 = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbAccentBox ");
+			let outerOldBox5 = [];
+			for(let i=0; i<innerOldBox5.length; i++){
+				outerOldBox5.push(innerOldBox5[i].parentElement.closest(".nbFracBox"));
+			}
+			for(let i=0; i<outerOldBox5.length; i++){
+				if(!outerOldBox5[i].classList.contains("nbFracLineConvert")){
+				outerOldBox5[i].classList.add("nbFracLineConvert");
+				}
+			}
+
+			//조건박스
+			let innerOldBox6 = contentEditClass[idx].querySelectorAll(".nbFracBox .nbDenom .nbCondBox ");
+			let outerOldBox6 = [];
+			for(let i=0; i<innerOldBox6.length; i++){
+				outerOldBox6.push(innerOldBox6[i].parentElement.closest(".nbFracBox"));
+			}
+			for(let i=0; i<outerOldBox6.length; i++){
+				if(!outerOldBox6[i].classList.contains("nbCondBoxInFracDenomConvert")){
+					outerOldBox6[i].classList.add("nbCondBoxInFracDenomConvert");
+				}
 			}
 		}
 	}
