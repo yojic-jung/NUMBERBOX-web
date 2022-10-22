@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import { BrowserView, MobileView } from 'react-device-detect';
+import { Helmet } from 'react-helmet-async';
 import {nb_getParameterByName, nb_fadeInOutA} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/common/common.css";
@@ -74,6 +75,12 @@ const Main = ()=>{
 
 return (
     <>
+    <Helmet>
+        <title>N명의수학</title>
+        <link rel="canonical" href="https://nsoohak.com/" />
+        <meta property="og:title" content="N명의수학" />
+        <meta property="og:description" content="N명의 사용자와 함께하는 수학플랫폼" />
+    </Helmet>
     <BrowserView>
         <div className='mainDiv'>
             <div className='mainImgBox first'><img className='mainImgUI' src={main1} alt=""/></div>

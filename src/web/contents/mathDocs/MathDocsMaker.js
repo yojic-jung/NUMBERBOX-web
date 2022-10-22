@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
@@ -1416,6 +1417,12 @@ const MathDocsMaker = ()=>{
             });
 return (
     <>
+    <Helmet>
+        <title>N명의수학</title>
+        <link rel="canonical" href="https://nsoohak.com/" />
+        <meta property="og:title" content="N명의수학" />
+        <meta property="og:description" content="N명의 사용자와 함께하는 수학플랫폼" />
+    </Helmet>
     <Outlet />
     <BrowserView className='mathDocsBrowserView'>
         <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>
