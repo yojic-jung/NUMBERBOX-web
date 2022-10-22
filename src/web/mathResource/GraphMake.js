@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import Geogebra from 'react-geogebra';
 import "css/main/main.css";
@@ -368,12 +367,6 @@ const GraphMake = ()=>{
     }
 return (
     <>    
-        <Helmet>
-            <title>그래프 만들기</title>
-            <link rel="canonical" href="https://nsoohak.com/resourceTools" />
-            <meta property='og:title' content='그래프 만들기' />
-            <meta property='og:description' content='그래프 만들기' />
-        </Helmet>
         <ResourceMenuBar/>
         <div className='ggb-custom-menu'>
             <button id="ggb-cus-dot" className="ggb-cus-btn" type='button' onClick={(event)=>{ggbCustomEffect(event)}}>점</button>

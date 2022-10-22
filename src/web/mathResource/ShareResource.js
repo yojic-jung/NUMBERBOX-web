@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserView, MobileView } from 'react-device-detect';
-import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import RoundButtonList from 'web/common/RoundButtonList';
@@ -142,12 +141,6 @@ const ShareResource = ()=>{
     }
 return (
     <>    
-     <Helmet>
-        <title>컨텐츠 공유</title>
-        <link rel="canonical" href="https://nsoohak.com/shareResource?mainCateNo=1" />
-        <meta property='og:title' content='컨텐츠 공유' />
-        <meta property='og:description' content='도형, 그래프 공유' />
-    </Helmet>
     <BrowserView>
      <ResourceMenuBar></ResourceMenuBar>
      <div className='cateDiv'>
