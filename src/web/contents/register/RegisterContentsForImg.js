@@ -1,4 +1,5 @@
 import React, { useState, useEffect} from 'react';
+import { Helmet } from 'react-helmet-async';
 import {Link} from "react-router-dom";
 import FormulaShortCutKey from './FormulaShortCutKey';
 import imgPlus2 from 'img/plus2.png';
@@ -294,6 +295,12 @@ const RegisterContentsForImg = ({contentsNo})=>{
 
   return (
     <>
+		<Helmet>
+			<title>이미지로 문제 등록</title>
+			<link rel="canonical" href="https://nsoohak.com/makeContentsForImg" />
+			<meta property='og:title' content='이미지로 문제 등록' />
+			<meta property='og:description' content='이미지로 문제 등록' />
+		</Helmet>
       <div id="registerQuestion">
       <form method="post" id="contentsForm" encType="multipart/form-data">
       <div className="rightAbsolBox marginTen">

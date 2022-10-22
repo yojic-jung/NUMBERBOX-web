@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Main from 'web/page/Main'
 import Login from 'web/page/Login'
 import EmailPassFind from 'web/page/EmailPassFind'
 import NaverLoginSuccess from 'web/page/NaverLoginSuccess'
 import SignUp from 'web/page/SignUp'
 import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker'
-import RegisterQuestion from 'web/contents/register/RegisterQuestion'
 import RegisterContents from 'web/contents/register/RegisterContents'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import RegisterResource from 'web/mathResource/RegisterResource'
@@ -38,37 +38,38 @@ const App = ()=>{
               </div>
             </div>
       <BrowserRouter>
-          <Routes>
-            <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
-            <Route exact path="/emailPassFind" element={nb_isLogin()  ? <Navigate to="/" /> : <EmailPassFind />} />
-            <Route exact path="/loginCallBackNaver" element={<NaverLoginSuccess />} />
-            <Route exact path="/signup" element={<SignUp />} />
-            <Route element={<TopMenuBar/>}>
-              <Route exact path="/resourceTools" element={<GraphMake />} />
-              <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />
-              <Route exact path="/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login?isDirect=false" />} />
-              <Route exact path="/mathTypeCategory" element={nb_isLogin()  ?  <MathTypeCategory /> : <Navigate to="/login?isDirect=false" />} />
-              <Route element={<BottomMenuBar/>}>
-                <Route exact path="/" element={<Main />} />
-                <Route exact path="/registerQuestion" element={nb_isLogin()  ? <RegisterQuestion /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
-                <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
-                <Route exact path="/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
-                <Route exact path="/contentsList" element={<ContentsList /> } />
-                <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/myMathDocs" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/myResource" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login?isDirect=false" />} />
-                <Route exact path="/shareResource" element={<ShareResource />} />
-                <Route exact path={"*"} element={<NotFound />} />
+        <HelmetProvider>
+            <Routes>
+              <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
+              <Route exact path="/emailPassFind" element={nb_isLogin()  ? <Navigate to="/" /> : <EmailPassFind />} />
+              <Route exact path="/loginCallBackNaver" element={<NaverLoginSuccess />} />
+              <Route exact path="/signup" element={<SignUp />} />
+              <Route element={<TopMenuBar/>}>
+                <Route exact path="/resourceTools" element={<GraphMake />} />
+                <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />
+                <Route exact path="/admin/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login?isDirect=false" />} />
+                <Route exact path="/admin/mathTypeCategory" element={nb_isLogin()  ?  <MathTypeCategory /> : <Navigate to="/login?isDirect=false" />} />
+                <Route element={<BottomMenuBar/>}>
+                  <Route exact path="/" element={<Main />} />
+                  <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
+                  <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
+                  <Route exact path="/admin/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
+                  <Route exact path="/contentsList" element={<ContentsList /> } />
+                  <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/myContentsList" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/myRepository" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/myMathDocs" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/myResource" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/admin/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/shareResource" element={<ShareResource />} />
+                  <Route exact path={"*"} element={<NotFound />} />
+                </Route>
               </Route>
-            </Route>
-        </Routes>
+          </Routes>
+          </HelmetProvider>
       </BrowserRouter>
     </>
   );

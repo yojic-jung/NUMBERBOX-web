@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {Link} from "react-router-dom";
 import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import "css/common/common.css";
@@ -133,6 +134,12 @@ const MyProfile = ()=>{
 
   return (
     <>
+        <Helmet>
+            <title>프로필</title>
+            <link rel="canonical" href="https://nsoohak.com/myProfile" />
+            <meta property='og:title' content='프로필' />
+            <meta property='og:description' content='프로필' />
+        </Helmet>
         <ProfileComponent isMine={true} />
         <div>
             <div className='myProfileWrap'>

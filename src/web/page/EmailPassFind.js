@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { Helmet } from 'react-helmet-async';
 import {Link} from "react-router-dom";
 import { useNavigate  } from 'react-router-dom'; // useHistory 추가
 import { nb_formDataFetch, nb_dataFetch} from 'js/common/common_nb.js';
@@ -87,6 +88,13 @@ const EmailPassFind = ()=>{
     }
 
 return (
+    <>
+        <Helmet>
+            <title>이메일/비밀번호 찾기</title>
+            <link rel="canonical" href="https://nsoohak.com/emailPassFind" />
+            <meta property='og:title' content='이메일/비밀번호 찾기' />
+            <meta property='og:description' content='이메일/비밀번호 찾기' />
+        </Helmet>
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
             <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
@@ -108,6 +116,7 @@ return (
                 </div>
             </div>
         </div>
+    </>
     )
 }
 
