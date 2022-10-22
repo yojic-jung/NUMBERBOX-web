@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import "css/common/nbScreen.css";
@@ -477,6 +478,19 @@ const MyContentsList = ({isMine, userNo})=>{
 
 
   return ( <>
+  {isMine ? <Helmet>
+                <title>나의 제작문제</title>
+                <link rel="canonical" href="https://nsoohak.com/myContentsList" />
+                <meta property="og:title" content="나의 제작문제" />
+                <meta property="og:description" content="나의 제작문제를 확인해 보세요!" />
+            </Helmet>
+            :
+            <Helmet>
+                <title>사용자 피드</title>
+                <meta property="og:title" content="사용자 피드" />
+                <meta property="og:description" content="사용자 피드를 확인해보세요!" />
+            </Helmet>}
+            
             <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
                 <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
                 <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>

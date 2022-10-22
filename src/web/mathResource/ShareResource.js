@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
@@ -141,6 +142,12 @@ const ShareResource = ()=>{
     }
 return (
     <>    
+    <Helmet>
+        <title>컨텐츠 목록</title>
+        <link rel="canonical" href="https://nsoohak.com/shareResource?mainCateNo=1" />
+        <meta property="og:title" content="컨텐츠 목록" />
+        <meta property="og:description" content="도형 및 그래프파일을 찾아보세요!" />
+    </Helmet>
     <BrowserView>
      <ResourceMenuBar></ResourceMenuBar>
      <div className='cateDiv'>

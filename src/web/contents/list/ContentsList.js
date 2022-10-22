@@ -1,5 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import {Link} from "react-router-dom";
 import FormulaEditor from 'web/contents/register/FormulaEditor'
@@ -718,6 +719,12 @@ const ContentsList = ()=>{
 
 
   return ( <>
+            <Helmet>
+                <title>수학문제 목록</title>
+                <link rel="canonical" href="https://nsoohak.com/contentsList" />
+                <meta property="og:title" content="수학문제 목록" />
+                <meta property="og:description" content="원하는 수학문제를 찾아보세요!" />
+            </Helmet>
             <BrowserView>
                 <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
                     <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>

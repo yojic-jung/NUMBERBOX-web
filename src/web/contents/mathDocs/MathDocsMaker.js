@@ -1418,10 +1418,10 @@ const MathDocsMaker = ()=>{
 return (
     <>
     <Helmet>
-        <title>N명의수학</title>
-        <link rel="canonical" href="https://nsoohak.com/" />
-        <meta property="og:title" content="N명의수학" />
-        <meta property="og:description" content="N명의 사용자와 함께하는 수학플랫폼" />
+        <title>학습지 만들기</title>
+        <link rel="canonical" href="https://nsoohak.com/makeMathDocs" />
+        <meta property="og:title" content="학습지 만들기" />
+        <meta property="og:description" content="학습지를 만들어 출력해보세요!" />
     </Helmet>
     <Outlet />
     <BrowserView className='mathDocsBrowserView'>

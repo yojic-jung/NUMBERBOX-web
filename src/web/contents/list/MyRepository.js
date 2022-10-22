@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
@@ -324,6 +325,12 @@ const MyRepository = ()=>{
 
   return (
         <>
+            <Helmet>
+                <title>나의 저장문제</title>
+                <link rel="canonical" href="https://nsoohak.com/myRepository" />
+                <meta property="og:title" content="나의 저장문제" />
+                <meta property="og:description" content="저장한 목록의 문제를 확인해보세요!" />
+            </Helmet>
             <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
                 <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
                 <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>

@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import EmptyList from 'web/common/EmptyList';
 import RegisterResourceInp from 'web/mathResource/RegisterResourceInp';
 import {Link} from "react-router-dom";
@@ -184,65 +185,72 @@ const MyResource = ()=>{
     });
 
   return (
-    <div>
-        <div className="bi-jutify-align2">
-            <div></div>
-            <div>
-                <Link className='linkNoneCss' to="/registerResource">
-                    <div className="updateBtn2">컨텐츠 등록</div>
-                </Link>
-            </div>
-        </div>
-        <div className='borderBottom'></div>
-        <div className='resWrap contentsDiv'>
-            {initResoureList.length !==0 ? 
-                    initResoureList
-                : <EmptyList msg={emptyListMsg} imgName="myResourceEmpty" addImgClass="miniSize" /> 
-            }
-        </div>
-        <div id="resDetailedWrap" className='blindBox hide'>
-            <div className="resDetailedDiv">
-                <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
-                <div id="resDetailedTitle" className='resDetailedTitle'></div>
-                <div id="resDetailedCate" className='resDetailedCate'></div>
-                <div className='resDetailedDesc'>※미리보기 슬라이드는 실제 파일과 다소 차이가 날 수 있으며 낮은 화질로 보여집니다</div>
-                <div className='overflowHidden'>
-                    <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
-                </div>
-                <div className="relative">
-                    <div id="customImgSliderBtnDiv" className="customImgSliderBtnDiv">
-                </div>
-                </div>
-                <div className='resDowwBtnWrap'>
-                    <div id="resDetailedPPtDownBtn" className='resDetailedPPtDownBtn' onClick={(event)=>{downPptFile("resourcePpt", event.target.dataset.pptName)}}>ppt파일 다운</div>
+    <>
+        <Helmet>
+          <title>나의 컨텐츠</title>
+          <link rel="canonical" href="https://nsoohak.com/myResource" />
+          <meta property="og:title" content="나의 컨텐츠" />
+          <meta property="og:description" content="나의 컨텐츠 목록을 확인해보세요!" />
+        </Helmet>
+        <div>
+            <div className="bi-jutify-align2">
+                <div></div>
+                <div>
+                    <Link className='linkNoneCss' to="/registerResource">
+                        <div className="updateBtn2">컨텐츠 등록</div>
+                    </Link>
                 </div>
             </div>
+            <div className='borderBottom'></div>
+            <div className='resWrap contentsDiv'>
+                {initResoureList.length !==0 ? 
+                        initResoureList
+                    : <EmptyList msg={emptyListMsg} imgName="myResourceEmpty" addImgClass="miniSize" /> 
+                }
             </div>
-        <div id="promptBoxScreen" className='promptBoxScreen hide'>
-                <div id="promptBox" className='promptBox'>
-                    <div className='promptBoxTop'><span id="promptBoxClose" className="promptBoxClose" onClick={()=>{document.getElementById("promptBoxScreen").classList.add('hide'); document.getElementById("promptInput").value="";}}>X</span></div>
-                    <div id="promptMsg" className="promptMsg"></div>
-                    <div className='promptInputDiv'>
-                        <input id="promptInput" className='promptInput' type="text" onKeyDown={(event)=>{if(event.keyCode===13){myResourceDel()} }}/>
+            <div id="resDetailedWrap" className='blindBox hide'>
+                <div className="resDetailedDiv">
+                    <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
+                    <div id="resDetailedTitle" className='resDetailedTitle'></div>
+                    <div id="resDetailedCate" className='resDetailedCate'></div>
+                    <div className='resDetailedDesc'>※미리보기 슬라이드는 실제 파일과 다소 차이가 날 수 있으며 낮은 화질로 보여집니다</div>
+                    <div className='overflowHidden'>
+                        <div id="customImgSliderContainerDiv" className="customImgSliderContainerDiv"></div>
                     </div>
-                    <div className='alignCenter'>
-                        <span id="promptBoxBtn" className='promptBoxBtn' onClick={()=>{myResourceDel()}}>확인</span>
+                    <div className="relative">
+                        <div id="customImgSliderBtnDiv" className="customImgSliderBtnDiv">
+                    </div>
+                    </div>
+                    <div className='resDowwBtnWrap'>
+                        <div id="resDetailedPPtDownBtn" className='resDetailedPPtDownBtn' onClick={(event)=>{downPptFile("resourcePpt", event.target.dataset.pptName)}}>ppt파일 다운</div>
                     </div>
                 </div>
-            </div>
-            <div id="updateResouce" className='blindBox alignLeft hide'>
-                <div className='updateResouceDiv'>
-                <form method="post" id="resourceForm" encType="multipart/form-data">
-                    <RegisterResourceInp isUpdtMode={true} parentMethod={updateResourceObj}/>
-                    <input id="updateResResourceNo" type="number" name="resourceNo" className='hide'/>
-                </form>
                 </div>
-            </div>
+            <div id="promptBoxScreen" className='promptBoxScreen hide'>
+                    <div id="promptBox" className='promptBox'>
+                        <div className='promptBoxTop'><span id="promptBoxClose" className="promptBoxClose" onClick={()=>{document.getElementById("promptBoxScreen").classList.add('hide'); document.getElementById("promptInput").value="";}}>X</span></div>
+                        <div id="promptMsg" className="promptMsg"></div>
+                        <div className='promptInputDiv'>
+                            <input id="promptInput" className='promptInput' type="text" onKeyDown={(event)=>{if(event.keyCode===13){myResourceDel()} }}/>
+                        </div>
+                        <div className='alignCenter'>
+                            <span id="promptBoxBtn" className='promptBoxBtn' onClick={()=>{myResourceDel()}}>확인</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="updateResouce" className='blindBox alignLeft hide'>
+                    <div className='updateResouceDiv'>
+                    <form method="post" id="resourceForm" encType="multipart/form-data">
+                        <RegisterResourceInp isUpdtMode={true} parentMethod={updateResourceObj}/>
+                        <input id="updateResResourceNo" type="number" name="resourceNo" className='hide'/>
+                    </form>
+                    </div>
+                </div>
 
-            <div className='paddingFiveZero'></div>
+                <div className='paddingFiveZero'></div>
 
-    </div>
-
+        </div>
+    </>
   );
 }
 

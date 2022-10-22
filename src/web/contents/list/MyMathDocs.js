@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {Link} from "react-router-dom";
 import {nb_dataFetch, nb_fadeInOutA} from 'js/common/common_nb.js';
 import EmptyList from 'web/common/EmptyList';
@@ -83,6 +84,12 @@ const MyMathDocs = ()=>{
         
 return (
                 <>
+                        <Helmet>
+                            <title>나의 학습지</title>
+                            <link rel="canonical" href="https://nsoohak.com/myMathDocs" />
+                            <meta property="og:title" content="나의 학습지" />
+                            <meta property="og:description" content="나의 학습지 내역을 확인해보세요!" />
+                        </Helmet>
                         <div>
                             {
                             mathDocsList.length === 0 ?

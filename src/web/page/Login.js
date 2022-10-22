@@ -1,4 +1,5 @@
 import React, { useEffect} from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import {Link} from "react-router-dom";
 import {nb_formJsonFetch, nb_getParameterByName} from 'js/common/common_nb.js';
@@ -98,6 +99,12 @@ const Login = ()=>{
 
 
 return (<>
+        <Helmet>
+            <title>로그인</title>
+            <link rel="canonical" href="https://nsoohak.com/login" />
+            <meta property="og:title" content="로그인" />
+            <meta property="og:description" content="로그인 후 N명의수학을 이용해보세요!" />
+        </Helmet>
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
             <div className='login-menu-back'><span className='pointer' onClick={()=>{goBack();}}>&lt;뒤로가기</span></div>

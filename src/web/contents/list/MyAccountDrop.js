@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import { nb_formDataFetch, nb_dataFetch} from 'js/common/common_nb.js';
 
@@ -102,6 +103,12 @@ const MyAccountDrop = () => {
 
     return (
         <>
+        <Helmet>
+          <title>회원탈퇴</title>
+          <link rel="canonical" href="https://nsoohak.com/myAccountDrop" />
+          <meta property="og:title" content="회원탈퇴" />
+          <meta property="og:description" content="회원탈퇴" />
+        </Helmet>
         <div className='myProfileWrap'>
             <div className='myProfileTitle'>회원탈퇴</div>
             <hr/>

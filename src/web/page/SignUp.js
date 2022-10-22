@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { Helmet } from 'react-helmet-async';
 import ServicePolicy from 'web/page/ServicePolicy'
 import PrivacyPolicy from 'web/page/PrivacyPolicy'
 import {Link} from "react-router-dom";
@@ -282,6 +283,12 @@ const SignUp = ()=>{
 
 return (
     <>
+        <Helmet>
+            <title>회원가입</title>
+            <link rel="canonical" href="https://nsoohak.com/signup" />
+            <meta property="og:title" content="회원가입" />
+            <meta property="og:description" content="회원가입 후 N명의수학을 이용해보세요!" />
+        </Helmet>
         <div className='bage-ground'>
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
             <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
