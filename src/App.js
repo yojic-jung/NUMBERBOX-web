@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
 import Main from 'web/page/Main'
 import Login from 'web/page/Login'
 import EmailPassFind from 'web/page/EmailPassFind'
@@ -38,7 +37,6 @@ const App = ()=>{
               </div>
             </div>
       <BrowserRouter>
-        <HelmetProvider>
             <Routes>
               <Route exact path="/login" element={nb_isLogin()  ? <Navigate to="/" /> : <Login />} />
               <Route exact path="/emailPassFind" element={nb_isLogin()  ? <Navigate to="/" /> : <EmailPassFind />} />
@@ -69,7 +67,6 @@ const App = ()=>{
                 </Route>
               </Route>
           </Routes>
-          </HelmetProvider>
       </BrowserRouter>
     </>
   );

@@ -1,6 +1,5 @@
 import React, {useState, useEffect } from 'react';
 import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
-import { Helmet } from "react-helmet-async";
 import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
@@ -1419,12 +1418,6 @@ return (
     <>
     <Outlet />
     <BrowserView className='mathDocsBrowserView'>
-        <Helmet>
-            <title>학습지 생성</title>
-            <link rel="canonical" href="https://nsoohak.com/makeMathDocs" />
-            <meta property='og:title' content='학습지 생성' />
-            <meta property='og:description' content='학습지를 만들고 출력할 수 있습니다.' />
-        </Helmet>
         <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5'>
             원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)
            
