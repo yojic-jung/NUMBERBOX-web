@@ -104,7 +104,7 @@ const AdminSvcCenter = ()=>{
                 document.getElementById("orgContentsLink").href = "/contentsList?contentsNo="+errReport.contentsNo;
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink2").classList.remove("hide");
-                document.getElementById("orgContentsLink2").href = "/workContentsList?contentsNo="+errReport.contentsNo;
+                document.getElementById("orgContentsLink2").href = "/admin/workContentsList?contentsNo="+errReport.contentsNo;
             }else if(errReport.errType === 2){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "컨텐츠 번호 : "+errReport.contentsNo;
                 document.getElementById("orgContentsLink2").classList.add("hide");

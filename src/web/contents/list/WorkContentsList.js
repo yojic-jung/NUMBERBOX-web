@@ -629,7 +629,7 @@ const WorkContentsList = ()=>{
             let returnObj = await nb_formDataFetch("/mathInfo/takeWorkContentsList",formData, true);
             let param = nb_getParameterByName("unitUniqId")
             if(param !== thrUnit[thrUnit.selectedIndex].dataset.uniqNo){
-                window.history.pushState("", "문제검색", '/workContentsList?unitUniqId='+thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+                window.history.pushState("", "문제검색", '/admin/workContentsList?unitUniqId='+thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
             }
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
@@ -662,7 +662,7 @@ const WorkContentsList = ()=>{
 
         const searchWorkListByContentsNo = async function(contentsNo, hasNotiPhrases){
             let returnObj = await nb_dataFetch("/mathInfo/takeWorkContentsListByContentsNo?contentsno="+contentsNo, true);
-            window.history.pushState("", "문제검색", '/workContentsList?unitUniqId=0&contentsNo='+contentsNo);
+            window.history.pushState("", "문제검색", '/admin/workContentsList?unitUniqId=0&contentsNo='+contentsNo);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }

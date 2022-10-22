@@ -1,4 +1,4 @@
-import {React, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import LicenseUi from 'web/common/LicenseUi.js';
 import { useLocation } from 'react-router-dom';

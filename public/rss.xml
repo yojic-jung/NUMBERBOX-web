@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>N명의수학</title>
+    <link>https://nsoohak.com/</link>
+    <description>N명의수학 웹페이지 rss 피드</description>
+    <generator>N명의수학</generator>
+    <pubDate>2022년 10월 22일</pubDate>
+    <item>
+      <title>N명의수학</title>
+      <link>https://nsoohak.com</link>
+      <description>메인 페이지</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com</guid>
+    </item>
+    <item>
+      <title>학습지 만들기</title>
+      <link>https://nsoohak.com/makeMathDocs</link>
+      <description>학습지 만들기</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com/makeMathDocs</guid>
+    </item>
+    <item>
+      <title>문제 검색</title>
+      <link>https://nsoohak.com/contentsList</link>
+      <description>수학문제 검색</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com/contentsList</guid>
+    </item>
+    <item>
+      <title>문제 만들기</title>
+      <link>https://nsoohak.com/contentsList</link>
+      <description>수학 문제 만들기</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com/contentsList</guid>
+    </item>
+    <item>
+      <title>컨텐츠</title>
+      <link>https://nsoohak.com/shareResource?mainCateNo=1</link>
+      <description>도형 및 이미지 파일 공유</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com/shareResource?mainCateNo=1</guid>
+    </item>
+    <item>
+      <title>컨텐츠 도구</title>
+      <link>https://nsoohak.com/resourceTools</link>
+      <description>그래프 만들기</description>
+    <pubDate>2022년 10월 22일</pubDate>
+      <guid>https://nsoohak.com/resourceTools</guid>
+    </item>
+  </channel>
+</rss>

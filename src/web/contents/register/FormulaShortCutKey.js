@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import {reg_getMappingShortCutKeyClk, reg_writeDisableDom, reg_dressYellowBox, reg_reGenerFormulBugFix, reg_undoStackByClick, 
     reg_undoArrPop, reg_addBrInLastPosition, reg_nbFormulaConvert} from 'js/contents/register/contents_reg';
 import shortCutButExImg1 from 'img/shortCutButExImg1.PNG';
