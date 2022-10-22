@@ -411,6 +411,300 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 }
 
 /*
+* 정의 : 구 버전 수식 UI 및 컨버트 호환 함수
+* 설명 : 컨버트 방식 이전 또는 업데이트 하며 변경 되는 수식 표현 방법에 의해 
+*        예전 방식으로 구현된 수식 현재 방식으로 변경하는 함수
+ */
+export const reg_oldNbFormulToNewNbFormul = async (pageType) => {
+	if(pageType === "makeContents"){
+		//writeDisable 요소 적용 안된 것들 적용 시켜주기
+		let contentEditClass = document.getElementsByClassName("contentEditClass");
+		for(let idx = 0; idx<contentEditClass.length; idx++){
+			let writeDisable = contentEditClass[idx].querySelectorAll(".nbL-R-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbR-R-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbL-C-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbR-C-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbL-S-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbR-S-Brck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbAbsVal");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbTrigon");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+			}
+
+			//borderBox 적용 안된 것 borderBox도 추가
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbCaseBrck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+				writeDisable[i].classList.add("borderBox");
+			}
+			writeDisable = contentEditClass[idx].querySelectorAll(".nbThrCaseBrck");
+			for(let i=0; i<writeDisable.length; i++){
+				writeDisable[i].classList.add("writeDisable");
+				writeDisable[i].classList.add("borderBox");
+			}
+		}
+	}
+	
+}
+
+/*
+* 정의 : 수식 컨버트
+*/
+export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) => {
+	//루트 안 분수
+	if(nbGrammer.indexOf("nbFracBox") > -1){
+		let nbRootBoxStrt = strtElement.closest(".nbRootBox");
+		let nbRootBoxEnd = endElement.closest(".nbRootBox");
+		if(nbRootBoxStrt !== null && nbRootBoxEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
+				nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
+				nbRootBoxStrt.classList.add("nbConvert");
+				nbRootBoxStrt.classList.add("nbFracInRoot");
+				while(nbRootBoxStrt.parentElement.closest(".nbRootBox")!==null){
+					nbRootBoxStrt=nbRootBoxStrt.parentElement.closest(".nbRootBox");
+					nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
+					nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
+					nbRootBoxStrt.classList.add("nbConvert");
+					nbRootBoxStrt.classList.add("nbFracInRoot");
+				}
+			}
+		}
+		//분수 분의 분수(분모 안 분수, 분자 안 분수)
+		let nbFracBoxStrt = strtElement.closest(".nbFracBox");
+		let nbFracBoxEnd = endElement.closest(".nbFracBox");
+		if(nbFracBoxStrt !== null && nbFracBoxEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
+					nbFracBoxStrt.classList.add("nbConvert");
+					nbFracBoxStrt.classList.add("nbFracInDenom");
+				}
+				if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
+					nbFracBoxStrt.classList.add("nbConvert");
+					nbFracBoxStrt.classList.add("nbFracInNumer");
+				}
+			}
+
+			//리밋 안에 분수 분의 분수 있는 경우(순서 변경 되면 안됨. 분수 분의 분수 뒤에서 구현되야 정확하게 구현)
+			let nbFracBoxInLimStrt = nbFracBoxStrt.closest(".nbLimBase");
+			let nbFracBoxInLimEnd = nbFracBoxEnd.closest(".nbLimBase");
+			if(nbFracBoxInLimStrt !== null && nbFracBoxInLimEnd !== null){
+				if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+					if(nbFracBoxStrt.classList.contains("nbFracInDenom") && nbFracBoxStrt.classList.contains("nbFracInNumer")){
+						nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+						nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+						nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInFracInLim");
+					}
+					else if(nbFracBoxStrt.classList.contains("nbFracInDenom")){
+						nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
+						nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
+					}
+				}
+			}
+		}
+
+		//리밋 안의 분수 컴파일
+		let nbLimBaseStrt = strtElement.closest(".nbLimBase");
+		let nbLimBaseEnd = endElement.closest(".nbLimBase");
+		if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
+			}
+		}
+
+		//적분 안의 분수 컴파일
+		let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbIntegralEnd = endElement.closest(".nbIntBase");
+		if(nbIntegralStrt === null && nbIntegralEnd === null){
+			nbIntegralStrt = strtElement.closest(".nbDoubleIntBase");
+			nbIntegralEnd = endElement.closest(".nbDoubleIntBase");
+		}
+		if(nbIntegralStrt === null && nbIntegralEnd === null){
+			nbIntegralStrt = strtElement.closest(".nbTripleIntBase");
+			nbIntegralEnd = endElement.closest(".nbTripleIntBase");
+		}
+		if(nbIntegralStrt !== null && nbIntegralEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbIntegralStrt.closest(".nbBox").classList.add("nbConvert");
+				nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
+			}
+		}
+
+		//시그마 안 분수 컴파일
+		let nbSigmaStrt = strtElement.closest(".nbSigmaSumBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbSigmaEnd = endElement.closest(".nbSigmaSumBase");
+		if(nbSigmaStrt !== null && nbSigmaEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbSigmaStrt.closest(".nbBox").classList.add("nbConvert");
+				nbSigmaStrt.closest(".nbBox").classList.add("nbFracInSigmaSum");
+			}
+		}
+
+		//ln함수 안 분수 컴파일
+		let nbLnStrt = strtElement.closest(".nbLnBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbLnEnd = endElement.closest(".nbLnBase");
+		if(nbLnStrt !== null && nbLnEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbLnStrt.closest(".nbBox").classList.add("nbConvert");
+				nbLnStrt.closest(".nbBox").classList.add("nbFracInLn");
+			}
+		}
+
+		//로그함수 안 분수 컴파일
+		let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbLogEnd = endElement.closest(".nbLogBase");
+		if(nbLogStrt !== null && nbLogEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbLogStrt.closest(".nbBox").classList.add("nbConvert");
+				nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
+			}
+		}
+	}
+
+	//시그마 컴파일
+	if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+		//리밋 안의 시그마 컴파일
+		let nbLimBaseStrt = strtElement.closest(".nbLimBase");
+		let nbLimBaseEnd = endElement.closest(".nbLimBase");
+		if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbLimBaseEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
+			}
+		}
+		//분모 안의 시그마 컴파일
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbSigmaSumInDenom");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+		//분자 안의 시그마 컴파일
+		let nbNumerStrt = strtElement.closest(".nbNumer");
+		let nbNumerEnd = endElement.closest(".nbNumer");
+		if(nbNumerStrt !== null && nbNumerEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+
+	//분모, 분자 안에 리밋 들어가는 경우
+	if(nbGrammer.indexOf("nbLimBox") > -1){
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbLimInDenom");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+
+		let nbNumerStrt = strtElement.closest(".nbNumer");
+		let nbNumerEnd = endElement.closest(".nbNumer");
+		if(nbNumerStrt !== null && nbNumerEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbLimInNumer");
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+	
+
+	//nbConvert 분모 안에 루트, 순환소수, 악센트 들어가는 경우(분모, 분자에 padding:2)
+	if(nbGrammer.indexOf("nbRootBox") > -1 || nbGrammer.indexOf("nbOverDotBox") > -1 || nbGrammer.indexOf("nbAccentBox") > -1 ){
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+
+	//분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
+	if(nbGrammer.indexOf("nbArrowBox") > -1 || nbGrammer.indexOf("nbOverlineBox") > -1){
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+
+	//분모, 분자 안에 적분 들어가는 경우
+	if(nbGrammer.indexOf("nbIntegralBox") > -1 || nbGrammer.indexOf("nbDoubleIntegralBox") > -1 || nbGrammer.indexOf("nbTripleIntegralBox") > -1){
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbIntegralInDenom");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+
+		let nbNumerStrt = strtElement.closest(".nbNumer");
+		let nbNumerEnd = endElement.closest(".nbNumer");
+		if(nbNumerStrt !== null && nbNumerEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbIntegralInNumer");
+				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+
+	//분수 안에 조건박스
+	if(nbGrammer.indexOf("nbCondBox") > -1){
+		let nbDenomStrt = strtElement.closest(".nbDenom");
+		let nbDenomEnd = endElement.closest(".nbDenom");
+		if(nbDenomStrt !== null && nbDenomEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbCondBoxInFracDenomConvert");
+				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+
+		let nbNumerStrt = strtElement.closest(".nbNumer");
+		let nbNumerEnd = endElement.closest(".nbNumer");
+		if(nbNumerStrt !== null && nbNumerEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbNumerEnd.closest(".nbFracBox").classList.add("nbCondBoxInFracNumerConvert");
+				nbNumerEnd.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+	}
+}
+
+/*
 *	정의 : reg_preventKeyEvent에서 사용되는 라인 이동 버그 요소 제어
 *	설명 : 분수용 괄호, 첨자의 경우 글자크기 및 줄간격이 다른 텍스트와 달라 라인 이동 정상적이지 않음
 *		   다른 텍스트와 동일하게 작동하도록 변환 함수
@@ -1756,7 +2050,7 @@ export const reg_preventKeyEvent = async (event) => {
 		const isWriteDisableDom = await reg_writeDisableDom(event)
 
 		//nb문법 삽입 전 커서 위치 요소 파악(nbConvert)
-		let strtElement = window.getSelection().getRangeAt(0).startContainer;
+        let strtElement = window.getSelection().getRangeAt(0).startContainer;
 		let endElement = window.getSelection().getRangeAt(0).endContainer;
 		if(strtElement.classList === undefined) strtElement = strtElement.parentElement;
 		if(endElement.classList === undefined) endElement = endElement.parentElement;
@@ -1790,239 +2084,11 @@ export const reg_preventKeyEvent = async (event) => {
 				positionDetect.remove();
 			}
 			
-			
+
 			//위 방식도 정상작동
 			if(nbGrammer.length !== 0){
 				//nbConvert 루트 안의 분수 컴파일
-				if(nbGrammer.indexOf("nbFracBox") > -1){
-					let nbRootBoxStrt = strtElement.closest(".nbRootBox");
-					let nbRootBoxEnd = endElement.closest(".nbRootBox");
-					if(nbRootBoxStrt !== null && nbRootBoxEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
-							nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
-							nbRootBoxStrt.classList.add("nbConvert");
-							nbRootBoxStrt.classList.add("nbFracInRoot");
-							while(nbRootBoxStrt.parentElement.closest(".nbRootBox")!==null){
-								nbRootBoxStrt=nbRootBoxStrt.parentElement.closest(".nbRootBox");
-								nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbConvert");
-								nbRootBoxStrt.querySelector(".nbRootBase").classList.add("nbFracInRoot");
-								nbRootBoxStrt.classList.add("nbConvert");
-								nbRootBoxStrt.classList.add("nbFracInRoot");
-							}
-						}
-					}
-					//분모 안의 분수 또는 분자 안의 분수 컴파일
-					let nbFracBoxStrt = strtElement.closest(".nbFracBox");
-					let nbFracBoxEnd = endElement.closest(".nbFracBox");
-					if(nbFracBoxStrt !== null && nbFracBoxEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
-								nbFracBoxStrt.classList.add("nbConvert");
-								nbFracBoxStrt.classList.add("nbFracInDenom");
-							}
-							if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
-								nbFracBoxStrt.classList.add("nbConvert");
-								nbFracBoxStrt.classList.add("nbFracInNumer");
-							}
-						}
-
-						//nbFracInDenom위에 리밋 있는 경우
-						let nbFracBoxInLimStrt = nbFracBoxStrt.closest(".nbLimBase");
-						let nbFracBoxInLimEnd = nbFracBoxEnd.closest(".nbLimBase");
-						if(nbFracBoxInLimStrt !== null && nbFracBoxInLimEnd !== null){
-							if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-								if(nbFracBoxStrt.classList.contains("nbFracInDenom") && nbFracBoxStrt.classList.contains("nbFracInNumer")){
-									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
-									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
-									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInFracInLim");
-								}
-								else if(nbFracBoxStrt.classList.contains("nbFracInDenom")){
-									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbConvert");
-									nbFracBoxInLimEnd.closest(".nbLimBox").classList.add("nbFracInDenomInLim");
-								}
-							}
-						}
-					}
-
-					//리밋 안의 분수 컴파일
-					let nbLimBaseStrt = strtElement.closest(".nbLimBase");
-					let nbLimBaseEnd = endElement.closest(".nbLimBase");
-					if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
-							nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
-						}
-					}
-
-					//적분 안의 분수 컴파일
-					let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-					let nbIntegralEnd = endElement.closest(".nbIntBase");
-					if(nbIntegralStrt === null && nbIntegralEnd === null){
-						nbIntegralStrt = strtElement.closest(".nbDoubleIntBase");
-						nbIntegralEnd = endElement.closest(".nbDoubleIntBase");
-					}
-					if(nbIntegralStrt === null && nbIntegralEnd === null){
-						nbIntegralStrt = strtElement.closest(".nbTripleIntBase");
-						nbIntegralEnd = endElement.closest(".nbTripleIntBase");
-					}
-					if(nbIntegralStrt !== null && nbIntegralEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbIntegralStrt.closest(".nbBox").classList.add("nbConvert");
-							nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
-						}
-					}
-
-					//시그마 안 분수 컴파일
-					let nbSigmaStrt = strtElement.closest(".nbSigmaSumBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-					let nbSigmaEnd = endElement.closest(".nbSigmaSumBase");
-					if(nbSigmaStrt !== null && nbSigmaEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbSigmaStrt.closest(".nbBox").classList.add("nbConvert");
-							nbSigmaStrt.closest(".nbBox").classList.add("nbFracInSigmaSum");
-						}
-					}
-
-					//ln함수 안 분수 컴파일
-					let nbLnStrt = strtElement.closest(".nbLnBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-					let nbLnEnd = endElement.closest(".nbLnBase");
-					if(nbLnStrt !== null && nbLnEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbLnStrt.closest(".nbBox").classList.add("nbConvert");
-							nbLnStrt.closest(".nbBox").classList.add("nbFracInLn");
-						}
-					}
-
-					//로그함수 안 분수 컴파일
-					let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-					let nbLogEnd = endElement.closest(".nbLogBase");
-					if(nbLogStrt !== null && nbLogEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbLogStrt.closest(".nbBox").classList.add("nbConvert");
-							nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
-						}
-					}
-				}
-
-				//시그마 컴파일
-				if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
-					//리밋 안의 시그마 컴파일
-					let nbLimBaseStrt = strtElement.closest(".nbLimBase");
-					let nbLimBaseEnd = endElement.closest(".nbLimBase");
-					if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
-							nbLimBaseEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
-						}
-					}
-					//분모 안의 시그마 컴파일
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbSigmaSumInDenom");
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-					//분자 안의 시그마 컴파일
-					let nbNumerStrt = strtElement.closest(".nbNumer");
-					let nbNumerEnd = endElement.closest(".nbNumer");
-					if(nbNumerStrt !== null && nbNumerEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-				}
-
-				//nbConvert 분모, 분자 안에 리밋 들어가는 경우
-				if(nbGrammer.indexOf("nbLimBox") > -1){
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbLimInDenom");
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-
-					let nbNumerStrt = strtElement.closest(".nbNumer");
-					let nbNumerEnd = endElement.closest(".nbNumer");
-					if(nbNumerStrt !== null && nbNumerEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbLimInNumer");
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-				}
-				
-
-				//nbConvert 분모 안에 루트, 순환소수, 악센트 들어가는 경우(분모, 분자에 padding:2)
-				if(nbGrammer.indexOf("nbRootBox") > -1 || nbGrammer.indexOf("nbOverDotBox") > -1 || nbGrammer.indexOf("nbAccentBox") > -1 ){
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert");
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-				}
-
-				//nbConvert 분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
-				if(nbGrammer.indexOf("nbArrowBox") > -1 || nbGrammer.indexOf("nbOverlineBox") > -1){
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbFracLineConvert2");
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-				}
-
-				//분모, 분자 안에 적분 들어가는 경우
-				if(nbGrammer.indexOf("nbIntegralBox") > -1 || nbGrammer.indexOf("nbDoubleIntegralBox") > -1 || nbGrammer.indexOf("nbTripleIntegralBox") > -1){
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbIntegralInDenom");
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-
-					let nbNumerStrt = strtElement.closest(".nbNumer");
-					let nbNumerEnd = endElement.closest(".nbNumer");
-					if(nbNumerStrt !== null && nbNumerEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbIntegralInNumer");
-							nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
-						}
-					}
-				}
-
-
-				/* 조건 박스는 단축키가 없어서 해당 로직에서 구현될 일 없음.
-				//nbConvert 분모 안에 직선, 선분 들어가는 경우(분모, 분자에 padding:3)
-				if(nbGrammer.indexOf("nbCondBox") > -1){
-					let nbDenomStrt = strtElement.closest(".nbDenom");
-					let nbDenomEnd = endElement.closest(".nbDenom");
-					if(nbDenomStrt !== null && nbDenomEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbDenomStrt.closest(".nbFracBox").classList.add("nbCondBoxInFracDenomConvert");
-						}
-					}
-
-					let nbNumerStrt = strtElement.closest(".nbNumer");
-					let nbNumerEnd = endElement.closest(".nbNumer");
-					if(nbNumerStrt !== null && nbNumerEnd !== null){
-						if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
-							nbNumerEnd.closest(".nbFracBox").classList.add("nbCondBoxInFracNumerConvert");
-						}
-					}
-				}
-				*/
+				await reg_nbFormulaConvert(nbGrammer, strtElement, endElement);
 
 				//nbConvert 분수의 분모 안에 분수가 있고 이 분수의 분모 또는 분자에 
 				//루트 순환소수, 루트 악센트, 루트 직선, 루트 선분 들어가는 경우는 구현 안함, 추후 이런 수식 기호를 사용할 일 있으면 추가해야함

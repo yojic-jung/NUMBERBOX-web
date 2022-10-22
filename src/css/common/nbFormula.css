@@ -1251,7 +1251,12 @@
     background:rgb(235, 238, 245) !important;
 }
 
-.onlyEdit:focus .borderBox, .onlyEdit:focus .borderBox.writeDisable.nbTrigon{
+.onlyEdit:focus .borderBox, .onlyEdit:focus .borderBox.writeDisable.nbTrigon,
+.onlyEdit:focus .borderBox.writeDisable.nbL-R-Brck, .onlyEdit:focus .writeDisable.borderBox.nbR-R-Brck,
+.onlyEdit:focus .writeDisable.borderBox.nbL-C-Brck, .onlyEdit:focus .writeDisable.borderBox.nbR-C-Brck,
+.onlyEdit:focus .writeDisable.borderBox.nbL-S-Brck, .onlyEdit:focus .writeDisable.borderBox.nbR-S-Brck,
+.onlyEdit:focus .writeDisable.borderBox.nbAbsVal
+{
     border:1px dashed gray;
     box-shadow: unset;
 }

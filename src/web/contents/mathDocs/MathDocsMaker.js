@@ -164,6 +164,13 @@ const MathDocsMaker = ()=>{
     }
 
     const onlyMyProdOrRepoContents = async ()=>{
+        if(!nb_isLogin()) {
+            if(isBrowser) alert("로그인 이후 사용해 주시기 바랍니다.");
+            else alert("PC로 접속하여 사용해 주시기 바랍니다.");
+            
+            return;
+        }
+        
         setShowChart(false);
         setConTotalCnt(0);
         setMathContentsList([]);

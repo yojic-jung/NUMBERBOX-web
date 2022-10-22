@@ -10,7 +10,7 @@ import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getChe
 	nb_licenseUiCheck, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_formulaTapMoveEv,
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
-		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, 
+		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, reg_oldNbFormulToNewNbFormul,
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
 		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting, reg_enableImageResizeInDiv, reg_removeResizeFrame, reg_imageCopy} from 'js/contents/register/contents_reg';
 
@@ -310,6 +310,9 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				document.getElementById("fifNoFormulaEditor").innerHTML = myContents["myContents"].fifNo;
 
 				await nb_multiChoiceGridSet("multi-show");
+
+				//예전 방식으로 구현된 수식UI 현재 방식으로 변경
+				await reg_oldNbFormulToNewNbFormul("makeContents");
 
 				//이미지 file 셋팅 필요(문제 및 정답)
 				if(myContents["myContents"].contentsImg !== null){
