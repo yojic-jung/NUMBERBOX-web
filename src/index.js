@@ -1,5 +1,6 @@
 import React from 'react';
 import App from './App';
+import './index.css';
 import { HelmetProvider } from 'react-helmet-async';
 import { hydrate, render } from "react-dom";
 const rootElement = document.getElementById("root");
