@@ -30,7 +30,11 @@
     "postbuild": "react-snap"
   },
   "reactSnap": {
-    "include": ["/", "/makeContents", "/shareResource", "/resourceTools", "/makeMathDocs", "/contentsList"]
+    "include": ["/", "/makeContents", "/shareResource", "/resourceTools", "/makeMathDocs", "/contentsList"],
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
   },
   "eslintConfig": {
     "extends": [
