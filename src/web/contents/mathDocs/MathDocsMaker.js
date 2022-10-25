@@ -1181,7 +1181,7 @@ const MathDocsMaker = ()=>{
 
         let conImgPath;
         if(contentsMap.contentsImg===null) conImgPath = "";
-        else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+        else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
 
         let sysCreateDate = contentsMap.sysCreateDate;
         let sysDateStr = "";
@@ -1247,7 +1247,7 @@ const MathDocsMaker = ()=>{
     
             let conImgPath;
             if(contentsMap.contentsImg===null) conImgPath = "";
-            else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+            else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
     
             let sysCreateDate = contentsMap.sysCreateDate;
             let sysDateStr = "";
@@ -1313,7 +1313,7 @@ const MathDocsMaker = ()=>{
         
                 let conImgPath;
                 if(contentsMap.contentsImg===null) conImgPath = "";
-                else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+                else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
         
                 let sysCreateDate = contentsMap.sysCreateDate;
                 let sysDateStr = "";
@@ -1379,7 +1379,7 @@ const MathDocsMaker = ()=>{
     
                     let solImgPath;
                     if(contentsMap.solutionImg===null) solImgPath = "";
-                    else solImgPath = contentsMap.solutionImgPath+contentsMap.solutionImg;
+                    else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.solutionImgPath+contentsMap.solutionImg;
                    
                     return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                     <table className='workListTable'>
@@ -1634,7 +1634,7 @@ return (
 
                                 let conImgPath;
                                 if(contentsMap.contentsImg===null) conImgPath = "";
-                                else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+                                else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
 
                                 let contentsId = "workContentsDiv"+contentsMap.contentsNo;
                                 return  <div id={contentsId} className="contentsDiv userSearchPage" key={contentsMap.contentsNo} data-contents-no={contentsMap.contentsNo}> 

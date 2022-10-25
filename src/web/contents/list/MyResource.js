@@ -59,7 +59,7 @@ const MyResource = ()=>{
             let sliderDiv = document.createElement('div');
             sliderDiv.className = "customSliderBox";
             let sliderImg = document.createElement('img');
-            sliderImg.src = returnObj.imgList[i].imgPath+"/"+returnObj.imgList[i].imgName;
+            sliderImg.src = process.env.REACT_APP_SERVER_STATIC_HOST+returnObj.imgList[i].imgPath+returnObj.imgList[i].imgName;
             sliderDiv.append(sliderImg);
             sliderImg.classList.add("customSliderImg");
             if(i!==0) sliderImg.classList.add("hide");
@@ -134,7 +134,7 @@ const MyResource = ()=>{
         document.getElementById("titleValDesc").innerHTML="";
         document.getElementById("updateResResourceNo").value=Number(resourceNo);
         document.getElementById("title").value=title;
-        document.getElementById("representImg").src=imgPath+"/"+imgName;
+        document.getElementById("representImg").src=process.env.REACT_APP_SERVER_STATIC_HOST+imgPath+imgName;
         document.getElementById("pptFileCustomDesc").innerHTML=pptName.split("_")[2];
         document.getElementById("userCateDiv").innerHTML = "";
         document.getElementById("pptFile").value = "";
@@ -180,7 +180,7 @@ const MyResource = ()=>{
                         <span className='delBtn' onClick={()=>{nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.");setDelResourceNo(contentsMap.resourceNo)}} ></span>
                     </div>
                     <div className="img-title">{contentsMap.title}</div>
-                    <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
+                    <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.imgName} alt="컨텐츠 이미지"/>
                 </div>);
     });
 

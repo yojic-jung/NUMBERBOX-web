@@ -29,7 +29,6 @@ export const nb_isAdmin = () => {
  * 정의 : web에서 was의 data를 fetch하는 공통 함수
  * 설명 : transitEffect는 spinner 효과 사용여부 판단
 */
-
 export const nb_dataFetch = async (url, transitEffect) => {
   if(transitEffect){
     document.getElementById("page-transit").classList.remove("hide");
@@ -37,8 +36,10 @@ export const nb_dataFetch = async (url, transitEffect) => {
   } 
   
   let returnVal = null;
+  url = process.env.REACT_APP_DB_HOST+url;
   await fetch(url, {
       method: 'get',	// 방식은 get
+      credentials: 'include',
       headers: {
         'access-token':window.localStorage.getItem("access-token")
       }
@@ -80,8 +81,10 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
   } 
 
   let returnVal = null;
+  url = process.env.REACT_APP_DB_HOST+url;
     await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
       method: 'post',	// 방식은 post
+      credentials: 'include',
       headers: {
         'access-token':window.localStorage.getItem("access-token")
       },
@@ -120,9 +123,10 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
 
 
  export const nb_dataFileFetch = async (url, fileName) => {
-      
+  url = process.env.REACT_APP_DB_HOST+url;
   await fetch(url, {
         method: 'get',	// 방식은 get
+        credentials: 'include',
         headers: {
           'access-token':window.localStorage.getItem("access-token")
         },
@@ -156,8 +160,10 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     } 
   
     let returnVal = null;
+    url = process.env.REACT_APP_DB_HOST+url;
       await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
         method: 'post',	// 방식은 post
+        credentials: 'include',
         headers: {
         },
         body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
@@ -290,7 +296,8 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
       let formData = new FormData();
       formData.append("contentsNo",contentsNo);
       formData.append(targetId, event.target.files[0])
-      let returnObj = await nb_formDataFetch("/mathInfo/changeConOrSolImg",formData, true);
+      let url = process.env.REACT_APP_DB_HOST+"/mathInfo/changeConOrSolImg";
+      let returnObj = await nb_formDataFetch(url,formData, true);
       document.getElementById("imgUpdt").value = "Y";
       reader.readAsDataURL(event.target.files[0]);
       output.classList.remove('hide');

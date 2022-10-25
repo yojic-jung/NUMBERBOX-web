@@ -29,7 +29,7 @@ const TopMenuBar = (isMain)=>{
                 if(jsonObj.isSuccess){
                     setMyNickName(jsonObj.profile.nickname);
                     if(jsonObj.profile.profileImgPath !== null && jsonObj.profile.profileImgName !== null){
-                        setImgPath(jsonObj.profile.profileImgPath+"/"+jsonObj.profile.profileImgName);
+                        setImgPath(process.env.REACT_APP_SERVER_STATIC_HOST+jsonObj.profile.profileImgPath+jsonObj.profile.profileImgName);
                     }
                 }
             }

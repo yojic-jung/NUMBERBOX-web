@@ -726,10 +726,10 @@ const WorkContentsList = ()=>{
 
                 let conImgPath;
                 if(contentsMap.contentsImg===null) conImgPath = "";
-                else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+                else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
                 let solImgPath;
                 if(contentsMap.solutionImg===null) solImgPath = "";
-                else solImgPath = contentsMap.solutionImgPath+contentsMap.solutionImg;
+                else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.solutionImgPath+contentsMap.solutionImg;
                
                 //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
                 if(contentsList.length-1 === idx) isContentsListInitiated = true;

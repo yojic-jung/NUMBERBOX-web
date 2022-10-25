@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import FollowListBox from 'web/common/FollowListBox';
-import {nb_dataFetch, nb_extensionCheck2, nb_formDataFetch, nb_fadeInOutB} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_extensionCheck2, nb_formDataFetch, nb_fadeInOutB, nb_loadFile} from 'js/common/common_nb.js';
 import defaultProfileImg from 'img/defaultProfile.png';
 import profileAddImg from 'img/add.png';
 
@@ -21,7 +21,7 @@ const ProfileComponent = ({isMine, userNo})=>{
                 if(jsonObj.isSuccess){
                     setNickname(jsonObj.profile.nickname);
                     if(jsonObj.profile.profileImgPath !== null && jsonObj.profile.profileImgName !== null){
-                        setImgPath(jsonObj.profile.profileImgPath+"/"+jsonObj.profile.profileImgName)
+                        setImgPath(process.env.REACT_APP_SERVER_STATIC_HOST+jsonObj.profile.profileImgPath+jsonObj.profile.profileImgName)
                     }
                     if(jsonObj.isFollowed){
                         document.getElementById("followingUser").classList.add("hide");
@@ -39,7 +39,7 @@ const ProfileComponent = ({isMine, userNo})=>{
                 if(jsonObj.isSuccess){
                     setNickname(jsonObj.profile.nickname);
                     if(jsonObj.profile.profileImgPath !== null && jsonObj.profile.profileImgName !== null){
-                        setImgPath(jsonObj.profile.profileImgPath+"/"+jsonObj.profile.profileImgName)
+                        setImgPath(process.env.REACT_APP_SERVER_STATIC_HOST+jsonObj.profile.profileImgPath+jsonObj.profile.profileImgName)
                     }
                 }
                 setMyFollowing(jsonObj.myFollowing)
@@ -77,8 +77,6 @@ const ProfileComponent = ({isMine, userNo})=>{
             formData.append("profileImgFile", event.target.files[0]);
             let returnObj = await nb_formDataFetch("/registerProfileImg", formData, true);
             if(returnObj.isSuccess){
-                setImgPath("/webapp/static"+returnObj.profileImgPath+"/"+returnObj.profileImgName);
-                document.getElementById("topMenuProfileImg").src="/webapp/static"+returnObj.profileImgPath+"/"+returnObj.profileImgName;
             }else{
                 await nb_fadeInOutB("프로필 이미지 변경에 실패하였습니다.\n다시 등록해주시기 바랍니다.", 2000);
                 
@@ -149,11 +147,11 @@ const ProfileComponent = ({isMine, userNo})=>{
                         <tr>
                             <td>
                                 <span id="myProfile" className="profileImgWrap" onClick={()=>{document.getElementById("profileImgFile").click()}}>
-                                    <img alt="프로필이미지" src={imgPath} className="profileImg"/> 
+                                    <img id="profilImg" alt="프로필이미지" src={imgPath} className="profileImg"/> 
                                     {isMine && 
                                         <>
                                             <img alt="프로필변경" src={profileAddImg} className="profileUpdateBtn"/>
-                                            <input id="profileImgFile" accept="image/*" type="file" name="profileImgFile" className='hide' onChange={(event)=>{nb_extensionCheck2(event);registerProfileImg(event)}}/>
+                                            <input id="profileImgFile" accept="image/*" type="file" name="profileImgFile" className='hide' onChange={(event)=>{nb_extensionCheck2(event);registerProfileImg(event);nb_loadFile(event, "profilImg", undefined);nb_loadFile(event, "topMenuProfileImg", undefined);}}/>
                                         </>
                                     }
                                 </span>

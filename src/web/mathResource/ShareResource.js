@@ -57,7 +57,7 @@ const ShareResource = ()=>{
                                 <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.resourceNo)}}></div>
                             </div>
                             <div className="img-title">{contentsMap.title}</div>
-                            <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={contentsMap.imgPath+"/"+contentsMap.imgName} alt="컨텐츠 이미지"/>
+                            <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.imgName} alt="컨텐츠 이미지"/>
                         </div>);
             });
             setResourceList(initResoureList);
@@ -113,7 +113,7 @@ const ShareResource = ()=>{
             let sliderDiv = document.createElement('div');
             sliderDiv.className = "customSliderBox";
             let sliderImg = document.createElement('img');
-            sliderImg.src = returnObj.imgList[i].imgPath+"/"+returnObj.imgList[i].imgName;
+            sliderImg.src = process.env.REACT_APP_SERVER_STATIC_HOST+returnObj.imgList[i].imgPath+returnObj.imgList[i].imgName;
             sliderDiv.append(sliderImg);
             sliderImg.classList.add("customSliderImg");
             if(i!==0) sliderImg.classList.add("hide");

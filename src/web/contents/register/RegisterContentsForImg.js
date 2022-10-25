@@ -87,11 +87,11 @@ const RegisterContentsForImg = ({contentsNo})=>{
 
 				//이미지 file 셋팅 필요(문제 및 정답)
 				if(myContents["myContents"].contentsImg !== null){
-					document.getElementById("conImgOutput").src = myContents["myContents"].imgPath+"/"+myContents["myContents"].contentsImg;
+					document.getElementById("conImgOutput").src = process.env.REACT_APP_SERVER_STATIC_HOST+myContents["myContents"].imgPath+myContents["myContents"].contentsImg;
 					conImgName = myContents["myContents"].contentsImg;
 				}
 				if(myContents["myContents"].solutionImg !== null){
-					document.getElementById("solImgOutput").src = myContents["myContents"].solutionImgPath+"/"+myContents["myContents"].solutionImg;
+					document.getElementById("solImgOutput").src = process.env.REACT_APP_SERVER_STATIC_HOST+myContents["myContents"].solutionImgPath+myContents["myContents"].solutionImg;
 					solImgName = myContents["myContents"].solutionImg;
 				}
 				// 주관식 객관식 마지막 validation에서 처리 필요(X)

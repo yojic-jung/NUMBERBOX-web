@@ -157,14 +157,14 @@ const MyRepository = ()=>{
             
             if(contents.contentsImg !== null && contents.contentsImg !== undefined){
                 document.getElementById("quesDetailedImg-show").classList.remove("hide");
-                document.getElementById("contentsDetailedImgOutput").src = contents.imgPath+"/"+contents.contentsImg;
+                document.getElementById("contentsDetailedImgOutput").src = process.env.REACT_APP_SERVER_STATIC_HOST+contents.imgPath+contents.contentsImg;
             }else{
                 document.getElementById("quesDetailedImg-show").classList.add("hide");
                 
             }
             if(contents.solutionImg !== null && contents.solutionImg !== undefined){
                 document.getElementById("solDetailedImg-show").classList.remove("hide");
-                document.getElementById("solutionDetailedImgOutput").src = contents.solutionImgPath+"/"+contents.solutionImg;
+                document.getElementById("solutionDetailedImgOutput").src = process.env.REACT_APP_SERVER_STATIC_HOST+contents.solutionImgPath+contents.solutionImg;
             }else{
                 document.getElementById("solDetailedImg-show").classList.add("hide");
             }
@@ -256,7 +256,7 @@ const MyRepository = ()=>{
 
             let conImgPath;
             if(contentsMap.contentsImg===null) conImgPath = "";
-            else conImgPath = contentsMap.imgPath+contentsMap.contentsImg;
+            else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
             let profileImgPath=defaultProfile;
             if(contentsMap.membersProfile.profileImgPath !== null && contentsMap.membersProfile.profileImgName !== null){
                 //profileImgPath=contentsMap.membersProfile.profileImgPath+contentsMap.membersProfile.profileImgName;

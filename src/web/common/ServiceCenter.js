@@ -85,21 +85,21 @@ const ServiceCenter = ({myNickName})=>{
         document.getElementById("detailedReportContents").innerHTML = errReport.reportContents;
         if(errReport.firstImgName !== null){
             document.getElementById("detailedFirstImgShow").classList.remove("hide");
-            document.getElementById("detailedFirstImgShow").src = errReport.firstImgPath +"/"+ errReport.firstImgName
+            document.getElementById("detailedFirstImgShow").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.firstImgPath + errReport.firstImgName
         }else{
             document.getElementById("detailedFirstImgShow").classList.add("hide");
         }
         
         if(errReport.secondImgName !== null){
             document.getElementById("detailedSecondImgShow").classList.remove("hide");
-            document.getElementById("detailedSecondImgShow").src = errReport.secondImgPath +"/"+ errReport.secondImgName
+            document.getElementById("detailedSecondImgShow").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.secondImgPath + errReport.secondImgName
         }else{
             document.getElementById("detailedSecondImgShow").classList.add("hide");
         }
 
         if(errReport.thirdImgName !== null){
             document.getElementById("detailedThirdImgShow").classList.remove("hide");
-            document.getElementById("detailedThirdImgShow").src = errReport.thirdImgPath +"/"+ errReport.thirdImgName
+            document.getElementById("detailedThirdImgShow").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.thirdImgPath + errReport.thirdImgName
         }else{
             document.getElementById("detailedThirdImgShow").classList.add("hide");
         }

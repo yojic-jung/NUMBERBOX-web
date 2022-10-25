@@ -130,21 +130,21 @@ const AdminSvcCenter = ()=>{
         document.getElementById("detailedReportContentsAdmin").innerHTML = errReport.reportContents;
         if(errReport.firstImgName !== null){
             document.getElementById("detailedFirstImgShowAdmin").classList.remove("hide");
-            document.getElementById("detailedFirstImgShowAdmin").src = errReport.firstImgPath+"/"+errReport.firstImgName;
+            document.getElementById("detailedFirstImgShowAdmin").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.firstImgPath+errReport.firstImgName;
         }else{
             document.getElementById("detailedFirstImgShowAdmin").classList.add("hide");
         }
 
         if(errReport.secondImgName !== null){
             document.getElementById("detailedSecondImgShowAdmin").classList.remove("hide");
-            document.getElementById("detailedSecondImgShowAdmin").src = errReport.secondImgPath+"/"+errReport.secondImgName;
+            document.getElementById("detailedSecondImgShowAdmin").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.secondImgPath+errReport.secondImgName;
         }else{
             document.getElementById("detailedSecondImgShowAdmin").classList.add("hide");
         }
 
         if(errReport.thirdImgName !== null){
             document.getElementById("detailedThirdImgShowAdmin").classList.remove("hide");
-            document.getElementById("detailedThirdImgShowAdmin").src = errReport.thirdImgPath+"/"+errReport.thirdImgName;
+            document.getElementById("detailedThirdImgShowAdmin").src = process.env.REACT_APP_SERVER_STATIC_HOST+errReport.thirdImgPath+errReport.thirdImgName;
         }else{
             document.getElementById("detailedThirdImgShowAdmin").classList.add("hide");
         }
