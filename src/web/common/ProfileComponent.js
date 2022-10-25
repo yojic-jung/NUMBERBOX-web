@@ -77,6 +77,8 @@ const ProfileComponent = ({isMine, userNo})=>{
             formData.append("profileImgFile", event.target.files[0]);
             let returnObj = await nb_formDataFetch("/registerProfileImg", formData, true);
             if(returnObj.isSuccess){
+                setImgPath(process.env.REACT_APP_SERVER_STATIC_HOST+"/webapp/static"+returnObj.profileImgPath+"/"+returnObj.profileImgName);
+                document.getElementById("topMenuProfileImg").src=process.env.REACT_APP_SERVER_STATIC_HOST+"/webapp/static"+returnObj.profileImgPath+"/"+returnObj.profileImgName;
             }else{
                 await nb_fadeInOutB("프로필 이미지 변경에 실패하였습니다.\n다시 등록해주시기 바랍니다.", 2000);
                 
@@ -147,11 +149,11 @@ const ProfileComponent = ({isMine, userNo})=>{
                         <tr>
                             <td>
                                 <span id="myProfile" className="profileImgWrap" onClick={()=>{document.getElementById("profileImgFile").click()}}>
-                                    <img id="profilImg" alt="프로필이미지" src={imgPath} className="profileImg"/> 
+                                    <img alt="프로필이미지" src={imgPath} className="profileImg"/> 
                                     {isMine && 
                                         <>
                                             <img alt="프로필변경" src={profileAddImg} className="profileUpdateBtn"/>
-                                            <input id="profileImgFile" accept="image/*" type="file" name="profileImgFile" className='hide' onChange={(event)=>{nb_extensionCheck2(event);registerProfileImg(event);nb_loadFile(event, "profilImg", undefined);nb_loadFile(event, "topMenuProfileImg", undefined);}}/>
+                                            <input id="profileImgFile" accept="image/*" type="file" name="profileImgFile" className='hide' onChange={(event)=>{nb_extensionCheck2(event);registerProfileImg(event);}}/>
                                         </>
                                     }
                                 </span>

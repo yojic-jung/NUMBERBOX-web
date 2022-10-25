@@ -96,9 +96,9 @@ const SignUp = ()=>{
        let isChecked =  document.getElementById("agreeChk").checked;
        if(isChecked){
         document.getElementById("agreeValDesc").innerText = ""
-            document.getElementById("checkCircle").style.backgroundColor = "rgb(55, 113, 178)";
+            document.getElementById("checkCircle").classList.add("active");
        }else{
-            document.getElementById("checkCircle").style.backgroundColor = "rgb(184, 184, 184)";
+            document.getElementById("checkCircle").classList.remove("active");
        }
     }
 

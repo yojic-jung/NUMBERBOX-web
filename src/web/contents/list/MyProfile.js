@@ -193,7 +193,13 @@ const MyProfile = ()=>{
                 </>
                 : <>
                 <div className='myProfileTitle'>회원정보 확인</div>
-                <div className='myProfileDesc'>회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번 입력 해주시기 바랍니다.</div>
+                <div className='myProfileDesc'>
+                    회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번 입력 해주시기 바랍니다.
+                    <span className='sendPassForProfileBtn' onClick={()=>{sendPassword()}}>
+                        이메일로 임시비밀번호 받기
+                        <div className='sendPasswordForProfileDesc'>sns 로그인 이용자는 이메일로 임시 비밀번호를<br/>발급하여 인증 후 사용해주세요.</div>
+                    </span>
+                </div>
                 <table className='myProfileConfirmTable'>
                     <tbody>
                         <tr>
@@ -204,10 +210,6 @@ const MyProfile = ()=>{
                             <td>비밀번호</td>
                             <td>
                                 <input id="confirmPassword" className='confirmPassword' type="password" onKeyDown={(event)=>{if(event.keyCode === 13) document.getElementById("memberInfoDetailBtn").click();}}/>
-                                <span className='sendPassForProfileBtn' onClick={()=>{sendPassword()}}>
-                                    이메일로 임시비밀번호 받기
-                                    <div className='sendPasswordForProfileDesc'>sns 로그인 이용자는 이메일로 임시 비밀번호를 발급하여<br/>인증 후 사용해주세요.</div>
-                                </span>
                             </td>
                         </tr>
                     </tbody>
