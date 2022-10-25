@@ -39,7 +39,6 @@ export const nb_dataFetch = async (url, transitEffect) => {
   url = process.env.REACT_APP_DB_HOST+url;
   await fetch(url, {
       method: 'get',	// 방식은 get
-      mode: 'cors',
       credentials: 'include',
       headers: {
         'access-token':window.localStorage.getItem("access-token")
@@ -85,7 +84,6 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
   url = process.env.REACT_APP_DB_HOST+url;
     await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
       method: 'post',	// 방식은 post
-      mode: 'cors',
       credentials: 'include',
       headers: {
         'access-token':window.localStorage.getItem("access-token")
@@ -128,7 +126,6 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
   url = process.env.REACT_APP_DB_HOST+url;
   await fetch(url, {
         method: 'get',	// 방식은 get
-        mode: 'cors',
         credentials: 'include',
         headers: {
           'access-token':window.localStorage.getItem("access-token")
@@ -166,7 +163,6 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     url = process.env.REACT_APP_DB_HOST+url;
       await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
         method: 'post',	// 방식은 post
-        mode: 'cors',
         credentials: 'include',
         headers: {
         },
