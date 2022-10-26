@@ -80,6 +80,10 @@ const ShareResource = ()=>{
     
 
     const downPptFile = async (filePath, fileName) => {
+        if(!nb_isLogin()) {
+			alert("로그인 이후 사용해주시기 바랍니다.");
+			return;
+		}
         let name = fileName.split(".")[0].split("_")[2];
         nb_dataFileFetch('/common/download?filePath='+filePath+"&fileName="+encodeURI(fileName), name);
     }

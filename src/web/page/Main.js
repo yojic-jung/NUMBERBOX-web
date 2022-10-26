@@ -77,10 +77,10 @@ return (
     <>
     <Helmet>
         <title>N명의수학</title>
-        <meta name="description" content="N명의 사용자와 함께하는 수학플랫폼"/>
+        <meta name="description" content="N명의 사용자와 함께 만들어가는 수학 플랫폼"/>
         <link rel="canonical" href="https://nsoohak.com/" />
         <meta property="og:title" content="N명의수학" />
-        <meta property="og:description" content="N명의 사용자와 함께하는 수학플랫폼" />
+        <meta property="og:description" content="N명의 사용자와 함께 만들어가는 수학플랫폼" />
     </Helmet>
     <BrowserView>
         <div className='mainDiv'>
