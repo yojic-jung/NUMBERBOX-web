@@ -721,6 +721,7 @@ const ContentsList = ()=>{
   return ( <>
             <Helmet>
                 <title>수학문제 목록</title>
+                <meta name="description" content="원하는 수학문제를 찾아보세요!"/>
                 <link rel="canonical" href="https://nsoohak.com/contentsList" />
                 <meta property="og:title" content="수학문제 목록" />
                 <meta property="og:description" content="원하는 수학문제를 찾아보세요!" />

@@ -105,6 +105,7 @@ const MyAccountDrop = () => {
         <>
         <Helmet>
           <title>회원탈퇴</title>
+          <meta name="description" content="회원탈퇴"/>
           <link rel="canonical" href="https://nsoohak.com/myAccountDrop" />
           <meta property="og:title" content="회원탈퇴" />
           <meta property="og:description" content="회원탈퇴" />

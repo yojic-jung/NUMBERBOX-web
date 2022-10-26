@@ -297,6 +297,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
     <>
 		<Helmet>
           <title>이미지 문제 등록</title>
+		  <meta name="description" content="이미지 파일의 문제를 등록 해보세요!"/>
           <link rel="canonical" href="https://nsoohak.com/makeContentsForImg" />
           <meta property="og:title" content="이미지 문제 등록" />
           <meta property="og:description" content="이미지 파일의 문제를 등록 해보세요!" />

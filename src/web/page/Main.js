@@ -77,6 +77,7 @@ return (
     <>
     <Helmet>
         <title>N명의수학</title>
+        <meta name="description" content="N명의 사용자와 함께하는 수학플랫폼"/>
         <link rel="canonical" href="https://nsoohak.com/" />
         <meta property="og:title" content="N명의수학" />
         <meta property="og:description" content="N명의 사용자와 함께하는 수학플랫폼" />

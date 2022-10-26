@@ -1419,6 +1419,7 @@ return (
     <>
     <Helmet>
         <title>학습지 만들기</title>
+        <meta name="description" content="학습지를 만들어 출력해보세요!"/>
         <link rel="canonical" href="https://nsoohak.com/makeMathDocs" />
         <meta property="og:title" content="학습지 만들기" />
         <meta property="og:description" content="학습지를 만들어 출력해보세요!" />

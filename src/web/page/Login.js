@@ -101,6 +101,7 @@ const Login = ()=>{
 return (<>
         <Helmet>
             <title>로그인</title>
+            <meta name="description" content="로그인 후 N명의수학을 이용해보세요!"/>
             <link rel="canonical" href="https://nsoohak.com/login" />
             <meta property="og:title" content="로그인" />
             <meta property="og:description" content="로그인 후 N명의수학을 이용해보세요!" />

@@ -91,6 +91,7 @@ return (
     <>
         <Helmet>
             <title>계정 찾기</title>
+            <meta name="description" content="계정을 잃어버리셨나요?"/>
             <link rel="canonical" href="https://nsoohak.com/emailPassFind" />
             <meta property="og:title" content="계정 찾기" />
             <meta property="og:description" content="계정을 잃어버리셨나요?" />

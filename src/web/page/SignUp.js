@@ -285,6 +285,7 @@ return (
     <>
         <Helmet>
             <title>회원가입</title>
+            <meta name="description" content="회원가입 후 N명의수학을 이용해보세요!"/>
             <link rel="canonical" href="https://nsoohak.com/signup" />
             <meta property="og:title" content="회원가입" />
             <meta property="og:description" content="회원가입 후 N명의수학을 이용해보세요!" />

@@ -480,6 +480,7 @@ const MyContentsList = ({isMine, userNo})=>{
   return ( <>
   {isMine ? <Helmet>
                 <title>나의 제작문제</title>
+                <meta name="description" content="나의 제작문제를 확인해 보세요!"/>
                 <link rel="canonical" href="https://nsoohak.com/myContentsList" />
                 <meta property="og:title" content="나의 제작문제" />
                 <meta property="og:description" content="나의 제작문제를 확인해 보세요!" />
@@ -487,6 +488,7 @@ const MyContentsList = ({isMine, userNo})=>{
             :
             <Helmet>
                 <title>사용자 피드</title>
+                <meta name="description" content="사용자 피드를 확인해보세요!"/>
                 <meta property="og:title" content="사용자 피드" />
                 <meta property="og:description" content="사용자 피드를 확인해보세요!" />
             </Helmet>}

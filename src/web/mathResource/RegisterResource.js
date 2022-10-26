@@ -11,6 +11,7 @@ const RegisterResource = () => {
         <>
         <Helmet>
             <title>컨텐츠 등록</title>
+            <meta name="description" content="컨텐츠 등록하여 사용자들과 공유해보세요!"/>
             <link rel="canonical" href="https://nsoohak.com/registerResource" />
             <meta property="og:title" content="컨텐츠 등록" />
             <meta property="og:description" content="컨텐츠 등록하여 사용자들과 공유해보세요!" />

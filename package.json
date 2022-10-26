@@ -30,7 +30,7 @@
     "postbuild": "react-snap"
   },
   "reactSnap": {
-    "include": ["/", "/contentsList", "/resourceTools", "/makeMathDocs",  "/makeContents", "/shareResource"]
+    "include": ["/", "/makeMathDocs",  "/makeContents", "/shareResource", "/contentsList", "/resourceTools"]
   },
   "eslintConfig": {
     "extends": [

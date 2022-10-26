@@ -136,6 +136,7 @@ const MyProfile = ()=>{
     <>
         <Helmet>
           <title>프로필</title>
+          <meta name="description" content="나의 프로필을 확인해보세요!"/>
           <link rel="canonical" href="https://nsoohak.com/myProfile" />
           <meta property="og:title" content="프로필" />
           <meta property="og:description" content="나의 프로필을 확인해보세요!" />

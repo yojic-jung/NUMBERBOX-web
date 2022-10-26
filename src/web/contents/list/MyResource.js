@@ -188,6 +188,7 @@ const MyResource = ()=>{
     <>
         <Helmet>
           <title>나의 컨텐츠</title>
+          <meta name="description" content="나의 컨텐츠 목록을 확인해보세요!"/>
           <link rel="canonical" href="https://nsoohak.com/myResource" />
           <meta property="og:title" content="나의 컨텐츠" />
           <meta property="og:description" content="나의 컨텐츠 목록을 확인해보세요!" />

@@ -327,6 +327,7 @@ const MyRepository = ()=>{
         <>
             <Helmet>
                 <title>나의 저장문제</title>
+                <meta name="description" content="저장한 목록의 문제를 확인해보세요!"/>
                 <link rel="canonical" href="https://nsoohak.com/myRepository" />
                 <meta property="og:title" content="나의 저장문제" />
                 <meta property="og:description" content="저장한 목록의 문제를 확인해보세요!" />

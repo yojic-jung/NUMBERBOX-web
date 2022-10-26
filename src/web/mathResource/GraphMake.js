@@ -370,6 +370,7 @@ return (
     <>    
         <Helmet>
             <title>그래프 만들기</title>
+            <meta name="description" content="빠르게 그래프를 만들어 보세요!"/>
             <link rel="canonical" href="https://nsoohak.com/resourceTools" />
             <meta property="og:title" content="그래프 만들기" />
             <meta property="og:description" content="빠르게 그래프를 만들어 보세요!" />

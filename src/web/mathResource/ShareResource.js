@@ -144,6 +144,7 @@ return (
     <>    
     <Helmet>
         <title>컨텐츠 목록</title>
+        <meta name="description" content="도형 및 그래프파일을 찾아보세요!"/>
         <link rel="canonical" href="https://nsoohak.com/shareResource?mainCateNo=1" />
         <meta property="og:title" content="컨텐츠 목록" />
         <meta property="og:description" content="도형 및 그래프파일을 찾아보세요!" />

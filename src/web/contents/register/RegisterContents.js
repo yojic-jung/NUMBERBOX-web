@@ -10,6 +10,7 @@ const RegisterContents = ({contentsClassify})=>{
     <>
       <Helmet>
           <title>문제 만들기</title>
+          <meta name="description" content="편리한 수식편집기로 수학문제를 만들어보세요!"/>
           <link rel="canonical" href="https://nsoohak.com/makeContents" />
           <meta property="og:title" content="문제 만들기" />
           <meta property="og:description" content="편리한 수식편집기로 수학문제를 만들어보세요!" />

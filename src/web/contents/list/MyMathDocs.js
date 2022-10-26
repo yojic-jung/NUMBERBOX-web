@@ -86,6 +86,7 @@ return (
                 <>
                         <Helmet>
                             <title>나의 학습지</title>
+                            <meta name="description" content="나의 학습지 내역을 확인해보세요!"/>
                             <link rel="canonical" href="https://nsoohak.com/myMathDocs" />
                             <meta property="og:title" content="나의 학습지" />
                             <meta property="og:description" content="나의 학습지 내역을 확인해보세요!" />
