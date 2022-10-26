@@ -30,8 +30,7 @@
     "postbuild": "react-snap"
   },
   "reactSnap": {
-    "include": ["/", "/makeMathDocs",  "/makeContents", "/shareResource", "/contentsList", "/resourceTools"],
-    "//" :"주석, react-snap 만들고 나서 각 폴더에 Infinity-1s-250px.svg(로딩바 이미지) 넣어주기, favicon.png도 넣어주기"
+    "include": ["/", "/makeMathDocs",  "/makeContents", "/shareResource", "/contentsList", "/resourceTools"]
   },
   "eslintConfig": {
     "extends": [
