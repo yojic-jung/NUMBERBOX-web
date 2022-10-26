@@ -30,7 +30,14 @@
     "postbuild": "react-snap"
   },
   "reactSnap": {
-    "include": ["/", "/makeContents", "/shareResource", "/resourceTools", "/makeMathDocs", "/contentsList"]
+    "include": [
+      "/",
+      "/contentsList",
+      "/resourceTools",
+      "/makeMathDocs",
+      "/makeContents",
+      "/shareResource"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +59,7 @@
     ]
   },
   "devDependencies": {
-    "@types/sortablejs": "^1.13.0"
+    "@types/sortablejs": "^1.13.0",
+    "react-snap": "^1.23.0"
   }
 }
