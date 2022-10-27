@@ -147,36 +147,6 @@ return (
             <div className='bi-jutify-align mobile'>
                 <div className={titleClass}><Link className='linkNoneCss' to="/">N명<span className='menu-title-etc2'>의</span>수학</Link></div>
                 <div className={listClass}>
-                    <table className='menu-list-table mobile'>
-                        <tbody>
-                            {!isLogin && <tr>
-                                <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
-                                <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
-                                <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
-                            </tr>}
-                            {isLogin && <tr>
-                                <td><Link className='linkNoneCss' to="/makeMathDocs">학습지<br/>생성</Link></td>
-                                <td><Link className='linkNoneCss' to="/contentsList">문제<br/>검색</Link></td>
-                                <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
-                                <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
-                                    {imgPath === null ?
-                                        <img id="topMenuProfileImg" alt="." src={defaultProfileImg} className="topMenuProfileImg"/> 
-                                        : <img id="topMenuProfileImg" alt="." src={imgPath} className="topMenuProfileImg"/> 
-                                    }
-                                    
-                                    <ul className="myService-list hide">
-                                        <Link className='linkNoneCss' to="/myProfile"><li>프로필</li></Link>
-                                        <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
-                                        <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
-                                        <Link className='linkNoneCss' to="/myMathDocs"><li>나의 학습지</li></Link>
-                                        <Link className='linkNoneCss' to="/myResource"><li>나의 컨텐츠</li></Link>
-                                        <li onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
-                                        <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
-                                    </ul>
-                                </td>
-                            </tr>}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
