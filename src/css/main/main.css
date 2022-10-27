@@ -732,6 +732,12 @@ body {
     100% { transform: translate3d(-50px, 105vh, 0) rotateX(10deg) rotateY(250deg); }
   }
   
+  .pcDescDiv{
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    background: rgb(244, 244, 244);
+  }
 
   .container {
     width: 98vw;
@@ -746,8 +752,8 @@ body {
 
   .container.mobile{
     height: 35vh;
-    background: url("img/mobileMainView.png") no-repeat rgb(50, 74, 161);
-    background-size: 45px;
+    background:rgb(41, 57, 117);
+    background-size: 35px;
     background-position: 10% 5%;
   }
   

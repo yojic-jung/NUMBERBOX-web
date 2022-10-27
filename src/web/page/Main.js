@@ -26,9 +26,9 @@ const Main = ()=>{
             this.el = el;
             this.containerEl = null;
             
-            this.confettiFrequency = 3;
+            this.confettiFrequency = 1;
             this.confettiColors = ['#EF2964', '#00C09D', '#2D87B0', '#48485E','#EFFF1D'];
-            this.confettiAnimations = ['slow', 'medium', 'fast'];
+            this.confettiAnimations = ['slow', 'medium', 'slow'];
             
             this._setupElements();
             this._renderConfetti();
@@ -170,9 +170,11 @@ return (
                         <span className='mainSubTitileName'>"N명<span className='mainSubTitileName2'>의</span>수학"</span>
                     </div>
                     <div className='mainSubDesc2 mobile'>
-                    <span className='fontEmphasis'>[PC버전]</span>에서 서비스 제공중입니다.
                     </div>
                 </div>  
+            </div>
+            <div className='pcDescDiv'>
+                [PC버전]에서 서비스 제공중입니다.
             </div>
             <div className='mainSubRootDiv1 mobile'>
                 <div className='mainSubDiv1 mobile'>
