@@ -176,7 +176,8 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 6px;
+    top: 50%;
+    transform: translateY(-50%);
     left: -26px;
 }
 

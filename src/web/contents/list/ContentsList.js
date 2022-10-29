@@ -170,7 +170,7 @@ const ContentsList = ()=>{
         }
         currentPath = location.pathname;
         const asyncUseEffect = async function(){
-            let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
+            let jsonObj = await nb_dataFetch('/mathInfo/unitInfo?onlyExistUnit=true', true);
             setSubjectBox(jsonObj["mathSubjectInfo"]);
             //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
             setSecUnitSelBox(jsonObj["mathSecUnitInfo"]);

@@ -319,7 +319,7 @@
         top:-0.88em !important;
     }
 
-    /* 로그 함수(자연로그 포함) */
+    /* 로그 함수(자연로그 포함) 
     .mathDocsA4Frame .nbLogBox{
         vertical-align: -0.685em;
     }
@@ -383,9 +383,9 @@
     .mathDocsA4Frame .nbTripleIntBase .nbLnBox {
         vertical-align: -0.451em;
     }
+*/
 
-
-    /* 시그마 */
+    /* 시그마 
     .mathDocsA4Frame .nbSigmaSumBox {
         vertical-align: -0.084em
     }
@@ -421,22 +421,24 @@
     .mathDocsA4Frame .nbNumer .nbLimBase .nbSigmaSumBase {
         top: 2px;
     }
-
+*/
    
 
-    /* 적분 */
+    /* 적분 
     .mathDocsA4Frame .nbIntegralBox, .mathDocsA4Frame .nbDoubleIntegralBox, .mathDocsA4Frame .nbTripleIntegralBox {
         vertical-align: -0.071em
     }
-
+    */
+    /*
     .mathDocsA4Frame .nbIntegralBox.nbFracInIntegral .nbIntBase, 
     .mathDocsA4Frame .nbDoubleIntegralBox.nbFracInIntegral .nbDoubleIntBase, 
     .mathDocsA4Frame .nbTripleIntegralBox.nbFracInIntegral .nbTripleIntBase {
         position: relative;
         top: -0.5px;
     }
+    */
 
-    /* 극한 */
+    /* 극한 
     .mathDocsA4Frame .nbLimBox {
         vertical-align: -0.55em;
     }
@@ -446,6 +448,7 @@
     .mathDocsA4Frame .nbDenom .nbLimBox {
         vertical-align: -0.525em;
     }
+    */
 }
 
 
@@ -484,7 +487,7 @@
     top:-0.88em !important;
 }
 
-/* 로그 함수 */
+/* 로그 함수 
 .mathDocsTmpDivForHeightBugFix  .nbLogBox{
     vertical-align: -0.685em;
 }
@@ -505,8 +508,8 @@
 .mathDocsTmpDivForHeightBugFix .nbLnBox{
     vertical-align: -0.405em;
 }
-
-/* 시그마 */
+*/
+/* 시그마 
 .mathDocsTmpDivForHeightBugFix .nbSigmaSumBox {
     vertical-align: -0.04em
 }
@@ -519,3 +522,4 @@
 .mathDocsTmpDivForHeightBugFix .nbLimBox.nbSigmaSumInLim .nbLimTbody2{
     vertical-align: -0.755em;
 }
+*/

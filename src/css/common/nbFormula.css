@@ -182,7 +182,6 @@
 
 .nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox {
     position: relative;
-    vertical-align: middle;
     border-spacing: 0px;
     line-height: 160%;
 }
@@ -191,6 +190,10 @@
     display: inline-block;
 }
 
+.nbIntegralTbody2{
+    display: inline;
+    vertical-align: unset;
+}
 
 .nbIntSign, .nbDoubleIntSign, .nbTripleIntSign {
     font-family: 'MJXc-TeX-size2-Rw'; 
@@ -205,18 +208,20 @@
     min-width: 2em;
 }
 .nbIntBase, .nbDoubleIntBase, .nbTripleIntBase {
-    line-height: 110%;
+    line-height: 160%;
     min-width: 0.5em;
+    display:inline;
     position: relative;
     left: -0.2em;
-    top:2.35px
 }
 
+/*
 .nbIntegralBox.nbFracInIntegral .nbIntBase, .nbDoubleIntegralBox.nbFracInIntegral .nbDoubleIntBase,
  .nbTripleIntegralBox.nbFracInIntegral .nbTripleIntBase{
     position: relative;
-    top:0px
+    top:0px;
 }
+*/
 
 .nbDoubleIntBase{
     left: 0em;
@@ -309,13 +314,14 @@
     height: 2em;
 }
 
+/*
 .nbIntBase .nbRootBase.nbFracInRoot::before,
 .nbDoubleIntBase .nbRootBase.nbFracInRoot::before,
 .nbTripleIntBase .nbRootBase.nbFracInRoot::before,
 .nbLimBase .nbRootBase.nbFracInRoot::before{
     top: 0.368em;
 }
-
+*/
 
 .nbFracBox.nbIntegralInDenom{
     vertical-align: -2.45em;
@@ -340,7 +346,6 @@
 /** 시그마합 표현 **/
 .nbSigmaSumBox {
     position: relative;
-    vertical-align: middle;
     border-spacing: 0;
     text-align: center;
     line-height: 110%;
@@ -350,8 +355,14 @@
     vertical-align: 1em;
 }
 
-.nbSigmaSumTbody, .nbSigmaSumTbody2{
+.nbSigmaSumTbody{
     display: inline-block;
+}
+
+.nbSigmaSumTbody2{
+    display: inline;
+    line-height: 160%;
+    vertical-align: unset;
 }
 
 .nbSigmaSumSub {
@@ -376,11 +387,18 @@
     top: 2px;
 }
 
+.nbSigmaSumBase {
+    display: inline;
+    top:0;
+}
+
+/*
 .nbSigmaSumBox.nbFracInSigmaSum .nbSigmaSumBase{
     position: relative;
     top:0px;
 
 }
+*/
 
 .onlyEdit:focus .nbSigmaSumBase {
     min-width: 0.5em;
@@ -400,7 +418,6 @@
 /** 로그 **/
 .nbLogBox {
     position: relative;
-    vertical-align: -0.608em;
     border-spacing: 0;
 }
 
@@ -408,10 +425,22 @@
     position: relative;
     left: 0.1em;
 }
+.nbLogBoxTbody{
+    display: inline-block;
+    position: relative;
+    top: 2.5px;
+}
+
+.nbLogBoxTbody2{
+    display: inline;
+    vertical-align: unset;
+}
 
 .nbLogBase {
+    display: inline;
     min-width: 0.5em;
 }
+
 .nbLogBase .nbRootBase.nbFracInRoot::before {
     top: 0.265em;
 }
@@ -423,9 +452,14 @@
 }
 
 
-
+/*
 .nbFracInLog .nbLogSubBase {
     top:-6px
+}
+*/
+
+.onlyEdit:focus .borderBox{
+    display: table-cell;
 }
 
 .onlyEdit:focus .nbLogSubBase:before{
@@ -455,24 +489,19 @@
     border: unset !important;
 }
 
-.nbDenom .nbLogBox {
-    margin-top: 0;
-    vertical-align: -0.348em;
-}
-
-.nbNumer .nbLogBox {
-    margin: 0;
-    vertical-align: -0.351em;
-}
-
+/*
 .nbLogBox.nbFracInLog{
     vertical-align: middle;
 }
+*/
+/*
 .nbIntBase .nbLogBox,
 .nbDoubleIntBase .nbLogBox,
 .nbTripleIntBase .nbLogBox{
     vertical-align: -0.37em;
 }
+*/
+/*
 .nbLimBase .nbLogBox {
     vertical-align: 0em;
 }
@@ -488,35 +517,41 @@
 .nbSigmaSumBase .nbNumer .nbLogBox {
     vertical-align: -0.338em;
 }
+*/
 /** limit 박스 **/
 .nbLimBox {
     position: relative;
     line-height: 110%;
     border-spacing: 0px;
-    vertical-align: -0.45em;
 }
 
 .nbLimTbody{
     display: inline-block;
+    position: relative;
+    top: 7px;
 }
 .nbLimTbody2 {
-    display: inline-block;
-    vertical-align: top;
+    display: inline;
+    vertical-align: unset;
+    line-height: 160%;
 }
 
-/* lim 안 분수 */
+/* lim 안 분수 
 .nbLimBox.nbFracInLim .nbLimTbody2 {
     vertical-align: bottom;
 }
-/* lim 안 시그마 안 분수 */
+*/
+/* lim 안 시그마 안 분수
 .nbLimBox.nbFracInLim.nbSigmaSumInLim .nbLimTbody2{
     vertical-align: -0.6em;
 }
-/* lim 안 시그마 */
+ */
+/* lim 안 시그마 
 .nbLimBox.nbSigmaSumInLim .nbLimTbody2{
     vertical-align: -0.695em;
 }
-/* lim 안 분수(분수 안 분모 또는 분모, 분자 모두 분수 들어가는 경우) */
+*/
+/* lim 안 분수(분수 안 분모 또는 분모, 분자 모두 분수 들어가는 경우) 
 .nbLimBox.nbFracInFracInLim, .nbLimBox.nbFracInFracInLim.nbFracInDenomInLim {
     vertical-align: middle;
 }
@@ -530,6 +565,7 @@
 .nbLimBox.nbFracInDenomInLim .nbLimTbody{
     vertical-align: 1.15em;
 }
+*/
 
 .nbLimSign {
     line-height: 110%;
@@ -538,7 +574,7 @@
 
 .nbLimBase {
     min-width: 0.5em;
-    line-height: 110%;
+    display: inline;
 }
 .nbLimSubBase {
     font-size: 0.3em;
@@ -706,6 +742,11 @@
     border-top: 1px solid black;
   }
 
+  .nbExpTmp .nbNumer{
+    padding: 0 2px 0 2px;
+    line-height: 80%;
+  }
+
 /** 분수 안 지수 **/
 .nbNumer .nbExpTmp{
     bottom:0.5em;
@@ -740,12 +781,31 @@
     font-family: "STIXTwoText-Medium";
 }
 .nbLnBox{
+    vertical-align: unset;
+}
+.nbLnBoxTbody{
+    display: inline-block;
+    position: relative;
+    top:2px;
+}
+
+.nbLnBoxTbody2{
+    display:inline;
+    vertical-align: unset;
+}
+
+.nbLnBase {
+    display: inline;
+}
+/*
+.nbLnBox{
     vertical-align: -0.35em;
 }
+*/
 .onlyEdit:focus .nbLnBase {
     min-width: 0.5em;
 }
-
+/*
 .nbLnBox.nbFracInLn {
     vertical-align: middle;
 }
@@ -754,19 +814,17 @@
     position: relative;
     top: 2.5px;
 }
+*/
 
-.nbDenom .nbLnBox {
-    vertical-align: -0.315em;
-}
-.nbNumer .nbLnBox {
-    vertical-align: -0.395em;
-}
 
+
+/*
 .nbIntBase .nbLnBox,
 .nbDoubleIntBase .nbLnBox,
 .nbTripleIntBase .nbLnBox {
     vertical-align: -0.36em;
 }
+*/
 
 /** 윗점 **/
 .nbOverDotBox{
@@ -870,6 +928,22 @@
     top:0.105em;
     left:-0.505em;
 }
+.nbExpBox .nbRootBase{
+    padding-top: 1px;
+}
+
+.nbExpBox .nbRootBase::before{
+    left:-0.905em;
+}
+
+.nbLogSubBase .nbRootBase{
+    padding-top: 1px;
+}
+
+.nbLogSubBase .nbRootBase::before{
+    left:-0.905em;
+}
+
 
 /* 맥북 크롬으로 접속한 경우*/
 .macChrome .nbRootBase::before{
@@ -898,6 +972,11 @@
     padding: 0px;
     font-size: 0.3em;
     text-align: center;
+}
+
+.nbRootBase .nbRootExpBase{
+    top: -1px;
+    left:-2px
 }
 
 .nbRootBox.nbFracInRoot .nbRootExpBase{

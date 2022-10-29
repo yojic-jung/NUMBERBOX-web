@@ -266,6 +266,14 @@
     font-size: 0.8em;
 }
 
+.shortCutKey .nbArcBase::before{
+    top:-0.4em;
+}
+
+.shortCutKey .nbLnBox {
+    vertical-align: -0.35em;
+}
+
 .shortCutKey .nbFracExpTmp {
     position: relative;
     right:-1em;
@@ -430,8 +438,8 @@
     word-break: break-all;
 }
 #ques-show{
-    margin-top:20px;
-    margin-bottom:60px;
+    padding-top:20px;
+    padding-bottom:60px;
     overflow: auto;
 }
  #multi-show{
@@ -863,7 +871,7 @@ height: 1.6em;
 
 /** 에디터 끝 **/
 /** nbCustomSel 박스 시작 **/
-.nbCustomSel * { 
+.nbCustomSel *:not(.nbBox):not(.borderBox) { 
     font-size:14px;
     line-height: 160%;
     font-family: 'nbFormulaFont';
@@ -967,7 +975,8 @@ height: 1.6em;
     overflow-y: scroll;
 }
 
-.nbCustomSel .nbCustomOptList.nbCustomOptList3::-webkit-scrollbar-thumb{
+.nbCustomSel .nbCustomOptList.nbCustomOptList3::-webkit-scrollbar-thumb
+,.nbCustomSel .nbCustomOptList.nbCustomOptList::-webkit-scrollbar-thumb{
     background: rgb(152, 175, 201);
 }
 .nbCustomSel .nbCustomOptList::-webkit-scrollbar {width: 6px;}
@@ -976,8 +985,12 @@ height: 1.6em;
 .nbCustomSel .nbCustomOptList::-webkit-scrollbar-thumb:hover {background: #303030;}
 
 .nbCustomSel.active .nbCustomOptList {
-  max-height: 500px;
+  max-height: 300px;
 }
+
+.nbCustomSel.active #cusSelSub.nbCustomOptList {
+    overflow-y: scroll;
+  }
 
 .nbCustomOptList li:first-child{
     background: rgb(220, 226, 233);
@@ -1232,7 +1245,7 @@ height: 1.6em;
 }
 .workListUnitTypeRoot .workListUnitType #cusSelSubDiv{
     padding:8px 0;
-    width: 160px;
+    width: 166px;
     font-size: 14px;
 }
 

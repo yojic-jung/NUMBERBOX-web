@@ -515,6 +515,7 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				}
 			}
 
+			/*
 			//리밋 안에 분수 분의 분수 있는 경우(순서 변경 되면 안됨. 분수 분의 분수 뒤에서 구현되야 정확하게 구현)
 			let nbFracBoxInLimStrt = nbFracBoxStrt.closest(".nbLimBase");
 			let nbFracBoxInLimEnd = nbFracBoxEnd.closest(".nbLimBase");
@@ -531,8 +532,10 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 					}
 				}
 			}
+			*/
 		}
 
+		/*
 		//리밋 안의 분수 컴파일
 		let nbLimBaseStrt = strtElement.closest(".nbLimBase");
 		let nbLimBaseEnd = endElement.closest(".nbLimBase");
@@ -542,7 +545,9 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
 			}
 		}
+		*/
 
+		/*
 		//적분 안의 분수 컴파일
 		let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
 		let nbIntegralEnd = endElement.closest(".nbIntBase");
@@ -560,8 +565,10 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
 			}
 		}
+		*/
 
 		//시그마 안 분수 컴파일
+		/*
 		let nbSigmaStrt = strtElement.closest(".nbSigmaSumBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
 		let nbSigmaEnd = endElement.closest(".nbSigmaSumBase");
 		if(nbSigmaStrt !== null && nbSigmaEnd !== null){
@@ -570,8 +577,10 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbSigmaStrt.closest(".nbBox").classList.add("nbFracInSigmaSum");
 			}
 		}
+		*/
 
 		//ln함수 안 분수 컴파일
+		/*
 		let nbLnStrt = strtElement.closest(".nbLnBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
 		let nbLnEnd = endElement.closest(".nbLnBase");
 		if(nbLnStrt !== null && nbLnEnd !== null){
@@ -580,7 +589,8 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbLnStrt.closest(".nbBox").classList.add("nbFracInLn");
 			}
 		}
-
+		*/
+		/*
 		//로그함수 안 분수 컴파일
 		let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
 		let nbLogEnd = endElement.closest(".nbLogBase");
@@ -590,10 +600,12 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
 			}
 		}
+		*/
 	}
 
 	//시그마 컴파일
 	if(nbGrammer.indexOf("nbSigmaSumBox") > -1){
+		/*
 		//리밋 안의 시그마 컴파일
 		let nbLimBaseStrt = strtElement.closest(".nbLimBase");
 		let nbLimBaseEnd = endElement.closest(".nbLimBase");
@@ -603,6 +615,7 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbLimBaseEnd.closest(".nbBox").classList.add("nbSigmaSumInLim");
 			}
 		}
+		*/
 		//분모 안의 시그마 컴파일
 		let nbDenomStrt = strtElement.closest(".nbDenom");
 		let nbDenomEnd = endElement.closest(".nbDenom");
@@ -3283,6 +3296,7 @@ export const reg_nbComplie = async (event) => {
 		}
 
 
+		/*
 		//적분 안 분수
 		let nbFracInIntegralBoxes = [];
 		document.activeElement.querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox").forEach((item, index, arr)=>{
@@ -3295,7 +3309,9 @@ export const reg_nbComplie = async (event) => {
 				nbFracInIntegralBoxes[i].classList.add("nbFracInIntegral");
 			}
 		}
+		*/
 
+		/*
 		//시그만 안 분수
 		let nbFracInSigmaSumBoxes = [];
 		document.activeElement.querySelectorAll(".nbSigmaSumBox").forEach((item, index, arr)=>{
@@ -3335,6 +3351,7 @@ export const reg_nbComplie = async (event) => {
 				nbLnBox[i].classList.add("nbFracInLn");
 			}
 		}
+		*/
 
 		//루트 안 분수
 		let nbRootBoxes = [];
@@ -3365,7 +3382,7 @@ export const reg_nbComplie = async (event) => {
 		//분수 안 시그마
 		let nbSigmaSumInDenom = [];
 		let nbSigmaSumInNumer = [];
-		//분수 안 시그마
+		//분수 안 적분
 		let nbIntegralInDenom = [];
 		let nbIntegralInNumer = [];
 
@@ -3486,6 +3503,7 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
+		/*
 		//리밋 안 분수, 시그마
 		let nbFracINLimBoxes = [];
 		let nbFracInFracInLimBoxes = [];
@@ -3525,9 +3543,10 @@ export const reg_nbComplie = async (event) => {
 				nbSigmaInLimBoxes[i].classList.add("nbSigmaSumInLim");
 			}
 		}
+		*/
 	}
 
-	//분수 안 시그마
+	//분수 안 적분
 	let nbIntergralInDenomBoxes = document.querySelectorAll(".nbFracBox.nbIntegralInDenom");
 	for(let i=0; i<nbIntergralInDenomBoxes.length; i++){
 		if(nbIntergralInDenomBoxes[i].querySelectorAll(".nbDenom .nbIntegralBox, .nbDenom .nbDoubleIntegralBox, .nbDenom .nbTripleIntegralBox").length === 0) {
@@ -3576,6 +3595,7 @@ export const reg_nbComplie = async (event) => {
 		}
 	}
 
+	/*
 	//ln 안 분수
 	let nbFracInLnBoxes = document.querySelectorAll(".nbLnBox.nbFracInLn");
 	for(let i=0; i<nbFracInLnBoxes.length; i++){
@@ -3593,8 +3613,10 @@ export const reg_nbComplie = async (event) => {
 			nbFracInLogBoxes[i].classList.remove("nbFracInLog");
 		}
 	}
+	*/
 
 	//시그마 안 분수
+	/*
 	let nbFracInSigmaBoxes = document.querySelectorAll(".nbSigmaSumBox.nbFracInSigmaSum");
 	for(let i=0; i<nbFracInSigmaBoxes.length; i++){
 		if(nbFracInSigmaBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
@@ -3602,7 +3624,9 @@ export const reg_nbComplie = async (event) => {
 			nbFracInSigmaBoxes[i].classList.remove("nbFracInSigmaSum");
 		}
 	}
+	*/
 
+	/*
 	//적분 안 분수
 	let nbFracInIntegralBoxes = document.querySelectorAll(".nbIntegralBox.nbFracInIntegral, .nbDoubleIntegralBox.nbFracInIntegral, .nbTripleIntegralBox.nbFracInIntegral");
 	for(let i=0; i<nbFracInIntegralBoxes.length; i++){
@@ -3611,7 +3635,9 @@ export const reg_nbComplie = async (event) => {
 			nbFracInIntegralBoxes[i].classList.remove("nbFracInIntegral");
 		}
 	}
+	*/
 
+	/*
 	//리밋 안 분수
 	let nbFracInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInLim");
 	for(let i=0; i<nbFracInLimBoxes.length; i++){
@@ -3620,7 +3646,9 @@ export const reg_nbComplie = async (event) => {
 			nbFracInLimBoxes[i].classList.remove("nbFracInLim");
 		}
 	}
+	*/
 
+	/*
 	//리밋 안 시그마
 	let nbSigmaInLimBoxes = document.querySelectorAll(".nbLimBox.nbSigmaSumInLim");
 	for(let i=0; i<nbSigmaInLimBoxes.length; i++){
@@ -3629,6 +3657,7 @@ export const reg_nbComplie = async (event) => {
 			nbSigmaInLimBoxes[i].classList.remove("nbSigmaSumInLim");
 		}
 	}
+	*/
 
 	//루트 안 분수
 	let nbRootBoxes = document.querySelectorAll(".nbRootBox.nbFracInRoot");
@@ -3699,6 +3728,7 @@ export const reg_nbComplie = async (event) => {
 		}
 	}
 
+	/*
 	//리밋 안 분수 분의 분수, 분수 안의 분모 안의 분수
 	let nbFracInDenomInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInDenomInLim");
 	for(let i=0; i<nbFracInDenomInLimBoxes.length; i++){
@@ -3714,6 +3744,7 @@ export const reg_nbComplie = async (event) => {
 			nbFracInFracInLimBoxes[i].classList.remove("nbFracInFracInLim");
 		}
 	}
+	*/
 }
 
 
