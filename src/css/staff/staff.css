@@ -274,9 +274,14 @@
     vertical-align: -0.35em;
 }
 
+.shortCutKey .nbR-R-BrckBox{
+    vertical-align: -0.8em;
+}
+
 .shortCutKey .nbFracExpTmp {
     position: relative;
-    right:-1em;
+    right: -0.3em;
+    top: -1em;
 }
 
 
@@ -594,6 +599,32 @@ height: 1.6em;
     font-family: 'MJXc-TeX-size2-Rw';
     font-weight: 100;
 }
+
+.shortCutKey .nb-R-BrckBase, .shortCutKey .nb-C-BrckBase, .shortCutKey .nb-S-BrckBase, .shortCutKey .nb-Abs-BrckBase {
+    min-width: 0.2em;
+    display: table-cell;
+}
+
+.shortCutKey .nb-Abs-Brck-Tbody:before, .shortCutKey .nb-Abs-Brck-Tbody::after{
+    font-size: 20px;
+}
+
+.shortCutKey .nb-R-Brck-Tbody:before, .shortCutKey .nb-R-Brck-Tbody:after,
+.shortCutKey .nb-C-Brck-Tbody:before, .shortCutKey .nb-C-Brck-Tbody:after,
+.shortCutKey .nb-S-Brck-Tbody:before, .shortCutKey .nb-S-Brck-Tbody:after,
+.shortCutKey .nbIntBrckTbody:before, .shortCutKey .nbIntBrckTbody:after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+
+.shortCutKey .nbIntBrckSupBase{
+    top: 0.5em;
+}
+
 
 .shortCutKey .nbAbsValBox{
     display: inline-block;

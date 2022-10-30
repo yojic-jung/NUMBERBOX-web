@@ -83,13 +83,14 @@
 }
 /*
 * -(대쉬, 마이너스) 기호 : U+002D;
+* 중복순열 기호 : U+002D;
 */
 @font-face {
     font-family: 'nbFormulaFont';
     src: url('font/SB-UgroL.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    unicode-range: U+002D;
+    unicode-range: U+002D, U+220F;
 }
 
 @font-face {
@@ -241,6 +242,44 @@
     top: 0em;
     left: -0.8em;
 }
+
+.nbFracInIntSub .nbIntSup, 
+.nbFracInIntSub .nbDoubleIntSup, 
+.nbFracInIntSub .nbTripleIntSup{
+    top:6px
+}
+
+.nbFracInIntSup .nbIntSup, 
+.nbFracInIntSup .nbDoubleIntSup, 
+.nbFracInIntSup .nbTripleIntSup{
+    padding-bottom: 20px;
+}
+
+.nbFracInIntSup .nbIntSub, 
+.nbFracInIntSup .nbDoubleIntSub, 
+.nbFracInIntSup .nbTripleIntSub{
+    bottom:6px;
+}
+.nbFracInIntSup.nbFracInIntSub{
+    margin:3px 0;
+}
+.nbFracInIntSup.nbFracInIntSub .nbIntSup, 
+.nbFracInIntSup.nbFracInIntSub .nbDoubleIntSup, 
+.nbFracInIntSup.nbFracInIntSub .nbTripleIntSup{
+    top:-3px;
+    padding-bottom:unset;
+}
+.nbFracInIntSup.nbFracInIntSub .nbIntSub, 
+.nbFracInIntSup.nbFracInIntSub .nbDoubleIntSub, 
+.nbFracInIntSup.nbFracInIntSub .nbTripleIntSub{
+    bottom: -3px;
+    padding-bottom:unset;
+}
+
+.nbFracInIntSup{
+    margin-top: 0.3em;
+}
+
 
 .nbDoubleIntSup{
     left: -0.3em;
@@ -489,6 +528,13 @@
     border: unset !important;
 }
 
+.nbFracInLogSubBase{
+    margin-bottom: 9px;
+}
+.nbFracInLogSubBase .nbLogSubBase{
+    top: 9px;
+}
+
 /*
 .nbLogBox.nbFracInLog{
     vertical-align: middle;
@@ -534,6 +580,10 @@
     display: inline;
     vertical-align: unset;
     line-height: 160%;
+}
+
+.nbFracInLimSubBase .nbLimTbody {
+    vertical-align: -1.58em;
 }
 
 /* lim 안 분수 
@@ -742,9 +792,26 @@
     border-top: 1px solid black;
   }
 
-  .nbExpTmp .nbNumer{
-    padding: 0 2px 0 2px;
-    line-height: 80%;
+  .nbExpTmp .nbNumer,
+  .nbIntSup .nbNumer,
+  .nbIntSub .nbNumer,
+  .nbLogSubBase .nbNumer,
+  .nbLimSubBase .nbNumer
+  {
+    padding: 0 2px 0px 2px;
+    line-height: 110%;
+  }
+
+  .nbIntSup .nbRootBox.nbFracInRoot .nbNumer,
+  .nbIntSub .nbRootBox.nbFracInRoot .nbNumer,
+  .nbDoubleIntSup .nbRootBox.nbFracInRoot .nbNumer,
+  .nbDoubleIntSub .nbRootBox.nbFracInRoot .nbNumer,
+  .nbTripleIntSup .nbRootBox.nbFracInRoot .nbNumer,
+  .nbTripleIntSub .nbRootBox.nbFracInRoot .nbNumer,
+  .nbLimSubBase .nbRootBox.nbFracInRoot .nbNumer,
+  .nbLogSubBase .nbRootBox.nbFracInRoot .nbNumer{
+    padding: 2px 2px 0px 2px;
+    line-height: 110%;
   }
 
 /** 분수 안 지수 **/
@@ -898,7 +965,7 @@
 /** 루트 **/
 
 .nbRootBox{
-    padding-left: 0.8em;
+    padding-left: 0.6em;
     position: relative;
     vertical-align:text-bottom;
     border-spacing: 0px;
@@ -928,22 +995,64 @@
     top:0.105em;
     left:-0.505em;
 }
-.nbExpBox .nbRootBase{
+
+.nbIntSub .nbRootBase,
+.nbIntSup .nbRootBase,
+.nbLogSubBase .nbRootBase,
+.nbLimSubBase .nbRootBase,
+.nbExpBox .nbRootBase,
+.nbIntBrckSupBase .nbRootBase,
+.nbIntBrckSubBase .nbRootBase{
     padding-top: 1px;
 }
 
+.nbIntSub .nbRootBase::before,
+.nbIntSup .nbRootBase::before,
+.nbLogSubBase .nbRootBase::before,
+.nbLimSubBase .nbRootBase::before,
 .nbExpBox .nbRootBase::before{
     left:-0.905em;
 }
 
-.nbLogSubBase .nbRootBase{
-    padding-top: 1px;
+.nbIntBrckSupBase .nbRootBase::before,
+.nbIntBrckSubBase .nbRootBase::before{
+    top: 0.205em;
+    left:-0.5em;
+    font-size: 2.8em;
 }
 
-.nbLogSubBase .nbRootBase::before{
-    left:-0.905em;
+.nbIntSup .nbRootBox,
+.nbIntSub .nbRootBox{
+    vertical-align: -0.75em;
+    margin:0 1px 0 2px;
 }
 
+.nbExpTmp .nbRootBox {
+    margin:0 1px 0 2px;
+}
+
+.nbLogSubBase .nbRootBox,
+.nbLimSubBase .nbRootBox {
+    vertical-align: -0.65em;
+    margin:0 1px 0 2px;
+}
+
+.nbLogSubBase .nbDenom .nbRootBox,
+.nbLogSubBase .nbNumer .nbRootBox,
+.nbLimSubBase .nbDenom .nbRootBox,
+.nbLimSubBase .nbNumer .nbRootBox,
+.nbExpTmp .nbDenom .nbRootBox,
+.nbExpTmp .nbNumer .nbRootBox {
+    vertical-align: -0.775em;
+    margin:0 1px 0 2px;
+}
+
+
+
+.nbExpTmp .nbNumer .nbRootBox {
+    vertical-align: text-bottom;
+    margin-left: 2px;
+}
 
 /* 맥북 크롬으로 접속한 경우*/
 .macChrome .nbRootBase::before{
@@ -1155,7 +1264,7 @@
     margin-top: 4px;
 }
 
-/** 큰 괄호(분수용) **/
+/** 큰 괄호(분수용) old_version **/
 .nbL-R-BrckBox, .nbR-R-BrckBox, .nbL-C-BrckBox, .nbR-C-BrckBox, .nbL-S-BrckBox, .nbR-S-BrckBox, .nbAbsValBox{
     display: inline-block;
     vertical-align: middle;
@@ -1186,6 +1295,154 @@
 .nbR-R-Brck, .nbR-C-Brck,.nbR-S-Brck{
     position: relative;
     right:0.15em;
+}
+
+/** 큰 괄호(분수용) new_version **/
+
+.nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox, .nbIntBrckBox {
+    border-spacing: 0;
+    position: relative;
+    padding: 0 0.45em;
+}
+.nb-Abs-BrckBox{
+    padding: 0 0.25em;
+}
+.nbIntBrckBox{
+    padding: 0 0.5em 0 0.4em;
+    margin:3px 0;
+}
+
+.nb-Abs-Brck-Tbody:before, .nb-Abs-Brck-Tbody:after,
+.nb-R-Brck-Tbody:before, .nb-R-Brck-Tbody:after,
+.nb-C-Brck-Tbody:before, .nb-C-Brck-Tbody:after,
+.nb-S-Brck-Tbody:before, .nb-S-Brck-Tbody:after,
+.nbIntBrckTbody:before, .nbIntBrckTbody:after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+}
+
+.nb-Abs-Brck-Tbody, .nb-R-Brck-Tbody, .nb-C-Brck-Tbody, .nb-S-Brck-Tbody, .nbIntBrckTbody{
+    display: inline;
+    vertical-align: unset;
+}
+
+.nbIntBrckTbody{
+    position: relative;
+}
+
+.nb-Abs-Brck-Tbody:before {
+    content: "|";
+    left: 0em;
+    font-size: 30px;
+    font-family: 'caseBrck';
+    font-weight: 100;
+}
+
+.nb-Abs-Brck-Tbody:after {
+    content: "|";
+    font-size: 30px;
+    font-family: 'caseBrck';
+    font-weight: 100;
+    right: 0.01em;
+}
+
+.nb-R-Brck-Tbody:before {
+    content: "(";
+    left: -0.1em;
+}
+
+.nb-R-Brck-Tbody:after {
+    content: ")";
+    right: -0.1em;
+}
+
+.nb-C-Brck-Tbody:before {
+    content: "{";
+    left: -0.1em;
+}
+
+.nb-C-Brck-Tbody:after {
+    content: "}";
+    right: -0.1em;
+}
+
+
+.nb-S-Brck-Tbody:before {
+    content: "[";
+    left: -0.1em;
+}
+
+.nb-S-Brck-Tbody:after {
+    content: "]";
+    right: -0.1em;
+}
+
+.nbIntBrckTbody::before{
+    content: "[";
+    left: -0.5em;
+}
+
+.nbIntBrckTbody::after{
+    content: "]";
+    right: -0.5em;
+}
+
+.nb-Abs-BrckBase, .nb-R-BrckBase, .nb-C-BrckBase, .nb-S-BrckBase, .nbIntBrckBase {
+    min-width: 0.5em;
+    display: inline;
+}
+
+.nbIntBrckTbody2{
+    display: inline-block;
+    position: relative;
+    left: 0.5em;
+}
+
+.nbIntBrckSupBase {
+    min-width: 1em;
+    line-height: 110%;
+    padding: 0px;
+    position: relative;
+    top: -0.3em;
+    font-size: 0.3em;
+    text-align: center;
+}
+
+.nbIntBrckSubBase {
+    min-width: 1em;
+    line-height: 110%;
+    padding: 0px;
+    font-size: 0.3em;
+    position: relative;
+    bottom: -1.8em;
+    text-align: center;
+}
+
+.nbIntBrckBox.nbFracInIntBrckSup .nbIntBrckSupBase{
+    top:-1em;
+}
+.nbIntBrckBox.nbFracInIntBrckSup .nbIntBrckSubBase{
+    bottom:0em;
+}
+
+.nbIntBrckBox.nbFracInIntBrckSub{
+    margin:0 0 10px 0;
+}
+
+.nbIntBrckBox.nbFracInIntBrckSub .nbIntBrckSupBase{
+    top:1em;
+}
+
+.nbIntBrckBox.nbFracInIntBrckSup.nbFracInIntBrckSub{
+    margin:0 0 3px 0;
+}
+
+.nbIntBrckBox.nbFracInIntBrckSup.nbFracInIntBrckSub .nbIntBrckSupBase{
+    top:0.3em;
 }
 
 /** 이항계수 **/
@@ -1513,12 +1770,48 @@
     top: 0.35em;
 }
 
+.nbNumer .nbLimBox .nbRootBase.nbFracInRoot::before,
+.nbDenom .nbLimBox .nbRootBase.nbFracInRoot::before {
+    top: 0.25em;
+}
+
 .macChrome .nbFracBox .nbRootBase.nbFracInRoot::before {
     top: 0.33em;
 }
 
 .nbFracBox .nbDenom .nbRootBase.nbFracInRoot .nbFracBox{
     margin-top: 3px;
+}
+
+.nbLogSubBase .nbRootBox.nbFracInRoot,
+.nbLimSubBase .nbRootBox.nbFracInRoot,
+.nbIntSup .nbRootBox.nbFracInRoot,
+.nbIntSub .nbRootBox.nbFracInRoot,
+.nbDoubleIntSup .nbRootBox.nbFracInRoot,
+.nbDoubleIntSub .nbRootBox.nbFracInRoot,
+.nbTripleIntSup .nbRootBox.nbFracInRoot,
+.nbTripleIntSub .nbRootBox.nbFracInRoot,
+.nbIntBrckSupBase .nbRootBox.nbFracInRoot,
+.nbIntBrckSubBase .nbRootBox.nbFracInRoot {
+    margin-left: 5px;
+}
+
+.nbLogSubBase .nbRootBase.nbFracInRoot::before,
+.nbLimSubBase .nbRootBase.nbFracInRoot::before,
+.nbIntSup .nbRootBase.nbFracInRoot::before,
+.nbIntSub .nbRootBase.nbFracInRoot::before,
+.nbDoubleIntSup .nbRootBase.nbFracInRoot::before,
+.nbDoubleIntSub .nbRootBase.nbFracInRoot::before,
+.nbTripleIntSup .nbRootBase.nbFracInRoot::before,
+.nbTripleIntSub .nbRootBase.nbFracInRoot::before,
+.nbIntBrckSupBase .nbRootBase.nbFracInRoot::before,
+.nbIntBrckSubBase .nbRootBase.nbFracInRoot::before  {
+    font-size: 5em;
+    top: 0.35em;
+}
+
+.nbLimSubBase .nbRootBase.nbFracInRoot::before{
+    top: 0.4em;
 }
 
 /* 분모 안의 조건 박스 */

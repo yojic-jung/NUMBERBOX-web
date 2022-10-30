@@ -535,37 +535,70 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			*/
 		}
 
-		/*
-		//리밋 안의 분수 컴파일
-		let nbLimBaseStrt = strtElement.closest(".nbLimBase");
-		let nbLimBaseEnd = endElement.closest(".nbLimBase");
+		//리밋 서브 안의 분수 컴파일
+		let nbLimBaseStrt = strtElement.closest(".nbLimSubBase");
+		let nbLimBaseEnd = endElement.closest(".nbLimSubBase");
 		if(nbLimBaseStrt !== null && nbLimBaseEnd !== null){
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbLimBaseStrt.closest(".nbBox").classList.add("nbConvert");
-				nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLim");
+				nbLimBaseEnd.closest(".nbBox").classList.add("nbFracInLimSubBase");
 			}
 		}
-		*/
 
-		/*
-		//적분 안의 분수 컴파일
-		let nbIntegralStrt = strtElement.closest(".nbIntBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-		let nbIntegralEnd = endElement.closest(".nbIntBase");
+		//괄호 적분 sup 안의 분수 컴파일
+		let nbIntBrckSupBaseStrt = strtElement.closest(".nbIntBrckSupBase");
+		let nbIntBrckSupBaseEnd = endElement.closest(".nbIntBrckSupBase");
+		if(nbIntBrckSupBaseStrt !== null && nbIntBrckSupBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbIntBrckSupBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbIntBrckSupBaseEnd.closest(".nbBox").classList.add("nbFracInIntBrckSup");
+			}
+		}
+
+		//괄호 적분 sub 안의 분수 컴파일
+		let nbIntBrckSubBaseStrt = strtElement.closest(".nbIntBrckSubBase");
+		let nbIntBrckSubBaseEnd = endElement.closest(".nbIntBrckSubBase");
+		if(nbIntBrckSubBaseStrt !== null && nbIntBrckSubBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbIntBrckSubBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbIntBrckSubBaseEnd.closest(".nbBox").classList.add("nbFracInIntBrckSub");
+			}
+		}
+
+		//적분 서브 안의 분수 컴파일
+		let nbIntegralStrt = strtElement.closest(".nbIntSup");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbIntegralEnd = endElement.closest(".nbIntSup");
 		if(nbIntegralStrt === null && nbIntegralEnd === null){
-			nbIntegralStrt = strtElement.closest(".nbDoubleIntBase");
-			nbIntegralEnd = endElement.closest(".nbDoubleIntBase");
+			nbIntegralStrt = strtElement.closest(".nbDoubleIntSup");
+			nbIntegralEnd = endElement.closest(".nbDoubleIntSup");
 		}
 		if(nbIntegralStrt === null && nbIntegralEnd === null){
-			nbIntegralStrt = strtElement.closest(".nbTripleIntBase");
-			nbIntegralEnd = endElement.closest(".nbTripleIntBase");
+			nbIntegralStrt = strtElement.closest(".nbTripleIntSup");
+			nbIntegralEnd = endElement.closest(".nbTripleIntSup");
 		}
 		if(nbIntegralStrt !== null && nbIntegralEnd !== null){
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbIntegralStrt.closest(".nbBox").classList.add("nbConvert");
-				nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntegral");
+				nbIntegralStrt.closest(".nbBox").classList.add("nbFracInIntSup");
 			}
 		}
-		*/
+
+		let nbIntegralStrt2 = strtElement.closest(".nbIntSub");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbIntegralEnd2 = endElement.closest(".nbIntSub");
+		if(nbIntegralStrt2 === null && nbIntegralEnd2 === null){
+			nbIntegralStrt2 = strtElement.closest(".nbDoubleIntSub");
+			nbIntegralEnd2 = endElement.closest(".nbDoubleIntSub");
+		}
+		if(nbIntegralStrt2 === null && nbIntegralEnd2 === null){
+			nbIntegralStrt2 = strtElement.closest(".nbTripleIntSub");
+			nbIntegralEnd2 = endElement.closest(".nbTripleIntSub");
+		}
+		if(nbIntegralStrt2 !== null && nbIntegralEnd2 !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbIntegralStrt2.closest(".nbBox").classList.add("nbConvert");
+				nbIntegralStrt2.closest(".nbBox").classList.add("nbFracInIntSub");
+			}
+		}
 
 		//시그마 안 분수 컴파일
 		/*
@@ -590,17 +623,15 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			}
 		}
 		*/
-		/*
-		//로그함수 안 분수 컴파일
-		let nbLogStrt = strtElement.closest(".nbLogBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
-		let nbLogEnd = endElement.closest(".nbLogBase");
+		//로그 서브베이스 안 분수 컴파일
+		let nbLogStrt = strtElement.closest(".nbLogSubBase");	//base가 아닌 box로 처음부터 찾으면 base 아닌 sup이나 sub에 넣어도 컨버트 됨
+		let nbLogEnd = endElement.closest(".nbLogSubBase");
 		if(nbLogStrt !== null && nbLogEnd !== null){
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbLogStrt.closest(".nbBox").classList.add("nbConvert");
-				nbLogStrt.closest(".nbBox").classList.add("nbFracInLog");
+				nbLogStrt.closest(".nbBox").classList.add("nbFracInLogSubBase");
 			}
 		}
-		*/
 	}
 
 	//시그마 컴파일
@@ -3295,21 +3326,55 @@ export const reg_nbComplie = async (event) => {
 			nbBox[i].style={};
 		}
 
-
-		/*
-		//적분 안 분수
-		let nbFracInIntegralBoxes = [];
-		document.activeElement.querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox").forEach((item, index, arr)=>{
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntegral"))) nbFracInIntegralBoxes.push(item);
+		//괄호 적분 안 분수
+		let nbFracInIntBrckSupBoxes = [];
+		document.activeElement.querySelectorAll(".nbIntBrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntBrckSup"))) nbFracInIntBrckSupBoxes.push(item);
 		});
 
-		for(let i=0; i<nbFracInIntegralBoxes.length; i++){
-			if(nbFracInIntegralBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
-				nbFracInIntegralBoxes[i].classList.add("nbConvert");
-				nbFracInIntegralBoxes[i].classList.add("nbFracInIntegral");
+		for(let i=0; i<nbFracInIntBrckSupBoxes.length; i++){
+			if(nbFracInIntBrckSupBoxes[i].querySelectorAll(".nbIntBrckSupBase .nbFracBox").length !== 0) {
+				nbFracInIntBrckSupBoxes[i].classList.add("nbConvert");
+				nbFracInIntBrckSupBoxes[i].classList.add("nbFracInIntBrckSup");
 			}
 		}
-		*/
+
+		let nbFracInIntBrckSubBoxes = [];
+		document.activeElement.querySelectorAll(".nbIntBrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntBrckSub"))) nbFracInIntBrckSubBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracInIntBrckSubBoxes.length; i++){
+			if(nbFracInIntBrckSubBoxes[i].querySelectorAll(".nbIntBrckSubBase .nbFracBox").length !== 0) {
+				nbFracInIntBrckSubBoxes[i].classList.add("nbConvert");
+				nbFracInIntBrckSubBoxes[i].classList.add("nbFracInIntBrckSub");
+			}
+		}
+
+		//적분 안 분수
+		let nbFracInIntSupBoxes = [];
+		document.activeElement.querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntSup"))) nbFracInIntSupBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracInIntSupBoxes.length; i++){
+			if(nbFracInIntSupBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracInIntSupBoxes[i].classList.add("nbConvert");
+				nbFracInIntSupBoxes[i].classList.add("nbFracInIntSup");
+			}
+		}
+
+		let nbFracInIntSubBoxes = [];
+		document.activeElement.querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInIntSub"))) nbFracInIntSubBoxes.push(item);
+		});
+
+		for(let i=0; i<nbFracInIntSubBoxes.length; i++){
+			if(nbFracInIntSubBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
+				nbFracInIntSubBoxes[i].classList.add("nbConvert");
+				nbFracInIntSubBoxes[i].classList.add("nbFracInIntSub");
+			}
+		}
 
 		/*
 		//시그만 안 분수
@@ -3324,21 +3389,22 @@ export const reg_nbComplie = async (event) => {
 				nbFracInSigmaSumBoxes[i].classList.add("nbFracInSigmaSum");
 			}
 		}
-		
+		*/
 
 		//log함수 안 분수
 		let nbLogBox = [];
 		document.activeElement.querySelectorAll(".nbLogBox").forEach((item, index, arr)=>{
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLog"))) nbLogBox.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLogSubBase"))) nbLogBox.push(item);
 		});
 
 		for(let i=0; i<nbLogBox.length; i++){
-			if(nbLogBox[i].querySelectorAll(".nbFracBox").length !== 0) {
+			if(nbLogBox[i].querySelectorAll(".nbLogSubBase .nbFracBox").length !== 0) {
 				nbLogBox[i].classList.add("nbConvert");
-				nbLogBox[i].classList.add("nbFracInLog");
+				nbLogBox[i].classList.add("nbFracInLogSubBase");
 			}
 		}
 
+		/*
 		//ln함수 안 분수
 		let nbLnBox = [];
 		document.activeElement.querySelectorAll(".nbLnBox").forEach((item, index, arr)=>{
@@ -3503,47 +3569,20 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
-		/*
+		
 		//리밋 안 분수, 시그마
-		let nbFracINLimBoxes = [];
-		let nbFracInFracInLimBoxes = [];
-		let nbFracIDenomInLimBoxes = [];
-		let nbSigmaInLimBoxes = [];
+		let nbFracInLimSubBase = [];
 		document.activeElement.querySelectorAll(".nbLimBox").forEach((item, index, arr)=>{
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLim"))) nbFracINLimBoxes.push(item);
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInDenomInLim"))) nbFracIDenomInLimBoxes.push(item);
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInFracInLim"))) nbFracInFracInLimBoxes.push(item);
-			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbSigmaSumInLim"))) nbSigmaInLimBoxes.push(item);
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbFracInLimSubBase"))) nbFracInLimSubBase.push(item);
 		});
 
-		for(let i=0; i<nbFracINLimBoxes.length; i++){
-			if(nbFracINLimBoxes[i].querySelectorAll(".nbFracBox").length !== 0) {
-				nbFracINLimBoxes[i].classList.add("nbConvert");
-				nbFracINLimBoxes[i].classList.add("nbFracInLim");
+		for(let i=0; i<nbFracInLimSubBase.length; i++){
+			if(nbFracInLimSubBase[i].querySelectorAll(".nbLimSubBase .nbFracBox").length !== 0) {
+				nbFracInLimSubBase[i].classList.add("nbConvert");
+				nbFracInLimSubBase[i].classList.add("nbFracInLimSubBase");
 			}
 		}
 
-		for(let i=0; i<nbFracInFracInLimBoxes.length; i++){
-			if(nbFracInFracInLimBoxes[i].querySelectorAll(".nbFracInDenom.nbFracInNumer").length !== 0) {
-				nbFracInFracInLimBoxes[i].classList.add("nbConvert");
-				nbFracInFracInLimBoxes[i].classList.add("nbFracInFracInLim");
-			}
-		}
-
-		for(let i=0; i<nbFracIDenomInLimBoxes.length; i++){
-			if(nbFracIDenomInLimBoxes[i].querySelectorAll(".nbFracInDenom").length !== 0) {
-				nbFracIDenomInLimBoxes[i].classList.add("nbConvert");
-				nbFracIDenomInLimBoxes[i].classList.add("nbFracInDenomInLim");
-			}
-		}
-
-		for(let i=0; i<nbSigmaInLimBoxes.length; i++){
-			if(nbSigmaInLimBoxes[i].querySelectorAll(".nbSigmaSumBox").length !== 0) {
-				nbSigmaInLimBoxes[i].classList.add("nbConvert");
-				nbSigmaInLimBoxes[i].classList.add("nbSigmaSumInLim");
-			}
-		}
-		*/
 	}
 
 	//분수 안 적분
@@ -3604,16 +3643,15 @@ export const reg_nbComplie = async (event) => {
 			nbFracInLnBoxes[i].classList.remove("nbFracInLn");
 		}
 	}
-
+*/
 	//log 안 분수
-	let nbFracInLogBoxes = document.querySelectorAll(".nbLogBox.nbFracInLog");
+	let nbFracInLogBoxes = document.querySelectorAll(".nbLogBox.nbFracInLogSubBase");
 	for(let i=0; i<nbFracInLogBoxes.length; i++){
-		if(nbFracInLogBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
+		if(nbFracInLogBoxes[i].querySelectorAll(".nbLogSubBase .nbFracBox").length === 0) {
 			nbFracInLogBoxes[i].classList.remove("nbConvert");
-			nbFracInLogBoxes[i].classList.remove("nbFracInLog");
+			nbFracInLogBoxes[i].classList.remove("nbFracInLogSubBase");
 		}
 	}
-	*/
 
 	//시그마 안 분수
 	/*
@@ -3626,27 +3664,75 @@ export const reg_nbComplie = async (event) => {
 	}
 	*/
 
-	/*
-	//적분 안 분수
-	let nbFracInIntegralBoxes = document.querySelectorAll(".nbIntegralBox.nbFracInIntegral, .nbDoubleIntegralBox.nbFracInIntegral, .nbTripleIntegralBox.nbFracInIntegral");
-	for(let i=0; i<nbFracInIntegralBoxes.length; i++){
-		if(nbFracInIntegralBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
-			nbFracInIntegralBoxes[i].classList.remove("nbConvert");
-			nbFracInIntegralBoxes[i].classList.remove("nbFracInIntegral");
+	//괄호 적분 안 분수 
+	let nbFracInIntBrckSupBoxes = document.querySelectorAll(".nbIntBrckBox.nbFracInIntBrckSup");
+	for(let i=0; i<nbFracInIntBrckSupBoxes.length; i++){
+		if(nbFracInIntBrckSupBoxes[i].querySelectorAll(".nbIntBrckSupBase .nbFracBox").length === 0) {
+			nbFracInIntBrckSupBoxes[i].classList.remove("nbConvert");
+			nbFracInIntBrckSupBoxes[i].classList.remove("nbFracInIntBrckSup");
 		}
 	}
-	*/
+	let nbFracInIntBrckSub2 = document.querySelectorAll(".nbIntBrckBox.nbFracInIntBrckSub");
+	for(let i=0; i<nbFracInIntBrckSub2.length; i++){
+		if(nbFracInIntBrckSub2[i].querySelectorAll(".nbIntBrckSubBase .nbFracBox").length === 0) {
+			nbFracInIntBrckSub2[i].classList.remove("nbConvert");
+			nbFracInIntBrckSub2[i].classList.remove("nbFracInIntBrckSub");
+		}
+	}
 
-	/*
-	//리밋 안 분수
-	let nbFracInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInLim");
-	for(let i=0; i<nbFracInLimBoxes.length; i++){
-		if(nbFracInLimBoxes[i].querySelectorAll(".nbFracBox").length === 0) {
-			nbFracInLimBoxes[i].classList.remove("nbConvert");
-			nbFracInLimBoxes[i].classList.remove("nbFracInLim");
+	//적분 안 분수
+	let nbFracInIntSupBoxes = document.querySelectorAll(".nbIntegralBox.nbFracInIntSup");
+	for(let i=0; i<nbFracInIntSupBoxes.length; i++){
+		if(nbFracInIntSupBoxes[i].querySelectorAll(".nbIntSup .nbFracBox").length === 0) {
+			nbFracInIntSupBoxes[i].classList.remove("nbConvert");
+			nbFracInIntSupBoxes[i].classList.remove("nbFracInIntSup");
 		}
 	}
-	*/
+	let nbFracInIntSupBoxes2 = document.querySelectorAll(".nbDoubleIntegralBox.nbFracInIntSup");
+	for(let i=0; i<nbFracInIntSupBoxes2.length; i++){
+		if(nbFracInIntSupBoxes2[i].querySelectorAll(".nbDoubleIntSup .nbFracBox").length === 0) {
+			nbFracInIntSupBoxes2[i].classList.remove("nbConvert");
+			nbFracInIntSupBoxes2[i].classList.remove("nbFracInIntSup");
+		}
+	}
+	let nbFracInIntSupBoxes3 = document.querySelectorAll(".nbTripleIntegralBox.nbFracInIntSup");
+	for(let i=0; i<nbFracInIntSupBoxes3.length; i++){
+		if(nbFracInIntSupBoxes3[i].querySelectorAll(".nbTripleIntSup .nbFracBox").length === 0) {
+			nbFracInIntSupBoxes3[i].classList.remove("nbConvert");
+			nbFracInIntSupBoxes3[i].classList.remove("nbFracInIntSup");
+		}
+	}
+
+	let nbFracInIntSubBoxes = document.querySelectorAll(".nbIntegralBox.nbFracInIntSub");
+	for(let i=0; i<nbFracInIntSubBoxes.length; i++){
+		if(nbFracInIntSubBoxes[i].querySelectorAll(".nbIntSub .nbFracBox").length === 0) {
+			nbFracInIntSubBoxes[i].classList.remove("nbConvert");
+			nbFracInIntSubBoxes[i].classList.remove("nbFracInIntSub");
+		}
+	}
+	let nbFracInIntSubBoxes2 = document.querySelectorAll(".nbDoubleIntegralBox.nbFracInIntSub");
+	for(let i=0; i<nbFracInIntSubBoxes2.length; i++){
+		if(nbFracInIntSubBoxes2[i].querySelectorAll(".nbDoubleIntSub .nbFracBox").length === 0) {
+			nbFracInIntSubBoxes2[i].classList.remove("nbConvert");
+			nbFracInIntSubBoxes2[i].classList.remove("nbFracInIntSub");
+		}
+	}
+	let nbFracInIntSubBoxes3 = document.querySelectorAll(".nbTripleIntegralBox.nbFracInIntSub");
+	for(let i=0; i<nbFracInIntSubBoxes3.length; i++){
+		if(nbFracInIntSubBoxes3[i].querySelectorAll(".nbTripleIntSub .nbFracBox").length === 0) {
+			nbFracInIntSubBoxes3[i].classList.remove("nbConvert");
+			nbFracInIntSubBoxes3[i].classList.remove("nbFracInIntSub");
+		}
+	}
+
+	//리밋 안 분수
+	let nbFracInLimBoxes = document.querySelectorAll(".nbLimBox.nbFracInLimSubBase");
+	for(let i=0; i<nbFracInLimBoxes.length; i++){
+		if(nbFracInLimBoxes[i].querySelectorAll(".nbLimSubBase .nbFracBox").length === 0) {
+			nbFracInLimBoxes[i].classList.remove("nbConvert");
+			nbFracInLimBoxes[i].classList.remove("nbFracInLimSubBase");
+		}
+	}
 
 	/*
 	//리밋 안 시그마
