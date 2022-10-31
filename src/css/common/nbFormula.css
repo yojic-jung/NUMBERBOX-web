@@ -809,7 +809,9 @@
   .nbTripleIntSup .nbRootBox.nbFracInRoot .nbNumer,
   .nbTripleIntSub .nbRootBox.nbFracInRoot .nbNumer,
   .nbLimSubBase .nbRootBox.nbFracInRoot .nbNumer,
-  .nbLogSubBase .nbRootBox.nbFracInRoot .nbNumer{
+  .nbLogSubBase .nbRootBox.nbFracInRoot .nbNumer,
+  .nbIntBrckSupBase .nbRootBox.nbFracInRoot .nbNumer,
+  .nbIntBrckSubBase .nbRootBox.nbFracInRoot .nbNumer{
     padding: 2px 2px 0px 2px;
     line-height: 110%;
   }

@@ -183,7 +183,7 @@ const MyRepository = ()=>{
             if(contents.contentsClassify === 1){
                 let profileImgPath=defaultProfile;
                 if(contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null){
-                    profileImgPath=contents.membersProfile.profileImgPath+contents.membersProfile.profileImgName;
+                    profileImgPath=process.env.REACT_APP_SERVER_STATIC_HOST+contents.membersProfile.profileImgPath+contents.membersProfile.profileImgName;
                 }
                 document.getElementById("detailedConImg").classList.remove("hide");
                 document.getElementById("detailedConImg").src = profileImgPath;

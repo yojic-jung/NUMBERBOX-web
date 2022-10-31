@@ -1,9 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import LicenseUi2 from 'web/common/LicenseUi2.js';
 import {nb_dataFetch} from 'js/common/common_nb.js';
 const DetailedContentsWrap = ({isBasedParent, modalRepoChange, modalLikeChange})=>{
 
     const [isModalBase, setIsModaBasel] = useState(isBasedParent);
+
+    useEffect(() => {
+        document.getElementById("workContentsDetailedDiv").addEventListener("contextmenu",(e)=>{
+            e.preventDefault();
+            return false;
+        });
+        document.getElementById("workContentsDetailedDiv").addEventListener("dragstart",(e)=>{
+            e.preventDefault();
+            return false;
+        });
+        document.getElementById("workContentsDetailedDiv").addEventListener("selectstart",(e)=>{
+            e.preventDefault();
+            return false;
+        });
+    },[]);
 
     const likeContents = async (event, isBasedParent)=>{
         let contentsNo = Number(event.target.dataset.contentsNo)

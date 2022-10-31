@@ -224,6 +224,15 @@ const MathTypeCategory = ()=>{
                        </span>
             }
             return <span className="mathDocsUnitBtn" key={subjectInfo.unitUniqNo} data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
+        }else if(subjectInfo.mainVal.includes("고등")){
+            if( subjectInfo.mainVal.includes("고등수학")){
+                return <span key={subjectInfo.unitUniqNo}>
+                            <span className="mathDocsGrade">고등</span>
+                            <span className="mathDocsUnitBtn" data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal}</span>
+                       </span>
+            }
+        }else{
+            return <span className="mathDocsUnitBtn" key={subjectInfo.unitUniqNo} data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}} dangerouslySetInnerHTML={{__html:subjectInfo.mainVal}}></span>
         }
     });
 

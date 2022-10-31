@@ -35,6 +35,7 @@
     margin:10px auto 0 auto;
     border: 0.5px solid rgb(206, 206, 206);
     padding:10px;
+    line-height: 250%;
 }
 
 .mathDocsSubjectInfoDiv.mobile{

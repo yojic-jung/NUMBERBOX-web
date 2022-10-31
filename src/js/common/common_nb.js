@@ -475,7 +475,7 @@ export const nb_fCustomOptClk = function(event, parentId, customTitle, originSel
       parentDom.classList.remove('nbCustomSelected');
     }
     parentDom.classList.remove('active');
-    //소단원과 유형정보에는 latex수식이 포함되어 value값으로 선택이 안됨
+
     if(parentId=="cusSelThrUnitDiv"){
       let optionList = orginSelOpt.children;
       let selectedIdx = 0;
@@ -483,6 +483,7 @@ export const nb_fCustomOptClk = function(event, parentId, customTitle, originSel
         if(optionList[i].dataset.uniqNo == targetDom.dataset.uniqNo) selectedIdx=i;
       }
       orginSelOpt.children[selectedIdx].selected = true;
+      orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
     }else if(parentId=="cusSelQuesTypeDiv"){
       let optionList = orginSelOpt.children;
       let selectedIdx = 0;
@@ -490,8 +491,10 @@ export const nb_fCustomOptClk = function(event, parentId, customTitle, originSel
         if(optionList[i].dataset.parentValue == targetDom.dataset.uniqNo && optionList[i].dataset.typeNo == targetDom.dataset.typeNo) selectedIdx=i;
       }
       orginSelOpt.children[selectedIdx].selected = true;
+      orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
     }else{
       orginSelOpt.value = targetDom.dataset.value
+      orginSelOpt.dataset.uniqNo = targetDom.dataset.uniqNo;
     }
 
     event.stopPropagation();  //이벤트 버블링 제거(제거 안하면 nb_fCustomSelDivClk 실행되어 customSel 박스가 안닫힘)

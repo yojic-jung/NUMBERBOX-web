@@ -833,7 +833,7 @@
     line-height: 15px;
 }
 
-.td1.userSearchPage{
+.td1.userSearchPage, .transContents{
     cursor: pointer;
     -webkit-touch-callout: none;
     -webkit-user-select: none;

@@ -101,6 +101,7 @@ const MyContentsList = ({isMine, userNo})=>{
 
     useEffect(()=>{
         const asyncUseEffect = async function(){
+            
             if(isMine){
                 document.getElementById("myPageProd").classList.add("active");
                 document.getElementById("myPageRepo").classList.remove("active");
@@ -358,6 +359,11 @@ const MyContentsList = ({isMine, userNo})=>{
                     }
                 }
 
+                let isNoSelect="";
+                if(contentsMap.contentsClassify === 2){
+                    isNoSelect=" transContents"
+                }
+
                 //이미지로 등록한 문제 여부
                 let isImgRegContents = false;
                 if(contentsMap.contentsImg !==null && contentsMap.imgPath !==null) {
@@ -425,7 +431,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className='td1'>
+                                            <td className={'td1'+isNoSelect}>
                                                 <div id="workQuesShow" className='workQuesShow quesRootDiv'>
                                                     <div className='quesDiv'>
                                                         <div className='quesContents' dangerouslySetInnerHTML={{__html:contentsMap.contents}}></div> 
@@ -442,7 +448,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className='td2'>
+                                            <td  className={'td2'+isNoSelect}>
                                                 <div className='solRootDiv'>
                                                     <div className='ansSolDiv'>
                                                     
