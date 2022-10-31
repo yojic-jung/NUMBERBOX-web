@@ -72,9 +72,16 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
 	//부모 자식 관계 판단하여 display: none or notnone
 	for(let i=0; i< childElement.length; i++){
 		let isCmbEvCond =false;                                //자식 컴포넌트 최초 한번만 연쇄이벤트 발생위한 변수
-	  if(isUnitBubbleEv){isCmbEvCond = (childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId).value) && childElement.childNodes[i].dataset.uniqNo.substring(0, 2) === document.getElementById(targetId).dataset.uniqNo.substring(0, 2);}
-	  else{isCmbEvCond = (childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId)[targetIndex].dataset.uniqNo);}
-	  
+	  if(isUnitBubbleEv){
+		if(document.getElementById(targetId).dataset.uniqNo !== undefined){
+			isCmbEvCond = (childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId).value) && childElement.childNodes[i].dataset.uniqNo.substring(0, 2) === document.getElementById(targetId).dataset.uniqNo.substring(0, 2);
+		}else{
+			isCmbEvCond = (childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId).value);
+		}
+	  }
+	  else{
+		isCmbEvCond = (childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId)[targetIndex].dataset.uniqNo);
+	}
 	  if(isCmbEvCond){
 		childElement.childNodes[i].style.display ="";
 		cusChildElement.childNodes[i].style.display ="";
