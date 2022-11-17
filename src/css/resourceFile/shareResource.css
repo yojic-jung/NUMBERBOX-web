@@ -364,21 +364,6 @@
   }
 
 
-  .resDetailedTimeDesc{
-    text-align: center;
-    font-size: 20px;
-    font-family: 'jejuGothic';
-    line-height: 180%;
-    position: fixed;
-    top:50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 99;
-    background-color: rgb(251, 251, 251);
-    color: rgb(23, 104, 196);;
-    padding: 40px 20px;
-    border-radius: 10px;
-  }
 
   .res-over-lay:hover .errBtn{
     display:block;

@@ -1690,7 +1690,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		newRange.addRange(tempRange);
 		let tempNode= document.createElement('span');
 		tempNode.className = "tmpCaretPoint";
-		tempNode.innerHTML = ".";
+		tempNode.innerHTML = "&#65279;";
 		tempRange.deleteContents();
 
 		//수식편집기 ctrl+v 한 경우 div 마지막에 br태그가 붙어 키보드 위로 이동이 정상적이지 않음
@@ -1773,7 +1773,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpCaretPoint";
-			tmpNode.innerHTML = ".";
+			tmpNode.innerHTML = "&#65279;";
 			moveRange.deleteContents();
 			moveRange.insertNode(tmpNode);
 			let i=1;
@@ -1795,7 +1795,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 				}
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpCaretPoint";
-				tmpNode.innerHTML = ".";
+				tmpNode.innerHTML = "&#65279;";
 				moveRange.deleteContents();
 				moveRange.insertNode(tmpNode);
 				i++;
@@ -1804,7 +1804,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 			document.getElementsByClassName("tmpCaretPoint")[0].remove();
 			tmpNode= document.createElement('span');
 			tmpNode.className = "tmpCaretPoint";
-			tmpNode.innerHTML = ".";
+			tmpNode.innerHTML = "&#65279;";
 			moveRange.deleteContents();
 			moveRange.insertNode(tmpNode);
 			//라인 이동시 이동 라인에 수식요소 있는 경우 수식요소 안으로 커서 안들어가는 경우 있어 
@@ -1829,7 +1829,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 			if(moveStrtContainer.closest(".innerTbTd")===null){
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpCaretPoint";
-				tmpNode.innerHTML = ".";
+				tmpNode.innerHTML = "&#65279;";
 				if(userKeyCode === 38){
 					parentTable.before(tmpNode);
 					newRange.setBaseAndExtent(document.getElementsByClassName("tmpCaretPoint")[0], 0, document.getElementsByClassName("tmpCaretPoint")[0], 0);
@@ -1853,7 +1853,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 			}else{
 				let tmpNode= document.createElement('span');
 				tmpNode.className = "tmpCaretPoint";
-				tmpNode.innerHTML = ".";
+				tmpNode.innerHTML = "&#65279;";
 				if(userKeyCode === 38){
 					if(document.activeElement.firstChild.classList === undefined){
 						document.activeElement.prepend(tmpNode);
@@ -1889,7 +1889,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		newRange.addRange(tmpRange);
 		let tmpNode= document.createElement('span');
 		tmpNode.className = "tmpCaretPoint";
-		tmpNode.innerHTML = ".";
+		tmpNode.innerHTML = "&#65279;";
 		tmpRange.deleteContents();
 		tmpRange.insertNode(tmpNode);
 		document.getElementById("topShortkeyDiv").classList.remove("hide");		// hide요소 show로 전환
@@ -4590,7 +4590,8 @@ export const reg_removeResizeFrame = function () {
 		  reset();
 	  }, false);
 	  
-	  editor.addEventListener('mousedown', function (e) {
+	  //editor가 아닌 window에 이벤트 걸어서 에디터 아닌 곳에서도 클릭하면 이미지 크기 및 속성 수정 프레임 제거되게끔 구현
+	  window.addEventListener('mousedown', function (e) {
 		if(e.target.classList !== undefined && e.target.closest(".imgWidthHeightDiv") !== null){
 			return;
 		}

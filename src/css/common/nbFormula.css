@@ -390,10 +390,6 @@
     line-height: 110%;
 }
 
-.nbSigmaSumBox .nbSigmaSumBox {
-    vertical-align: 1em;
-}
-
 .nbSigmaSumTbody{
     display: inline-block;
 }
@@ -795,6 +791,10 @@
   .nbExpTmp .nbNumer,
   .nbIntSup .nbNumer,
   .nbIntSub .nbNumer,
+  .nbDoubleIntSup .nbNumer,
+  .nbDoubleIntSub .nbNumer,
+  .nbTripleIntSup .nbNumer,
+  .nbTripleIntSub .nbNumer,
   .nbLogSubBase .nbNumer,
   .nbLimSubBase .nbNumer
   {
@@ -1000,6 +1000,10 @@
 
 .nbIntSub .nbRootBase,
 .nbIntSup .nbRootBase,
+.nbDoubleIntSub .nbRootBase,
+.nbDoubleIntSup .nbRootBase,
+.nbTripleIntSub .nbRootBase,
+.nbTripleIntSup .nbRootBase,
 .nbLogSubBase .nbRootBase,
 .nbLimSubBase .nbRootBase,
 .nbExpBox .nbRootBase,
@@ -1010,6 +1014,10 @@
 
 .nbIntSub .nbRootBase::before,
 .nbIntSup .nbRootBase::before,
+.nbDoubleIntSub .nbRootBase::before,
+.nbDoubleIntSup .nbRootBase::before,
+.nbTripleIntSub .nbRootBase::before,
+.nbTripleIntSup .nbRootBase::before,
 .nbLogSubBase .nbRootBase::before,
 .nbLimSubBase .nbRootBase::before,
 .nbExpBox .nbRootBase::before{
@@ -1024,7 +1032,11 @@
 }
 
 .nbIntSup .nbRootBox,
-.nbIntSub .nbRootBox{
+.nbIntSub .nbRootBox,
+.nbDoubleIntSub .nbRootBox,
+.nbDoubleIntSup .nbRootBox,
+.nbTripleIntSub .nbRootBox,
+.nbTripleIntSup .nbRootBox{
     vertical-align: -0.75em;
     margin:0 1px 0 2px;
 }

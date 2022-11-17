@@ -200,6 +200,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
         formData.append("cateList", cateList);
 
         document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+        document.getElementById("hourGlassDesc").innerText = "ppt를 등록하는데 시간이 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
 		let returnVal = await nb_formDataFetch("/mathInfo/registerResource", formData, false);
         document.getElementById("resDetailedTimeDesc").classList.add("hide");
         if(returnVal.isSuccess === true){
@@ -235,6 +236,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
 
         document.getElementById("confirmBoxClose").click();
         document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+        document.getElementById("hourGlassDesc").innerText = "ppt를 등록하는데 시간이 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
         let returnVal = await nb_formDataFetch("/mathInfo/updateResource", formData, false);
         document.getElementById("resDetailedTimeDesc").classList.add("hide");
 
@@ -327,14 +329,13 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
                 </div>
             </div>
             <div id="resDetailedTimeDesc" className='blindBox hide'>
-            <div className='resDetailedTimeDesc'>
-                <div>
-                    <img className="hourglass" src={hourglass} alt=""/>
+                <div id="hourGlassBox" className='resDetailedTimeDesc'>
+                    <div>
+                        <img className="hourglass" src={hourglass} alt=""/>
+                    </div>
+                    <div id="hourGlassDesc"></div>
                 </div>
-                ppt를 등록하는데 시간이 걸릴 수 있습니다.<br/>
-                잠시만 기다려 주세요...
             </div>
-     </div>
         </>
     );
 

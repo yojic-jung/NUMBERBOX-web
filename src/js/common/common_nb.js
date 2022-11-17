@@ -269,6 +269,11 @@ export const nb_confirmBox = async (message) => {
   document.getElementById("confirmBoxScreen").classList.remove("hide");
   document.getElementById("confirmMsg").innerText = message;
 }
+
+export const nb_confirmBoxB = async (message) => {
+  document.getElementById("confirmBoxScreenB").classList.remove("hide");
+  document.getElementById("confirmMsgB").innerText = message;
+}
 /*
  * 정의 : 클래스 추가 함수
  */
@@ -817,4 +822,20 @@ export const nb_moveToScrollAllRange = async function(isToTop){
           }
       }, 1)
   }
+}
+
+export const nb_dateFormat = async (separator) => {
+    let today = new Date();
+    let year = today.getFullYear(); 
+    let month = today.getMonth() + 1;
+    if(month.toString().length === 1) month = "0" + month.toString();
+    let date = today.getDate();
+    if(date.toString().length === 1) date = "0" + date.toString();
+    let hour = today.getHours();
+    if(hour.toString().length === 1) hour = "0" + hour.toString();
+    let minute = today.getMinutes();
+    if(minute.toString().length === 1) minute = "0" + minute.toString();
+    let milliSec = today.getMilliseconds();
+    if(milliSec.toString().length === 1) milliSec = "0" + milliSec.toString();
+    return year+separator+month+separator+date+separator+hour+separator+minute+separator+milliSec;
 }

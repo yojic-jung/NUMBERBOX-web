@@ -4,12 +4,15 @@ import FormulaEditor from 'web/contents/register/FormulaEditor'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import "css/common/nbScreen.css";
 import {nb_dataFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollEnd, nb_modalScrollStrt, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
-    , nb_detectScrollPosition, nb_moveToScroll} from 'js/common/common_nb.js';
+    , nb_detectScrollPosition, nb_moveToScroll, nb_confirmBox, nb_dateFormat} from 'js/common/common_nb.js';
 import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
+import {cvt_textNodeConvert, cvt_initWidthHeight, cvt_initOrgWidthHeight, cvt_convertHtmlToTex, cvt_makeJsonArrForHwp, cvt_combineFormul} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import EmptyList from 'web/common/EmptyList';
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
 import defaultProfile from 'img/defaultProfileWhite.png';
+import hwpDownImg from 'img/hwpDownImg.png';
+import hourglass from 'img/hourglass.gif';
 
 let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
 let scrollY = 0;       
@@ -219,6 +222,328 @@ const MyContentsList = ({isMine, userNo})=>{
             }
         }
 
+        const convertHtmlToTex = async (event) => {
+            let contentsNo = event.target.dataset.contentsNo;
+            let returnObj = await nb_dataFetch("/myContentsCheckForHwpDown?contentsNo="+contentsNo, true);
+
+            if(returnObj.contentsNo === -1){
+                hwpDownPopUpClose();
+                return;
+            }
+
+            if(contentsNo === "all"){
+                convertHtmlToTexAll();
+                hwpDownPopUpClose();
+                return;
+            }
+
+            let contentsDiv  = document.getElementsByClassName("contentsDiv");
+            let rootTb;
+
+            for(let i=0; i<contentsDiv.length; i++){
+                if(Number(contentsDiv[i].dataset.contentsNo) === returnObj.contentsNo){
+                    rootTb =  contentsDiv[i].querySelector(".workListTable")
+                    break;
+                }
+            }
+
+            let contentsArr = [{className:"quesContents", title:"[문제]"}, {id:"workMultiShow", className:"multiDivContents"}, {className:"ansContents", title:"[정답]"}, {className:"solContents", title:"[해설]"}];
+            let hwpJsonArrForPython = new Array();
+            for(let i=0; i<contentsArr.length; i++){
+                if(contentsArr[i].className === "multiDivContents"){
+                    //객관식 문제 아니면 건너뛰기
+                    if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("hide")){
+                        let breakObj = new Object();
+                        breakObj.contentsType = "BreakPara";
+                        hwpJsonArrForPython.push(breakObj);
+                        continue;
+                    }
+                    
+                    let tableObj = new Object();
+                    tableObj.contentsType = "table";
+                    tableObj.contentsDetailType = "table";
+                    tableObj.borderStyle = "allNone";
+                    if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("twoDivGrid")){
+                        tableObj.rowCnt = 3;
+                        tableObj.colCnt = 2;
+                        tableObj.colWidthList = [1, 1]
+                    }else if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("threeDivGrid")){
+                        tableObj.rowCnt = 2;
+                        tableObj.colCnt = 3;
+                        tableObj.colWidthList = [1, 1, 1]
+                    }else{
+                        tableObj.rowCnt = 5;
+                        tableObj.colCnt = 1;
+                        tableObj.colWidthList = [1]
+                    }
+                    tableObj.contents = new Array();
+                    let multiChoiceContents = [{className:"firDivContents"}, {className:"secDivContents"}, {className:"thrDivContents"}, {className:"fourDivContents"}, {className:"fifDivContents"}]; 
+                    for(let j=0; j<multiChoiceContents.length; j++){
+                        await cvt_initWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                        let quesContents = rootTb.querySelector("."+multiChoiceContents[j].className).cloneNode(true);
+                        await cvt_textNodeConvert(quesContents);
+                        let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                        let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                        let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+
+                        let tableCellContents = new Array();
+                        let num = "";
+                        if(j===0) num = "① ";
+                        else if(j===1) num = "② ";
+                        else if(j===2) num = "③ ";
+                        else if(j===3) num = "④ ";
+                        else if(j===4) num = "⑤ ";
+                        let tmpNumInnerObj = new Object();
+                        tmpNumInnerObj.contentsType = "text";
+                        tmpNumInnerObj.contents = num;
+                        let tmpNumObj = new Object();
+                        tmpNumObj.contents = tmpNumInnerObj;
+                        tmpNumObj.align = "alignLeft";
+                        tableCellContents.push(tmpNumObj);
+
+                        for(let k=0; k<newHwpJsonArr.length; k++){
+                            //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
+                            //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
+                            if(k===newHwpJsonArr.length-1 && newHwpJsonArr[k].contentsType==="BreakPara"){
+                                break;
+                            }
+                            let tmpObj = new Object();
+                            tmpObj.contents = newHwpJsonArr[k];
+                            tableCellContents.push(tmpObj);
+
+                        }
+                        tableObj.contents.push(tableCellContents);
+                        await cvt_initOrgWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                    }
+                    hwpJsonArrForPython.push(tableObj);
+
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    hwpJsonArrForPython.push(breakObj);
+                }else{
+                    await cvt_initWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                    let quesContents = rootTb.querySelector("."+contentsArr[i].className).cloneNode(true);
+                    if(contentsArr[i].className === "ansContents") {
+                        if(quesContents.querySelector(".multiAnswerSheet").innerText.length !== 0){
+                            quesContents.querySelector(".multiAnswerSheet").innerText = quesContents.querySelector(".multiAnswerSheet").innerText+" ";
+                        }
+                        quesContents.querySelector(".answerSheet").prepend(quesContents.querySelector(".multiAnswerSheet"))
+                        quesContents = quesContents.querySelector(".answerSheet");
+                    }
+                    await cvt_textNodeConvert(quesContents);
+                    let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                    let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                    await cvt_initOrgWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                    let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+                    let titleArr = new Array();
+                    let boldObj = new Object();
+                    boldObj.contentsType = "CharShapeBold";
+                    titleArr.push(boldObj);
+                    let titleObj = new Object();
+                    titleObj.contentsType = "text";
+                    titleObj.contents = contentsArr[i].title;
+                    titleArr.push(titleObj);
+                    titleArr.push(boldObj);
+
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    newHwpJsonArr.unshift(breakObj);
+                   
+                    if(contentsArr[i].className!=="quesContents"){
+                        newHwpJsonArr.push(breakObj);   //문제 줄바꿈은 객관식 끝나고
+                    }
+                    newHwpJsonArr.unshift(...titleArr);
+                    hwpJsonArrForPython.push(...newHwpJsonArr);
+                }
+            }
+       
+            hwpDownPopUpClose();
+
+            let formData = new FormData();
+            formData.append("id", JSON.stringify(hwpJsonArrForPython))
+            document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...";
+            await fetch("http://43.200.243.161:5000/makeHwp", {	// fetch를 통해 Ajax통신을 한다.
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                },
+                body: formData
+                }).then(async (response) => {
+                    return  response.blob();
+                })
+                .then(async (blob) => {
+                    let nowDate = await nb_dateFormat("_");
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "[N명의수학]나의제작문제_"+nowDate+".hwp";
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout((_) => {
+                        window.URL.revokeObjectURL(url);
+                    }, 60000);
+                    a.remove();
+                    document.getElementById("resDetailedTimeDesc").classList.add("hide");
+                })
+            
+        }
+
+            const convertHtmlToTexAll = async () => {
+                let workListTable = document.getElementById("contents-show").querySelectorAll(".contentsDiv");
+                let tmpNewTex = new Array();
+                for(let idx=0; idx<workListTable.length;idx++){
+                    let isTransContents = false;
+                    contentsList.forEach(element => {
+                        if(element.contentsClassify !== 1 && Number(workListTable[idx].dataset.contentsNo) === element.contentsNo) {
+                            isTransContents = true;
+                        }
+                    });
+
+                    if(isTransContents) continue;
+
+                    let rootTb =  workListTable[idx];
+                    let contentsArr = [{className:"quesContents", title:"[문제]"}, {id:"workMultiShow", className:"multiDivContents"}, {className:"ansContents", title:"[정답]"}, {className:"solContents", title:"[해설]"}];
+                    let hwpJsonArrForPython = new Array();
+                    for(let i=0; i<contentsArr.length; i++){
+                        if(contentsArr[i].className === "multiDivContents"){
+                            //객관식 문제 아니면 건너뛰기
+                            if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("hide")){
+                                let breakObj = new Object();
+                                breakObj.contentsType = "BreakPara";
+                                hwpJsonArrForPython.push(breakObj);
+                                continue;
+                            }
+                            
+                            let tableObj = new Object();
+                            tableObj.contentsType = "table";
+                            tableObj.contentsDetailType = "table";
+                            tableObj.borderStyle = "allNone";
+                            if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("twoDivGrid")){
+                                tableObj.rowCnt = 3;
+                                tableObj.colCnt = 2;
+                                tableObj.colWidthList = [1, 1]
+                            }else if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("threeDivGrid")){
+                                tableObj.rowCnt = 2;
+                                tableObj.colCnt = 3;
+                                tableObj.colWidthList = [1, 1, 1]
+                            }else{
+                                tableObj.rowCnt = 5;
+                                tableObj.colCnt = 1;
+                                tableObj.colWidthList = [1]
+                            }
+                            tableObj.contents = new Array();
+                            let multiChoiceContents = [{className:"firDivContents"}, {className:"secDivContents"}, {className:"thrDivContents"}, {className:"fourDivContents"}, {className:"fifDivContents"}]; 
+                            for(let j=0; j<multiChoiceContents.length; j++){
+                                await cvt_initWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                                let quesContents = rootTb.querySelector("."+multiChoiceContents[j].className).cloneNode(true);
+                                await cvt_textNodeConvert(quesContents);
+                                let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                                let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                                let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+
+                                let tableCellContents = new Array();
+                                let num = "";
+                                if(j===0) num = "① ";
+                                else if(j===1) num = "② ";
+                                else if(j===2) num = "③ ";
+                                else if(j===3) num = "④ ";
+                                else if(j===4) num = "⑤ ";
+                                let tmpNumInnerObj = new Object();
+                                tmpNumInnerObj.contentsType = "text";
+                                tmpNumInnerObj.contents = num;
+                                let tmpNumObj = new Object();
+                                tmpNumObj.contents = tmpNumInnerObj;
+                                tmpNumObj.align = "alignLeft";
+                                tableCellContents.push(tmpNumObj);
+
+                                for(let k=0; k<newHwpJsonArr.length; k++){
+                                    //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
+                                    //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
+                                    if(k===newHwpJsonArr.length-1 && newHwpJsonArr[k].contentsType==="BreakPara"){
+                                        break;
+                                    }
+                                    let tmpObj = new Object();
+                                    tmpObj.contents = newHwpJsonArr[k];
+                                    tableCellContents.push(tmpObj);
+
+                                }
+                                tableObj.contents.push(tableCellContents);
+                                await cvt_initOrgWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                            }
+                            hwpJsonArrForPython.push(tableObj);
+
+                            let breakObj = new Object();
+                            breakObj.contentsType = "BreakPara";
+                            hwpJsonArrForPython.push(breakObj);
+                        }else{
+                            await cvt_initWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                            let quesContents = rootTb.querySelector("."+contentsArr[i].className).cloneNode(true);
+                            if(contentsArr[i].className === "ansContents") {
+                                if(quesContents.querySelector(".multiAnswerSheet").innerText.length !== 0){
+                                    quesContents.querySelector(".multiAnswerSheet").innerText = quesContents.querySelector(".multiAnswerSheet").innerText+" ";
+                                }
+                                quesContents.querySelector(".answerSheet").prepend(quesContents.querySelector(".multiAnswerSheet"))
+                                quesContents = quesContents.querySelector(".answerSheet");
+                            }
+                            await cvt_textNodeConvert(quesContents);
+                            let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                            let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                            await cvt_initOrgWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                            let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+                            let titleArr = new Array();
+                            let boldObj = new Object();
+                            boldObj.contentsType = "CharShapeBold";
+                            titleArr.push(boldObj);
+                            let titleObj = new Object();
+                            titleObj.contentsType = "text";
+                            titleObj.contents = contentsArr[i].title;
+                            titleArr.push(titleObj);
+                            titleArr.push(boldObj);
+
+                            let breakObj = new Object();
+                            breakObj.contentsType = "BreakPara";
+                            newHwpJsonArr.unshift(breakObj);
+                            
+                            if(contentsArr[i].className!=="quesContents"){
+                                newHwpJsonArr.push(breakObj);   //문제 줄바꿈은 객관식 끝나고
+                            }
+                            newHwpJsonArr.unshift(...titleArr);
+                            hwpJsonArrForPython.push(...newHwpJsonArr);
+                        }
+
+                    }
+                    tmpNewTex.push(...hwpJsonArrForPython);
+            }
+
+            let formData = new FormData();
+            formData.append("id", JSON.stringify(tmpNewTex))
+            document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n문제 수가 많을수록 시간이 더 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
+            await fetch("http://43.200.243.161:5000/makeHwp", {	// fetch를 통해 Ajax통신을 한다.
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                },
+                body: formData
+                }).then(async (response) => {
+                    return  response.blob();
+                })
+                .then(async (blob) => {
+                    let nowDate = await nb_dateFormat("_");
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "[N명의수학]나의제작문제_"+nowDate+".hwp";
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout((_) => {
+                        window.URL.revokeObjectURL(url);
+                    }, 60000);
+                    a.remove();
+                    document.getElementById("resDetailedTimeDesc").classList.add("hide");
+                })
+            
+        }
+
         const showOrgContents = async function(orgContentsNo){
             let returnObj= await nb_dataFetch("/mathInfo/takeContentsByContentsNo?contentsno="+orgContentsNo, true);
             
@@ -317,6 +642,7 @@ const MyContentsList = ({isMine, userNo})=>{
         }
 
 
+        
 
         const workContentsList = contentsList.map( (contentsMap, idx) => {
                 let isMultiHide= "hide"
@@ -376,7 +702,6 @@ const MyContentsList = ({isMine, userNo})=>{
                 return  <div id="workContentsDiv" className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
                                 <table className='workListTable'>
                                     <thead>
-
                                         <tr className='workListTBHead2'>
                                             <td>
                                                 <div>
@@ -390,6 +715,12 @@ const MyContentsList = ({isMine, userNo})=>{
                                                             <span id={"contentsLike"+contentsMap.contentsNo} className="likeBtn" onClick={(event)=>{likeContents(event, contentsMap.contentsNo);}}></span>
                                                         </span>
                                                     </>
+                                                    }
+                                                    {isMine && !isImgRegContents && contentsMap.contentsClassify ===1 && 
+                                                        <span className='hwpDownImgWrap' onClick={(event)=>{nb_confirmBox("해당 문제를 한글파일로 다운받으시겠습니까?\n(일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = event.target.closest(".contentsDiv").dataset.contentsNo}}>
+                                                            <img className="hwpDownImg" src={hwpDownImg} alt=""/>
+                                                            <div className="hwpDownDesc">한글 파일로 다운 받기</div>
+                                                        </span>
                                                     }
                                                     [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
                                                     {isMine &&
@@ -408,7 +739,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                     }
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td className=''>
                                                 <div className='bi-jutify-align'>
                                                     <div>정답 및 해설</div>
                                                     <div>
@@ -456,8 +787,8 @@ const MyContentsList = ({isMine, userNo})=>{
                                                             <div>
                                                                 
                                                                 <div className='ansContents'>
-                                                                    <span className='mini-title6'>답</span>&nbsp;&nbsp;
-                                                                    <span  dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
+                                                                    <span className='ansDesc mini-title6'>답 &nbsp;&nbsp;</span>
+                                                                    <span className='multiAnswerSheet' dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
                                                                     <span className={"marginRFive "+isBlank}></span>
                                                                     <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
                                                                 </div>
@@ -482,6 +813,9 @@ const MyContentsList = ({isMine, userNo})=>{
                             </div>
         });
 
+        const hwpDownPopUpClose = async () => {
+            document.getElementById("confirmBoxScreen").classList.add("hide");
+        }
 
   return ( <>
   {isMine ? <Helmet>
@@ -511,6 +845,9 @@ const MyContentsList = ({isMine, userNo})=>{
                 { !modalState &&
                 <div>
                     <div className='workList myContentsList'>
+                        <div className='contentsDiv'>
+                            <span className='hwpAllDownBtn' onClick={(event)=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?\n사용자의 제작문제가 아닌 변형문제는 다운되지 않습니다.\n(일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
+                        </div>
                         <div className="contents-show filterContents" id="contents-show">
                         {workContentsList.length !== 0 ? 
                         <>
@@ -544,7 +881,24 @@ const MyContentsList = ({isMine, userNo})=>{
                     </div>
                 </div>
             </div>
-
+            <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
+                <div id="confirmBox" className='confirmBox'>
+                    <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{hwpDownPopUpClose();}}>X</span></div>
+                    <div id="confirmMsg" className="confirmMsg alignCenter"></div>
+                    <div className='alignCenter'>
+                        <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{hwpDownPopUpClose();}}>아니오</span>
+                        <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={(event)=>{convertHtmlToTex(event);}}>네</span>
+                    </div>
+                </div>
+            </div>
+            <div id="resDetailedTimeDesc" className='blindBox hide'>
+                <div id="hourGlassBox" className='resDetailedTimeDesc'>
+                    <div>
+                        <img className="hourglass" src={hourglass} alt=""/>
+                    </div>
+                    <div id="hourGlassDesc"></div>
+                </div>
+            </div>
             </>
 
   );
