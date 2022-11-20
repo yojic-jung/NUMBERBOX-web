@@ -73,6 +73,10 @@
     margin:70px auto;
 }
 
+.floatRight{
+    float: right;
+}
+
 .uploadBtn{
     cursor: pointer;
     color:white;

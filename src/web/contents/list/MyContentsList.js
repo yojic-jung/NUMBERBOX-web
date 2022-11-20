@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import "css/common/nbScreen.css";
-import {nb_dataFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollEnd, nb_modalScrollStrt, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
+import {nb_dataFetch, nb_formDataFileFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollEnd, nb_modalScrollStrt, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
     , nb_detectScrollPosition, nb_moveToScroll, nb_confirmBox, nb_dateFormat} from 'js/common/common_nb.js';
 import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import {cvt_textNodeConvert, cvt_initWidthHeight, cvt_initOrgWidthHeight, cvt_convertHtmlToTex, cvt_makeJsonArrForHwp, cvt_combineFormul} from 'js/convertGrammer/nbToTexConvert_cvt.js';
@@ -359,36 +359,18 @@ const MyContentsList = ({isMine, userNo})=>{
        
             hwpDownPopUpClose();
 
-            let formData = new FormData();
-            formData.append("id", JSON.stringify(hwpJsonArrForPython))
+            let form = new FormData();
+            form.append("jsonString", JSON.stringify(hwpJsonArrForPython));
             document.getElementById("resDetailedTimeDesc").classList.remove("hide");
             document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...";
-            await fetch("http://43.200.243.161:5000/makeHwp", {	// fetch를 통해 Ajax통신을 한다.
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                headers: {
-                },
-                body: formData
-                }).then(async (response) => {
-                    return  response.blob();
-                })
-                .then(async (blob) => {
-                    let nowDate = await nb_dateFormat("_");
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = "[N명의수학]나의제작문제_"+nowDate+".hwp";
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout((_) => {
-                        window.URL.revokeObjectURL(url);
-                    }, 60000);
-                    a.remove();
-                    document.getElementById("resDetailedTimeDesc").classList.add("hide");
-                })
+            let nowDate = await nb_dateFormat("_");
+            let fileName = "[N명의수학]나의제작문제_"+nowDate+".hwp";
+            await nb_formDataFileFetch("/takeHwpFile", form, fileName);
+            document.getElementById("resDetailedTimeDesc").classList.add("hide");
             
         }
 
-            const convertHtmlToTexAll = async () => {
+        const convertHtmlToTexAll = async () => {
                 let workListTable = document.getElementById("contents-show").querySelectorAll(".contentsDiv");
                 let tmpNewTex = new Array();
                 for(let idx=0; idx<workListTable.length;idx++){
@@ -515,33 +497,15 @@ const MyContentsList = ({isMine, userNo})=>{
                     tmpNewTex.push(...hwpJsonArrForPython);
             }
 
-            let formData = new FormData();
-            formData.append("id", JSON.stringify(tmpNewTex))
+            let form = new FormData();
+            form.append("jsonString", JSON.stringify(tmpNewTex));
             document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n문제 수가 많을수록 시간이 더 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
-            await fetch("http://43.200.243.161:5000/makeHwp", {	// fetch를 통해 Ajax통신을 한다.
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                headers: {
-                },
-                body: formData
-                }).then(async (response) => {
-                    return  response.blob();
-                })
-                .then(async (blob) => {
-                    let nowDate = await nb_dateFormat("_");
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = "[N명의수학]나의제작문제_"+nowDate+".hwp";
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout((_) => {
-                        window.URL.revokeObjectURL(url);
-                    }, 60000);
-                    a.remove();
-                    document.getElementById("resDetailedTimeDesc").classList.add("hide");
-                })
-            
+            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...";
+            let nowDate = await nb_dateFormat("_");
+            let fileName = "[N명의수학]나의제작문제_"+nowDate+".hwp";
+            await nb_formDataFileFetch("/takeHwpFile", form, fileName);
+            document.getElementById("resDetailedTimeDesc").classList.add("hide");
+                       
         }
 
         const showOrgContents = async function(orgContentsNo){

@@ -121,6 +121,36 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     return returnVal;
   }
 
+  
+export const nb_formDataFileFetch = async (url, formData, fileName) => {
+  url = process.env.REACT_APP_DB_HOST+url;
+    await fetch(url, {	// fetch를 통해 Ajax통신을 한다.
+      method: 'post',	// 방식은 post
+      credentials: 'include',
+      headers: {
+        'access-token':window.localStorage.getItem("access-token")
+      },
+      body: formData	// body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
+    })
+    .then((res) => {
+      return res.blob();
+    }).then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout((_) => {
+            window.URL.revokeObjectURL(url);
+        }, 60000);
+        a.remove();
+
+      })
+      .catch((err) => {
+          console.error('err: ', err);
+      });
+  }
 
  export const nb_dataFileFetch = async (url, fileName) => {
   url = process.env.REACT_APP_DB_HOST+url;
