@@ -500,7 +500,7 @@ const MyContentsList = ({isMine, userNo})=>{
             let form = new FormData();
             form.append("jsonString", JSON.stringify(tmpNewTex));
             document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...";
+            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n제작문제가 많을수록 시간이 더 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
             let nowDate = await nb_dateFormat("_");
             let fileName = "[N명의수학]나의제작문제_"+nowDate+".hwp";
             await nb_formDataFileFetch("/takeHwpFile", form, fileName);
