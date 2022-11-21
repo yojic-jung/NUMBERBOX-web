@@ -10,6 +10,8 @@ import main2 from 'img/mainContentsMake.PNG';
 import main3 from 'img/mainResourceShare.PNG';
 import mainSubConMake from 'img/mainSubConMake.PNG';
 import mainSubConMake2 from 'img/mainSubConMake2.PNG';
+import hwpConverImg1 from 'img/hwpConverImg1.png';
+import hwpConverImg2 from 'img/hwpConverImg2.PNG';
 import mainSubDocsMake from 'img/mainSubDocsMake.PNG';
 import mainResourceMake from 'img/mainResourceMake.PNG';
 
@@ -140,21 +142,32 @@ return (
                             사용자가 새로운 변형 문제로 만들 수 있습니다.<br/>
                     </div>
                 </div>
-
-
             </div>
         </div>
-        <div className='mainSubDiv3'>
-            <div>
-                <div className='mainSubTitle'>도형 및 그래프 공유(그래프 제작 툴)</div>
-                <div className='mainSubDesc'>
-                수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.<br/>
-                또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
-                </div>
+
+        <div className='mainSubRootDiv3'>
+            <div className='mainSubDiv2Title'>한글파일(hwp)로 나의 제작 문제 다운받기</div>
+            <div className='mainSubDesc1'>
+                사용자가 제작한 문제를 한글파일(hwp)로 변환하여 다운 받을 수 있습니다.
             </div>
-            <div className='relative alignRight'>
-                <div className='mainSubBox first'><img className='mainImgUI' src={main3} alt=""/></div>
-                <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
+            <div className='mainSubBox first hwp'>
+                <img className='mainImgUI hwp1' src={hwpConverImg1} alt=""/>
+                <img className='mainImgUI hwp2' src={hwpConverImg2} alt=""/>
+            </div>
+        </div>
+        <div className='mainSubRootDiv4'>
+            <div className='mainSubDiv3'>
+                <div>
+                    <div className='mainSubTitle'>도형 및 그래프 공유(그래프 제작 툴)</div>
+                    <div className='mainSubDesc'>
+                    수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.<br/>
+                    또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
+                    </div>
+                </div>
+                <div className='relative alignRight'>
+                    <div className='mainSubBox first'><img className='mainImgUI' src={main3} alt=""/></div>
+                    <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
+                </div>
             </div>
         </div>
         </BrowserView>
@@ -211,8 +224,13 @@ return (
                              사용자가 새로운 변형 문제로 만들 수 있습니다.<br/>
                         </div>
                     </div>
-
-
+                    <div>
+                        <div className='mainSubDescTitle third mobile'>한글파일(hwp)로 다운</div>
+                        <div className='mainSubDescContents mobile'>
+                                내가 제작한 수학문제들을 한글파일(hwP)로<br/>
+                                변환하여 다운 받을 수 있습니다.<br/>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className='mainSubDiv3 mobile'>
@@ -235,7 +253,7 @@ return (
                 <div className='mainSubRootRadiusInnerWrap'>
                 <div className='mainSubRootRadiusDiv first'>
                     <div className='mainSubRootRadiusTitle'>수식 편집기</div>
-                    <div>편리한 수학문제 제작툴로 문제를 빠르게 만들 수 있어요!</div>
+                    <div>편리한 제작툴로 문제를 빠르게 만들 수 있고 한글파일(hwp)로 다운 받을 수 있어요!</div>
                 </div>
 
                 <div className='mainSubRootRadiusDiv second'>
