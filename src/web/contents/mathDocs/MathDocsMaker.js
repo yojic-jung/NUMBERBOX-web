@@ -1066,6 +1066,7 @@ const MathDocsMaker = ()=>{
         setMathDocsOwner(document.getElementById("mathDocsOwner").value);
         setRerenderVal(rerenderVal+1);
         setShowMathPaper(true);
+        registerMathDocsUsage();
     }
 
     const saveMathDocsPaper = async () =>{
@@ -1139,6 +1140,30 @@ const MathDocsMaker = ()=>{
         
     }
 
+
+    const registerMathDocsUsage= async () => {
+        let formData = new FormData();
+
+        let contentsNoList;
+        for(let i=0; i< mathContentsList.length; i++){
+            if(i===0){
+                contentsNoList = mathContentsList[i].contentsNo;
+            }else{
+                contentsNoList += ","+mathContentsList[i].contentsNo;
+            }
+        }
+
+        if(isInnerPage){
+            formData.append("docsNo", Number(mathDocsNo));
+        }
+
+        formData.append("docsGrade", document.getElementById("docsGrade").value);
+        formData.append("docsTitle", document.getElementById("docsTitle").value);
+        formData.append("docsSubTitle", document.getElementById("docsSubTitle").value);
+        formData.append("docsOwner", document.getElementById("mathDocsOwner").value);
+        formData.append("contentsNoList", contentsNoList);
+        nb_formDataFetch("/mathDocs/registerMathDocsUsage", formData, true);
+    }
    
 
     
