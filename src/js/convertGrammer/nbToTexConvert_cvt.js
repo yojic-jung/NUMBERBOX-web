@@ -227,7 +227,7 @@ export const cvt_convertHtmlToTex = (contentsDiv) => {
         nbBoxes = contentsDiv.querySelectorAll(".nbBox:not(:has(.nbBox))");
     }
 
-    //div태그 없애기(왼쪽, 가운데, 오른쪽 정렬 구현 안함) alignCenter, alignRight, alignLeft
+    //div태그 없애기
     let allDivDom = contentsDiv.querySelectorAll("div")
     while(allDivDom.length > 0){
         //최하위 div 안 텍스트 존재하지만 마지막 태그가 br태그 아니면 뒤에 br 추가 

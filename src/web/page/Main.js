@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { Helmet } from 'react-helmet-async';
-import {nb_getParameterByName, nb_fadeInOutA} from 'js/common/common_nb.js';
+import {nb_getParameterByName, nb_fadeInOutA, nb_dataFetch} from 'js/common/common_nb.js';
 import "css/main/main.css";
 import "css/common/common.css";
 import nPeople from 'img/nPeople.png';
@@ -20,7 +20,7 @@ const Main = ()=>{
     useEffect(function(){
         let param = nb_getParameterByName("succeedSignUp");
         if(param !== ""){
-            nb_fadeInOutA("감사합니다. 회원가입이 정상적으로 완료 되었습니다.", 2000);
+            document.getElementById("signUpSuccedRootBox").classList.remove("hide");
             window.history.pushState("", "N명의 수학", '/');
         }
 
@@ -75,6 +75,11 @@ const Main = ()=>{
           window.confettiful = new Confettiful(document.querySelector('.js-container'));
     })
 
+    const selectProfile = async (profileType)=>{
+        await nb_dataFetch("/registerMemberProfile?profileType="+profileType, true);
+        document.getElementById("signUpSuccedRootBox").classList.add("hide");
+        nb_fadeInOutA("감사합니다. N명의수학 서비스를 누려보세요.", 2000);
+    }
 return (
     <>
     <Helmet>
@@ -168,6 +173,31 @@ return (
                     <div className='mainSubBox first'><img className='mainImgUI' src={main3} alt=""/></div>
                     <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
                 </div>
+            </div>
+        </div>
+        <div id="signUpSuccedRootBox" className='blindBox hide'>
+            <div className='signUpSuccedBox'>
+                <div className='signUpSuccedTitle'>회원가입이 정상적으로 완료되었습니다.</div>
+                <div className='signUpSuccedTitle'>회원님의 프로필을 선택해주세요.</div>
+                <table className='signUpSuccedTb'>
+                    <tbody>
+                        <tr>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(1)}}>원장회원으로 시작하기</div></td>
+                        </tr>
+                        <tr>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(2)}}>강사회원으로 시작하기</div></td>
+                        </tr>
+                        <tr>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(3)}}>교사회원으로 시작하기</div></td>
+                        </tr>
+                        <tr>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(4)}}>학부모/학생회원으로 시작하기</div></td>
+                        </tr>
+                        <tr>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(5)}}>기타 회원으로 시작하기</div></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         </BrowserView>

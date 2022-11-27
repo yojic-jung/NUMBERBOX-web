@@ -270,8 +270,7 @@ const SignUp = ()=>{
         formData.append("birth", birth);
 		let returnObj = await nb_formDataFetch("/signup",formData, true);
         if(returnObj.isSuccess === "success"){
-            alert("회원가입이 정상적으로 완료되었습니다.");
-            window.location.href = "/";
+            window.location.href = "/?succeedSignUp=1";
         }else if(returnObj.isSuccess === "existsEmail"){
             alert("이미 존재하는 이메일입니다.");
         }else if(returnObj.isSuccess === "existsPhone"){

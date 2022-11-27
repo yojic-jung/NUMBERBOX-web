@@ -7,7 +7,7 @@ import licensePublic from 'img/license-public.png'
 import licensePrivate from 'img/license-private.png'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, reg_removeStyleAttribute, reg_removeResizeFrame} from 'js/contents/register/contents_reg';
-
+import { cvt_convertHtmlToTex} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg})=>{
 	let urlPath = useLocation().pathname;
     useEffect(() => {
@@ -254,8 +254,46 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		if(returnObj.error!=undefined){
 			alert("["+returnObj.status+" "+returnObj.error+"]\n메시지 : "+returnObj.message);
 		}
-		
 		if(returnObj["saveSuccess"]){
+			//컨텐츠 문법 등록[strt]
+			let contentGrammer = document.createElement("div")
+			let contentsTitle = ["contents", "firNo", "secNo", "thrNo", "fourNo", "fifNo", "solution", "answer"]
+			for(let i=0; i<contentsTitle.length; i++){
+				let tmpData = formData.get(contentsTitle[i])
+				let tmpDocument = document.createElement("div");
+				tmpDocument.innerHTML = tmpData;
+				contentGrammer.append(tmpDocument);
+			}
+			let innerTbTd = contentGrammer.querySelectorAll(".innerTbTd");
+			for(let i=0;i<innerTbTd.length; i++){
+				innerTbTd[i].append(document.createTextNode("\n"));
+			}
+			let contentsDiv = await cvt_convertHtmlToTex(contentGrammer);
+
+			let breakPara = contentsDiv.querySelectorAll(".breakParaSpan");
+			while(breakPara.length !== 0){
+				breakPara[0].outerHTML = "\n"
+				breakPara = contentsDiv.querySelectorAll(".breakParaSpan");
+			}
+
+			let imgDom = contentsDiv.querySelectorAll("img");
+			while(imgDom.length !== 0){
+				imgDom[0].remove();
+				imgDom = contentsDiv.querySelectorAll("img");
+			}
+
+			let allDom = contentsDiv.querySelectorAll("*");
+			while(allDom.length !== 0){
+				allDom[0].outerHTML = allDom[0].innerText;
+				allDom = contentsDiv.querySelectorAll("*");
+			}
+			let newFormData = new FormData();
+			newFormData.append("contentsNo", returnObj["contentsNo"]);
+			newFormData.append("contentsGram", contentsDiv.innerText);
+			nb_formDataFetch("/mathInfo/registerContentsGrammer",newFormData, false);
+			//컨텐츠 문법 등록[end]
+			
+			
 			//유형, 난이도, 유사 문제, 유사 문제 페이지 초기화
 			customQuesType.innerText="유형정보"
 			quesType.selectedIndex=0;
