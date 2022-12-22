@@ -67,7 +67,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		//document.getElementById('answerFormulaEditor').removeEventListener('paste', pastePreventFile);
 
 		window.shortCutKeyList = null;
-
+		window.shortCutKeyHigh1 = null;
+		window.shortCutKeyEtc = null;
 		//undo 초기화
 		reg_undoRedoInitialize();
 	}
@@ -102,7 +103,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			let file = event.clipboardData.items[i].getAsFile();
 			if(file !== null){
 				let fileName = file.name.split(".")
-				let fileExtension = fileName[1].toUpperCase()
+				let fileExtension = fileName[fileName.length-1].toUpperCase()
+				alert(fileExtension)
 				if(fileExtension === "PNG" || fileExtension === "JPG" || fileExtension === "JPEG" || fileExtension === "GIF" ||
 					fileExtension === "BMP"){
 					alert("정답 입력창에는 이미지 첨부가 불가합니다.");

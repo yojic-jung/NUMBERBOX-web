@@ -605,9 +605,6 @@ const MyContentsList = ({isMine, userNo})=>{
 
         }
 
-
-        
-
         const workContentsList = contentsList.map( (contentsMap, idx) => {
                 let isMultiHide= "hide"
                 if(contentsMap.firNo!==""){
@@ -681,7 +678,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                     </>
                                                     }
                                                     {isMine && !isImgRegContents && contentsMap.contentsClassify ===1 && 
-                                                        <span className='hwpDownImgWrap' onClick={(event)=>{nb_confirmBox("해당 문제를 한글파일로 다운받으시겠습니까?\n(일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = event.target.closest(".contentsDiv").dataset.contentsNo}}>
+                                                        <span className='hwpDownImgWrap' onClick={(event)=>{nb_confirmBox("해당 문제를 한글파일로 다운받으시겠습니까?\n(업로드 및 다운로드 일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = event.target.closest(".contentsDiv").dataset.contentsNo}}>
                                                             <img className="hwpDownImg" src={hwpDownImg} alt=""/>
                                                             <div className="hwpDownDesc">한글 파일로 다운 받기</div>
                                                         </span>
@@ -810,7 +807,7 @@ const MyContentsList = ({isMine, userNo})=>{
                 <div>
                     <div className='workList myContentsList'>
                         <div className='contentsDiv'>
-                            <span className='hwpAllDownBtn' onClick={(event)=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?\n사용자의 제작문제가 아닌 변형문제는 다운되지 않습니다.\n(일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
+                            <span className='hwpAllDownBtn' onClick={(event)=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?\n사용자의 제작문제가 아닌 변형문제는 다운되지 않습니다.\n(업로드 및 다운로드 일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
                         </div>
                         <div className="contents-show filterContents" id="contents-show">
                         {workContentsList.length !== 0 ? 

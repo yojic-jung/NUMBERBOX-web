@@ -141,6 +141,13 @@
     height:100%;
 }
 
+.selectNone{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none
+}
+
 .boxHighLight:focus{
     border:1px solid #B2CCFF;
     box-shadow:0 0 2px 2px #B2CCFF;
@@ -495,6 +502,7 @@
 .promptMsg, .confirmMsg{
     padding: 25px 20px 25px 20px;
     line-height: 160%;
+    min-width: 250px;
 }
 
 .promptInputDiv{

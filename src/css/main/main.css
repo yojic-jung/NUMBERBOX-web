@@ -937,7 +937,6 @@ body {
     top:50%;
     left:50%;
     transform: translate(-50%, -50%);
-    width: 350px;
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
@@ -948,7 +947,7 @@ body {
 .signUpSuccedTb{
     margin:auto;
     text-align: center;
-    border-spacing: 15px;
+    border-spacing: 10px;
 }
 
 .signUpSuccedTitle{
@@ -961,13 +960,16 @@ body {
 .signUpSuccedBtn{
     margin:2px 0;
     display: inline-block;
-    padding: 10px;
+    padding: 5px;
     color:white;
     background-color: rgb(155, 170, 217);
-    width: 250px;
+    width: 60px;
+    height: 50px;
+    line-height: 50px;
     border-radius: 10px;
     font-family: 'jejuGothic';
     cursor: pointer;
+    font-size: 18px;
 }
 
 .signUpSuccedBtn:hover{

@@ -23,6 +23,8 @@ import TopMenuBar from 'web/common/TopMenuBar';
 import BottomMenuBar from 'web/common/BottomMenuBar';
 import AdminSvcCenter from 'web/admin/AdminSvcCenter';
 import MathTypeCategory from 'web/admin/MathTypeCategory';
+import HwpToHtml from 'web/fileConvert/HwpToHtml';
+
 
 const App = ()=>{
   return (
@@ -42,6 +44,7 @@ const App = ()=>{
               <Route exact path="/emailPassFind" element={nb_isLogin()  ? <Navigate to="/" /> : <EmailPassFind />} />
               <Route exact path="/loginCallBackNaver" element={<NaverLoginSuccess />} />
               <Route exact path="/signup" element={<SignUp />} />
+              <Route exact path="/fileConvert" element={<HwpToHtml />} />
               <Route element={<TopMenuBar/>}>
                 <Route exact path="/resourceTools" element={<GraphMake />} />
                 <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />

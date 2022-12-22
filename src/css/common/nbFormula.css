@@ -33,7 +33,7 @@
     src: url('font/OTJeongsogeonhaeLA.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-    unicode-range:  U+3260-3266;
+    unicode-range:  U+3260-3266, U+00B7;
 }
 
 
@@ -1020,7 +1020,11 @@
 .nbTripleIntSup .nbRootBase::before,
 .nbLogSubBase .nbRootBase::before,
 .nbLimSubBase .nbRootBase::before,
-.nbExpBox .nbRootBase::before{
+.nbExpBox .nbRootBase::before,
+.nbLeftSub .nbRootBase::before,
+.nbRightSub .nbRootBase::before,
+.nbSubTmp .nbRootBase::before,
+.nbSigmaSumSub .nbRootBase::before{
     left:-0.905em;
 }
 
@@ -1312,13 +1316,17 @@
 }
 
 /** 큰 괄호(분수용) new_version **/
+.nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox{
+    border-spacing: 0;
+    position: relative;
+}
 
-.nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox, .nbIntBrckBox {
+.nb-Abs-BrckBox.nbBrckInFrac, .nb-R-BrckBox.nbBrckInFrac, .nb-C-BrckBox.nbBrckInFrac, .nb-S-BrckBox.nbBrckInFrac, .nbIntBrckBox {
     border-spacing: 0;
     position: relative;
     padding: 0 0.45em;
 }
-.nb-Abs-BrckBox{
+.nb-Abs-BrckBox.nbBrckInFrac{
     padding: 0 0.25em;
 }
 .nbIntBrckBox{
@@ -1326,10 +1334,10 @@
     margin:3px 0;
 }
 
-.nb-Abs-Brck-Tbody:before, .nb-Abs-Brck-Tbody:after,
-.nb-R-Brck-Tbody:before, .nb-R-Brck-Tbody:after,
-.nb-C-Brck-Tbody:before, .nb-C-Brck-Tbody:after,
-.nb-S-Brck-Tbody:before, .nb-S-Brck-Tbody:after,
+.nbBrckInFrac .nb-Abs-Brck-Tbody:before, .nbBrckInFrac .nb-Abs-Brck-Tbody:after,
+.nbBrckInFrac .nb-R-Brck-Tbody:before, .nbBrckInFrac .nb-R-Brck-Tbody:after,
+.nbBrckInFrac .nb-C-Brck-Tbody:before, .nbBrckInFrac .nb-C-Brck-Tbody:after,
+.nbBrckInFrac .nb-S-Brck-Tbody:before, .nbBrckInFrac .nb-S-Brck-Tbody:after,
 .nbIntBrckTbody:before, .nbIntBrckTbody:after {
     position: absolute;
     top: 50%;
@@ -1351,12 +1359,22 @@
 .nb-Abs-Brck-Tbody:before {
     content: "|";
     left: 0em;
+}
+
+.nb-Abs-Brck-Tbody:after {
+    content: "|";
+    right: 0em;
+}
+
+.nbBrckInFrac .nb-Abs-Brck-Tbody:before {
+    content: "|";
+    left: 0em;
     font-size: 30px;
     font-family: 'caseBrck';
     font-weight: 100;
 }
 
-.nb-Abs-Brck-Tbody:after {
+.nbBrckInFrac .nb-Abs-Brck-Tbody:after {
     content: "|";
     font-size: 30px;
     font-family: 'caseBrck';
@@ -1403,6 +1421,14 @@
 .nbIntBrckTbody::after{
     content: "]";
     right: -0.5em;
+}
+
+.nb-Abs-BrckBase, .nb-R-BrckBase, .nb-C-BrckBase, .nb-S-BrckBase{
+    line-height: 110%;
+}
+
+.nbBrckInFrac .nb-Abs-BrckBase, .nbBrckInFrac .nb-R-BrckBase, .nbBrckInFrac .nb-C-BrckBase, .nbBrckInFrac .nb-S-BrckBase{
+    line-height: 160%;
 }
 
 .nb-Abs-BrckBase, .nb-R-BrckBase, .nb-C-BrckBase, .nb-S-BrckBase, .nbIntBrckBase {

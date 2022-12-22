@@ -182,19 +182,12 @@ return (
                 <table className='signUpSuccedTb'>
                     <tbody>
                         <tr>
-                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(1)}}>원장회원으로 시작하기</div></td>
-                        </tr>
-                        <tr>
-                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(2)}}>강사회원으로 시작하기</div></td>
-                        </tr>
-                        <tr>
-                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(3)}}>교사회원으로 시작하기</div></td>
-                        </tr>
-                        <tr>
-                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(4)}}>학부모/학생회원으로 시작하기</div></td>
-                        </tr>
-                        <tr>
-                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(5)}}>기타 회원으로 시작하기</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(1)}}>원장</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(2)}}>강사</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(3)}}>교사</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(4)}}>학부모</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(5)}}>학생</div></td>
+                            <td><div className='signUpSuccedBtn' onClick={()=>{selectProfile(6)}}>기타</div></td>
                         </tr>
                     </tbody>
                 </table>
@@ -257,7 +250,7 @@ return (
                     <div>
                         <div className='mainSubDescTitle third mobile'>한글파일(hwp)로 다운</div>
                         <div className='mainSubDescContents mobile'>
-                                내가 제작한 수학문제들을 한글파일(hwP)로<br/>
+                                내가 제작한 수학문제들을 한글파일(hwp)로<br/>
                                 변환하여 다운 받을 수 있습니다.<br/>
                         </div>
                     </div>

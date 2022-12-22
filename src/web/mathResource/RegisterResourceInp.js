@@ -94,7 +94,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
             document.getElementById("representImg").src=image;
         }else{
             let fileNames = event.target.files[0].name.split(".");
-            let filetype = fileNames[1].toUpperCase();
+            let filetype = fileNames[fileNames.length-1].toUpperCase();
             if(!( filetype === "PNG" || filetype=='JPG' || filetype=='GIF' || filetype=='PNG' || filetype=='JPEG' || filetype=='BMP')){
                 alert("이미지 파일만 등록 가능합니다.(PNG, JPG, GIF, PNG, JPEG, BMP 확장자만 가능)");
                 document.getElementById("imgFile").value = "";
@@ -126,7 +126,7 @@ const RegisterResourceInp = ({isUpdtMode, parentMethod}) => {
             document.getElementById("pptFileCustomDesc").innerText="choose File..."
         }else{
             let fileNames = event.target.files[0].name.split(".");
-            let filetype = fileNames[1].toUpperCase();
+            let filetype = fileNames[fileNames.length-1].toUpperCase();
             if(!(filetype === "PPT" || filetype==='PPTX')){
                 alert("ppt 파일만 등록 가능합니다.(PPT, PPTX 확장자만 가능)");
                 document.getElementById("pptFile").value = "";

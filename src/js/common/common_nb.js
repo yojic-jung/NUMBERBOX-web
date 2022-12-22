@@ -66,6 +66,9 @@ export const nb_dataFetch = async (url, transitEffect) => {
     if(data !== ""){
       returnVal = JSON.parse(data);
       if(returnVal.existMsg){
+        if(document.getElementById("resDetailedTimeDesc") !== null){
+          document.getElementById("resDetailedTimeDesc").classList.add("hide");
+        }
         nb_fadeInOutC(returnVal.serverMsg, 3000);
       }
     }
@@ -113,7 +116,10 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
       if(data !== ""){
         returnVal = JSON.parse(data)
         if(returnVal.existMsg){
-          alert(returnVal.serverMsg);
+          if(document.getElementById("resDetailedTimeDesc") !== null){
+            document.getElementById("resDetailedTimeDesc").classList.add("hide");
+          }
+          nb_fadeInOutC(returnVal.serverMsg, 3000);
         }
       }
       
@@ -405,29 +411,51 @@ export const nb_extensionCheck = async (event, outputTarget, updtMode) => {
 * 정의 : 이미지 파일 확장자 체크 함수
 * 설명 : 아웃풋 이미지 변경없이 확장자만 체크
 */
-export const nb_extensionCheck2 = async (event) => {
+export const nb_extensionCheck2 = async (event, exetension) => {
   let targetId = event.target.id;
   let obj = document.getElementById(targetId);
   let file =	document.getElementById(targetId).files[0];
   if(file== undefined){     //이미지 등록 후 다시 버튼 클릭하여 아무것도 안하고 취소버튼 누른 경우 버그 해결
         return false;
   }
-  // file[0].size 는 파일 용량 정보입니다.
-  if(file.size > 1024*1024*2){
-    // 용량 초과시 경고후 해당 파일의 용량도 보여줌
-      alert("첨부파일 사이즈는 2MB 이내로 등록 가능합니다. ");
+  if(exetension === "hwp"){
+    // file[0].size 는 파일 용량 정보입니다.
+    if(file.size > 1024*1024*10){
+      // 용량 초과시 경고후 해당 파일의 용량도 보여줌
+        alert("첨부파일 사이즈는 10MB 이내로 등록 가능합니다. ");
+        document.getElementById(targetId).value= "";
+        return false;
+    }
+  }else{
+    // file[0].size 는 파일 용량 정보입니다.
+    if(file.size > 1024*1024*2){
+      // 용량 초과시 경고후 해당 파일의 용량도 보여줌
+        alert("첨부파일 사이즈는 2MB 이내로 등록 가능합니다. ");
+        document.getElementById(targetId).value= "";
+        return false;
+    }
+  }
+  
+  let fileNames = event.target.files[0].name.split(".");
+  let filetype = fileNames[fileNames.length-1].toLowerCase();
+  if(exetension === "hwp"){
+    // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
+    if(filetype==='hwp' || filetype==='hml' || filetype==='hwpx' || filetype === 'hwt' || filetype === 'hwtx'){
+    }else{
+      alert('한글 파일만 등록해주세요.(hwp/hml/hwpx/hwt/hwtx)');
       document.getElementById(targetId).value= "";
       return false;
-  }
-  let fileNames = event.target.files[0].name.split(".");
-  let filetype = fileNames[1].toLowerCase();
-  // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
-  if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
+    }
   }else{
-    alert('이미지 파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
-    document.getElementById(targetId).value= "";
-    return false;
+    // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
+    if(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp'){
+    }else{
+      alert('이미지 파일만 등록해주세요.(img/gif/png/jpeg/bmp)');
+      document.getElementById(targetId).value= "";
+      return false;
+    }
   }
+  
 
   if(fileNames[0].length > 40){
     alert("파일이름은 40글자 미만으로 설정해주시기 바랍니다.");

@@ -69,8 +69,13 @@ const EditTableInnerUi = ({parentMethod})=>{
         }
 
         let targetDomId ;
-        if(!document.getElementById('contentsFormulaEditor').classList.contains('hide')) targetDomId="contentsFormulaEditor";
-        else targetDomId="solutionFormulaEditor";
+        if(document.getElementById('myHwpContents') !== null && document.getElementById('myHwpContents')!==undefined){
+            targetDomId = "myHwpContents";
+        }else{
+            if(!document.getElementById('contentsFormulaEditor').classList.contains('hide')) targetDomId="contentsFormulaEditor";
+            else targetDomId="solutionFormulaEditor";
+        }
+        
 
         //포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
         if(document.getSelection().focusNode==null){

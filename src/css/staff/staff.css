@@ -103,6 +103,14 @@
     box-shadow:0 0 2px 2px #B2CCFF;
 }
 
+/*
+*   border 있으면 커서 위아래 이동시 오류남(myHwpContents에서만 원인 파악 불가)
+*/
+.myHwpContents:focus{
+    outline: none;
+    box-shadow:0 0 2px 2px #B2CCFF;
+}
+
 .answerFormulaEditor, #answer{
     width:240px;
     min-height: 1em;
@@ -362,6 +370,10 @@
     font-weight: 100;
 }
 
+.shortCutKey .nb-Abs-BrckBox, .shortCutKey .nb-R-BrckBox, .shortCutKey .nb-C-BrckBox, .shortCutKey .nb-S-BrckBox{
+    padding: 0 0.45em;
+}
+
 .shortCutKeyTop .shortCutKey, .shortCutKeyLeft .shortCutKey, .shortCutKeyBelow .shortCutKey, .shortCutKeyRight .shortCutKey{
     min-width: unset;
     width: 30px;
@@ -607,6 +619,8 @@ height: 1.6em;
 
 .shortCutKey .nb-Abs-Brck-Tbody:before, .shortCutKey .nb-Abs-Brck-Tbody::after{
     font-size: 20px;
+    font-family: 'caseBrck';
+    vertical-align: sub;
 }
 
 .shortCutKey .nb-R-Brck-Tbody:before, .shortCutKey .nb-R-Brck-Tbody:after,
@@ -1778,18 +1792,21 @@ height: 1.6em;
 
 
 .imgWidthHeightDiv{
-    font-size: 14px;
+    font-size: 16px;
     background-color: white;
-    border: 0.5px solid gray;
-    padding:2px 0;
-    text-indent: 5px;
+    border: 3px solid gray;
+    padding:20px 10px;
     text-align: left;
-    position: relative;
-    top: -8px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    line-height: 200%;
 }
 
 .imgWidthHeightDiv input{
-    width:50px;
+    width:80px;
 }
 
 .imgWidthHeightDiv input:disabled{
@@ -1831,6 +1848,17 @@ height: 1.6em;
 }
 .imgFloatLeft:hover{
     background: url('img/imgFloatLeftGray.png') center no-repeat;
+    background-size: 40px;
+}
+
+.imgAlignCenterLikeChar{
+    background:  url('img/imgAlignCenterLikeChar.png') center no-repeat;
+    background-size: 40px;
+    display: inline-block;
+    cursor: pointer;
+}
+.imgAlignCenterLikeChar:hover{
+    background: url('img/imgAlignCenterLikeCharGray.png') center no-repeat;
     background-size: 40px;
 }
 

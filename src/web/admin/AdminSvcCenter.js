@@ -10,6 +10,7 @@ const AdminSvcCenter = ()=>{
     const [resErrCnt, setResErrCnt] = useState(0);
     const [mathDocsErrCnt, setmMathDocsErrCnt] = useState(0);
     const [makeContentsErrCnt, setMakeContentsErrCnt] = useState(0);
+    const [fileConvertErrCnt, setFileConvertErrCnt] = useState(0);
 
     const [errList, setErrList] = useState(new Array());
 
@@ -23,6 +24,7 @@ const AdminSvcCenter = ()=>{
             setMakeContentsErrCnt(returnVal.makeContentsErrCnt);
             setConErrCnt(returnVal.conErrCnt);
             setResErrCnt(returnVal.resErrCnt);
+            setFileConvertErrCnt(returnVal.fileConvertErrCnt)
             setErrList(returnObj.errReportList);
         }
 
@@ -57,6 +59,7 @@ const AdminSvcCenter = ()=>{
             setMakeContentsErrCnt(returnVal.makeContentsErrCnt);
             setConErrCnt(returnVal.conErrCnt);
             setResErrCnt(returnVal.resErrCnt);
+            setFileConvertErrCnt(returnVal.fileConvertErrCnt)
             setErrList(returnObj.errReportList);
         }else{
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportSearchBySttsAndTypeByAdmin?reportStts="+reportStts+"&errType="+errType, true);
@@ -77,6 +80,8 @@ const AdminSvcCenter = ()=>{
             errType = "학습지 오류 신고"
         }else if(errReport.errType === 4){
             errType = "문제만들기 오류 신고"
+        }else if(errReport.errType === 5){
+            errType = "파일변환 오류 신고"
         }
 
         document.getElementById("reportId").value=errReport.reportId;
@@ -117,6 +122,12 @@ const AdminSvcCenter = ()=>{
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink").innerHTML = "학습지 열기"
                 document.getElementById("orgContentsLink").href = "/makeMathDocs?docsNo="+errReport.contentsNo;
+            }else if(errReport.errType === 5){
+                document.getElementById("detailedErrReportConNoAdmin").innerHTML = "파일 번호 : "+errReport.contentsNo;
+                document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink").classList.remove("hide");
+                document.getElementById("orgContentsLink").innerHTML = "파일 열기"
+                document.getElementById("orgContentsLink").href = "/fileConvert?convertNo="+errReport.contentsNo;
             }
             document.getElementById("detailedErrReportConNoAdmin").classList.remove("hide");
         }else{
@@ -188,7 +199,11 @@ const AdminSvcCenter = ()=>{
                 setmMathDocsErrCnt(newErrList.length);
             }else if(errType === 4){
                 setMakeContentsErrCnt(newErrList.length);
+            }else if(errType === 5){
+                setFileConvertErrCnt(newErrList.length)
             }
+
+
             document.getElementById("replyErrReportForm").reset();
             document.getElementById("detailedAdminQnaClose").click();
         }
@@ -204,6 +219,8 @@ const AdminSvcCenter = ()=>{
             errType = "학습지 오류"
         }else if(errMap.errType === 4){
             errType = "문제만들기 오류"
+        }else if(errMap.errType === 5){
+            errType = "파일변환 오류"
         }
 
         let reportStts = "접수"
@@ -234,6 +251,7 @@ return (
                     <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, 2)}}>컨텐츠 오류 신고 내역<span className='errReportCnt'>+{resErrCnt}</span></div></td>
                     <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, 3)}}>학습지 오류 신고 내역<span className='errReportCnt'>+{mathDocsErrCnt}</span></div></td>
                     <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, 4)}}>문제만들기 오류 내역<span className='errReportCnt'>+{makeContentsErrCnt}</span></div></td>
+                    <td><div className='adminErrReportTbDiv' onClick={(event)=>{showErrReport(event, 5)}}>파일변환 오류 내역<span className='errReportCnt'>+{fileConvertErrCnt}</span></div></td>
                 </tr>
             </tbody>
         </table>

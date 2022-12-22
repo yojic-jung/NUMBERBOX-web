@@ -50,7 +50,7 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         if( !(focusId === "contentsFormulaEditor" || focusId === "solutionFormulaEditor"
         || focusId === "firNoFormulaEditor" || focusId === "secNoFormulaEditor"
         || focusId === "thrNoFormulaEditor" || focusId === "fourNoFormulaEditor"
-        || focusId === "fifNoFormulaEditor" || focusId === "answerFormulaEditor") ){
+        || focusId === "fifNoFormulaEditor" || focusId === "answerFormulaEditor" || focusId === "myHwpContents") ){
             //셀렉트 상태에서 수식 탭 버튼 클릭하면 activeElement가 버튼으로 셋팅되어 anchorNode의 부모요소 파악
             if(!window.getSelection().isCollapsed && (window.getSelection().anchorNode.parentElement.closest(".contentEditClass") !== null)){
             }else{

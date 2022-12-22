@@ -488,6 +488,7 @@ export const reg_oldNbFormulToNewNbFormul = async (pageType) => {
 * 정의 : 수식 컨버트
 */
 export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) => {
+
 	//루트 안 분수
 	if(nbGrammer.indexOf("nbFracBox") > -1){
 		let nbRootBoxStrt = strtElement.closest(".nbRootBox");
@@ -639,6 +640,47 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbLogStrt.closest(".nbBox").classList.add("nbFracInLogSubBase");
 			}
 		}
+
+		//분수용 절댓값 괄호 안 분수
+		let nbAbsBrckBaseStrt = strtElement.closest(".nb-Abs-BrckBase");
+		let nbAbsBrckBaseEnd = endElement.closest(".nb-Abs-BrckBase");
+		if(nbAbsBrckBaseStrt !== null && nbAbsBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbAbsBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbAbsBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+			}
+		}
+
+		//분수용 소괄호 안 분수
+		let nbRoundBrckBaseStrt = strtElement.closest(".nb-R-BrckBase");
+		let nbRoundBrckBaseEnd = endElement.closest(".nb-R-BrckBase");
+		if(nbRoundBrckBaseStrt !== null && nbRoundBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbRoundBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbRoundBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+			}
+		}
+
+		//분수용 중괄호 안 분수 (nb-C-BrckBox)
+		let nbCBrckBaseStrt = strtElement.closest(".nb-C-BrckBase");
+		let nbCBrckBaseEnd = endElement.closest(".nb-C-BrckBase");
+		if(nbCBrckBaseStrt !== null && nbCBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbCBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbCBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+			}
+		}
+
+		//분수용 대괄호 안 분수 nb-S-BrckBox
+		let nbSBrckBaseStrt = strtElement.closest(".nb-S-BrckBase");
+		let nbSBrckBaseEnd = endElement.closest(".nb-S-BrckBase");
+		if(nbSBrckBaseStrt !== null && nbSBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbSBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
+				nbSBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+			}
+		}
+
 	}
 
 	//시그마 컴파일
@@ -670,6 +712,43 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+			}
+		}
+		
+		//분수용 절댓값 괄호 안 시그마 컴파일
+		let nbAbsBrckBaseStrt = strtElement.closest(".nb-Abs-BrckBase");
+		let nbAbsBrckBaseEnd = endElement.closest(".nb-Abs-BrckBase");
+		if(nbAbsBrckBaseStrt !== null && nbAbsBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
+				nbAbsBrckBaseEnd.closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 소괄호
+		let nbRBrckBaseStrt = strtElement.closest(".nb-R-BrckBase");
+		let nbRBrckBaseEnd = endElement.closest(".nb-R-BrckBase");
+		if(nbRBrckBaseStrt !== null && nbRBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
+				nbRBrckBaseEnd.closest(".nb-R-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 중괄호
+		let nbCBrckBaseStrt = strtElement.closest(".nb-C-BrckBase");
+		let nbCBrckBaseEnd = endElement.closest(".nb-C-BrckBase");
+		if(nbCBrckBaseStrt !== null && nbCBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 대괄호
+		let nbSBrckBaseStrt = strtElement.closest(".nb-S-BrckBase");
+		let nbSBrckBaseEnd = endElement.closest(".nb-S-BrckBase");
+		if(nbSBrckBaseStrt !== null && nbSBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbConvert");
 			}
 		}
 	}
@@ -739,7 +818,86 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
 			}
 		}
+
+
+		//분수용 절댓값 괄호 안 적분 컴파일
+		let nbAbsBrckBaseStrt = strtElement.closest(".nb-Abs-BrckBase");
+		let nbAbsBrckBaseEnd = endElement.closest(".nb-Abs-BrckBase");
+		if(nbAbsBrckBaseStrt !== null && nbAbsBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
+				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 소괄호
+		let nbRBrckBaseStrt = strtElement.closest(".nb-R-BrckBase");
+		let nbRBrckBaseEnd = endElement.closest(".nb-R-BrckBase");
+		if(nbRBrckBaseStrt !== null && nbRBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
+				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 중괄호
+		let nbCBrckBaseStrt = strtElement.closest(".nb-C-BrckBase");
+		let nbCBrckBaseEnd = endElement.closest(".nb-C-BrckBase");
+		if(nbCBrckBaseStrt !== null && nbCBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 대괄호
+		let nbSBrckBaseStrt = strtElement.closest(".nb-S-BrckBase");
+		let nbSBrckBaseEnd = endElement.closest(".nb-S-BrckBase");
+		if(nbSBrckBaseStrt !== null && nbSBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbConvert");
+			}
+		}
 	}
+
+	//분수 안에 조건박스
+	if(nbGrammer.indexOf("nbIntBrckBox") > -1){
+		//분수용 절댓값 괄호 안 적분 컴파일
+		let nbAbsBrckBaseStrt = strtElement.closest(".nb-Abs-BrckBase");
+		let nbAbsBrckBaseEnd = endElement.closest(".nb-Abs-BrckBase");
+		if(nbAbsBrckBaseStrt !== null && nbAbsBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
+				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 소괄호
+		let nbRBrckBaseStrt = strtElement.closest(".nb-R-BrckBase");
+		let nbRBrckBaseEnd = endElement.closest(".nb-R-BrckBase");
+		if(nbRBrckBaseStrt !== null && nbRBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
+				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 중괄호
+		let nbCBrckBaseStrt = strtElement.closest(".nb-C-BrckBase");
+		let nbCBrckBaseEnd = endElement.closest(".nb-C-BrckBase");
+		if(nbCBrckBaseStrt !== null && nbCBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
+				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbConvert");
+			}
+		}
+		//분수용 대괄호
+		let nbSBrckBaseStrt = strtElement.closest(".nb-S-BrckBase");
+		let nbSBrckBaseEnd = endElement.closest(".nb-S-BrckBase");
+		if(nbSBrckBaseStrt !== null && nbSBrckBaseEnd !== null){
+			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
+				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbConvert");
+			}
+		}
+	}
+
 
 	//분수 안에 조건박스
 	if(nbGrammer.indexOf("nbCondBox") > -1){
@@ -761,6 +919,217 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			}
 		}
 	}
+}
+
+/*
+*	정의 : 변환되지 않은 nbBox 변환 함수
+*/
+export const reg_convertNotTransferdNbBox = async (domId) => {
+	//분모, 분자, 분수용 괄호 안의 시그마
+	let nbSigmaSumBox = document.getElementById(domId).querySelectorAll(".nbSigmaSumBox")
+	for(let i=0; i<nbSigmaSumBox.length; i++){
+		if(nbSigmaSumBox[i].parentElement.closest(".nbDenom") !== null){
+			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbSigmaSumInDenom");
+			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert")
+		}else if(nbSigmaSumBox[i].parentElement.closest(".nbNumer") !== null ){
+			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbSigmaSumInNumer");
+			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		/*
+		//분수용 절댓값 괄호
+		if(nbSigmaSumBox[i].parentElement.closest(".nb-Abs-BrckBase") !== null ){
+			nbSigmaSumBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
+			nbSigmaSumBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 소괄호
+		if(nbSigmaSumBox[i].parentElement.closest(".nb-R-BrckBase") !== null ){
+			nbSigmaSumBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
+			nbSigmaSumBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 중괄호
+		if(nbSigmaSumBox[i].parentElement.closest(".nb-C-BrckBase") !== null ){
+			nbSigmaSumBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
+			nbSigmaSumBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 대괄호
+		if(nbSigmaSumBox[i].parentElement.closest(".nb-S-BrckBase") !== null ){
+			nbSigmaSumBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
+			nbSigmaSumBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbConvert");
+		}
+		*/
+	}
+
+	//분수용 괄호 안의 적분, 시그마, 괄호 적분
+	let nbIntgralBox = document.getElementById(domId).querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox, .nbSigmaSumBox, .nbIntBrckBox")
+	for(let i=0; i<nbIntgralBox.length; i++){
+		//분수용 절댓값 괄호
+		if(nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase") !== null ){
+			nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
+			nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 소괄호
+		if(nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase") !== null ){
+			nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
+			nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 중괄호
+		if(nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase") !== null ){
+			nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
+			nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbConvert");
+		}
+		//분수용 대괄호
+		if(nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase") !== null ){
+			nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
+			nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbConvert");
+		}
+	}
+
+
+	
+
+	//분모, 분자 안에 리밋
+	let nbLimBox = document.getElementById(domId).querySelectorAll(".nbLimBox")
+	for(let i=0; i<nbLimBox.length; i++){
+		if(nbLimBox[i].parentElement.closest(".nbDenom") !== null){
+			nbLimBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbLimInDenom");
+			nbLimBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}else if(nbLimBox[i].parentElement.closest(".nbNumer") !== null){
+			nbLimBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbLimInNumer");
+			nbLimBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
+
+	//분모, 분자 안에 조건박스
+	let nbCondBox = document.getElementById(domId).querySelectorAll(".nbCondBox")
+	for(let i=0; i<nbCondBox.length; i++){
+		if(nbCondBox[i].parentElement.closest(".nbDenom") !== null){
+			nbCondBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbCondBoxInFracDenomConvert");
+			nbCondBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}else if(nbCondBox[i].parentElement.closest(".nbNumer") !== null){
+			nbCondBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbCondBoxInFracNumerConvert");
+			nbCondBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
+
+	//분수 체크
+	let nbFracBox = document.getElementById(domId).querySelectorAll(".nbFracBox")
+	for(let i=0; i<nbFracBox.length; i++){
+		//분모 안 분수
+		if(nbFracBox[i].parentElement.closest(".nbDenom") !== null){
+			nbFracBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbFracInDenom");
+			nbFracBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		//분자 안 분수
+		if(nbFracBox[i].parentElement.closest(".nbNumer") !== null){
+			nbFracBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbFracInNumer");
+			nbFracBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		//루트 안 분수
+		if(nbFracBox[i].parentElement.closest(".nbRootBase") !== null){
+			nbFracBox[i].parentElement.closest(".nbRootBase").classList.add("nbFracInRoot");
+			nbFracBox[i].parentElement.closest(".nbRootBase").classList.add("nbConvert");
+			nbFracBox[i].parentElement.closest(".nbRootBase").closest(".nbBox").classList.add("nbFracInRoot");
+			nbFracBox[i].parentElement.closest(".nbRootBase").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		//리밋 서브 안의 분수
+		if(nbFracBox[i].parentElement.closest(".nbLimSubBase") !== null){
+			nbFracBox[i].parentElement.closest(".nbLimSubBase").closest(".nbBox").classList.add("nbFracInLimSubBase");
+			nbFracBox[i].parentElement.closest(".nbLimSubBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//괄호 적분 sup 안의 분수
+		if(nbFracBox[i].parentElement.closest(".nbIntBrckSupBase") !== null){
+			nbFracBox[i].parentElement.closest(".nbIntBrckSupBase").closest(".nbBox").classList.add("nbFracInIntBrckSup");
+			nbFracBox[i].parentElement.closest(".nbIntBrckSupBase").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		//괄호 적분 sub 안의 분수
+		if(nbFracBox[i].parentElement.closest(".nbIntBrckSubBase") !== null){
+			nbFracBox[i].parentElement.closest(".nbIntBrckSubBase").closest(".nbBox").classList.add("nbFracInIntBrckSub");
+			nbFracBox[i].parentElement.closest(".nbIntBrckSubBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//적분 sup 안의 분수
+		if(nbFracBox[i].parentElement.closest(".nbIntSup") !== null){
+			nbFracBox[i].parentElement.closest(".nbIntSup").closest(".nbBox").classList.add("nbFracInIntSup");
+			nbFracBox[i].parentElement.closest(".nbIntSup").closest(".nbBox").classList.add("nbConvert");
+		}
+		if(nbFracBox[i].parentElement.closest(".nbDoubleIntSup") !== null){
+			nbFracBox[i].parentElement.closest(".nbDoubleIntSup").closest(".nbBox").classList.add("nbFracInIntSup");
+			nbFracBox[i].parentElement.closest(".nbDoubleIntSup").closest(".nbBox").classList.add("nbConvert");
+		}
+		if(nbFracBox[i].parentElement.closest(".nbTripleIntSup") !== null){
+			nbFracBox[i].parentElement.closest(".nbTripleIntSup").closest(".nbBox").classList.add("nbFracInIntSup");
+			nbFracBox[i].parentElement.closest(".nbTripleIntSup").closest(".nbBox").classList.add("nbConvert");
+		}
+
+		//적분 sub 안의 분수
+		if(nbFracBox[i].parentElement.closest(".nbIntSub") !== null){
+			nbFracBox[i].parentElement.closest(".nbIntSub").closest(".nbBox").classList.add("nbFracInIntSub");
+			nbFracBox[i].parentElement.closest(".nbIntSub").closest(".nbBox").classList.add("nbConvert");
+		}
+		if(nbFracBox[i].parentElement.closest(".nbDoubleIntSub") !== null){
+			nbFracBox[i].parentElement.closest(".nbDoubleIntSub").closest(".nbBox").classList.add("nbFracInIntSub");
+			nbFracBox[i].parentElement.closest(".nbDoubleIntSub").closest(".nbBox").classList.add("nbConvert");
+		}
+		if(nbFracBox[i].parentElement.closest(".nbTripleIntSub") !== null){
+			nbFracBox[i].parentElement.closest(".nbTripleIntSub").closest(".nbBox").classList.add("nbFracInIntSub");
+			nbFracBox[i].parentElement.closest(".nbTripleIntSub").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//로그 서브베이스 안 분수
+		if(nbFracBox[i].parentElement.closest(".nbLogSubBase") !== null){
+			nbFracBox[i].parentElement.closest(".nbLogSubBase").closest(".nbBox").classList.add("nbFracInLogSubBase");
+			nbFracBox[i].parentElement.closest(".nbLogSubBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//분수용 절댓값 괄호 안 분수
+		if(nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase") !== null){
+			nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
+			nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//분수용 소괄호 안 분수
+		if(nbFracBox[i].parentElement.closest(".nb-R-BrckBase") !== null){
+			nbFracBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
+			nbFracBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//분수용 중괄호 안 분수
+		if(nbFracBox[i].parentElement.closest(".nb-C-BrckBase") !== null){
+			nbFracBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
+			nbFracBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nbBox").classList.add("nbConvert");
+		}
+		
+		//분수용 대괄호 안 분수
+		if(nbFracBox[i].parentElement.closest(".nb-S-BrckBase") !== null){
+			nbFracBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
+			nbFracBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
+
+	//분모 안에 루트, 순환소수, 악센트
+	let nbRootDotAccentBox = document.getElementById(domId).querySelectorAll(".nbRootBox , .nbOverDotBox, .nbAccentBox")
+	for(let i=0; i<nbRootDotAccentBox.length; i++){
+		if(nbRootDotAccentBox[i].parentElement.closest(".nbDenom") !== null){
+			nbRootDotAccentBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbFracLineConvert");
+			nbRootDotAccentBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
+
+	//분모 안에 직선, 선분
+	let nbArrowBox = document.getElementById(domId).querySelectorAll(".nbOverlineBox, .nbArrowBox")
+	for(let i=0; i<nbArrowBox.length; i++){
+		if(nbArrowBox[i].parentElement.closest(".nbDenom") !== null){
+			nbArrowBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbFracLineConvert2");
+			nbArrowBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
+	
 }
 
 /*
@@ -1335,7 +1704,6 @@ let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인
 //redo 변수
 let redoArr = [];
 export const reg_preventKeyEvent = async (event, isMyContents) => {
-	
 	if(!isMyContents){
 		if(!window.getSelection().isCollapsed){
 			if(!document.getSelection().isCollapsed && event.ctrlKey && (event.keyCode === 67 || event.keyCode === 88) && !event.altKey) {
@@ -2045,6 +2413,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 									break;
 								}
 							}
+							
 							//다음 라인의 첫번째 요소가 수식이면 앞에 img 태그 추가하여 수식이 윗줄로 올라오게끔 구현
 							if(firstChild !== null && firstChild.classList !== undefined && firstChild.classList.contains("nbBox")){
 								//다음 라인의 첫번째 요소에 img태그 추가 후 제자리로 복귀
@@ -3420,6 +3789,60 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
+		//분수용 절댓값 안 분수
+		let nbAbsBrckBox = [];
+		document.activeElement.querySelectorAll(".nb-Abs-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbBrckInFrac"))) nbAbsBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbAbsBrckBox.length; i++){
+			if(nbAbsBrckBox[i].querySelectorAll(".nb-Abs-BrckBase .nbFracBox, .nb-Abs-BrckBase .nbIntegralBox, .nb-Abs-BrckBase .nbDoubleIntegralBox, .nb-Abs-BrckBase .nbTripleIntegralBox, .nb-Abs-BrckBase .nbSigmaSumBox, .nb-Abs-BrckBase .nbIntBrckBox").length !== 0) {
+				nbAbsBrckBox[i].classList.add("nbConvert");
+				nbAbsBrckBox[i].classList.add("nbBrckInFrac");
+			}
+		}
+
+		//분수용 소괄호 안 분수
+		let nbRoundBrckBox = [];
+		document.activeElement.querySelectorAll(".nb-R-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbBrckInFrac"))) nbRoundBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbRoundBrckBox.length; i++){
+			if(nbRoundBrckBox[i].querySelectorAll(".nb-R-BrckBox .nbFracBox, .nb-R-BrckBase .nbIntegralBox, .nb-R-BrckBase .nbDoubleIntegralBox, .nb-R-BrckBase .nbTripleIntegralBox, .nb-R-BrckBase .nbSigmaSumBox, .nb-R-BrckBase .nbIntBrckBox").length !== 0) {
+				nbRoundBrckBox[i].classList.add("nbConvert");
+				nbRoundBrckBox[i].classList.add("nbBrckInFrac");
+			}
+		}
+
+
+		//분수용 중괄호 안 분수
+		let nbCBrckBox = [];
+		document.activeElement.querySelectorAll(".nb-C-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbBrckInFrac"))) nbCBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbCBrckBox.length; i++){
+			if(nbCBrckBox[i].querySelectorAll(".nb-C-BrckBox .nbFracBox, .nb-C-BrckBase .nbIntegralBox, .nb-C-BrckBase .nbDoubleIntegralBox, .nb-C-BrckBase .nbTripleIntegralBox, .nb-C-BrckBase .nbSigmaSumBox, .nb-C-BrckBase .nbIntBrckBox").length !== 0) {
+				nbCBrckBox[i].classList.add("nbConvert");
+				nbCBrckBox[i].classList.add("nbBrckInFrac");
+			}
+		}
+
+		//분수용 대괄호 안 분수
+		let nbSBrckBox = [];
+		document.activeElement.querySelectorAll(".nb-S-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbBrckInFrac"))) nbSBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbSBrckBox.length; i++){
+			if(nbSBrckBox[i].querySelectorAll(".nb-S-BrckBox .nbFracBox, .nb-S-BrckBase .nbIntegralBox, .nb-S-BrckBase .nbDoubleIntegralBox, .nb-S-BrckBase .nbTripleIntegralBox, .nb-S-BrckBase .nbSigmaSumBox, .nb-S-BrckBase .nbIntBrckBox").length !== 0) {
+				nbSBrckBox[i].classList.add("nbConvert");
+				nbSBrckBox[i].classList.add("nbBrckInFrac");
+			}
+		}
+
+
 		/*
 		//ln함수 안 분수
 		let nbLnBox = [];
@@ -3785,6 +4208,44 @@ export const reg_nbComplie = async (event) => {
 			nbFracInFracBoxes[i].classList.remove("nbFracInNumer");
 		}
 	}
+
+	//분수용 괄호 안 분수
+	let nbBrckInFracBoxes = document.querySelectorAll(".nb-Abs-BrckBox.nbBrckInFrac, .nb-R-BrckBox.nbBrckInFrac, .nb-C-BrckBox.nbBrckInFrac, .nb-S-BrckBox.nbBrckInFrac");
+	for(let i=0; i<nbBrckInFracBoxes.length; i++){
+		//분수용 절댓값 괄호
+		if(nbBrckInFracBoxes[i].classList.contains("nb-Abs-BrckBox")){
+			if(nbBrckInFracBoxes[i].querySelectorAll(".nb-Abs-BrckBase .nbFracBox, .nb-Abs-BrckBase .nbIntegralBox, .nb-Abs-BrckBase .nbDoubleIntegralBox, .nb-Abs-BrckBase .nbTripleIntegralBox, .nb-Abs-BrckBase .nbIntBrckBox, .nb-Abs-BrckBase .nbSigmaSumBox").length === 0){
+				nbBrckInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracBoxes[i].classList.remove("nbBrckInFrac");
+			}
+		}
+
+		//분수용 소괄호
+		if(nbBrckInFracBoxes[i].classList.contains("nb-R-BrckBox")){
+			if(nbBrckInFracBoxes[i].querySelectorAll(".nb-R-BrckBase .nbFracBox, .nb-R-BrckBase .nbIntegralBox, .nb-R-BrckBase .nbDoubleIntegralBox, .nb-R-BrckBase .nbTripleIntegralBox, .nb-R-BrckBase .nbIntBrckBox, .nb-R-BrckBase .nbSigmaSumBox").length === 0){
+				nbBrckInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracBoxes[i].classList.remove("nbBrckInFrac");
+			}
+		}
+
+		//분수용 중괄호
+		if(nbBrckInFracBoxes[i].classList.contains("nb-C-BrckBox")){
+			if(nbBrckInFracBoxes[i].querySelectorAll(".nb-C-BrckBase .nbFracBox, .nb-C-BrckBase .nbIntegralBox, .nb-C-BrckBase .nbDoubleIntegralBox, .nb-C-BrckBase .nbTripleIntegralBox, .nb-C-BrckBase .nbIntBrckBox, .nb-C-BrckBase .nbSigmaSumBox").length === 0){
+				nbBrckInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracBoxes[i].classList.remove("nbBrckInFrac");
+			}
+		}
+
+		//분수용 대괄호
+		if(nbBrckInFracBoxes[i].classList.contains("nb-S-BrckBox")){
+			if(nbBrckInFracBoxes[i].querySelectorAll(".nb-S-BrckBase .nbFracBox, .nb-S-BrckBase .nbIntegralBox, .nb-S-BrckBase .nbDoubleIntegralBox, .nb-S-BrckBase .nbTripleIntegralBox, .nb-S-BrckBase .nbIntBrckBox, .nb-S-BrckBase .nbSigmaSumBox").length === 0){
+				nbBrckInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracBoxes[i].classList.remove("nbBrckInFrac");
+			}
+		}
+		
+	}
+
 
 	//루트, 순환소수, 악센트
 	let nbFracLineConvert = document.querySelectorAll(".nbFracBox.nbFracLineConvert");
@@ -4183,6 +4644,7 @@ export const reg_removeResizeFrame = function () {
 	  if (!(/chrome/i.test(navigator.userAgent) && /google/i.test(window.navigator.vendor))) {
 		  return;
 	  }
+	  let orgId = id;
 	  var editor = document.getElementById(id);
 	  var resizing = false;
 	  
@@ -4206,6 +4668,13 @@ export const reg_removeResizeFrame = function () {
 		  return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
 	  };
 	  var clickImage = function (img) {
+
+		//td안에 이미지 있는 경우 이미지 프레임이 정상적으로 안씌워져서 td를 에디터로 설정
+		if(img.closest(".innerTbTd") !==null){
+			editor = img.closest(".innerTbTd")
+		}else{
+			editor = document.getElementById(orgId)
+		}
 		let orgWidth = img.offsetWidth;
 		let orgHeight = img.offsetHeight;
 
@@ -4221,19 +4690,60 @@ export const reg_removeResizeFrame = function () {
 		  const editorScrollLeft = editor.scrollLeft;
 		  const top = imgPosition.top - editorScrollTop - 1;
 		  const left = imgPosition.left - editorScrollLeft - 1;
+
   
 		let imgWidthHeight = createDOM('span', 'imgWidthHeight', {
 			width: '30px',
 			height: '30px',
 			margin: '0 2px',
 			});
-		let imgWidthHeightDiv = createDOM('div', 'imgWidthHeightDiv', {
-			width: '220px',
-			margin: '0 2px',
-			});
-		imgWidthHeightDiv.contentEditable = false;
-		imgWidthHeightDiv.classList.add("hide");
+		imgWidthHeight.addEventListener('click', (event) => {
+			var img = currentImage;
+			var imgHeight = img.offsetHeight;
+			var imgWidth = img.offsetWidth;
+			var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+			var editorScrollTop = editor.scrollTop;
+			var editorScrollLeft = editor.scrollLeft;
+			var customTop = imgPosition.top - editorScrollTop - 1;
+			var customLeft = imgPosition.left - editorScrollLeft - 1;
 
+			imgAlignDiv.style.position = "absolute";
+			imgAlignDiv.style.top = customTop-35+'px';
+			imgAlignDiv.style.left = customLeft+'px';
+
+			document.getElementsByClassName("resize-frame")[0].style.top =  customTop+imgHeight-10+'px';
+			document.getElementsByClassName("resize-frame")[0].style.left =  customLeft+imgWidth-10+'px';
+
+			document.getElementsByClassName("resizer top-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer top-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer left-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer left-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer right-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer right-border")[0].style.left =  customLeft+imgWidth+'px';
+
+			document.getElementsByClassName("resizer bottom-border")[0].style.top =  customTop+imgHeight+'px';
+			document.getElementsByClassName("resizer bottom-border")[0].style.left =  customLeft+'px';
+		});
+
+		let imgWidthHeightRootDiv = createDOM('div', 'imgWidthHeightRootDiv', {
+			width: '100%',
+			height: '100%',
+			position:"fixed",
+			top:0,
+			left:0,
+			backgroundColor:'rgb(0, 0, 0, 0.2)'
+			});
+		imgWidthHeightRootDiv.contentEditable = false;
+		imgWidthHeightRootDiv.classList.add("hide");
+		
+		let imgWidthHeightDiv = createDOM('div', 'imgWidthHeightDiv', {
+			});
+		//imgWidthHeightDiv.contentEditable = false;
+		//imgWidthHeightDiv.classList.add("hide");
+
+		
 		let imgWidthFixDiv = createDOM('div', '', {
 			margin: '0 2px',
 			});
@@ -4242,6 +4752,37 @@ export const reg_removeResizeFrame = function () {
 			});
 		imgWidthFixLabelBtn.innerHTML = "가로 세로 비율 유지";
 		imgWidthFixLabelBtn.htmlFor ="imgWidthFixChkBtn";
+		
+		imgWidthFixLabelBtn.addEventListener('click', (event) => {
+			var img = currentImage;
+			var imgHeight = img.offsetHeight;
+			var imgWidth = img.offsetWidth;
+			var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+			var editorScrollTop = editor.scrollTop;
+			var editorScrollLeft = editor.scrollLeft;
+			var customTop = imgPosition.top - editorScrollTop - 1;
+			var customLeft = imgPosition.left - editorScrollLeft - 1;
+
+			imgAlignDiv.style.position = "absolute";
+			imgAlignDiv.style.top = customTop-35+'px';
+			imgAlignDiv.style.left = customLeft+'px';
+
+			document.getElementsByClassName("resize-frame")[0].style.top =  customTop+imgHeight-10+'px';
+			document.getElementsByClassName("resize-frame")[0].style.left =  customLeft+imgWidth-10+'px';
+
+			document.getElementsByClassName("resizer top-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer top-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer left-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer left-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer right-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer right-border")[0].style.left =  customLeft+imgWidth+'px';
+
+			document.getElementsByClassName("resizer bottom-border")[0].style.top =  customTop+imgHeight+'px';
+			document.getElementsByClassName("resizer bottom-border")[0].style.left =  customLeft+'px';
+		});
+
 
 		let imgWidthFixChkBtn = createDOM('input', '', {
 			margin: '0 2px',
@@ -4257,6 +4798,34 @@ export const reg_removeResizeFrame = function () {
 			}else{
 				document.getElementById("imgHeightSet").disabled = false;
 			}
+
+			var img = currentImage;
+			var imgHeight = img.offsetHeight;
+			var imgWidth = img.offsetWidth;
+			var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+			var editorScrollTop = editor.scrollTop;
+			var editorScrollLeft = editor.scrollLeft;
+			var customTop = imgPosition.top - editorScrollTop - 1;
+			var customLeft = imgPosition.left - editorScrollLeft - 1;
+
+			imgAlignDiv.style.position = "absolute";
+			imgAlignDiv.style.top = customTop-35+'px';
+			imgAlignDiv.style.left = customLeft+'px';
+
+			document.getElementsByClassName("resize-frame")[0].style.top =  customTop+imgHeight-10+'px';
+			document.getElementsByClassName("resize-frame")[0].style.left =  customLeft+imgWidth-10+'px';
+
+			document.getElementsByClassName("resizer top-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer top-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer left-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer left-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer right-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer right-border")[0].style.left =  customLeft+imgWidth+'px';
+
+			document.getElementsByClassName("resizer bottom-border")[0].style.top =  customTop+imgHeight+'px';
+			document.getElementsByClassName("resizer bottom-border")[0].style.left =  customLeft+'px';
 		})
 
 		imgWidthFixDiv.append(imgWidthFixChkBtn);
@@ -4280,6 +4849,7 @@ export const reg_removeResizeFrame = function () {
 				let ratio = event.target.value/orgWidth;
 				document.getElementById("imgHeightSet").value = ratio*orgHeight;
 			}
+
 		});
 		imgWidthInput.addEventListener('keyup', (event) => {
 			if(document.getElementById("imgWidthFixChkBtn").checked){
@@ -4288,8 +4858,40 @@ export const reg_removeResizeFrame = function () {
 			}
 		});
 
+		imgWidthInput.addEventListener('click', (event) => {
+			var img = currentImage;
+			var imgHeight = img.offsetHeight;
+			var imgWidth = img.offsetWidth;
+			var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+			var editorScrollTop = editor.scrollTop;
+			var editorScrollLeft = editor.scrollLeft;
+			var customTop = imgPosition.top - editorScrollTop - 1;
+			var customLeft = imgPosition.left - editorScrollLeft - 1;
+
+			imgAlignDiv.style.position = "absolute";
+			imgAlignDiv.style.top = customTop-35+'px';
+			imgAlignDiv.style.left = customLeft+'px';
+
+			document.getElementsByClassName("resize-frame")[0].style.top =  customTop+imgHeight-10+'px';
+			document.getElementsByClassName("resize-frame")[0].style.left =  customLeft+imgWidth-10+'px';
+
+			document.getElementsByClassName("resizer top-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer top-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer left-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer left-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer right-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer right-border")[0].style.left =  customLeft+imgWidth+'px';
+
+			document.getElementsByClassName("resizer bottom-border")[0].style.top =  customTop+imgHeight+'px';
+			document.getElementsByClassName("resizer bottom-border")[0].style.left =  customLeft+'px';
+		});
+
+		
+
 		let imgHeighTitle = createDOM('span', '', {
-			margin: '0 2px',
+			margin: '0 2px 0 10px',
 			});
 		imgHeighTitle.innerHTML = "높이";
 
@@ -4300,6 +4902,36 @@ export const reg_removeResizeFrame = function () {
 		imgHeightInput.id="imgHeightSet";
 		imgHeightInput.className = 'imgHeightSet';
 		imgHeightInput.disabled = true;
+
+		imgHeightInput.addEventListener('click', (event) => {
+			var img = currentImage;
+			var imgHeight = img.offsetHeight;
+			var imgWidth = img.offsetWidth;
+			var imgPosition = { top: img.offsetTop, left: img.offsetLeft };
+			var editorScrollTop = editor.scrollTop;
+			var editorScrollLeft = editor.scrollLeft;
+			var customTop = imgPosition.top - editorScrollTop - 1;
+			var customLeft = imgPosition.left - editorScrollLeft - 1;
+
+			imgAlignDiv.style.position = "absolute";
+			imgAlignDiv.style.top = customTop-35+'px';
+			imgAlignDiv.style.left = customLeft+'px';
+
+			document.getElementsByClassName("resize-frame")[0].style.top =  customTop+imgHeight-10+'px';
+			document.getElementsByClassName("resize-frame")[0].style.left =  customLeft+imgWidth-10+'px';
+
+			document.getElementsByClassName("resizer top-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer top-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer left-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer left-border")[0].style.left =  customLeft+'px';
+
+			document.getElementsByClassName("resizer right-border")[0].style.top =  customTop+'px';
+			document.getElementsByClassName("resizer right-border")[0].style.left =  customLeft+imgWidth+'px';
+
+			document.getElementsByClassName("resizer bottom-border")[0].style.top =  customTop+imgHeight+'px';
+			document.getElementsByClassName("resizer bottom-border")[0].style.left =  customLeft+'px';
+		});
 
 		let imgWidthHeightSetBtn = createDOM('span', 'imgWidthHeightSetBtn', {
 			width:"20px",
@@ -4343,12 +4975,18 @@ export const reg_removeResizeFrame = function () {
 			height: '30px',
 			margin: '0 2px',
 			});
+
+		let imgAlignCenterLikeChar = createDOM('span', 'imgAlignCenterLikeChar', {
+			width: '30px',
+			height: '30px',
+			margin: '0 2px',
+		});
 	
 		let imgAlignDiv = createDOM('p', 'imgAlignDiv', {
 				position: 'absolute',
 				top: (top)-35 + 'px',
 				left: (left) + 'px',
-				width: '220px',
+				width: '250px',
 			textAlign:"center",
 			height: '30px',
 			border:"1px solid gray",
@@ -4361,14 +4999,16 @@ export const reg_removeResizeFrame = function () {
 		imgAlignDiv.append(imgWidthHeight);
 		imgAlignDiv.append(imgFloatLeft);
 		imgAlignDiv.append(imgFloatRight);
+		imgAlignDiv.append(imgAlignCenterLikeChar);
 		imgAlignDiv.append(imgLeftAlign);
 		imgAlignDiv.append(imgCenterAlign);
 		imgAlignDiv.append(imgRightAlign);
-		imgAlignDiv.append(imgWidthHeightDiv);
+		imgWidthHeightRootDiv.append(imgWidthHeightDiv);
+		imgAlignDiv.append(imgWidthHeightRootDiv);
 
 
 		imgWidthHeight.addEventListener('click', function(){
-			imgWidthHeightDiv.classList.remove("hide");
+			imgWidthHeightRootDiv.classList.remove("hide");
 			imgWidthInput.value= currentImage.clientWidth;
 			imgHeightInput.value= currentImage.clientHeight;
 		})
@@ -4384,6 +5024,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="block";
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px auto";
+			currentImage.style.verticalAlign="unset";
 			imgAttributeChageShow();
 			reset();
 		})
@@ -4392,6 +5033,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="block";
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px 10px 10px auto";
+			currentImage.style.verticalAlign="unset";
 			imgAttributeChageShow();
 			reset();
 		})
@@ -4400,6 +5042,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="inline";
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px 10px 10px 10px";
+			currentImage.style.verticalAlign="unset";
 			imgAttributeChageShow();
 			reset();
 		})
@@ -4408,6 +5051,7 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="inline";
 			currentImage.style.float="left";
 			currentImage.style.margin="10px";
+			currentImage.style.verticalAlign="unset";
 			imgAttributeChageShow();
 			reset();
 		})
@@ -4416,9 +5060,19 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.display="inline";
 			currentImage.style.float="right";
 			currentImage.style.margin="10px";
+			currentImage.style.verticalAlign="unset";
 			imgAttributeChageShow();
 			reset();
 		})
+		imgAlignCenterLikeChar.addEventListener('click', function(){
+			currentImage.style.display="unset";
+			currentImage.style.float="unset";
+			currentImage.style.margin="0px";
+			currentImage.style.verticalAlign="middle";
+			imgAttributeChageShow();
+			reset();
+		})
+
 		editor.append(imgAlignDiv);
   
 		  editor.append(createDOM('span', 'resize-frame', {
@@ -4515,6 +5169,7 @@ export const reg_removeResizeFrame = function () {
 			  }
 			  //return false;
 		  };
+
 	  };
 	  var bindClickListener = function () {
 		  editor.querySelectorAll('img').forEach((img, i) => {
@@ -4597,7 +5252,7 @@ export const reg_removeResizeFrame = function () {
 		}
 
 		if(!(e.target.classList.contains("resize-frame") || e.target.classList.contains("imgWidthHeight") || e.target.classList.contains("imgLeftAlign") || e.target.classList.contains("imgCenterAlign")
-		|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight"))){
+		|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight") || e.target.classList.contains("imgAlignCenterLikeChar"))){
 			reset();
 			let imgSelection = document.getElementsByClassName("imgSelection"); 
 			for(let i=0; i<imgSelection.length; i++){
@@ -4622,7 +5277,7 @@ export const reg_removeResizeFrame = function () {
 					}
 					
 					if(!(e.target.classList.contains("resize-frame") || e.target.classList.contains("imgWidthHeight") || e.target.classList.contains("imgLeftAlign") || e.target.classList.contains("imgCenterAlign")
-					|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight"))){
+					|| e.target.classList.contains("imgRightAlign") || e.target.classList.contains("imgFloatLeft") || e.target.classList.contains("imgFloatRight") || e.target.classList.contains("imgAlignCenterLikeChar"))){ 
 						//reset();
 						let imgSelection = document.getElementsByClassName("imgSelection"); 
 						for(let i=0; i<imgSelection.length; i++){
@@ -4640,7 +5295,7 @@ export const reg_removeResizeFrame = function () {
   const imgAttributeChageShow = () =>{
 			let imgAlignDiv = document.querySelectorAll(".imgAlignDiv");
 			for(let i=0; i<imgAlignDiv.length; i++){
-			imgAlignDiv[i].remove();
+				imgAlignDiv[i].remove();
 			}
 
 			let imgWidthHeightDiv = document.querySelectorAll(".imgWidthHeightDiv");
@@ -4681,4 +5336,38 @@ export const reg_removeResizeFrame = function () {
 			
   }
 
-  
+/*
+* 정의 : 비어있는 텍스트 노드 제거
+*/
+let vacantTextNodeArr = new Array();
+export const reg_vacantTextNodeRemove = async (event, domId) => {
+	if(event.keyCode !== 8 && event.keyCode !== 46) {
+		return;
+	}
+	
+	const GetText = async (tag) =>{
+		if(tag.hasChildNodes()) {
+			var i;
+			for(i = 0; i < tag.childNodes.length; i ++) {
+				if(tag.childNodes[i].nodeType == 3) {
+					vacantTextNodeArr.push(tag.childNodes[i]);
+				} else {
+					await GetText(tag.childNodes[i]);
+				}
+			}
+		}
+		if(tag.nodeType == 3) {
+			vacantTextNodeArr.push(tag);
+		}
+	}
+	vacantTextNodeArr = new Array();
+	await GetText(document.getElementById(domId));
+	for(let i=vacantTextNodeArr.length-1; i>=0; i--){
+		var range = document.createRange();
+		range.selectNodeContents(vacantTextNodeArr[i]);
+		var rects = range.getClientRects();
+		if (rects.length === 0) {
+			vacantTextNodeArr[i].remove();
+		}
+	}
+}

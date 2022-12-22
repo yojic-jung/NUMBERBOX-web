@@ -53,31 +53,42 @@ const NbWebEditor = ({parentMethod})=>{
 				img.style.width=367+"px";
 				//포커스가 문제입력창 또는 해설 입력창에 있으면 포커스 위치에 이미지 삽입
 				if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
-				&& (window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") || window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")) ){
+				&& (
+					window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") 
+					|| window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")
+					|| window.getSelection().anchorNode.parentElement.closest(".myHwpContents")
+				) ){
 					let selection = document.getSelection();
 					let newRange = selection.getRangeAt(0);
 					newRange.insertNode(img);
 					window.getSelection().collapseToEnd();
 				}else{
-					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
-						document.getElementById("contentsFormulaEditor").append(img);
+					if(document.getElementById("myHwpContents") !== null && document.getElementById("myHwpContents") !== undefined){
+						document.getElementById("myHwpContents").append(img);
 					}else{
-						document.getElementById("solutionFormulaEditor").append(img);
+						if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+							document.getElementById("contentsFormulaEditor").append(img);
+						}else{
+							document.getElementById("solutionFormulaEditor").append(img);
+						}
 					}
 				}
 				
 				reader.onload = async () => {
 				   img.src=reader.result;
 				   let contentEditClass;
-				   if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
-						contentEditClass = document.getElementById("contentsFormulaEditor");
-						document.getElementById("contents").value = contentEditClass.innerHTML;
-						document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
-					}else{
-						contentEditClass = document.getElementById("solutionFormulaEditor");
-						document.getElementById("solution").value = contentEditClass.innerHTML;
-						document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-					}
+				   if(document.getElementById("contentsFormulaEditor") !==null){
+						if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+							contentEditClass = document.getElementById("contentsFormulaEditor");
+							document.getElementById("contents").value = contentEditClass.innerHTML;
+							document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
+						}else{
+							contentEditClass = document.getElementById("solutionFormulaEditor");
+							document.getElementById("solution").value = contentEditClass.innerHTML;
+							document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+						}
+				   }
+				   
 				}; 
 				if (file) reader.readAsDataURL(file);
 				event.target.value= "";
@@ -113,7 +124,7 @@ const NbWebEditor = ({parentMethod})=>{
 		if(document.getSelection().isCollapsed) window.getSelection().collapseToEnd();	//셀렉션객체의 마지막 부분에 포커스 맞춤
 
 		//문제입력과 해설입력 창에만 적용
-		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor"){
+		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor" || focusId === "myHwpContents"){
 			//정렬버그 해결
 			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
 				//복붙하여 span에 text-align적용되어 정렬 안되는 버그 해결
