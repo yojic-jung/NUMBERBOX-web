@@ -683,7 +683,8 @@ const MyContentsList = ({isMine, userNo})=>{
                                                             <div className="hwpDownDesc">한글 파일로 다운 받기</div>
                                                         </span>
                                                     }
-                                                    [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
+                                                    <span dangerouslySetInnerHTML={{__html:"["+contentsMap.mathUnitInfo.subject+"] "+contentsMap.mathUnitInfo.secUnit} }></span>
+                                                   
                                                     {isMine &&
                                                         <>
                                                             {hasLicense  &&

@@ -24,6 +24,7 @@ import BottomMenuBar from 'web/common/BottomMenuBar';
 import AdminSvcCenter from 'web/admin/AdminSvcCenter';
 import MathTypeCategory from 'web/admin/MathTypeCategory';
 import HwpToHtml from 'web/fileConvert/HwpToHtml';
+import MembersStatistic from 'web/admin/MembersStatistic';
 
 
 const App = ()=>{
@@ -48,6 +49,7 @@ const App = ()=>{
               <Route element={<TopMenuBar/>}>
                 <Route exact path="/resourceTools" element={<GraphMake />} />
                 <Route exact path="/makeMathDocs" element={<MathDocsMaker /> } />
+                <Route exact path="/admin/membersStatistic" element={nb_isLogin()  ?  <MembersStatistic /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/admin/adminSvcCenter" element={nb_isLogin()  ?  <AdminSvcCenter /> : <Navigate to="/login?isDirect=false" />} />
                 <Route exact path="/admin/mathTypeCategory" element={nb_isLogin()  ?  <MathTypeCategory /> : <Navigate to="/login?isDirect=false" />} />
                 <Route element={<BottomMenuBar/>}>

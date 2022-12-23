@@ -282,7 +282,7 @@ const MyRepository = ()=>{
                                                     <span className='userSearchBtn manager hide'>N명의수학</span>
                                                     :  <span className='userSearchBtn hide'><img src={profileImgPath} alt="" className='contentsListProfile'/> {contentsMap.membersProfile.nickname}</span>
                                                     }
-                                                    <span>[{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}</span>
+                                                    <span dangerouslySetInnerHTML={{__html:"["+contentsMap.mathUnitInfo.subject+"] "+contentsMap.mathUnitInfo.secUnit} }></span>
                                                 </div>
                                                 {!isImgRegContents && <div className='relative'>
                                                     <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>
