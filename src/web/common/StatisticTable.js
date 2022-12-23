@@ -69,43 +69,43 @@ const StatisticTable = ({title, statisticArr, hasRowName, unit, totalOpt, ratioO
             let totalCnt=rowObj.nbCol1+rowObj.nbCol2+rowObj.nbCol3+rowObj.nbCol4+rowObj.nbCol5+rowObj.nbCol6+rowObj.nbCol7+rowObj.nbCol8+rowObj.nbCol9+rowObj.nbCol10;
             if(typeof(rowObj.nbCol1) === "number"){
                 lastColName+=rowObj.nbCol1;
-                nbColRatio1=Math.floor(rowObj.nbCol1/totalCnt*100)+"%"
+                nbColRatio1=Math.round(rowObj.nbCol1/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol2) === "number"){
                 lastColName+=rowObj.nbCol2;
-                nbColRatio2=Math.floor(rowObj.nbCol2/totalCnt*100)+"%"
+                nbColRatio2=Math.round(rowObj.nbCol2/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol3) === "number"){
                 lastColName+=rowObj.nbCol3;
-                nbColRatio3=Math.floor(rowObj.nbCol3/totalCnt*100)+"%"
+                nbColRatio3=Math.round(rowObj.nbCol3/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol4) === "number"){
                 lastColName+=rowObj.nbCol4;
-                nbColRatio4=Math.floor(rowObj.nbCol4/totalCnt*100)+"%"
+                nbColRatio4=Math.round(rowObj.nbCol4/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol5) === "number"){
                 lastColName+=rowObj.nbCol5;
-                nbColRatio5=Math.floor(rowObj.nbCol5/totalCnt*100)+"%"
+                nbColRatio5=Math.round(rowObj.nbCol5/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol6) === "number"){
                 lastColName+=rowObj.nbCol6;
-                nbColRatio6=Math.floor(rowObj.nbCol6/totalCnt*100)+"%"
+                nbColRatio6=Math.round(rowObj.nbCol6/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol7) === "number"){
                 lastColName+=rowObj.nbCol7;
-                nbColRatio7=Math.floor(rowObj.nbCol7/totalCnt*100)+"%"
+                nbColRatio7=Math.round(rowObj.nbCol7/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol8) === "number"){
                 lastColName+=rowObj.nbCol8;
-                nbColRatio8=Math.floor(rowObj.nbCol8/totalCnt*100)+"%"
+                nbColRatio8=Math.round(rowObj.nbCol8/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol9) === "number"){
                 lastColName+=rowObj.nbCol9;
-                nbColRatio9=Math.floor(rowObj.nbCol9/totalCnt*100)+"%"
+                nbColRatio9=Math.round(rowObj.nbCol9/totalCnt*100)+"%"
             }
             if(typeof(rowObj.nbCol10) === "number"){
                 lastColName+=rowObj.nbCol10;
-                nbColRatio10=Math.floor(rowObj.nbCol10/totalCnt*100)+"%"
+                nbColRatio10=Math.round(rowObj.nbCol10/totalCnt*100)+"%"
             }
             
             if(idx !==0 && ratioOpt) isRatioShow = true;
