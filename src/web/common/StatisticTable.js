@@ -145,7 +145,7 @@ const StatisticTable = ({title, statisticArr, hasRowName, unit, totalOpt, ratioO
 
     return (
         <div className='statisticTableWrap'>
-            <div>{title}</div>
+            <div className='statisticTableTitle'>{title}</div>
             <table className='statisticTable'>
                     {StatisticTd}
             </table>

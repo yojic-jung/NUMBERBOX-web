@@ -6,13 +6,25 @@ import StatisticTable from 'web/common/StatisticTable'
 const MembersStatistic = () => {
     let isAdmin = nb_isAdmin();
     const [isShow, setIsShow] = useState(false);
+    
+    const [membersInfo, setMembersInfo] = useState(new Array());
     const [membersCntByAge, setMembersCntByAge] = useState(new Array());
     const [membesrCntByHourPeriod, setMembesrCntByHourPeriod] = useState(new Array());
     const [membesrCntByProAndHourPeriod, setMembesrCntByProAndHourPeriod] = useState(new Array());
     const [membesrCntByProfile, setMembesrCntByProfile] = useState(new Array());
     const [membesrCntBySignupDate, setMembesrCntBySignupDate] = useState(new Array());
+
+    const [dailyLoginUserCnt, setDailyLoginUserCnt] = useState(new Array());
+    const [reLoginRatioPerMonth, setReLoginRatioPerMonth] = useState(new Array());
+
+    const [docsUsage, setDocsUsage] = useState(new Array());
+    const [docsUsageByProfile, setDocsUsageByProfile] = useState(new Array());
+    const [docsUsageByProfileAndDay, setDocsUsageByProfileAndDay] = useState(new Array());
+    const [docsUsageByDay, setDocsUsageByDay] = useState(new Array());
+    
     const [memberMathContentsCnt, setMemberMathContentsCnt] = useState(new Array());
-    const [mathDocsUsageStatistic, setMathDocsUsageStatistic] = useState(new Array());
+
+
     
     useEffect(() => {
         if(!isAdmin) window.location.href = "/";
@@ -21,13 +33,21 @@ const MembersStatistic = () => {
             let statistic2 = await nb_dataFetch("/mathDocs/mathDocsUsageStatistic", true);
             let statistic3 = await nb_dataFetch("/mathInfo/mathContentsStatistic", true);
 
+            setMembersInfo(statistic1.membersInfo)
             setMembersCntByAge(statistic1.membersCntByAge)
             setMembesrCntByHourPeriod(statistic1.membesrCntByHourPeriod)
             setMembesrCntByProAndHourPeriod(statistic1.membesrCntByProAndHourPeriod)
             setMembesrCntByProfile(statistic1.membesrCntByProfile)
             setMembesrCntBySignupDate(statistic1.membesrCntBySignupDate)
+            setDailyLoginUserCnt(statistic1.dailyLoginUserCnt);
+            setReLoginRatioPerMonth(statistic1.reLoginRatioPerMonth);
+
             setMemberMathContentsCnt(statistic3.memberMathContentsCnt);
-            setMathDocsUsageStatistic(statistic2.mathDocsUsageStatistic);
+
+            setDocsUsage(statistic2.docsUsage);
+            setDocsUsageByProfile(statistic2.docsUsageByProfile)
+            setDocsUsageByProfileAndDay(statistic2.docsUsageByProfileAndDay);
+            setDocsUsageByDay(statistic2.docsUsageByDay);
             setIsShow(true)
         }
         asyncUseEffect();
@@ -36,14 +56,46 @@ const MembersStatistic = () => {
     return (
         <div className="MembersStatisticRootDiv">
             {isShow &&
+
             <div>
-                <StatisticTable title="연령별 회원 분포" statisticArr={membersCntByAge} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
-                <StatisticTable title="프로필별 회원 분포" statisticArr={membesrCntByProfile} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
-                <StatisticTable title="시간대별 가입자 분포" statisticArr={membesrCntByHourPeriod} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
-                <StatisticTable title="프로필/시간대별 가입자 분포" statisticArr={membesrCntByProAndHourPeriod} hasRowName={true} unit='명' totalOpt={true} ratioOpt={false}></StatisticTable>
-                <StatisticTable title="날짜별 가입자 분포" statisticArr={membesrCntBySignupDate} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
-                <StatisticTable title="학습지 사용률" statisticArr={mathDocsUsageStatistic} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
-                <StatisticTable title="문제 제작 사용자" statisticArr={memberMathContentsCnt} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                <div>
+                    <span id="" className='customBtn' onClick={()=>{document.getElementById("lastSignupUser").classList.remove("hide")}}>최신 가입자 정보 조회</span>
+                </div>
+                <div id="lastSignupUser" className='blindBox hide'>
+                    <div className='statisticFixedDiv'>
+                        <div className='closeBtn' onClick={()=>{document.getElementById("lastSignupUser").classList.add("hide")}}>X</div>
+                        <StatisticTable title="최근 가입자 100명 정보 조회" statisticArr={membersInfo} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                    </div>
+                </div>
+                <div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;회원 분포 통계&gt;</div>
+                        <StatisticTable title="연령별 회원 분포" statisticArr={membersCntByAge} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="프로필별 회원 분포" statisticArr={membesrCntByProfile} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
+                    </div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;가입자 분포 통계&gt;</div>
+                        <StatisticTable title="시간대별 가입자 분포" statisticArr={membesrCntByHourPeriod} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="프로필/시간대별 가입자 분포" statisticArr={membesrCntByProAndHourPeriod} hasRowName={true} unit='명' totalOpt={true} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="날짜별 가입자 분포" statisticArr={membesrCntBySignupDate} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                    </div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;접속자 분포 통계&gt;</div>
+                        <StatisticTable title="일일 접속자 분포" statisticArr={dailyLoginUserCnt} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="월별 가입자 재접속 비율" statisticArr={reLoginRatioPerMonth} hasRowName={false} unit='%' totalOpt={false} ratioOpt={false}></StatisticTable>
+                    </div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;학습지 분포 통계&gt;</div>
+                        <StatisticTable title="학습지 사용률" statisticArr={docsUsage} hasRowName={false} unit='번' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="요일별 학습지 사용률" statisticArr={docsUsageByDay} hasRowName={false} unit='번' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="프로필별 학습지 사용률" statisticArr={docsUsageByProfile} hasRowName={false} unit='번' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="프로필/요일별 학습지 사용률" statisticArr={docsUsageByProfileAndDay} hasRowName={true} unit='번' totalOpt={true} ratioOpt={false}></StatisticTable>
+                    </div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;문제 제작 분포 통계&gt;</div>
+                        <StatisticTable title="문제 제작 사용자" statisticArr={memberMathContentsCnt} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                    </div>
+                </div>
             </div>
             }
         </div>
