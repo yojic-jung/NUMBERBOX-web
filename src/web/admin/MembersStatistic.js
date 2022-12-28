@@ -7,6 +7,7 @@ const MembersStatistic = () => {
     let isAdmin = nb_isAdmin();
     const [isShow, setIsShow] = useState(false);
     
+    const [membersInfoKey, setMembersInfoKey] = useState(new Array());
     const [membersInfo, setMembersInfo] = useState(new Array());
     const [membersCntByAge, setMembersCntByAge] = useState(new Array());
     const [membesrCntByHourPeriod, setMembesrCntByHourPeriod] = useState(new Array());
@@ -25,7 +26,6 @@ const MembersStatistic = () => {
     const [memberMathContentsCnt, setMemberMathContentsCnt] = useState(new Array());
 
 
-    
     useEffect(() => {
         if(!isAdmin) window.location.href = "/";
         const asyncUseEffect = async () =>{
@@ -33,6 +33,7 @@ const MembersStatistic = () => {
             let statistic2 = await nb_dataFetch("/mathDocs/mathDocsUsageStatistic", true);
             let statistic3 = await nb_dataFetch("/mathInfo/mathContentsStatistic", true);
 
+            setMembersInfoKey(1);
             setMembersInfo(statistic1.membersInfo)
             setMembersCntByAge(statistic1.membersCntByAge)
             setMembesrCntByHourPeriod(statistic1.membesrCntByHourPeriod)
@@ -53,6 +54,36 @@ const MembersStatistic = () => {
         asyncUseEffect();
     },[]);
 
+    const sortByDateTime = async (mode) => {
+        let orderedDate = membersInfo.sort((a, b) => {
+            if(a.nbCol1 === "이메일" && b.nbCol1 === "이메일"){
+                return 0;
+            }
+            if(mode === "loginDate"){
+                let datetime = a.nbCol4.split(" ");
+                let datetime2 =  b.nbCol4.split(" ");
+                let newDateTime = datetime[0].replaceAll("년", "").replaceAll("월", "").replaceAll("일", "");
+                let newDateTime2 = datetime2[0].replaceAll("년", "").replaceAll("월", "").replaceAll("일", "");
+                return new Date(newDateTime2)-new Date(newDateTime)
+            }else {
+                let datetime = a.nbCol5.split(" ");
+                let datetime2 =  b.nbCol5.split(" ");
+                let newDateTime = datetime[0].replaceAll("년", "").replaceAll("월", "").replaceAll("일", "");
+                let newDateTime2 = datetime2[0].replaceAll("년", "").replaceAll("월", "").replaceAll("일", "");
+                return new Date(newDateTime2)-new Date(newDateTime)
+            }
+        });
+
+        setMembersInfo(orderedDate);
+        setMembersInfoKey(membersInfoKey+1);
+        if(mode === "signupDate"){
+            document.getElementById("sortBySignup").classList.add("active");
+            document.getElementById("sortByLoginiDate").classList.remove("active");
+        }else{
+            document.getElementById("sortBySignup").classList.remove("active");
+            document.getElementById("sortByLoginiDate").classList.add("active");
+        }
+    }
     return (
         <div className="MembersStatisticRootDiv">
             {isShow &&
@@ -64,7 +95,11 @@ const MembersStatistic = () => {
                 <div id="lastSignupUser" className='blindBox hide'>
                     <div className='statisticFixedDiv'>
                         <div className='closeBtn' onClick={()=>{document.getElementById("lastSignupUser").classList.add("hide")}}>X</div>
-                        <StatisticTable title="최근 가입자 100명 정보 조회" statisticArr={membersInfo} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <div className='alignLeft'>
+                            <span id="sortByLoginiDate" className='customBtn4' onClick={()=>{sortByDateTime("loginDate")}}>최신 로그인 순</span>
+                            <span id="sortBySignup" className='customBtn4 active' onClick={()=>{sortByDateTime("signupDate")}}>최신 가입자 순</span>
+                        </div>
+                        <StatisticTable title="최근 가입자 100명 정보 조회" key={membersInfoKey} statisticArr={membersInfo} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
                     </div>
                 </div>
                 <div>

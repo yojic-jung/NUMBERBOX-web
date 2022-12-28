@@ -216,6 +216,13 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
+		let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
+		for(let i=0; i<targetId.length; i++){
+			let allImgDom = document.getElementById(targetId[i]).querySelectorAll("img");
+			for(let j=0; j<allImgDom.length; j++){
+				formData.append("imgTagSrc", allImgDom[j].src);
+			}
+		}
 		//undo 초기화
 		await reg_undoRedoInitialize();
 		//수정모드로 들어온 경우

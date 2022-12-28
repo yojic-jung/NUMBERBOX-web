@@ -1454,6 +1454,10 @@ height: 1.6em;
 }
 */
 
+.popupBox.unsetHeight{
+    height: unset;
+}
+
 .fixedBox{
     padding: 0 10px;
     box-shadow: 0 0 5px 5px #999;

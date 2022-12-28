@@ -6,7 +6,7 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
-import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getCheckedVal, 
+import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getCheckedVal, nb_base64ImgRegisterToS3,
 	nb_licenseUiCheck, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload, nb_fadeInOutA} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_formulaTapMoveEv,
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
@@ -104,7 +104,6 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			if(file !== null){
 				let fileName = file.name.split(".")
 				let fileExtension = fileName[fileName.length-1].toUpperCase()
-				alert(fileExtension)
 				if(fileExtension === "PNG" || fileExtension === "JPG" || fileExtension === "JPEG" || fileExtension === "GIF" ||
 					fileExtension === "BMP"){
 					alert("정답 입력창에는 이미지 첨부가 불가합니다.");
@@ -754,8 +753,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -770,23 +769,23 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<input id="multiChoiceImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);multiChoiceImageFile(event);}} />
 						<div className="multiChoiceWrap">
-							<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("firNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("secNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("thrNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fourNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fifNoFormulaEditor")}}></div>
 						</div>
 						<div className="hide">

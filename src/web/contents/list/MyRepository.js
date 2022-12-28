@@ -353,7 +353,7 @@ const MyRepository = ()=>{
                 </div>
             }
                    
-            <div id="outerFormulaEditor" className='fixedBox hide'>
+            <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState  && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2}/>}
             </div>

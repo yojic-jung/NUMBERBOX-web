@@ -9,7 +9,7 @@ import "css/staff/staff.css";
 import "css/common/common.css";
 import "css/fileConvert/fileConvert.css";
 import hourglass from 'img/hourglass.gif';
-import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_formDataFetch, nb_topMenuFixed, nb_getParameterByName} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_base64ImgRegisterToS3, nb_formDataFetch, nb_topMenuFixed, nb_getParameterByName} from 'js/common/common_nb.js';
 import { reg_preventKeyEvent, reg_selectCheck, reg_dressSelectionBackColor, reg_dressYellowBox,reg_formulaTapMoveEv,
      reg_tbPasteInPastePrevent, reg_tbCellKeyUp, reg_nbComplie, reg_imageCopy, reg_mDownTdWidthChange, reg_mMoveTdWidthChange,
      reg_mUpTdWidthChange, reg_selStartTdWidthChange, reg_tbSelBackgroundRemove, reg_tbCellMouseUp, reg_tbCellCopy, reg_convertNotTransferdNbBox,
@@ -177,13 +177,16 @@ const HwpToHtml = ()=>{
         return isExecuted;
     }
         
-    const hwpHtmlToNbHtml = async (domId, isFirst, imgPath, convertNo) => {
+    const hwpHtmlToNbHtml = async (domId, isFirst, s3FileUrl, convertNo) => {
         //이미지 파일 셋팅
         let imgDom = document.getElementById("myHwpContents").querySelectorAll("img");
         for(let i=0; i<imgDom.length; i++){
             let lastIdx = imgDom[i].src.lastIndexOf("/");
-            let imgName = imgDom[i].src.substring(lastIdx, imgDom[i].src.length);
-            imgDom[i].src=process.env.REACT_APP_SERVER_STATIC_HOST+"/"+imgPath+"/"+imgName;
+            let imgName = imgDom[i].src.substring(lastIdx+1, imgDom[i].src.length);
+            if(s3FileUrl !== undefined){
+                imgName = s3FileUrl+imgName;
+            }
+            imgDom[i].src=imgName;
         }
         
         //메타 태그 제거
@@ -582,8 +585,7 @@ const HwpToHtml = ()=>{
                 }
 
                 convertFileNameRoot[0].classList.add("active")
-
-                await hwpHtmlToNbHtml("myHwpContents", true, returnObj.contentsList[0].imgPath, returnObj.contentsList[0].convertNo);
+                await hwpHtmlToNbHtml("myHwpContents", true, returnObj.s3FileUrl, returnObj.contentsList[0].convertNo);
 
                 //undo, redo 초기화 및 변환된 상태 저장
                 let fakeEv = new Object();
@@ -689,6 +691,12 @@ const HwpToHtml = ()=>{
         formData.append("convertNo", document.getElementById("myHwpContents").dataset.convertNo);
         formData.append("converted", true);
         formData.append("convertContents", document.getElementById("myHwpContents").innerHTML)
+        let imgTagList = document.getElementById("myHwpContents").querySelectorAll("img");
+        for(let i=0; i<imgTagList.length; i++){
+            formData.append("imgFileTagList", imgTagList[i].src);
+        }
+        
+
         let returnObj = await nb_formDataFetch("/convert/saveMyHwpContents", formData, transitEffect);
         setMyUpldFile(returnObj.contentsList)
     }
@@ -824,14 +832,14 @@ return (
 				</div>
                 <div className='saveDiv'>
                     {isAdminMode ?
-                    <span className='saveBtn' onClick={(event)=>{hwpHtmlToNbHtml("myHwpContents", false, myUpldFile[0].imgPath);}}>수식 문법 변환</span>
+                    <span className='saveBtn' onClick={(event)=>{hwpHtmlToNbHtml("myHwpContents", false);}}>수식 문법 변환</span>
                     :
                     <span className='saveBtn' onClick={(event)=>{saveMyHwpContents(event, true)}}>save</span>
                     }
                     
                 </div>
                 <NbWebEditor parentMethod={()=>{}}></NbWebEditor>
-                <div id="myHwpContents" className='myHwpContents contentEditClass onlyEdit' contentEditable={true} onKeyDown={(event) => {reg_preventKeyEvent(event, true);}} onKeyUp={(event) => {reg_dressYellowBox();reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);reg_vacantTextNodeRemove(event, "myHwpContents")}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="myHwpContents" className='myHwpContents contentEditClass onlyEdit' contentEditable={true} onKeyDown={(event) => {reg_preventKeyEvent(event, true);}} onKeyUp={(event) => {reg_dressYellowBox();reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);reg_vacantTextNodeRemove(event, "myHwpContents");nb_base64ImgRegisterToS3(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
             </div>
         </div>
         :

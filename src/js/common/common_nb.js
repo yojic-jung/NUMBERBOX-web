@@ -1,4 +1,3 @@
-import { toBePartiallyChecked } from "@testing-library/jest-dom/dist/matchers";
 import imageCompression from 'browser-image-compression';
 
 export const nb_isLogin =  () => {
@@ -368,6 +367,77 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
     output.classList.add('hide');
   }
 
+/*
+* 정의 : base64 이미지를 파일로 변환
+*/
+export const nb_base64ImgtoFile = async (imgSrc, filename) => {  //outputId는 출력 dom
+      let base64Type = [{mimeType:"data:image/png;base64,", ext:".png"}, {mimeType:"data:image/jpeg;base64,", ext:".jpeg"}, 
+      {mimeType:"data:image/bmp;base64,", ext:".bmp"}, {mimeType:"data:image/webp;base64,", ext:".webp"}, 
+      {mimeType:"data:image/gif;base64,", ext:".gif"}];
+      
+      let isBase64Str=false;
+      let exetension = ""
+      for(let i=0; i<base64Type.length; i++){
+        if(imgSrc.indexOf(base64Type[i].mimeType)>-1){
+            isBase64Str=true;
+            exetension=base64Type[i].ext;
+            break;
+        }
+      }
+      //base64가 아닌 경우 null 리턴
+      if(!isBase64Str){
+        return null;
+      }
+
+      let arr = imgSrc.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+      while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new File([u8arr], filename+exetension, {type:mime});
+}
+
+/*
+* 정의 : base64Img S3서버에 저장
+*/
+export const nb_base64ImgRegisterToS3 = async (event)=>{
+  //ctrl+v로 base64 이미지 들어온 경우 s3에 등록
+  if(event.keyCode === 86 && event.ctrlKey){
+      let imgFile;
+      let allImgDom = event.target.querySelectorAll("img");
+      for(let i=0; i<allImgDom.length; i++){
+          let fileName = await nb_generateRandomString(15);
+          imgFile = await nb_base64ImgtoFile(allImgDom[i].src, fileName);
+          //base64 이미지가 아닌 경우 skip
+          if(imgFile === null) continue;
+          let formData = new FormData();
+          formData.append("actionId", 10);
+          formData.append("imgPath", "editorImgUpld");
+          formData.append("multipartFile", imgFile);
+          let returnObj = await nb_formDataFetch("/common/imgUpload", formData, false);
+          allImgDom[i].src=returnObj.s3ImgUrl;
+      }
+  }
+}
+
+/*
+* 정의 : 랜덤 문자열 추출
+*/
+export const nb_generateRandomString = async (num) => {
+  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < num; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
 
 /*
 * 정의 : 이미지 파일 확장자 체크 함수

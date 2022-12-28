@@ -1,7 +1,7 @@
 import React from 'react';
 import EditTableInnerUi from 'web/contents/register/EditTableInnerUi'
 import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/contents/register/contents_reg';
-import {nb_extensionCheck2, nb_module_handleImageUpload} from 'js/common/common_nb.js';
+import {nb_extensionCheck2, nb_module_handleImageUpload, nb_formDataFetch} from 'js/common/common_nb.js';
 import editOutputScreen from 'img/editOutputScreen.PNG';
 import formulaFocusAsistDesc from 'img/formulaFocusAsistDesc.PNG';
 const NbWebEditor = ({parentMethod})=>{
@@ -46,6 +46,52 @@ const NbWebEditor = ({parentMethod})=>{
 		event.preventDefault();
 
 		if(style === "insertImage"){
+			if(event.target.value === "") return;
+			//이미지 업로드
+			let formData = new FormData();
+			formData.append("actionId", 10);
+      		formData.append("imgPath", "editorImgUpld");
+			formData.append("multipartFile", event.target.files[0]);
+			let returnObj = await nb_formDataFetch("/common/imgUpload", formData, true);
+			let img=document.createElement("img");
+			if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
+			&& (
+				window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") 
+				|| window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")
+				|| window.getSelection().anchorNode.parentElement.closest(".myHwpContents")
+			) ){
+				let selection = document.getSelection();
+				let newRange = selection.getRangeAt(0);
+				newRange.insertNode(img);
+				window.getSelection().collapseToEnd();
+			}else{
+				if(document.getElementById("myHwpContents") !== null && document.getElementById("myHwpContents") !== undefined){
+					document.getElementById("myHwpContents").append(img);
+				}else{
+					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+						document.getElementById("contentsFormulaEditor").append(img);
+					}else{
+						document.getElementById("solutionFormulaEditor").append(img);
+					}
+				}
+			}
+			img.style.width=367+"px";
+			img.src=returnObj.s3ImgUrl;
+			let contentEditClass;
+			if(document.getElementById("contentsFormulaEditor") !==null){
+				 if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+					 contentEditClass = document.getElementById("contentsFormulaEditor");
+					 document.getElementById("contents").value = contentEditClass.innerHTML;
+					 document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
+				 }else{
+					 contentEditClass = document.getElementById("solutionFormulaEditor");
+					 document.getElementById("solution").value = contentEditClass.innerHTML;
+					 document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+				 }
+			}
+
+			event.target.value= "";
+			/*
 			let file =await nb_module_handleImageUpload(event)
 			if(file !== undefined){
 				let img=document.createElement("img");
@@ -94,7 +140,7 @@ const NbWebEditor = ({parentMethod})=>{
 				event.target.value= "";
 				return;
 			}
-			
+			*/
 		}
 
 		//포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)

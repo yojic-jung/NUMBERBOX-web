@@ -4636,9 +4636,15 @@ export const reg_removeResizeFrame = function () {
 	for(let i=0; i<imgWidthHeightDiv.length; i++){
 		imgWidthHeightDiv[i].remove();
 	}
-	
+
+	//팝업 박스 위에서 열린 경우 이미지 가로, 세로 조절 팝업 위치가 정확하지 않은 버그 해결
+	if(document.getElementsByClassName("popupBox")[0] !== undefined){
+		document.getElementsByClassName("popupBox")[0].classList.remove("unsetHeight");
+		document.getElementsByClassName("popupBox")[0].scrollTop=scrollYtoMovePrevPoint;
+	}
   };
 
+  let scrollYtoMovePrevPoint;
   let currentImage;
   export const reg_enableImageResizeInDiv = (id) => {
 	  if (!(/chrome/i.test(navigator.userAgent) && /google/i.test(window.navigator.vendor))) {
@@ -4668,7 +4674,11 @@ export const reg_removeResizeFrame = function () {
 		  return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
 	  };
 	  var clickImage = function (img) {
-
+		if(document.getElementsByClassName("popupBox")[0] !== undefined){
+			scrollYtoMovePrevPoint = document.getElementsByClassName("popupBox")[0].scrollTop;
+		}else{
+			scrollYtoMovePrevPoint=window.scrollY;
+		}
 		//td안에 이미지 있는 경우 이미지 프레임이 정상적으로 안씌워져서 td를 에디터로 설정
 		if(img.closest(".innerTbTd") !==null){
 			editor = img.closest(".innerTbTd")
@@ -5011,6 +5021,9 @@ export const reg_removeResizeFrame = function () {
 			imgWidthHeightRootDiv.classList.remove("hide");
 			imgWidthInput.value= currentImage.clientWidth;
 			imgHeightInput.value= currentImage.clientHeight;
+			if(document.getElementsByClassName("popupBox")[0] !== undefined){
+				document.getElementsByClassName("popupBox")[0].classList.add("unsetHeight");
+			}
 		})
 
 		imgWidthHeightSetBtn.addEventListener('click', function(){
@@ -5018,6 +5031,14 @@ export const reg_removeResizeFrame = function () {
 			currentImage.style.height=imgHeightInput.value+"px";
 			imgAttributeChageShow();
 			reset();
+
+			//팝업 박스 위에서 열린 경우 이미지 가로, 세로 조절 팝업 위치가 정확하지 않은 버그 해결
+			if(document.getElementsByClassName("popupBox")[0] !== undefined){
+				document.getElementsByClassName("popupBox")[0].classList.remove("unsetHeight");
+				scrollYtoMovePrevPoint = document.getElementsByClassName("popupBox")[0].scrollTop;
+			}else{
+				scrollYtoMovePrevPoint=window.scrollY;
+			}
 		})
 
 		imgCenterAlign.addEventListener('click', function(){

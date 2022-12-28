@@ -1165,7 +1165,7 @@ const WorkContentsList = ()=>{
                     </div>
                 </div>
             }
-            <div id="outerFormulaEditor" className='fixedBox hide'>
+            <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState  && <FormulaEditor contentsNo={contentsNo} contentsClassify={0}/>}
             </div>
