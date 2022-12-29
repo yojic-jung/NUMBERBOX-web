@@ -5,7 +5,8 @@ import { useLocation } from 'react-router-dom';
 import CustomSelBoxDown from 'web/common/CustomSelBoxDown'
 import licensePublic from 'img/license-public.png'
 import licensePrivate from 'img/license-private.png'
-import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut} from 'js/common/common_nb.js';
+import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, 
+	nb_base64ImgRegisterToS3ByTargetId, nb_getByteLengthOfString} from 'js/common/common_nb.js';
 import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, reg_removeStyleAttribute, reg_removeResizeFrame} from 'js/contents/register/contents_reg';
 import { cvt_convertHtmlToTex} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg})=>{
@@ -15,10 +16,11 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		if(isOnlyImgReg){ document.getElementById("transLicenseDesc").classList.add("hide");}
       },[]);
 
-	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈)
+	  let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
+	  let targetHtml = ["contents", "solution" ,"firNo" , "secNo", "thrNo", "fourNo", "fifNo", "answer"];
+	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈), 이미지 base64로 남아있는 것 한번 더 체크해서 변경
 	  const trimRegisterContents = async function() {
-		let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
-		let targetHtml = ["contents", "solution" ,"firNo" , "secNo", "thrNo", "fourNo", "fifNo", "answer"];
+		
 
 		document.getElementById("contentsOptBox").classList.remove("hide");
 		for(let i=0; i<targetId.length; i++){
@@ -53,16 +55,12 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			//수식요소 및 div 태그 스타일 직접 적용된 경우 제거
 			await reg_removeStyleAttribute(targetId[i]);
 
-			
 			document.getElementById(targetHtml[i]).value = document.getElementById(targetId[i]).innerHTML;
 
 		}
 	  }
 	
-	  const getByteLengthOfString = function(s,b,i,c){
-		for(b=i=0;c=s.charCodeAt(i++);b+=c>>11?3:c>>7?2:1);
-		return b;
-	  };
+	  
 
 	  const shareSttsChange = async function(shareStts){
 		if(shareStts){
@@ -106,18 +104,22 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		 let mathTypeClassify = document.getElementById("mathTypeClassify");
 		 let cusMathClassifySelTitle = document.getElementById("cusMathClassifySelTitle");
 
+		 //이미지 base64 to s3 sever upload
+		 for(let i=0; i<targetId.length; i++){
+		 	 await nb_base64ImgRegisterToS3ByTargetId(targetId[i]);
+		 }
 
 		 if(!isOnlyImgReg){
-			let totalFileSize = getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("firNoFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("secNoFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("thrNoFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("fourNoFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("fifNoFormulaEditor").innerHTML)
-				+getByteLengthOfString(document.getElementById("answerFormulaEditor").innerHTML)
-			if(totalFileSize/1000 > 5000){
-				alert("등록하신 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트 및 이미지는 최대 5MB까지 등록가능합니다.\n고화질 이미지를 등록한 경우 문제 등록이 불가할 수 있습니다.");
+			let totalFileSize = nb_getByteLengthOfString(document.getElementById("contentsFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("solutionFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("firNoFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("secNoFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("thrNoFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("fourNoFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("fifNoFormulaEditor").innerHTML)
+				+nb_getByteLengthOfString(document.getElementById("answerFormulaEditor").innerHTML)
+			if(totalFileSize/1000 > 60){
+				alert("등록하신 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트는 최대 60KB까지 등록가능합니다.");
 				return false;
 			}
 		 }
@@ -216,7 +218,6 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		let formData = new FormData(document.getElementById("contentsForm"));
 		formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
 		formData.append("typeNo", quesType[quesType.selectedIndex].dataset.typeNo);
-		let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
 		for(let i=0; i<targetId.length; i++){
 			let allImgDom = document.getElementById(targetId[i]).querySelectorAll("img");
 			for(let j=0; j<allImgDom.length; j++){

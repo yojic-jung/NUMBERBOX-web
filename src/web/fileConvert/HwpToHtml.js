@@ -9,7 +9,8 @@ import "css/staff/staff.css";
 import "css/common/common.css";
 import "css/fileConvert/fileConvert.css";
 import hourglass from 'img/hourglass.gif';
-import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_base64ImgRegisterToS3, nb_formDataFetch, nb_topMenuFixed, nb_getParameterByName} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_base64ImgRegisterToS3, nb_formDataFetch, 
+    nb_topMenuFixed, nb_getParameterByName, nb_base64ImgRegisterToS3ByTargetId, nb_getByteLengthOfString} from 'js/common/common_nb.js';
 import { reg_preventKeyEvent, reg_selectCheck, reg_dressSelectionBackColor, reg_dressYellowBox,reg_formulaTapMoveEv,
      reg_tbPasteInPastePrevent, reg_tbCellKeyUp, reg_nbComplie, reg_imageCopy, reg_mDownTdWidthChange, reg_mMoveTdWidthChange,
      reg_mUpTdWidthChange, reg_selStartTdWidthChange, reg_tbSelBackgroundRemove, reg_tbCellMouseUp, reg_tbCellCopy, reg_convertNotTransferdNbBox,
@@ -687,15 +688,25 @@ const HwpToHtml = ()=>{
 
         if(!event.isTrusted) return; //사용자 액션 아닌 자바스크립트로 실행된 경우 리턴
         if(document.getElementById("myHwpContents").dataset.convertNo === undefined) return;
+        //변환 안된 이미지 파일 변환
+        await nb_base64ImgRegisterToS3ByTargetId("myHwpContents");
+        
+       //파일 용량 validation
+        let totalFileSize = nb_getByteLengthOfString(document.getElementById("myHwpContents").innerHTML);
+        if(totalFileSize/1000 > 5000){
+            alert("등록하신 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트는 최대 5MB까지 등록가능합니다.");
+            return false;
+        }
+
         let formData = new FormData();
         formData.append("convertNo", document.getElementById("myHwpContents").dataset.convertNo);
         formData.append("converted", true);
         formData.append("convertContents", document.getElementById("myHwpContents").innerHTML)
+
         let imgTagList = document.getElementById("myHwpContents").querySelectorAll("img");
         for(let i=0; i<imgTagList.length; i++){
             formData.append("imgFileTagList", imgTagList[i].src);
         }
-        
 
         let returnObj = await nb_formDataFetch("/convert/saveMyHwpContents", formData, transitEffect);
         setMyUpldFile(returnObj.contentsList)

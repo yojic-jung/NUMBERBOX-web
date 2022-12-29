@@ -316,6 +316,13 @@ export const nb_addClass = async (targetId, className) => {
   document.getElementById(targetId).classList.add(className);
 }
 
+/*
+ * 정의 : 바이트 크기 리턴
+ */
+export const nb_getByteLengthOfString = function(s,b,i,c){
+  for(b=i=0;c=s.charCodeAt(i++);b+=c>>11?3:c>>7?2:1);
+  return b;
+  };
 
 
 /*
@@ -423,6 +430,27 @@ export const nb_base64ImgRegisterToS3 = async (event)=>{
           allImgDom[i].src=returnObj.s3ImgUrl;
       }
   }
+}
+
+/*
+* 정의 : base64Img S3서버에 저장
+*/
+export const nb_base64ImgRegisterToS3ByTargetId = async (targetId)=>{
+    //ctrl+v로 base64 이미지 들어온 경우 s3에 등록
+    let imgFile;
+    let allImgDom = document.getElementById(targetId).querySelectorAll("img");
+    for(let i=0; i<allImgDom.length; i++){
+        let fileName = await nb_generateRandomString(15);
+        imgFile = await nb_base64ImgtoFile(allImgDom[i].src, fileName);
+        //base64 이미지가 아닌 경우 skip
+        if(imgFile === null) continue;
+        let formData = new FormData();
+        formData.append("actionId", 10);
+        formData.append("imgPath", "editorImgUpld");
+        formData.append("multipartFile", imgFile);
+        let returnObj = await nb_formDataFetch("/common/imgUpload", formData, false);
+        allImgDom[i].src=returnObj.s3ImgUrl;
+    }
 }
 
 /*
