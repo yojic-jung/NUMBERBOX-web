@@ -33,9 +33,19 @@
     src: url('font/OTJeongsogeonhaeLA.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-    unicode-range:  U+3260-3266, U+00B7;
+    unicode-range:  U+3260-3266;
 }
 
+/*
+* 중간점(곱하기 점) : U+00B7
+*/
+@font-face {
+    font-family: 'nbFormulaFont';
+    src: url('font/KOTRALEAP.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range:   U+00B7;
+}
 
 /* 영어 대문자 */
 @font-face {
@@ -713,6 +723,13 @@
     text-align: center;
 }
 
+.nbExpTmp .nbSubTmp, .nbIntSub .nbSubTmp,  .nbIntSup .nbSubTmp, 
+.nbDoubleIntSub .nbSubTmp, .nbDoubleIntSup .nbSubTmp, .nbTripleIntSub .nbSubTmp, .nbTripleIntSup .nbSubTmp, 
+.nbRootExpBase .nbSubTmp, .nbLogSubBase .nbSubTmp, .nbLimSubBase .nbSubTmp, .nbSigmaSumSub .nbSubTmp, .nbSigmaSumSup .nbSubTmp,
+.nbIntBrckSupBase .nbSubTmp, .nbIntBrckSubBase .nbSubTmp, .nbFracExpTmp .nbSubTmp {
+    top:2.3em;
+}
+
 /** 양방향 아래첨자 표현 **/
 .nbBiDirSubBox{
     line-height: 110%;
@@ -1334,10 +1351,10 @@
     margin:3px 0;
 }
 
-.nbBrckInFrac .nb-Abs-Brck-Tbody:before, .nbBrckInFrac .nb-Abs-Brck-Tbody:after,
-.nbBrckInFrac .nb-R-Brck-Tbody:before, .nbBrckInFrac .nb-R-Brck-Tbody:after,
-.nbBrckInFrac .nb-C-Brck-Tbody:before, .nbBrckInFrac .nb-C-Brck-Tbody:after,
-.nbBrckInFrac .nb-S-Brck-Tbody:before, .nbBrckInFrac .nb-S-Brck-Tbody:after,
+.nb-Abs-BrckBox.nbBrckInFrac > .nb-Abs-Brck-Tbody:before, .nb-Abs-BrckBox.nbBrckInFrac > .nb-Abs-Brck-Tbody:after,
+.nb-R-BrckBox.nbBrckInFrac > .nb-R-Brck-Tbody:before, .nb-R-BrckBox.nbBrckInFrac > .nb-R-Brck-Tbody:after,
+.nb-C-BrckBox.nbBrckInFrac > .nb-C-Brck-Tbody:before, .nb-C-BrckBox.nbBrckInFrac > .nb-C-Brck-Tbody:after,
+.nb-S-BrckBox.nbBrckInFrac > .nb-S-Brck-Tbody:before, .nb-S-BrckBox.nbBrckInFrac > .nb-S-Brck-Tbody:after,
 .nbIntBrckTbody:before, .nbIntBrckTbody:after {
     position: absolute;
     top: 50%;
@@ -1366,7 +1383,7 @@
     right: 0em;
 }
 
-.nbBrckInFrac .nb-Abs-Brck-Tbody:before {
+.nb-Abs-BrckBox.nbBrckInFrac > .nb-Abs-Brck-Tbody:before {
     content: "|";
     left: 0em;
     font-size: 30px;
@@ -1374,7 +1391,7 @@
     font-weight: 100;
 }
 
-.nbBrckInFrac .nb-Abs-Brck-Tbody:after {
+.nb-Abs-BrckBox.nbBrckInFrac > .nb-Abs-Brck-Tbody:after {
     content: "|";
     font-size: 30px;
     font-family: 'caseBrck';
@@ -1385,6 +1402,79 @@
 .nb-R-Brck-Tbody:before {
     content: "(";
     left: -0.1em;
+}
+
+.nb-R-BrckBox.nbLargeBrck > .nb-R-Brck-Tbody:before{
+    content: "";
+    background: url("img/roundLargeBrckLeft.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    left: 0.1em;
+}
+.nb-R-BrckBox.nbLargeBrck > .nb-R-Brck-Tbody:after{
+    content: "";
+    background: url("img/roundLargeBrckRight.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    right: 0.1em;
+}
+
+.nb-C-BrckBox.nbLargeBrck > .nb-C-Brck-Tbody:before{
+    content: "";
+    background: url("img/cLargeBrckLeft.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    left: 0.1em;
+}
+.nb-C-BrckBox.nbLargeBrck > .nb-C-Brck-Tbody:after{
+    content: "";
+    background: url("img/cLargeBrckRight.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    right: 0.1em;
+}
+
+.nb-S-BrckBox.nbLargeBrck > .nb-S-Brck-Tbody:before{
+    content: "";
+    background: url("img/squreLargeBrckLeft.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    left: 0.1em;
+}
+.nb-S-BrckBox.nbLargeBrck > .nb-S-Brck-Tbody:after{
+    content: "";
+    background: url("img/squreLargeBrckRight.png") no-repeat center center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    right: 0.1em;
+}
+
+.nb-Abs-BrckBox.nbLargeBrck{
+    padding: 0 0.45em;
+}
+
+.nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:before{
+    content: "";
+    background: url("img/absLargeBrck.png") no-repeat right center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    left: -0.1em;
+}
+
+.nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:after{
+    content: "";
+    background: url("img/absLargeBrck.png") no-repeat left center;
+    width: 8px;
+    height: 95%;
+    background-size: contain;
+    right: -0.1em;
 }
 
 .nb-R-Brck-Tbody:after {

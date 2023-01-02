@@ -10,13 +10,13 @@ import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getChe
 	nb_licenseUiCheck, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload, nb_fadeInOutA} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_formulaTapMoveEv,
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
-		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, reg_oldNbFormulToNewNbFormul,
+		reg_newSelectFormulaElement, reg_selectCheck, reg_removeSelectionBackColor, reg_oldNbFormulToNewNbFormul, reg_convertFigureTagRemove,
 		reg_dressSelectionBackColor, reg_tbCellMouseUp, reg_tbCellCopy, reg_tbSelBackgroundRemove, reg_tbPasteInPastePrevent, reg_tbCellKeyUp
 		,reg_tbPastePrevent, reg_nbComplie, reg_undoRedoInitialize, reg_undoRedoSetting, reg_enableImageResizeInDiv, reg_removeResizeFrame, reg_imageCopy} from 'js/contents/register/contents_reg';
 
 
 const quesAnsTabList = [{id:'quesTab',tabName:'문제 입력', className:"checkedTap"}, {id:'ansSolTab',tabName:'해설 및 정답', className:""}];
-const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt 단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식(alt+shift 단축키)', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호(alt+shift+ctrl 단축키)', className:"formulaTap"}];
+const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt 단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식(alt+shift 단축키)', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호(alt+shift+ctrl 단축키)', className:"formulaTap"}, {id:'etcFormulaTap2',tabName:'기타 기호2', className:"formulaTap"}];
 let shortCutKeyList;
 
 let multiImgTargetId;
@@ -69,6 +69,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		window.shortCutKeyList = null;
 		window.shortCutKeyHigh1 = null;
 		window.shortCutKeyEtc = null;
+		window.shortCutKeyEtc2 = null;
 		//undo 초기화
 		reg_undoRedoInitialize();
 	}
@@ -209,6 +210,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			window.shortCutKeyList = shortCutKeyList;
 			window.shortCutKeyHigh1 = jsonObj["shortCutKeyHigh1"];
 			window.shortCutKeyEtc = jsonObj["shortCutKeyEtc"];
+			window.shortCutKeyEtc2 = jsonObj["shortCutKeyEtc2"];
+
 			if(contentsNo!==undefined) document.getElementById("outerFormulaEditor").addEventListener('scroll', topMenuFixed);
 			else window.addEventListener('scroll', topMenuFixed);
 			window.addEventListener('resize', topMenuWidth);
@@ -560,17 +563,27 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			document.getElementById("shortKeyBoard").classList.remove("hide");
 			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc2").classList.add("hide");
 			targetDom.classList.add("selectedTab");
 		}else if(targetId=="highFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.add("hide");
 			document.getElementById("shortKeyBoardHigh").classList.remove("hide");
 			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc2").classList.add("hide");
 			targetDom.classList.add("selectedTab");
 		}
 		else if(targetId=="etcFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.add("hide");
 			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.remove("hide");
+			document.getElementById("shortKeyBoardEtc2").classList.add("hide");
+			targetDom.classList.add("selectedTab");
+		}
+		else if(targetId=="etcFormulaTap2"){
+			document.getElementById("shortKeyBoard").classList.add("hide");
+			document.getElementById("shortKeyBoardHigh").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc2").classList.remove("hide");
 			targetDom.classList.add("selectedTab");
 		}
 
@@ -748,13 +761,14 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoard" keyName="shortCutKey" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor}/>}
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardHigh" keyName="shortCutKeyHigh1" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
 				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc" keyName="shortCutKeyEtc" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
+				{ isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc2" keyName="shortCutKeyEtc2" parentShortCutKey={shortCutKey} parentMethod={showFormulaEditor} />}
 				</div>
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
 				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
-                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true" placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
-                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true" placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true"  spellCheck={false} placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("solutionFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 				
                 <textarea id="contents" className="contents hide" name="contents" defaultValue={contentsText}></textarea>
 				<textarea id="solution" className="solution hide" name="solution" defaultValue={solutionText}></textarea>
@@ -769,23 +783,23 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<div id="multiChoiceBox" className="multiChoiceBox">
 						<input id="multiChoiceImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);multiChoiceImageFile(event);}} />
 						<div className="multiChoiceWrap">
-							<div id="firNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="firNoFormulaEditor" contentEditable="true"  spellCheck={false} className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("firNoFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("firNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="secNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="secNoFormulaEditor" contentEditable="true" spellCheck={false} className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("secNoFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("secNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="thrNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="thrNoFormulaEditor" contentEditable="true" spellCheck={false} className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("thrNoFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("thrNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="fourNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="fourNoFormulaEditor" contentEditable="true" spellCheck={false} className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("fourNoFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fourNoFormulaEditor")}}></div>
 						</div>
 						<div className="multiChoiceWrap">
-							<div id="fifNoFormulaEditor" contentEditable="true" className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event)}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+							<div id="fifNoFormulaEditor" contentEditable="true" spellCheck={false} className="multiChoiceView contentEditClass onlyEdit" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);nb_multiChoiceGridSet("multi-show");reg_dressSelectionBackColor();reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("fifNoFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 							<div className="multiChoiceImgAddBtn" onClick={()=>{multiChoiceImgAdd("fifNoFormulaEditor")}}></div>
 						</div>
 						<div className="hide">
@@ -807,7 +821,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<div className="mini-title">정답</div>
 					<div>
 						<div className="mini-title2">주관식 정답</div> 
-						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" spellCheck={false} onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
 						<div className="mini-title2">객관식 정답(선택) </div>

@@ -9,10 +9,10 @@ import "css/staff/staff.css";
 import "css/common/common.css";
 import "css/fileConvert/fileConvert.css";
 import hourglass from 'img/hourglass.gif';
-import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_base64ImgRegisterToS3, nb_formDataFetch, 
+import {nb_dataFetch, nb_extensionCheck2, nb_isLogin, nb_isManger, nb_base64ImgRegisterToS3, nb_formDataFetch,  nb_confirmBox,
     nb_topMenuFixed, nb_getParameterByName, nb_base64ImgRegisterToS3ByTargetId, nb_getByteLengthOfString} from 'js/common/common_nb.js';
 import { reg_preventKeyEvent, reg_selectCheck, reg_dressSelectionBackColor, reg_dressYellowBox,reg_formulaTapMoveEv,
-     reg_tbPasteInPastePrevent, reg_tbCellKeyUp, reg_nbComplie, reg_imageCopy, reg_mDownTdWidthChange, reg_mMoveTdWidthChange,
+     reg_tbPasteInPastePrevent, reg_tbCellKeyUp, reg_nbComplie, reg_imageCopy, reg_mDownTdWidthChange, reg_mMoveTdWidthChange, reg_convertFigureTagRemove,
      reg_mUpTdWidthChange, reg_selStartTdWidthChange, reg_tbSelBackgroundRemove, reg_tbCellMouseUp, reg_tbCellCopy, reg_convertNotTransferdNbBox,
      reg_removeSelectionBackColor, reg_newSelectFormulaElement, reg_removeResizeFrame, reg_enableImageResizeInDiv, reg_oneLineOneDiv,
      reg_undoRedoSetting, reg_undoRedoInitialize, reg_tbCellMouseDown, reg_tbCellMouseMove, reg_vacantTextNodeRemove} from 'js/contents/register/contents_reg';
@@ -33,11 +33,12 @@ const HwpToHtml = ()=>{
         const asyncUseEffect = async function(){
             let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
-            setShortCutKeyAll([...jsonObj["shortCutKey"], ...jsonObj["shortCutKeyHigh1"], ...jsonObj["shortCutKeyEtc"]]);
+            setShortCutKeyAll([...jsonObj["shortCutKey"], ...jsonObj["shortCutKeyHigh1"], ...jsonObj["shortCutKeyEtc"], ...jsonObj["shortCutKeyEtc2"]]);
 			setIsFetchShotCutKey(true);
             window.shortCutKeyList = jsonObj["shortCutKey"];
 			window.shortCutKeyHigh1 = jsonObj["shortCutKeyHigh1"];
 			window.shortCutKeyEtc = jsonObj["shortCutKeyEtc"];
+            window.shortCutKeyEtc = jsonObj["shortCutKeyEtc2"];
 
             //convertNo 파라미터 있고 관리자 및 매니저이면 convertNo 파일 내용 볼 수 있음(관리자 및 매니저 아닌 경우 파라미터 없는 로직 그대로 수행)
             let resourceMenu;
@@ -91,6 +92,7 @@ const HwpToHtml = ()=>{
             window.shortCutKeyList = null;
 			window.shortCutKeyHigh1 = null;
 			window.shortCutKeyEtc = null;
+            window.shortCutKeyEtc2 = null;
             window.removeEventListener('scroll', topMenuFixed);
             window.removeEventListener('resize', topMenuWidth);
             //window.removeEventListener('scroll',reg_removeResizeFrame);
@@ -131,7 +133,7 @@ const HwpToHtml = ()=>{
                 await reg_undoRedoInitialize();
                 await reg_undoRedoSetting()
 
-                await saveMyHwpContents(fakeEv, true);
+                await saveMyHwpContents(fakeEv, true, false);
             }
             document.getElementById("hwpToWebUpld").click()
         }else{
@@ -179,6 +181,7 @@ const HwpToHtml = ()=>{
     }
         
     const hwpHtmlToNbHtml = async (domId, isFirst, s3FileUrl, convertNo) => {
+        
         //이미지 파일 셋팅
         let imgDom = document.getElementById("myHwpContents").querySelectorAll("img");
         for(let i=0; i<imgDom.length; i++){
@@ -346,7 +349,7 @@ const HwpToHtml = ()=>{
                 }
 
                 //띄어쓰기 및 한컴에서만 사용되는 효과 없애기
-                texGrammer = texGrammer.replaceAll(" ", "").replaceAll("rm", "").replaceAll("it", "").replaceAll("bold", "")
+                texGrammer = texGrammer.replaceAll("& ", "").replaceAll(" ", "").replaceAll("rm", "").replaceAll("it", "")
                                         .replaceAll("`", " ").replaceAll("~", " ").replaceAll("\"", "")
                                         .replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("nbCustomWaveText", "~");
                                         
@@ -356,7 +359,14 @@ const HwpToHtml = ()=>{
                         let nbFormulGrammer = shortCutKeyAll.filter((element) => {
                             return (element.id === replaceTexToNbBoxFormul[j].formulId) 
                         });
+                        //n명의 수학에는 존재하지 않고, 한글 파일에만 존재하는 수식 처리
+                        if(nbFormulGrammer[0] === undefined){
+                            let tmpObj = new Object();
+                            tmpObj.nbGrammer = "";
+                            nbFormulGrammer[0] = tmpObj;
+                        }
                         let convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer[0].nbGrammer);
+                        
                         //중괄호 없는 경우
                         if(convertHtml === null){
                             let tmpId = "임시아이디"+i+"-"+j+"-"+tmpIdx+"-"+uniqIdx+".";
@@ -594,15 +604,13 @@ const HwpToHtml = ()=>{
                 await reg_undoRedoInitialize();
                 await reg_undoRedoSetting()
 
-                await saveMyHwpContents(fakeEv, true);
-                
+                await saveMyHwpContents(fakeEv, true, true);
                 reg_enableImageResizeInDiv("myHwpContents");
             }else{
                 if(returnObj.upldCntOver){
 
                 }
             }
-
              //input file 초기화
             event.target.value= "";
         }
@@ -616,7 +624,6 @@ const HwpToHtml = ()=>{
         document.getElementById("myHwpContents").dataset.convertNo = convertNo;
         document.getElementById("myHwpContents").innerHTML = myConvertFile[0].convertContents
 
-         
         //변환이 안된채 저장되어있으면 다시 한번 변환
         if(!myConvertFile[0].converted){
             //관리자 모드로 들어온 경우 변환 금지
@@ -626,19 +633,8 @@ const HwpToHtml = ()=>{
                 return;
             }
 
-            await hwpHtmlToNbHtml("myHwpContents", false, myConvertFile[0].imgPath);
-
-            //undo, redo 초기화 및 변환된 상태 저장
-            let fakeEv = new Object();
-            fakeEv.isTrusted = true;
-            await reg_undoRedoInitialize();
-            await reg_undoRedoSetting()
-
-            await saveMyHwpContents(fakeEv, true);
-            
-            reg_enableImageResizeInDiv("myHwpContents");
+            await nb_confirmBox("수식변환이 진행되지 않는 파일이 존재합니다.\n수식변환을 진행하시겠습니까?\n")
         }
-        
 
         let convertFileNameRoot = document.getElementsByClassName("convertFileNameRoot");
         for(let i=0; i<convertFileNameRoot.length; i++){
@@ -648,11 +644,38 @@ const HwpToHtml = ()=>{
         event.target.closest(".convertFileNameRoot").classList.add("active");
     }
 
-    const removeConvertContents = async (convertNo) => {
+    const progressConvert = async () => {
+        document.getElementById("confirmBoxScreen").classList.add("hide")
+
+        document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+        document.getElementById("hourGlassDesc").innerText = "수식기호를 변환 중 입니다.\n수식기호가 많은 파일은 수 분이 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
+        await nb_dataFetch("/" , false);
+        let convertNo = document.getElementById("myHwpContents").dataset.convertNo;
+        let myConvertFile = myUpldFile.filter((element) => {
+            return (element.convertNo === Number(convertNo)) 
+        });
+        await hwpHtmlToNbHtml("myHwpContents", false, myConvertFile[0].imgPath);
+
+        //undo, redo 초기화 및 변환된 상태 저장
+        let fakeEv = new Object();
+        fakeEv.isTrusted = true;
+        await reg_undoRedoInitialize();
+        await reg_undoRedoSetting()
+
+        await saveMyHwpContents(fakeEv, true, true);
+        
+        reg_enableImageResizeInDiv("myHwpContents");
+        document.getElementById("resDetailedTimeDesc").classList.add("hide");
+    }
+
+    const removeConvertContents = async (convertNo, askConfirm) => {
         //관리자 모드로 들어온 경우 삭제 금지
         if(isAdminMode) return;
-
-        let isRemove = window.confirm("해당 업로드 내역을 삭제하시겠습니까?");
+        let isRemove = true
+        if(askConfirm){
+             isRemove = window.confirm("해당 업로드 내역을 삭제하시겠습니까?");
+        }
+        
         if(isRemove){
             let jsonObj = await nb_dataFetch('/convert/removeConvertContents?convertNo='+convertNo, true);
             if(jsonObj.isSuccess){
@@ -672,17 +695,22 @@ const HwpToHtml = ()=>{
         if(isAdminMode) isHide="hide";
         return <tr key={conents.convertNo}>
                     <td className='myHwpContentsTd'>
-                        <div className="convertFileNameRoot" onClick={(event)=>{saveMyHwpContents(event, true);showConvertContents(event, conents.convertNo);reg_undoRedoInitialize();reg_undoRedoSetting()}}>
+                        <div className="convertFileNameRoot" onClick={async (event)=>{await saveMyHwpContents(event, true, false);await showConvertContents(event, conents.convertNo);reg_undoRedoInitialize();reg_undoRedoSetting()}}>
                             <div className='convertFileName'>{conents.convertFileName}</div>
                             <div className='convertUpdateDate'>등록일 : {conents.sysCreateDate}</div>
                         </div>
                     </td>
-                    <td><span className={'circleDel '+isHide} onClick={()=>{removeConvertContents(conents.convertNo)}}>-</span></td>
+                    <td><span className={'circleDel '+isHide} onClick={()=>{removeConvertContents(conents.convertNo, true)}}>-</span></td>
                 </tr>
                 
     });
 
-    const saveMyHwpContents = async (event, transitEffect) => {
+    /*
+    * 파일 변환 저장 함수 : 한글파일 업로드 버튼 클릭, 한글 파일 업로드 후 web으로 넘어와 변환 마친 후,
+                            직접 save 버튼 클릭시,   다른 파일 목록 클릭시
+                            페이지 나갈 때, 변환 안된채 빠져 나왔을 때 재변환 후
+    */
+    const saveMyHwpContents = async (event, transitEffect, convertChanged) => {
         //관리자 모드로 들어온 경우 저장 금지
         if(isAdminMode) return;
 
@@ -700,14 +728,22 @@ const HwpToHtml = ()=>{
 
         let formData = new FormData();
         formData.append("convertNo", document.getElementById("myHwpContents").dataset.convertNo);
-        formData.append("converted", true);
+
+        if(convertChanged){ //수식이 변환 된 후에만 converted 칼럼 true로 변경
+            formData.append("converted", true);
+        }else{ //(한글파일 업로드 버튼 클릭, 직접 save 버튼 클릭시, 페이지 나갈 때, 다른 파일 목록 클릭시)
+            //변환 안된 파일은 save되면 안됨(사용자가 &strt/ $end/ 사이값 조작하면 에러 날 수 있음)
+            let myConvertFile = myUpldFile.filter((element) => {
+                return (element.convertNo === Number(document.getElementById("myHwpContents").dataset.convertNo)) 
+            });
+            if(!myConvertFile[0].converted) return;
+        }
         formData.append("convertContents", document.getElementById("myHwpContents").innerHTML)
 
         let imgTagList = document.getElementById("myHwpContents").querySelectorAll("img");
         for(let i=0; i<imgTagList.length; i++){
             formData.append("imgFileTagList", imgTagList[i].src);
         }
-
         let returnObj = await nb_formDataFetch("/convert/saveMyHwpContents", formData, transitEffect);
         setMyUpldFile(returnObj.contentsList)
     }
@@ -752,7 +788,7 @@ const HwpToHtml = ()=>{
         event.preventDefault();
         event.returnValue = '';
         let isQuit = window.confirm("사이트에서 나가시겠습니까?/n변경사항이 저장되지 않을 수 있습니다.")
-        await saveMyHwpContents(event, true)
+        await saveMyHwpContents(event, true, false)
         return isQuit;
     }
 
@@ -804,7 +840,7 @@ const HwpToHtml = ()=>{
     //특수문자 인코딩 에러 테스트
     const test = async ()=> {
         let formData = new FormData();
-            formData.append("convertContents", "-😛");
+            formData.append("convertContents", "~!@#$%^*()-😛😁{}[];'/.,");
         await nb_formDataFetch("/convert/test", formData, true);
     }
 return (
@@ -840,17 +876,18 @@ return (
                     { isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoard" keyName="shortCutKey" parentShortCutKey={shortCutKey} parentMethod={()=>{}}/>}
                     { isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardHigh" keyName="shortCutKeyHigh1" parentShortCutKey={shortCutKey} parentMethod={()=>{}} />}
                     { isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc" keyName="shortCutKeyEtc" parentShortCutKey={shortCutKey} parentMethod={()=>{}} />}
+                    { isFetchShotCutKey && <FormulaShortCutKey compId="shortKeyBoardEtc2" keyName="shortCutKeyEtc2" parentShortCutKey={shortCutKey} parentMethod={()=>{}} />}
 				</div>
                 <div className='saveDiv'>
                     {isAdminMode ?
                     <span className='saveBtn' onClick={(event)=>{hwpHtmlToNbHtml("myHwpContents", false);}}>수식 문법 변환</span>
                     :
-                    <span className='saveBtn' onClick={(event)=>{saveMyHwpContents(event, true)}}>save</span>
+                    <span className='saveBtn' onClick={(event)=>{saveMyHwpContents(event, true, false)}}>save</span>
                     }
                     
                 </div>
                 <NbWebEditor parentMethod={()=>{}}></NbWebEditor>
-                <div id="myHwpContents" className='myHwpContents contentEditClass onlyEdit' contentEditable={true} onKeyDown={(event) => {reg_preventKeyEvent(event, true);}} onKeyUp={(event) => {reg_dressYellowBox();reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);reg_vacantTextNodeRemove(event, "myHwpContents");nb_base64ImgRegisterToS3(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div id="myHwpContents" className='myHwpContents contentEditClass onlyEdit' contentEditable={true} spellCheck={false} onKeyDown={(event) => {reg_preventKeyEvent(event, true);}} onKeyUp={(event) => {reg_dressYellowBox();reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);reg_vacantTextNodeRemove(event, "myHwpContents");nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("myHwpContents");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
             </div>
         </div>
         :
@@ -867,7 +904,16 @@ return (
                 <div id="hourGlassDesc"></div>
             </div>
         </div>
-        
+        <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
+            <div id="confirmBox" className='confirmBox'>
+                <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" >&nbsp;</span></div>
+                <div id="confirmMsg" className="confirmMsg"></div>
+                <div className='alignCenter'>
+                    <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{document.getElementById("confirmBoxScreen").classList.add("hide");removeConvertContents(document.getElementById("myHwpContents").dataset.convertNo, false)}}>파일삭제</span>
+                    <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={async ()=>{await progressConvert()}}>진행</span>
+                </div>
+            </div>
+        </div>
     </div>
     )
 }

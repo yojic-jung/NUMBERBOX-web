@@ -622,12 +622,7 @@ const WorkContentsList = ()=>{
 
             let formData = new FormData(document.getElementById("workSearchForm"));
             formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
-            // FormData의 값 확인
-            /*
-            for (var pair of formData.entries()) {
-                console.log(pair[0]+ ': ' + pair[1]);
-            }
-            */
+            
 
             let returnObj = await nb_formDataFetch("/mathInfo/takeWorkContentsList",formData, true);
             let param = nb_getParameterByName("unitUniqId")

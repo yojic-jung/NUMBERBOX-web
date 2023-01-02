@@ -232,12 +232,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			formData.append("contentsNo", contentsNo[2]);
 			if(contentsClassify === 0) formData.append("mathContentsCompSeqNo", contentsNo[3]);	
 		}
-		// FormData의 값 확인
-		/*
-		for (var pair of formData.entries()) {
-			console.log(pair[0]+ ': ' + pair[1]);
-		}
-		*/
+		
 		let returnObj;
 		if(contentsClassify === 0){
 			returnObj = await nb_formDataFetch("/mathInfo/registerContents",formData, true);

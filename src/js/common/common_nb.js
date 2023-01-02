@@ -567,7 +567,6 @@ export const nb_extensionCheck2 = async (event, exetension) => {
 export const nb_module_handleImageUpload = async (event) => {
       let imageFile = event.target.files[0];
       
-      //console.log(imageFile.size/1024/1024 < 0.06);
       //1MB 보다 큰 이미지에 대해서만 압축 진행
       if(imageFile.size/1024/1024 < 0.05) return imageFile;
       let options = {
@@ -581,7 +580,6 @@ export const nb_module_handleImageUpload = async (event) => {
         document.getElementById("page-transit-desc").classList.remove("hide");
         document.getElementById("page-transit-desc").innerText = "이미지를 압축하여 불러오고 있습니다...";
         let compressedFile = await imageCompression(imageFile, options);
-       // console.log(compressedFile.size/1024/1024);
         document.getElementById("page-transit").classList.add("hide");
         document.getElementById("page-transit-img").classList.add("hide");
         document.getElementById("page-transit-desc").classList.add("hide");

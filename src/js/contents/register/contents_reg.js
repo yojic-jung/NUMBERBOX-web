@@ -516,10 +516,26 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 				if(strtElement.closest(".nbDenom") !== null && endElement.closest(".nbDenom") !== null){
 					nbFracBoxStrt.classList.add("nbConvert");
 					nbFracBoxStrt.classList.add("nbFracInDenom");
+
+					//분수 분의 분수 위에 분수용 괄호 있는 경우
+					let parentBrck = nbFracBoxStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+					while(parentBrck !== null){
+						parentBrck.classList.add("nbConvert")
+						parentBrck.classList.add("nbLargeBrck")
+						parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+					}
 				}
 				if(strtElement.closest(".nbNumer") !== null && endElement.closest(".nbNumer") !== null){
 					nbFracBoxStrt.classList.add("nbConvert");
 					nbFracBoxStrt.classList.add("nbFracInNumer");
+
+					//분수 분의 분수 위에 분수용 괄호 있는 경우
+					let parentBrck = nbFracBoxStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+					while(parentBrck !== null){
+						parentBrck.classList.add("nbConvert")
+						parentBrck.classList.add("nbLargeBrck")
+						parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+					}
 				}
 			}
 
@@ -703,6 +719,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbSigmaSumInDenom");
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+
+				//분모 안의 시그마 위에 분수용 괄호 있는 경우
+				let parentBrck = nbDenomStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분자 안의 시그마 컴파일
@@ -712,6 +736,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbSigmaSumInNumer");
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+				
+				//분자 안의 시그마 위에 분수용 괄호 있는 경우
+				let parentBrck = nbNumerStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		
@@ -761,6 +793,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbLimInDenom");
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+
+				//분모 안의 리밋 위에 분수용 괄호 있는 경우
+				let parentBrck = nbDenomStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -770,6 +810,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbLimInNumer");
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+
+				//분자 안의 리밋 위에 분수용 괄호 있는 경우
+				let parentBrck = nbNumerStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 	}
@@ -807,6 +855,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbIntegralInDenom");
 				nbDenomStrt.closest(".nbFracBox").classList.add("nbConvert");
+
+				//분모, 분자 안에 적분 들어간 분수 위에 분수용 괄호 있는 경우
+				let parentBrck = nbDenomStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -816,6 +872,14 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbIntegralInNumer");
 				nbNumerStrt.closest(".nbFracBox").classList.add("nbConvert");
+
+				//분모, 분자 안에 적분 들어간 분수 위에 분수용 괄호 있는 경우
+				let parentBrck = nbNumerStrt.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox")
+				while(parentBrck !== null){
+					parentBrck.classList.add("nbConvert")
+					parentBrck.classList.add("nbLargeBrck")
+					parentBrck = parentBrck.parentElement.closest(".nb-Abs-BrckBox, .nb-C-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -923,6 +987,7 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 
 /*
 *	정의 : 변환되지 않은 nbBox 변환 함수
+*   설명 : 파일 변환 페이지에서 convert 방식 적용
 */
 export const reg_convertNotTransferdNbBox = async (domId) => {
 	//분모, 분자, 분수용 괄호 안의 시그마
@@ -932,8 +997,8 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbSigmaSumInDenom");
 			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert")
 		}else if(nbSigmaSumBox[i].parentElement.closest(".nbNumer") !== null ){
-			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbSigmaSumInNumer");
-			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+			nbSigmaSumBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbSigmaSumInNumer");
+			nbSigmaSumBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
 		}
 
 		/*
@@ -986,7 +1051,17 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 	}
 
 
-	
+	//분모, 분자 안에 적분
+	let nbIntBox = document.getElementById(domId).querySelectorAll(".nbIntegralBox, .nbDoubleIntegralBox, .nbTripleIntegralBox")
+	for(let i=0; i<nbIntBox.length; i++){
+		if(nbIntBox[i].parentElement.closest(".nbDenom") !== null){
+			nbIntBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbIntegralInDenom");
+			nbIntBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
+		}else if(nbIntBox[i].parentElement.closest(".nbNumer") !== null){
+			nbIntBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbIntegralInNumer");
+			nbIntBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
+		}
+	}
 
 	//분모, 분자 안에 리밋
 	let nbLimBox = document.getElementById(domId).querySelectorAll(".nbLimBox")
@@ -1129,7 +1204,15 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 			nbArrowBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert");
 		}
 	}
-	
+
+	//분수용 괄호 nbLargeBrck 만들기(.nbFracInDenom, .nbFracInNumer, .nbIntegralInDenom, .nbIntegralInNumer, .nbSigmaSumInDenom, .nbSigmaSumInNumer, .nbLimInDenom .nbLimInNumer)
+	let nbBrck = document.getElementById(domId).querySelectorAll(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-S-BrckBox, .nb-C-BrckBox")
+	for(let i=0; i<nbBrck.length; i++){
+		if(nbBrck[i].querySelectorAll(".nbFracInDenom, .nbFracInNumer, .nbIntegralInDenom, .nbIntegralInNumer, .nbSigmaSumInDenom, .nbSigmaSumInNumer, .nbLimInDenom, .nbLimInNumer").length !== 0){
+			nbBrck[i].classList.add("nbLargeBrck");
+			nbBrck[i].parentElement.classList.add("nbConvert");
+		}
+	}
 }
 
 /*
@@ -1725,7 +1808,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		
 	}else{
 		if(!event.ctrlKey){
-			reg_removeResizeFrame();	
+			reg_removeResizeFrame(false);	
 		}
 	 }
 
@@ -2044,7 +2127,15 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		*  contentEditable이 아닌 요소 제거 및 contentEditable 요소의 높이를 제거하여 모든 텍스트 보이도록 구현
 		*  커서 포인터와 이동할 커서 포인터를 브라우저 중앙에 두어 null값 안나오도록 구현
 		*/
-		let windowScrollTop = document.querySelector('html').scrollTop;			// 이전 브라우저 스크롤 높이 파악
+
+		let windowScrollTop = 0;
+		//팝업창 없이 열린 경우
+		if(document.getElementsByClassName("popupBox").length === 0){
+			windowScrollTop = document.querySelector('html').scrollTop;			// 이전 브라우저 스크롤 높이 파악
+		}else{ //팝업창 있는 경우
+			windowScrollTop = document.getElementsByClassName("popupBox")[0].scrollTop;			// 이전 브라우저 스크롤 높이 파악
+		}
+		
 		let scrollTop = document.getElementById(document.activeElement.id).scrollTop // 이전 active 요소 스크롤 높이 파악
 		document.getElementById(document.activeElement.id).classList.add("fullHeight");
 		document.getElementById("topShortkeyDiv").classList.add("hide");
@@ -2262,7 +2353,13 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		tmpRange.insertNode(tmpNode);
 		document.getElementById("topShortkeyDiv").classList.remove("hide");		// hide요소 show로 전환
 		document.getElementById(document.activeElement.id).classList.remove("fullHeight");	// hide요소 show로 전환
-		document.querySelector('html').scrollTop = windowScrollTop;			//브라우저 스크롤 초기화
+		
+		//팝업창 없이 열린 경우
+		if(document.getElementsByClassName("popupBox").length === 0){
+			document.querySelector('html').scrollTop = windowScrollTop;			//브라우저 스크롤 초기화
+		}else{ //팝업창 있는 경우
+			document.getElementsByClassName("popupBox")[0].scrollTop = windowScrollTop;
+		}
 		document.getElementById(document.activeElement.id).scrollTop = scrollTop;	//contentEditable 요소 스크롤 초기화
 		
 		//contentEditable 요소 스크롤 이동 필요시 스크롤 이동
@@ -3694,6 +3791,7 @@ export const reg_nbFormulaDelBugFix = async (event) => {
 * 정의 : 수식 컴파일 방식 구현
 * 설명 : 루트 안의 분수, 분수 없을 때 컴파일 클래스 제거
 *		 분수 안의 분수, 루트, 순환소수, 악센트, 직선, 선분
+*         ctrl+v로 들어가는 경우와 삭제 처리
 */
 export const reg_nbComplie = async (event) => {
 	await reg_nbFormulaDelBugFix();
@@ -3802,6 +3900,18 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
+		nbAbsBrckBox = [];	//분수용 절댓값 안 분수 분의 분수
+		document.activeElement.querySelectorAll(".nb-Abs-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbLargeBrck"))) nbAbsBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbAbsBrckBox.length; i++){
+			if(nbAbsBrckBox[i].querySelectorAll(".nb-Abs-BrckBase .nbFracInDenom, .nb-Abs-BrckBase .nbFracInNumer, .nb-Abs-BrckBase .nbIntegralInDenom, .nb-Abs-BrckBase .nbIntegralInNumer, .nb-Abs-BrckBase .nbSigmaSumInDenom, .nb-Abs-BrckBase .nbSigmaSumInNumer, .nb-Abs-BrckBase .nbLimInDenom, .nb-Abs-BrckBase .nbLimInNumer").length !== 0) {
+				nbAbsBrckBox[i].classList.add("nbConvert");
+				nbAbsBrckBox[i].classList.add("nbLargeBrck");
+			}
+		}
+
 		//분수용 소괄호 안 분수
 		let nbRoundBrckBox = [];
 		document.activeElement.querySelectorAll(".nb-R-BrckBox").forEach((item, index, arr)=>{
@@ -3815,6 +3925,19 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
+		nbRoundBrckBox = [];	//분수용 소괄호 안 분수 분의 분수
+		document.activeElement.querySelectorAll(".nb-R-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbLargeBrck"))) nbRoundBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbRoundBrckBox.length; i++){
+			if(nbRoundBrckBox[i].querySelectorAll(".nb-R-BrckBase .nbFracInDenom, .nb-R-BrckBase .nbFracInNumer, .nb-R-BrckBase .nbIntegralInDenom, .nb-R-BrckBase .nbIntegralInNumer, .nb-R-BrckBase .nbSigmaSumInDenom, .nb-R-BrckBase .nbSigmaSumInNumer, .nb-R-BrckBase .nbLimInDenom, .nb-R-BrckBase .nbLimInNumer").length !== 0) {
+				nbRoundBrckBox[i].classList.add("nbConvert");
+				nbRoundBrckBox[i].classList.add("nbLargeBrck");
+			}
+		}
+
+
 
 		//분수용 중괄호 안 분수
 		let nbCBrckBox = [];
@@ -3826,6 +3949,18 @@ export const reg_nbComplie = async (event) => {
 			if(nbCBrckBox[i].querySelectorAll(".nb-C-BrckBox .nbFracBox, .nb-C-BrckBase .nbIntegralBox, .nb-C-BrckBase .nbDoubleIntegralBox, .nb-C-BrckBase .nbTripleIntegralBox, .nb-C-BrckBase .nbSigmaSumBox, .nb-C-BrckBase .nbIntBrckBox").length !== 0) {
 				nbCBrckBox[i].classList.add("nbConvert");
 				nbCBrckBox[i].classList.add("nbBrckInFrac");
+			}
+		}
+
+		nbCBrckBox = [];	//분수용 중괄호 안 분수 분의 분수
+		document.activeElement.querySelectorAll(".nb-C-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbLargeBrck"))) nbCBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbCBrckBox.length; i++){
+			if(nbCBrckBox[i].querySelectorAll(".nb-C-BrckBase .nbFracInDenom, .nb-C-BrckBase .nbFracInNumer, .nb-C-BrckBase .nbIntegralInDenom, .nb-C-BrckBase .nbIntegralInNumer, .nb-C-BrckBase .nbSigmaSumInDenom, .nb-C-BrckBase .nbSigmaSumInNumer, .nb-C-BrckBase .nbLimInDenom, .nb-C-BrckBase .nbLimInNumer").length !== 0) {
+				nbCBrckBox[i].classList.add("nbConvert");
+				nbCBrckBox[i].classList.add("nbLargeBrck");
 			}
 		}
 
@@ -3842,6 +3977,17 @@ export const reg_nbComplie = async (event) => {
 			}
 		}
 
+		nbSBrckBox = [];	//분수용 대괄호 안 분수 분의 분수
+		document.activeElement.querySelectorAll(".nb-S-BrckBox").forEach((item, index, arr)=>{
+			if(!(item.classList.contains("nbConvert") && item.classList.contains("nbLargeBrck"))) nbSBrckBox.push(item);
+		});
+
+		for(let i=0; i<nbSBrckBox.length; i++){
+			if(nbSBrckBox[i].querySelectorAll(".nb-S-BrckBase .nbFracInDenom, .nb-S-BrckBase .nbFracInNumer, .nb-S-BrckBase .nbIntegralInDenom, .nb-S-BrckBase .nbIntegralInNumer, .nb-S-BrckBase .nbSigmaSumInDenom, .nb-S-BrckBase .nbSigmaSumInNumer, .nb-S-BrckBase .nbLimInDenom, .nb-S-BrckBase .nbLimInNumer").length !== 0) {
+				nbSBrckBox[i].classList.add("nbConvert");
+				nbSBrckBox[i].classList.add("nbLargeBrck");
+			}
+		}
 
 		/*
 		//ln함수 안 분수
@@ -4243,7 +4389,42 @@ export const reg_nbComplie = async (event) => {
 				nbBrckInFracBoxes[i].classList.remove("nbBrckInFrac");
 			}
 		}
-		
+	}
+
+	//분수용 괄호 안 분수 분의 분수
+	let nbBrckInFracInFracBoxes = document.querySelectorAll(".nb-Abs-BrckBox.nbLargeBrck, .nb-R-BrckBox.nbLargeBrck, .nb-C-BrckBox.nbLargeBrck, .nb-S-BrckBox.nbLargeBrck");
+	for(let i=0; i<nbBrckInFracInFracBoxes.length; i++){
+		//분수용 절댓값 괄호
+		if(nbBrckInFracInFracBoxes[i].classList.contains("nb-Abs-BrckBox")){
+			if(nbBrckInFracInFracBoxes[i].querySelectorAll(".nb-Abs-BrckBase .nbFracInDenom, .nb-Abs-BrckBase .nbFracInNumer, .nb-Abs-BrckBase .nbIntegralInDenom, .nb-Abs-BrckBase .nbIntegralInNumer, .nb-Abs-BrckBase .nbSigmaSumInDenom, .nb-Abs-BrckBase .nbSigmaSumInNumer, .nb-Abs-BrckBase .nbLimInDenom, .nb-Abs-BrckBase .nbLimInNumer").length === 0){
+				nbBrckInFracInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracInFracBoxes[i].classList.remove("nbLargeBrck");
+			}
+		}
+
+		//분수용 소괄호
+		if(nbBrckInFracInFracBoxes[i].classList.contains("nb-R-BrckBox")){
+			if(nbBrckInFracInFracBoxes[i].querySelectorAll(".nb-R-BrckBase .nbFracInDenom, .nb-R-BrckBase .nbFracInNumer, .nb-R-BrckBase .nbIntegralInDenom, .nb-R-BrckBase .nbIntegralInNumer, .nb-R-BrckBase .nbSigmaSumInDenom, .nb-R-BrckBase .nbSigmaSumInNumer, .nb-R-BrckBase .nbLimInDenom, .nb-R-BrckBase .nbLimInNumer").length === 0){
+				nbBrckInFracInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracInFracBoxes[i].classList.remove("nbLargeBrck");
+			}
+		}
+
+		//분수용 중괄호
+		if(nbBrckInFracInFracBoxes[i].classList.contains("nb-C-BrckBox")){
+			if(nbBrckInFracInFracBoxes[i].querySelectorAll(".nb-C-BrckBase .nbFracInDenom, .nb-C-BrckBase .nbFracInNumer, .nb-C-BrckBase .nbIntegralInDenom, .nb-C-BrckBase .nbIntegralInNumer, .nb-C-BrckBase .nbSigmaSumInDenom, .nb-C-BrckBase .nbSigmaSumInNumer, .nb-C-BrckBase .nbLimInDenom, .nb-C-BrckBase .nbLimInNumer").length === 0){
+				nbBrckInFracInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracInFracBoxes[i].classList.remove("nbLargeBrck");
+			}
+		}
+
+		//분수용 대괄호
+		if(nbBrckInFracInFracBoxes[i].classList.contains("nb-S-BrckBox")){
+			if(nbBrckInFracInFracBoxes[i].querySelectorAll(".nb-S-BrckBase .nbFracInDenom, .nb-S-BrckBase .nbFracInNumer, .nb-S-BrckBase .nbIntegralInDenom, .nb-S-BrckBase .nbIntegralInNumer, .nb-S-BrckBase .nbSigmaSumInDenom, .nb-S-BrckBase .nbSigmaSumInNumer, .nb-S-BrckBase .nbLimInDenom, .nb-S-BrckBase .nbLimInNumer").length === 0){
+				nbBrckInFracInFracBoxes[i].classList.remove("nbConvert");
+				nbBrckInFracInFracBoxes[i].classList.remove("nbLargeBrck");
+			}
+		}
 	}
 
 
@@ -4554,7 +4735,7 @@ export const reg_convertSpanToNoTag = (targetId) => {
 export const reg_convertPtagToDivTag = () => {
 	if(window.getSelection().isCollapsed){
 		//워드, 한컴 복붙 하는 경우 p태그 생겨남
-		let pTag = document.getElementsByTagName("P");
+		let pTag = document.activeElement.getElementsByTagName("P");
 		
 
 		if(pTag.length>0){
@@ -4576,6 +4757,33 @@ export const reg_convertPtagToDivTag = () => {
 		}
 	}
 }
+
+/*
+* 정의 : figure태그 remove
+*/
+export const reg_convertFigureTagRemove = (targetId) => {
+	if(window.getSelection().isCollapsed){
+		//워드, 한컴 복붙 하는 경우 p태그 생겨남
+		let figureTag = document.getElementById(targetId).getElementsByTagName("figure");
+
+		if(figureTag.length >0){
+			let tmpNode = document.createElement("img");
+			tmpNode.className = "tmpPositionDetect";
+			window.getSelection().getRangeAt(0).insertNode(tmpNode);
+			window.getSelection().collapseToStart();
+
+			while(figureTag.length > 0){
+				figureTag[0].outerHTML = figureTag[0].innerHTML;
+				figureTag = document.getElementById(targetId).getElementsByTagName("figure");
+			}
+
+			window.getSelection().getRangeAt(0).selectNode(document.getElementsByClassName("tmpPositionDetect")[0]);
+			window.getSelection().collapseToStart();
+			document.getElementsByClassName("tmpPositionDetect")[0].remove();
+		}
+	}
+}
+
 
 /*
 *       정의 : 수식 및 div 태그 style 속성 없애기
@@ -4622,7 +4830,7 @@ export const reg_imageCopy = async (event, isCopy) =>{
 	}
 }
 
-export const reg_removeResizeFrame = function () {
+export const reg_removeResizeFrame = function (scrollMove) {
 	if(	document.querySelectorAll(".resize-frame,.resizer") !== null){
 	  document.querySelectorAll(".resize-frame,.resizer").forEach((item) => item.parentNode.removeChild(item));
 	}
@@ -4638,7 +4846,7 @@ export const reg_removeResizeFrame = function () {
 	}
 
 	//팝업 박스 위에서 열린 경우 이미지 가로, 세로 조절 팝업 위치가 정확하지 않은 버그 해결
-	if(document.getElementsByClassName("popupBox")[0] !== undefined){
+	if(document.getElementsByClassName("popupBox")[0] !== undefined && scrollMove === undefined){
 		document.getElementsByClassName("popupBox")[0].classList.remove("unsetHeight");
 		document.getElementsByClassName("popupBox")[0].scrollTop=scrollYtoMovePrevPoint;
 	}

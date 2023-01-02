@@ -343,7 +343,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
 									<div className='regAnswerWrap'>
 										<div className="mini-title2">주관식 정답 &nbsp;&nbsp;</div>
 										<div className='answerWrapForImg'>
-											<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit forImg" contentEditable="true" onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+											<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit forImg" contentEditable="true" spellCheck={false} onKeyDown={(event) => reg_preventKeyEvent(event)} onKeyUp={(event) => {formulaConvert(event);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
 											<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 										</div>
 									</div>

@@ -44,7 +44,7 @@ const nbToTexConvert =
 const engCheck =/^[a-zA-Z]*$/; 
 const numCheck =/^[0-9]*$/; 
 const fomulCheck1 =/^[π±×÷ʹ∘⦁∏≡≈≠≤≥<>+\-=\|\[\]\(\)]*$/;
-const fomulCheck2 =/^[∅∪∩⊃⊂⊇⊆∋∈∌∉]*$/;
+const fomulCheck2 =/^[∅∪∩⊃⊂⊇⊆∋∈∌∉⊄]*$/;
 const fomulCheck3 =/^[αβγδθρμω∂στφ∞Δ≈≡∝∽]*$/;
 const fomulCheck4 =/^[\{\}]*$/; //중괄호 수식에서 사라지는 문제 해결(수식 밖 중괄호 처리)
 
@@ -62,7 +62,7 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: " CDOT ", nbFormula : "·"}, {texGrammer: "{CDOT", nbFormula : "{·"},
     {texGrammer: " BECAUSE ", nbFormula : "∵"}, {texGrammer: "{BECAUSE", nbFormula : "{∵"},
     {texGrammer: " THEREFORE ", nbFormula : "∴"}, {texGrammer: "{THEREFORE", nbFormula : "{∴"},
-    {texGrammer: "!=", nbFormula : "≠"}, 
+    {texGrammer: " !=", nbFormula : "≠"}, {texGrammer: "{!=", nbFormula : "{≠"}, 
     {texGrammer: " LEQ ", nbFormula : "≤"}, {texGrammer: "{LEQ", nbFormula : "{≤"},
     {texGrammer: " GEQ ", nbFormula : "≥"}, {texGrammer: "{GEQ", nbFormula : "{≥"},
     {texGrammer: " EMPTYSET ", nbFormula : "∅"}, {texGrammer: "{EMPTYSET", nbFormula : "{∅"}, 
@@ -76,6 +76,7 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: " IN ", nbFormula : "∈"}, {texGrammer: "{IN", nbFormula : "{∈"},
     {texGrammer: " NOWNS ", nbFormula : "∌"}, {texGrammer: "{NOWNS", nbFormula : "{∌"}, 
     {texGrammer: " NOTIN ", nbFormula : "∉"}, {texGrammer: "{NOTIN", nbFormula : "{∉"},
+    {texGrammer: " NSUBSET ", nbFormula : "⊄"}, {texGrammer: "{NSUBSET", nbFormula : "{⊄"},
     {texGrammer: " alpha ", nbFormula : "α"}, {texGrammer: "{alpha", nbFormula : "{α"},
     {texGrammer: " beta ", nbFormula : "β"}, {texGrammer: "{beta", nbFormula : "{β"}, 
     {texGrammer: " gamma ", nbFormula : "γ"},  {texGrammer: "{gamma", nbFormula : "{γ"},
@@ -106,13 +107,20 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: "UPARROW", nbFormula : "⇑"},
     {texGrammer: "DOWNARROW", nbFormula : "⇓"},
 
+    {texGrammer: "NEARROW ", nbFormula : "↗"},
+    {texGrammer: "SEARROW ", nbFormula : "↘"},
+    {texGrammer: "NWARROW ", nbFormula : "↖"},
+    {texGrammer: "SWARROW ", nbFormula : "↙"},
+
     {texGrammer: "BIGCIRC", nbFormula : "○"},
     {texGrammer: "MSANGLE", nbFormula : "∡"},
     {texGrammer: "CENTIGRADE", nbFormula : "℃"},
     {texGrammer: "FAHRENHEIT", nbFormula : "℉"},
     {texGrammer: "TRIANGLE", nbFormula : "△"},
-    
+
+    {texGrammer: "'", nbFormula : "ʹ"},
     {texGrammer: "prime", nbFormula : "ʹ"},
+    
     {texGrammer: "SIM", nbFormula : "nbCustomWaveText"},
     {texGrammer: "BULLET ", nbFormula : "⦁"},
     {texGrammer: " vert", nbFormula : "|"}, {texGrammer: "{vert ", nbFormula : "|"},
@@ -154,6 +162,7 @@ export const replaceTexToNbBoxFormul = [
     {texGrammer: "dyad", formulId : 40},
     {texGrammer: "dot", formulId : 9},
     {texGrammer: "hat", formulId : 10},
+    {texGrammer: "bold", formulId : 1000},
 
     {texGrammer: "cases", formulId : 89},
     {texGrammer: "^", formulId : 6}, //지수와 밑은 다른 문법에서도 사용되므로 가장 나중에 변환
@@ -967,6 +976,9 @@ export const cvt_convertTexToNbFormul = async (formulId, texGrammer, texIndex, n
     //경우의수(2가지)
     }else if(formulId === 89){   
         return await cvt_convertCasesTexToHtml(texGrammer, texIndex, nbFormulHTML);
+    //bold
+    }else if(formulId === 1000){   
+        return await cvt_convertBoldTexToHtml(texGrammer, texIndex, nbFormulHTML);
     }
 }
 
@@ -1202,7 +1214,7 @@ export const cvt_convertBrckTexToHtml = async (texGrammer, texIndex, nbFormulHTM
             if(texGrammer.substr(rightUnderBrckIdx.endBrckIdx+1, 2)==="^{") {
                 let rightSupBrckIdx = await cvt_findRightBrck(texGrammer, rightUnderBrckIdx.endBrckIdx+1);
                 let convertNbFormulBox = document.createElement('span');
-                convertNbFormulBox.innerHTML = '<table class="nbIntBrckBox nbBox"><tbody class="nbIntBrckTbody"><tr><td class="nbIntBrckBase borderBox yellowBorderBox"><br></td></tr></tbody><tbody class="nbIntBrckTbody2"><tr><td class="nbIntBrckSupBase borderBox"><br></td></tr><tr><td class="nbIntBrckSubBase borderBox"><br></td></tr></tbody></table>';
+                convertNbFormulBox.innerHTML = '<table class="nbIntBrckBox nbBox"><tbody class="nbIntBrckTbody"><tr><td class="nbIntBrckBase borderBox"><br></td></tr></tbody><tbody class="nbIntBrckTbody2"><tr><td class="nbIntBrckSupBase borderBox"><br></td></tr><tr><td class="nbIntBrckSubBase borderBox"><br></td></tr></tbody></table>';
                 
                 convertNbFormulBox.querySelector(".nbIntBrckBase").innerText = texGrammer.substring(texIndex+5, rightCloseBrckIdx);
                 convertNbFormulBox.querySelector(".nbIntBrckSubBase").innerText = texGrammer.substring(rightUnderBrckIdx.strtBrckIdx, rightUnderBrckIdx.endBrckIdx);
@@ -1825,17 +1837,14 @@ export const cvt_convertCasesTexToHtml = async (texGrammer, texIndex, nbFormulHT
 * 설명 : 변환한 html요소와 문법 시작 인덱스와 끝 인덱스를 리턴
 
 export const cvt_convertBiDirSubTexToHtml = async (texGrammer, texIndex, nbFormulHTML) =>{
-    console.log(texGrammer);
     // C LSUB {3} _{2} 문법.(3C2)
     //LSUB 옆에 있는 base 찾기[strt]
     let lastSpaceIdx = texGrammer.substring(0, texIndex).lastIndexOf(" ");
-    console.log(lastSpaceIdx);
     if(lastSpaceIdx <0){
         return null;
     }
 
     let secondLastSpaceIdx = texGrammer.substring(0, lastSpaceIdx).lastIndexOf(" ");
-    console.log(secondLastSpaceIdx);
     if(secondLastSpaceIdx <0){
         return null;
     }
@@ -1853,7 +1862,6 @@ export const cvt_convertBiDirSubTexToHtml = async (texGrammer, texIndex, nbFormu
     //LSUB 바로 뒤에 있는 중괄호 찾기[end]
 
     //LSUB 뒤에 있는 _{} sub[strt]
-    console.log(texGrammer.substr(rightBrckIdx.endBrckIdx+1, 2));
     if(texGrammer.substr(rightBrckIdx.endBrckIdx+1, 2) !== "_{"){
         return null;
     }
@@ -1878,3 +1886,31 @@ export const cvt_convertBiDirSubTexToHtml = async (texGrammer, texIndex, nbFormu
     return {"nbFormulBox":convertNbFormulBox, "strtIdx":secondLastSpaceIdx, "endIdx":rightSubBrckIdx.endBrckIdx+1};
 }
 */
+
+
+/*
+* 정의 : tex변환 함수(bold)
+* 설명 : 변환한 html요소와 문법 시작 인덱스와 끝 인덱스를 리턴
+*/
+export const cvt_convertBoldTexToHtml= async (texGrammer, texIndex, nbFormulHTML) =>{
+    let rightBrckIdx = await cvt_findRightBrck(texGrammer, texIndex);
+    
+    //null나왔을 때 리턴 처리
+    if(rightBrckIdx.strtBrckIdx === null || rightBrckIdx.endBrckIdx === null ){
+            return null;
+    }
+
+    if(texIndex>0 && texGrammer.substring(texIndex-1, texIndex) === "{"){
+        let outsideBrckIdx = await cvt_findRightBrck(texGrammer, texIndex-1);   //bold를 감싸는 중괄호
+        texGrammer = texGrammer.substring(rightBrckIdx.strtBrckIdx, rightBrckIdx.endBrckIdx);
+        
+        let tmpSpan = document.createElement("span");
+        tmpSpan.innerHTML = texGrammer
+        //html 및 문법 시작 idx와 끝 idx 리턴
+        return {"nbFormulBox":tmpSpan, "strtIdx":texIndex-1, "endIdx":outsideBrckIdx.endBrckIdx+1};
+    }else{
+        return null;
+    }
+    
+    
+}
