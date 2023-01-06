@@ -16,15 +16,15 @@ import { reg_preventKeyEvent, reg_selectCheck, reg_dressSelectionBackColor, reg_
      reg_mUpTdWidthChange, reg_selStartTdWidthChange, reg_tbSelBackgroundRemove, reg_tbCellMouseUp, reg_tbCellCopy, reg_convertNotTransferdNbBox,
      reg_removeSelectionBackColor, reg_newSelectFormulaElement, reg_removeResizeFrame, reg_enableImageResizeInDiv, reg_oneLineOneDiv,
      reg_undoRedoSetting, reg_undoRedoInitialize, reg_tbCellMouseDown, reg_tbCellMouseMove, reg_vacantTextNodeRemove} from 'js/contents/register/contents_reg';
-import {cvt_convertTexToNbFormul, replaceTexToNbFormul, replaceTexToNbBoxFormul} from 'js/convertGrammer/nbToTexConvert_cvt.js';
+import {cvt_convertTexToNbFormul, replaceTexToNbFormul, replaceTexToNbBoxFormul, cvt_findRightBrck} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 
-const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt 단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식(alt+shift 단축키)', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호(alt+shift+ctrl 단축키)', className:"formulaTap"}];
+const formulaTabList = [{id:'mainFormulaTap',tabName:'기본수식(alt 단축키)', className:"formulaTap selectedTab"}, {id:'highFormulaTap',tabName:'기타 수식(alt+shift 단축키)', className:"formulaTap"}, {id:'etcFormulaTap',tabName:'기타 기호(alt+shift+ctrl 단축키)', className:"formulaTap"}, {id:'etcFormulaTap2',tabName:'기타 기호2', className:"formulaTap"}];
 
 const HwpToHtml = ()=>{
 
     const [isAdminMode, setIsAdminMode] = useState(false);
     const [myUpldFile, setMyUpldFile] = useState(new Array());
-    const [emptyListMsg, setEmptyListMsg] = useState("한글파일로 관리하는 수학문제를 N명의수학을 통해 DB화 하여 관리해보세요!\nN명의수학에서 제공하는 여러 문제 관리 기능을 사용하실 수 있습니다!");
+    const [emptyListMsg, setEmptyListMsg] = useState("한글파일로 관리하는 수학문제를 N명의수학을 통해 DB화 해서 관리해보세요!\nN명의수학에서 제공하는 여러 문제 관리 기능을 사용하실 수 있습니다!");
     const [shortCutKey, setShortCutKey] = useState("");
     const [shortCutKeyAll, setShortCutKeyAll] = useState(new Array());
     const [isFetchShotCutKey, setIsFetchShotCutKey] = useState(false);
@@ -244,7 +244,7 @@ const HwpToHtml = ()=>{
                 let tdDom = trDom[j].querySelectorAll("td");
                 for(let k=0; k<tdDom.length; k++){
                     //editInnerTable 너비에 맞게 td 너비 비율 맞춰 셋팅
-                    tdDom[k].style.width = (tdDom[k].offsetWidth/trDom[j].offsetWidth)*380+"px";
+                    //tdDom[k].style.width = (tdDom[k].offsetWidth/trDom[j].offsetWidth)*380-10+"px";
                     tdDom[k].dataset.col = k;
                 }
             }
@@ -253,10 +253,9 @@ const HwpToHtml = ()=>{
         let tdDom = document.getElementById(domId).querySelectorAll("td");
         for(let i=0; i<tdDom.length; i++){
             if(tdDom[i].closest(".editInnerTable") === null) continue;
-            let width = tdDom[i].style.width;
             tdDom[i].style=""
             tdDom[i].classList="innerTbTd"
-            tdDom[i].style.width = width;
+            tdDom[i].style.width =(tdDom[i].offsetWidth/tdDom[i].closest("tr").offsetWidth)*380-12+"px";
             tdDom[i].addEventListener('mousedown', reg_tbCellMouseDown);
             tdDom[i].addEventListener('mousemove', reg_tbCellMouseMove);
             tdDom[i].id = "innerTbTd"+tdDom[i].closest("tr").dataset.row+tdDom[i].dataset.col;
@@ -310,6 +309,8 @@ const HwpToHtml = ()=>{
                 a_array.push(tag);
             }
         }
+
+       
         
         while(true){
             a_array = new Array();
@@ -347,25 +348,37 @@ const HwpToHtml = ()=>{
                 for(let j=0; j<replaceTexToNbFormul.length; j++){
                     texGrammer = texGrammer.replaceAll(replaceTexToNbFormul[j].texGrammer, replaceTexToNbFormul[j].nbFormula);
                 }
-
                 //띄어쓰기 및 한컴에서만 사용되는 효과 없애기
                 texGrammer = texGrammer.replaceAll("& ", "").replaceAll(" ", "").replaceAll("rm", "").replaceAll("it", "")
                                         .replaceAll("`", " ").replaceAll("~", " ").replaceAll("\"", "")
                                         .replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("nbCustomWaveText", "~");
-                                        
                 for(let j=0; j<replaceTexToNbBoxFormul.length; j++){
                     let tmpIdx = 0;
                     while(texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer) > -1){
+                        
                         let nbFormulGrammer = shortCutKeyAll.filter((element) => {
                             return (element.id === replaceTexToNbBoxFormul[j].formulId) 
                         });
-                        //n명의 수학에는 존재하지 않고, 한글 파일에만 존재하는 수식 처리
+                        //LEFT.으로 들어온 경우 분수용 괄호 문법 모두 넘겨주기
+                        if(replaceTexToNbBoxFormul[j].formulId === 999){
+                            nbFormulGrammer = shortCutKeyAll.filter((element) => {
+                                return (element.id === 82 || element.id === 83 || element.id === 84 || element.id === 85) 
+                            });
+                        }
+
+                        //n명의 수학에는 존재하지 않고, 한글 파일에만 존재하는 수식 처리(bold)
                         if(nbFormulGrammer[0] === undefined){
                             let tmpObj = new Object();
                             tmpObj.nbGrammer = "";
                             nbFormulGrammer[0] = tmpObj;
                         }
-                        let convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer[0].nbGrammer);
+
+                        let convertHtml;
+                        if(replaceTexToNbBoxFormul[j].formulId === 999){ //LEFT.으로 들어온 경우 분수용 괄호 문법 모두 넘겨주기
+                            convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer);
+                        }else{
+                            convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer[0].nbGrammer);
+                        }
                         
                         //중괄호 없는 경우
                         if(convertHtml === null){
@@ -416,21 +429,122 @@ const HwpToHtml = ()=>{
             a_array[i].after(tmpSpan);
             a_array[i].remove();
         }
-       
+
         //borderBox 안에 있는 수식 문법 변환
         let forTexCheckNbBorderBox = document.getElementById(domId).querySelectorAll(".forTexCheck");
         let forTexCheckIdx = 0;
         let tmpBoxFormulArr2 = new Array();
+        
+        /*
+        //진행률 계산
+        let date1 = new Date();
+        let secondConvertDomLen = forTexCheckNbBorderBox.length;
+        let isShowTenPer =false; 
+        let isShowThirtyPer =false; 
+        let isShowHalfPer =false; 
+        let isShowSeventyPer =false; 
+        let isShowAlmostPer =false; 
+        */
         //루프 돌아서 새로 생겨나는 것 체크되는지 확인
-        while(forTexCheckNbBorderBox.length > 0){
+        while(forTexCheckNbBorderBox.length>0){
+            /*
+            if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.1 && !isShowTenPer){
+                let date2 = new Date();
+                let elapsedMSec = date2.getTime() - date11.getTime();
+                let elapsedSec = elapsedMSec / 1000;
+                console.log("2차변환 시간 차 : "+elapsedSec);
+                console.log("2차변환 10% 작업");
+                isShowTenPer = true;
+                console.log(forTexCheckNbBorderBox.length);
+            }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.3 && !isShowThirtyPer){
+                let date2 = new Date();
+                let elapsedMSec = date2.getTime() - date11.getTime();
+                let elapsedSec = elapsedMSec / 1000;
+                console.log("2차변환 시간 차 : "+elapsedSec);
+                console.log("2차변환 30% 작업");
+                isShowThirtyPer = true;
+                console.log(forTexCheckNbBorderBox.length);
+            }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.5 && !isShowHalfPer){
+                let date2 = new Date();
+                let elapsedMSec = date2.getTime() - date11.getTime();
+                let elapsedSec = elapsedMSec / 1000;
+                console.log("2차변환 시간 차 : "+elapsedSec);
+                console.log("2차변환 50% 작업");
+                isShowHalfPer = true;
+                console.log(forTexCheckNbBorderBox.length);
+            }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.7 && !isShowSeventyPer){
+                let date2 = new Date();
+                let elapsedMSec = date2.getTime() - date11.getTime();
+                let elapsedSec = elapsedMSec / 1000;
+                console.log("2차변환 시간 차 : "+elapsedSec);
+                console.log("2차변환 70% 작업");
+                isShowSeventyPer = true;
+                console.log(forTexCheckNbBorderBox.length);
+            }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.95 && !isShowAlmostPer){
+                let date2 = new Date();
+                let elapsedMSec = date2.getTime() - date11.getTime();
+                let elapsedSec = elapsedMSec / 1000;
+                console.log("2차변환 시간 차 : "+elapsedSec);
+                console.log("2차변환 95% 작업");
+                isShowAlmostPer = true;
+                console.log(forTexCheckNbBorderBox.length);
+            }
+            */
             let texGrammer = forTexCheckNbBorderBox[0].innerText;
+            if(texGrammer.indexOf("lpile")>-1){
+                let pileBrckIdx = await cvt_findRightBrck(texGrammer, texGrammer.indexOf("lpile"));
+                //null나왔을 때 리턴 처리
+                if(pileBrckIdx.strtBrckIdx !== null && pileBrckIdx.endBrckIdx !== null){
+                    if(pileBrckIdx.endBrckIdx - pileBrckIdx.strtBrckIdx<2){
+                        texGrammer = texGrammer.substring(0, texGrammer.indexOf("lpile"))+texGrammer.substr(pileBrckIdx.endBrckIdx+1);
+                    }
+                }
+            }else if(texGrammer.indexOf("rpile")>-1){
+                let pileBrckIdx = await cvt_findRightBrck(texGrammer, texGrammer.indexOf("rpile"));
+                //null나왔을 때 리턴 처리
+                if(pileBrckIdx.strtBrckIdx !== null && pileBrckIdx.endBrckIdx !== null){
+                    if(pileBrckIdx.endBrckIdx - pileBrckIdx.strtBrckIdx<2){
+                        texGrammer = texGrammer.substring(0, texGrammer.indexOf("rpile"))+texGrammer.substr(pileBrckIdx.endBrckIdx+1);
+                    }
+                }
+            }else if(texGrammer.indexOf("pile")>-1){
+                let pileBrckIdx = await cvt_findRightBrck(texGrammer, texGrammer.indexOf("pile"));
+                //null나왔을 때 리턴 처리
+                if(pileBrckIdx.strtBrckIdx !== null && pileBrckIdx.endBrckIdx !== null){
+                    if(pileBrckIdx.endBrckIdx - pileBrckIdx.strtBrckIdx<2){
+                        texGrammer = texGrammer.substring(0, texGrammer.indexOf("pile"))+texGrammer.substr(pileBrckIdx.endBrckIdx+1);
+                    }
+                }
+            }
+            
             for(let j=0; j<replaceTexToNbBoxFormul.length; j++){
                 let tmpIdx = 0;
                 while(texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer) > -1){
                     let nbFormulGrammer = shortCutKeyAll.filter((element) => {
                         return (element.id === replaceTexToNbBoxFormul[j].formulId) 
                     });
-                    let convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer[0].nbGrammer);
+
+                    //LEFT.으로 들어온 경우 분수용 괄호 문법 모두 넘겨주기
+                    if(replaceTexToNbBoxFormul[j].formulId === 999){
+                        nbFormulGrammer = shortCutKeyAll.filter((element) => {
+                            return (element.id === 82 || element.id === 83 || element.id === 84 || element.id === 85) 
+                        });
+                    }
+
+                    //n명의 수학에는 존재하지 않고, 한글 파일에만 존재하는 수식 처리(bold)
+                    if(nbFormulGrammer[0] === undefined){
+                        let tmpObj = new Object();
+                        tmpObj.nbGrammer = "";
+                        nbFormulGrammer[0] = tmpObj;
+                    }
+                    
+                    let convertHtml;
+                    if(replaceTexToNbBoxFormul[j].formulId === 999){ //LEFT.으로 들어온 경우 분수용 괄호 문법 모두 넘겨주기
+                        convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer);
+                    }else{
+                        convertHtml = await cvt_convertTexToNbFormul(replaceTexToNbBoxFormul[j].formulId, texGrammer, texGrammer.indexOf(replaceTexToNbBoxFormul[j].texGrammer), nbFormulGrammer[0].nbGrammer);
+                    }
+                    
                     //중괄호 없는 경우
                     if(convertHtml === null){   //예외처리
                         let tmpId = "임시아이디"+forTexCheckIdx+"-"+j+"-"+tmpIdx+".";
@@ -460,8 +574,6 @@ const HwpToHtml = ()=>{
                         return;
                     }
                 }
-        
-                
             }
 
             for(let idx=0; idx<tmpBoxFormulArr2.length; idx++){
@@ -495,8 +607,6 @@ const HwpToHtml = ()=>{
             forTexCheckIdx++;
         }
 
-        
-        
          //비어있는 borderBox에 br추가 
          let nbBorderBox = document.getElementById(domId).querySelectorAll(".borderBox");
          for(let i=0; i<nbBorderBox.length; i++){
@@ -540,6 +650,17 @@ const HwpToHtml = ()=>{
         //수식 convert
         await reg_convertNotTransferdNbBox("myHwpContents");
 
+        //지수 옆에 분수용 괄호 있는 경우 분수용 지수로 바꾸기
+        let nbExpBox = document.getElementById(domId).querySelectorAll(".nbExpBox:not(:has(.nbFracExpTmp))");
+        for(let i=nbExpBox.length-1; i>=0; i--){
+           if(nbExpBox[i].previousSibling !== null && nbExpBox[i].previousSibling !== undefined){
+               if(nbExpBox[i].previousSibling.classList !== undefined && nbExpBox[i].previousSibling.classList.contains("nbBrckInFrac")){
+                   nbExpBox[i].querySelector(".nbExpTmp").classList.add("nbFracExpTmp");
+                   nbExpBox[i].querySelector(".nbExpTmp").classList.remove("nbExpTmp");
+               }
+           }
+        }
+
         //마지막 줄바꿈 제거
         let whileIdx= 0;
         while(document.getElementById(domId).innerText.substr(-2) === "\n\n"){
@@ -582,7 +703,7 @@ const HwpToHtml = ()=>{
         if(event.target.files[0] !== undefined){
             let formData = new FormData(document.getElementById("hwpForm"));
             document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-            document.getElementById("hourGlassDesc").innerText = "한글 파일을 변환 중 입니다.\n수식기호가 많은 파일은 수 분이 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
+            document.getElementById("hourGlassDesc").innerHTML = "한글 파일을 변환 중 입니다.<br>수식이 많은 파일은 시간이 더 걸릴 수 있습니다.<br>잠시만 기다려 주세요...<br><span class='hourGlassSubDesc'>※ 수식이 많은 수능형 문제+해설 파일은 20 페이지 미만 파일을 사용 권장합니다.<br>(10페이지 40초 내외, 15페이지 1분 내외, 20페이지 2분 내외)</span>";
             let returnObj = await nb_formDataFetch("/convert/convertHwpToWeb", formData, false);
             document.getElementById("resDetailedTimeDesc").classList.add("hide");
             if(returnObj.isSuccess){
@@ -648,7 +769,7 @@ const HwpToHtml = ()=>{
         document.getElementById("confirmBoxScreen").classList.add("hide")
 
         document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-        document.getElementById("hourGlassDesc").innerText = "수식기호를 변환 중 입니다.\n수식기호가 많은 파일은 수 분이 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
+        document.getElementById("hourGlassDesc").innerHTML = "한글 파일을 변환 중 입니다.<br>수식이 많은 파일은 시간이 더 걸릴 수 있습니다.<br>잠시만 기다려 주세요...<br><span class='hourGlassSubDesc'>※ 수식이 많은 수능형 문제+해설 파일은 20 페이지 미만 파일을 사용 권장합니다.<br>(10페이지 40초 내외, 15페이지 1분 내외, 20페이지 2분 내외)</span>";
         await nb_dataFetch("/" , false);
         let convertNo = document.getElementById("myHwpContents").dataset.convertNo;
         let myConvertFile = myUpldFile.filter((element) => {
@@ -708,7 +829,7 @@ const HwpToHtml = ()=>{
     /*
     * 파일 변환 저장 함수 : 한글파일 업로드 버튼 클릭, 한글 파일 업로드 후 web으로 넘어와 변환 마친 후,
                             직접 save 버튼 클릭시,   다른 파일 목록 클릭시
-                            페이지 나갈 때, 변환 안된채 빠져 나왔을 때 재변환 후
+                            변환 안된채 빠져 나왔을 때 재변환 후
     */
     const saveMyHwpContents = async (event, transitEffect, convertChanged) => {
         //관리자 모드로 들어온 경우 저장 금지
@@ -731,7 +852,7 @@ const HwpToHtml = ()=>{
 
         if(convertChanged){ //수식이 변환 된 후에만 converted 칼럼 true로 변경
             formData.append("converted", true);
-        }else{ //(한글파일 업로드 버튼 클릭, 직접 save 버튼 클릭시, 페이지 나갈 때, 다른 파일 목록 클릭시)
+        }else{ //(한글파일 업로드 버튼 클릭, 직접 save 버튼 클릭시, 다른 파일 목록 클릭시)
             //변환 안된 파일은 save되면 안됨(사용자가 &strt/ $end/ 사이값 조작하면 에러 날 수 있음)
             let myConvertFile = myUpldFile.filter((element) => {
                 return (element.convertNo === Number(document.getElementById("myHwpContents").dataset.convertNo)) 
@@ -759,17 +880,27 @@ const HwpToHtml = ()=>{
 			document.getElementById("shortKeyBoard").classList.remove("hide");
 			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+            document.getElementById("shortKeyBoardEtc2").classList.add("hide");
 			targetDom.classList.add("selectedTab");
 		}else if(targetId=="highFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.add("hide");
 			document.getElementById("shortKeyBoardHigh").classList.remove("hide");
 			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+            document.getElementById("shortKeyBoardEtc2").classList.add("hide");
 			targetDom.classList.add("selectedTab");
 		}
 		else if(targetId=="etcFormulaTap"){
 			document.getElementById("shortKeyBoard").classList.add("hide");
 			document.getElementById("shortKeyBoardHigh").classList.add("hide");
 			document.getElementById("shortKeyBoardEtc").classList.remove("hide");
+            document.getElementById("shortKeyBoardEtc2").classList.add("hide");
+			targetDom.classList.add("selectedTab");
+		}
+        else if(targetId=="etcFormulaTap2"){
+			document.getElementById("shortKeyBoard").classList.add("hide");
+			document.getElementById("shortKeyBoardHigh").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc").classList.add("hide");
+			document.getElementById("shortKeyBoardEtc2").classList.remove("hide");
 			targetDom.classList.add("selectedTab");
 		}
 
@@ -788,7 +919,6 @@ const HwpToHtml = ()=>{
         event.preventDefault();
         event.returnValue = '';
         let isQuit = window.confirm("사이트에서 나가시겠습니까?/n변경사항이 저장되지 않을 수 있습니다.")
-        await saveMyHwpContents(event, true, false)
         return isQuit;
     }
 
@@ -847,7 +977,7 @@ return (
     <div className='selectNone'>    
         <div className='hwpToWebDiv'>
             <div className='hwpToWebTitle'>hwp to web 파일 변환기</div>
-            <div className='hwpToWebDesc'>한글파일(*.hwp)을 업로드하면 웹사이트에서도 사용할 수 있게 변환이 가능합니다!</div>
+            <div className='hwpToWebDesc'>한글파일을 업로드하면 웹사이트에서도 사용할 수 있게 변환이 가능합니다!<span className='circleUI2 marginTen' onClick={()=>{document.getElementById("hwpToWebGuidBox").classList.remove("hide")}}>?</span> </div>
             <div className={isAdminMode ? 'hwpToWebUpldBtn hide' : 'hwpToWebUpldBtn'} onClick={()=>{hwpToWebBtn()}}>한글파일 업로드</div>
             <form method="post" id="hwpForm" encType="multipart/form-data">
                 <input id="hwpToWebUpld" name="hwpFile" className="hide" type="file" onChange={(event) => {nb_extensionCheck2(event, "hwp");convertHwpToWeb(event)}}/>
@@ -880,9 +1010,9 @@ return (
 				</div>
                 <div className='saveDiv'>
                     {isAdminMode ?
-                    <span className='saveBtn' onClick={(event)=>{hwpHtmlToNbHtml("myHwpContents", false);}}>수식 문법 변환</span>
+                    <span className='saveBtn lowerZidx' onClick={(event)=>{hwpHtmlToNbHtml("myHwpContents", false);}}>수식 문법 변환</span>
                     :
-                    <span className='saveBtn' onClick={(event)=>{saveMyHwpContents(event, true, false)}}>save</span>
+                    <span className='saveBtn lowerZidx' onClick={(event)=>{saveMyHwpContents(event, true, false)}}>save</span>
                     }
                     
                 </div>
@@ -896,6 +1026,23 @@ return (
         </div>
         }
 
+        <div id="hwpToWebGuidBox" className='blindBox hide'>
+            <div className='hwpToWebGuidDiv'>
+                <div><span className='closeBtn2' onClick={()=>{document.getElementById("hwpToWebGuidBox").classList.add("hide")}}>X</span></div>
+                <div className='hwpToWebGuidTitle'>hwp to web 파일 변환기는</div>
+                <div className='hwpToWebGuidContents'>
+                    한글파일에서 수식을 추출하여 N명의수학 웹사이트에서 사용할 수 있게 변환합니다.<br/>
+                    수식기호가 많은 파일은 시간이 더 걸릴 수 있습니다.<br/>
+                    <br/>
+                    수식이 많은 고등수학 해설지 파일 같은 경우<br/>
+                    10 페이지 40초 내외, 15 페이지 1분 내외, 20 페이지 2분 내외의 시간이 걸립니다.<br/>
+                    <br/>
+                    20 페이지 미만의 파일 사용을 권장드리며,<br/>
+                    20 페이지 내외의 파일 변환 중 화면 멈춤현상이나 백화현상이 나타나더라도<br/>
+                    변환이 진행 중이니 잠시 기다려주시면 변환이 완료됩니다.<br/>
+                </div>
+            </div>
+        </div>
         <div id="resDetailedTimeDesc" className='blindBox hide'>
             <div id="hourGlassBox" className='resDetailedTimeDesc'>
                 <div>
