@@ -808,7 +808,7 @@ const MyContentsList = ({isMine, userNo})=>{
                 <div>
                     <div className='workList myContentsList'>
                         <div className='contentsDiv'>
-                            {isMine &&
+                            {isMine && workContentsList.length !== 0 && 
                                 <span className='hwpAllDownBtn' onClick={(event)=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?\n사용자의 제작문제가 아닌 변형문제는 다운되지 않습니다.\n(업로드 및 다운로드 일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
                             }
                         </div>

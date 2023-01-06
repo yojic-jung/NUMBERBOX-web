@@ -117,6 +117,10 @@
     padding: 3px 10px;
 }
 
+.saveBtn.lowerZidx{
+    z-index: 5;
+}
+
 .myHwpContentsTd{
     position: relative;
 }
@@ -153,4 +157,29 @@
 
 .red{
     color:red;
+}
+
+.hwpToWebGuidDiv{
+    padding: 30px;
+    width: 580px;
+    position: fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 10px;
+}
+
+.hwpToWebGuidTitle{
+    color:rgb(17, 67, 204);
+    font-size: 20px;
+    font-family: 'jejuGothic';
+    text-align: left;
+}
+
+.hwpToWebGuidContents{
+    margin-top: 20px;
+    line-height: 160%;
+    font-family: 'jejuGothic';
+    text-align: left;
 }

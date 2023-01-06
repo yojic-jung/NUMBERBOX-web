@@ -664,6 +664,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbAbsBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
 				nbAbsBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+
+				let brckBox = nbAbsBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -674,6 +681,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbRoundBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
 				nbRoundBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+
+				let brckBox = nbRoundBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -684,6 +698,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbCBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
 				nbCBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+
+				let brckBox = nbCBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -694,6 +715,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbSBrckBaseStrt.closest(".nbBox").classList.add("nbConvert");
 				nbSBrckBaseStrt.closest(".nbBox").classList.add("nbBrckInFrac");
+
+				let brckBox = nbSBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 
@@ -754,6 +782,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
 				nbAbsBrckBaseEnd.closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbAbsBrckBaseEnd.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 소괄호
@@ -763,6 +798,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
 				nbRBrckBaseEnd.closest(".nb-R-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbRBrckBaseEnd.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 중괄호
@@ -772,6 +814,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
 				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbCBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 대괄호
@@ -781,6 +830,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
 				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbSBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 	}
@@ -891,6 +947,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
 				nbAbsBrckBaseStrt.closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbAbsBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 소괄호
@@ -900,6 +963,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
 				nbRBrckBaseStrt.closest(".nb-R-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbRBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 중괄호
@@ -909,6 +979,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
 				nbCBrckBaseStrt.closest(".nb-C-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbCBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 		//분수용 대괄호
@@ -918,6 +995,13 @@ export const reg_nbFormulaConvert = async (nbGrammer, strtElement, endElement) =
 			if(window.getSelection().getRangeAt(0).startContainer === window.getSelection().getRangeAt(0).endContainer){
 				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
 				nbSBrckBaseStrt.closest(".nb-S-BrckBox").classList.add("nbConvert");
+
+				let brckBox = nbSBrckBaseStrt.closest(".nbBox");
+				while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+					brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+					brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+				}
 			}
 		}
 	}
@@ -996,9 +1080,23 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 		if(nbSigmaSumBox[i].parentElement.closest(".nbDenom") !== null){
 			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbSigmaSumInDenom");
 			nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox").classList.add("nbConvert")
+
+			let brckBox = nbSigmaSumBox[i].parentElement.closest(".nbDenom").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}else if(nbSigmaSumBox[i].parentElement.closest(".nbNumer") !== null ){
 			nbSigmaSumBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbSigmaSumInNumer");
 			nbSigmaSumBox[i].parentElement.closest(".nbNumer").closest(".nbBox").classList.add("nbConvert");
+
+			let brckBox = nbSigmaSumBox[i].parentElement.closest(".nbNumer").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 
 		/*
@@ -1032,21 +1130,49 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 		if(nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase") !== null ){
 			nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbBrckInFrac");
 			nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox").classList.add("nbConvert");
+
+			let brckBox = nbIntgralBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nb-Abs-BrckBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		//분수용 소괄호
 		if(nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase") !== null ){
 			nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbBrckInFrac");
 			nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox").classList.add("nbConvert");
+
+			let brckBox = nbIntgralBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nb-R-BrckBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		//분수용 중괄호
 		if(nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase") !== null ){
 			nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbBrckInFrac");
 			nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox").classList.add("nbConvert");
+
+			let brckBox = nbIntgralBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nb-C-BrckBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		//분수용 대괄호
 		if(nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase") !== null ){
 			nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbBrckInFrac");
 			nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox").classList.add("nbConvert");
+
+			let brckBox = nbIntgralBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nb-S-BrckBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 	}
 
@@ -1166,24 +1292,52 @@ export const reg_convertNotTransferdNbBox = async (domId) => {
 		if(nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase") !== null){
 			nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
 			nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nbBox").classList.add("nbConvert");
+
+			let brckBox = nbFracBox[i].parentElement.closest(".nb-Abs-BrckBase").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		
 		//분수용 소괄호 안 분수
 		if(nbFracBox[i].parentElement.closest(".nb-R-BrckBase") !== null){
 			nbFracBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
 			nbFracBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nbBox").classList.add("nbConvert");
+
+			let brckBox = nbFracBox[i].parentElement.closest(".nb-R-BrckBase").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		
 		//분수용 중괄호 안 분수
 		if(nbFracBox[i].parentElement.closest(".nb-C-BrckBase") !== null){
 			nbFracBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
 			nbFracBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nbBox").classList.add("nbConvert");
+
+			let brckBox = nbFracBox[i].parentElement.closest(".nb-C-BrckBase").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 		
 		//분수용 대괄호 안 분수
 		if(nbFracBox[i].parentElement.closest(".nb-S-BrckBase") !== null){
 			nbFracBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nbBox").classList.add("nbBrckInFrac");
 			nbFracBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nbBox").classList.add("nbConvert");
+
+			let brckBox = nbFracBox[i].parentElement.closest(".nb-S-BrckBase").closest(".nbBox");
+			while(brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox") !== null){
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbConvert");
+				brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox").classList.add("nbBrckInFrac");
+				brckBox = brckBox.parentElement.closest(".nb-Abs-BrckBox, .nb-R-BrckBox, .nb-C-BrckBox, .nb-S-BrckBox");
+			}
 		}
 	}
 

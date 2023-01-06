@@ -130,12 +130,22 @@
     font-style: normal;
 }
 
+/*경우의 수, 구버전*/
 @font-face {
-    font-family: 'caseBrck';
+    font-family: 'caseBrck-old';
     src: url('font/Chosunilbo_myungjo.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
+
+/*경우의 수, 현재버전*/
+@font-face {
+    font-family: 'caseBrck';
+    src: url('font/Dorsa-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 
 @font-face {
     font-family: 'MapoDacapo';
@@ -1062,6 +1072,11 @@
     margin:0 1px 0 2px;
 }
 
+.nbIntBrckSupBase  .nbRootBox,
+.nbIntBrckSubBase  .nbRootBox{
+    margin:0 1px 0 3px;
+}
+
 .nbExpTmp .nbRootBox {
     margin:0 1px 0 2px;
 }
@@ -1338,14 +1353,68 @@
     position: relative;
 }
 
-.nb-Abs-BrckBox.nbBrckInFrac, .nb-R-BrckBox.nbBrckInFrac, .nb-C-BrckBox.nbBrckInFrac, .nb-S-BrckBox.nbBrckInFrac, .nbIntBrckBox {
+.nb-Abs-BrckBox.nbBrckInFrac, .nb-R-BrckBox.nbBrckInFrac, .nb-C-BrckBox.nbBrckInFrac, .nbIntBrckBox {
     border-spacing: 0;
     position: relative;
     padding: 0 0.45em;
 }
+
+.nb-R-BrckBox.nbBrckInFrac.nbLargeBrck.rightAbsBrck{
+    padding: 0 4px 0 0.45em;
+    margin: 0 2px 0 0;
+}
+
+.nb-Abs-BrckBox.nbBrckInFrac.nbLargeBrck.rightSBrck {
+    padding: 0 6px 0 4px;
+    margin: 0 0 0 4px;
+}
+
+.nb-R-BrckBox.nbBrckInFrac.nbLargeBrck.rightSBrck {
+    padding: 0 2px 0 6px;
+    margin-right: 2px;
+}
+
+.nb-S-BrckBox.nbBrckInFrac.nbLargeBrck.rightAbsBrck {
+    margin-right: 2px;
+}
+
+.nb-C-BrckBox.nbBrckInFrac.nbLargeBrck.rightAbsBrck {
+    padding: 0 3px 0 6px;
+    margin-right: 1px;
+}
+
+.nb-S-BrckBox.nbBrckInFrac{
+    padding: 0 4px;
+}
+
+.nb-R-BrckBox.nbBrckInFrac.noRightBrck, 
+.nb-C-BrckBox.nbBrckInFrac.noRightBrck, .nb-S-BrckBox.nbBrckInFrac.noRightBrck{
+    padding: 0 0.05em 0 0.45em;
+}
+
+
+.nb-Abs-BrckBox.nbBrckInFrac.noRightBrck{
+    padding: 0 0.05em 0 0.25em;
+}
+
+.nb-R-BrckBox.nbBrckInFrac.noLeftBrck, 
+.nb-C-BrckBox.nbBrckInFrac.noLeftBrck, .nb-S-BrckBox.nbBrckInFrac.noLeftBrck{
+    padding: 0 0.45em 0 0.05em;
+}
+
+.nb-Abs-BrckBox.nbBrckInFrac.noLeftBrck{
+    padding: 0 0.45em 0 0.05em;
+}
+
 .nb-Abs-BrckBox.nbBrckInFrac{
     padding: 0 0.25em;
 }
+
+.nb-Abs-BrckBox.nbBrckInFrac.nbBrckInFrac.rightRoundBrck, .nb-Abs-BrckBox.nbBrckInFrac.nbBrckInFrac.rightCBrck {
+    padding: 0 0.3em 0 0.25em;
+    margin:0 0 0 2px
+}
+
 .nbIntBrckBox{
     padding: 0 0.5em 0 0.4em;
     margin:3px 0;
@@ -1387,14 +1456,14 @@
     content: "|";
     left: 0em;
     font-size: 30px;
-    font-family: 'caseBrck';
+    font-family: 'caseBrck-old';
     font-weight: 100;
 }
 
 .nb-Abs-BrckBox.nbBrckInFrac > .nb-Abs-Brck-Tbody:after {
     content: "|";
     font-size: 30px;
-    font-family: 'caseBrck';
+    font-family: 'caseBrck-old';
     font-weight: 100;
     right: 0.01em;
 }
@@ -1408,78 +1477,241 @@
     content: "";
     background: url("img/roundLargeBrckLeft.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    left: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    left: 0;
 }
 .nb-R-BrckBox.nbLargeBrck > .nb-R-Brck-Tbody:after{
     content: "";
     background: url("img/roundLargeBrckRight.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    right: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
 }
 
 .nb-C-BrckBox.nbLargeBrck > .nb-C-Brck-Tbody:before{
     content: "";
     background: url("img/cLargeBrckLeft.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    left: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    left: 0;
 }
 .nb-C-BrckBox.nbLargeBrck > .nb-C-Brck-Tbody:after{
     content: "";
     background: url("img/cLargeBrckRight.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    right: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
 }
 
 .nb-S-BrckBox.nbLargeBrck > .nb-S-Brck-Tbody:before{
     content: "";
-    background: url("img/squreLargeBrckLeft.png") no-repeat center center;
+    background: url("img/squareLargeBrckLeft.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    left: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    left: 0;
 }
 .nb-S-BrckBox.nbLargeBrck > .nb-S-Brck-Tbody:after{
     content: "";
-    background: url("img/squreLargeBrckRight.png") no-repeat center center;
+    background: url("img/squareLargeBrckRight.png") no-repeat center center;
     width: 8px;
-    height: 95%;
-    background-size: contain;
-    right: 0.1em;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
 }
 
 .nb-Abs-BrckBox.nbLargeBrck{
-    padding: 0 0.45em;
+    padding: 0 2px;
+    margin: 0 2px;
 }
 
 .nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:before{
     content: "";
-    background: url("img/absLargeBrck.png") no-repeat right center;
-    width: 8px;
-    height: 95%;
-    background-size: contain;
-    left: -0.1em;
+    background: url("img/absLargeBrck.png") no-repeat center center;
+    width: 2.5px;
+    height: 100%;
+    background-size: 1.5px 90%;
+    left: 0;
 }
 
 .nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:after{
     content: "";
-    background: url("img/absLargeBrck.png") no-repeat left center;
-    width: 8px;
-    height: 95%;
-    background-size: contain;
-    right: -0.1em;
+    background: url("img/absLargeBrck.png") no-repeat center center;
+    width: 2.5px;
+    height: 100%;
+    background-size: 1.5px 90%;
+    right: 0;
 }
 
 .nb-R-Brck-Tbody:after {
     content: ")";
     right: -0.1em;
+}
+
+
+.noLeftBrck > .nb-R-Brck-Tbody:before, .noRightBrck > .nb-R-Brck-Tbody:after,
+.noLeftBrck > .nb-C-Brck-Tbody:before, .noRightBrck > .nb-C-Brck-Tbody:after,
+.noLeftBrck > .nb-S-Brck-Tbody:before, .noRightBrck > .nb-S-Brck-Tbody:after,
+.noLeftBrck > .nb-Abs-Brck-Tbody:before, .noRightBrck > .nb-Abs-Brck-Tbody:after {
+    content: "";
+}
+
+.nb-Abs-BrckBox.nbBrckInFrac.noLeftBrck > .nb-Abs-Brck-Tbody::before,
+.nb-Abs-BrckBox.nbBrckInFrac.noRightBrck > .nb-Abs-Brck-Tbody:after,
+.nb-R-BrckBox.nbLargeBrck.noLeftBrck > .nb-R-Brck-Tbody:before, 
+.nb-R-BrckBox.nbLargeBrck.noRightBrck > .nb-R-Brck-Tbody:after,
+.nb-Abs-BrckBox.nbLargeBrck.noLeftBrck > .nb-Abs-Brck-Tbody:before,
+.nb-Abs-BrckBox.nbLargeBrck.noRightBrck > .nb-Abs-Brck-Tbody:after,
+.nb-C-BrckBox.nbLargeBrck.noLeftBrck > .nb-C-Brck-Tbody::before,
+.nb-C-BrckBox.nbLargeBrck.noRightBrck > .nb-C-Brck-Tbody:after,
+.nb-S-BrckBox.nbLargeBrck.noLeftBrck > .nb-S-Brck-Tbody::before,
+.nb-S-BrckBox.nbLargeBrck.noRightBrck > .nb-S-Brck-Tbody:after{
+    content: "";
+    background: unset;
+}
+
+
+
+.rightRoundBrck > .nb-S-Brck-Tbody:after, .rightRoundBrck > .nb-Abs-Brck-Tbody:after,
+.rightRoundBrck > .nb-C-Brck-Tbody:after {
+    content: ")";
+    right: 0.01em;
+}
+
+
+
+.rightCBrck > .nb-Abs-Brck-Tbody:after, .rightCBrck > .nb-R-Brck-Tbody:after,
+.rightCBrck > .nb-S-Brck-Tbody:after {
+    content: "}";
+    right: 0em;
+}
+
+.nb-R-BrckBox.nbBrckInFrac.rightCBrck > .nb-R-Brck-Tbody:after{
+    content: "}";
+}
+
+.rightSBrck > .nb-C-Brck-Tbody:after {
+    content: "]";
+    right: -0.1em;
+}
+
+.rightAbsBrck > .nb-C-Brck-Tbody:after {
+    content: "|";
+    right: -0.1em;
+}
+
+.rightSBrck > .nb-C-Brck-Tbody:after, .rightSBrck > .nb-Abs-Brck-Tbody:after, .rightSBrck > .nb-R-Brck-Tbody:after  {
+    content: "]";
+    right: -0.1em;
+}
+
+
+
+.rightAbsBrck > .nb-R-Brck-Tbody:after, .rightAbsBrck > .nb-S-Brck-Tbody:after,
+.rightAbsBrck > .nb-C-Brck-Tbody:after  {
+    content: "|";
+    right: -0.1em;
+}
+
+.nbBrckInFrac.rightAbsBrck > .nb-R-Brck-Tbody:after {
+    content: "|";
+    font-size: 30px;
+    font-family: 'caseBrck';
+    font-weight: 100;
+    right: 0.01em;
+}
+
+.nb-C-BrckBox.nbLargeBrck.rightRoundBrck > .nb-C-Brck-Tbody:after, 
+.nb-S-BrckBox.nbLargeBrck.rightRoundBrck > .nb-S-Brck-Tbody:after,
+.nb-Abs-BrckBox.nbLargeBrck.rightRoundBrck.nbBrckInFrac > .nb-Abs-Brck-Tbody:after{
+    content: "";
+    background: url("img/roundLargeBrckRight.png") no-repeat left center;
+    width: 5px;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
+}
+
+.nb-Abs-BrckBox.nbLargeBrck.rightCBrck.nbBrckInFrac > .nb-Abs-Brck-Tbody:after,
+.nb-R-BrckBox.nbLargeBrck.rightCBrck.nbBrckInFrac  > .nb-R-Brck-Tbody:after,
+.nb-S-BrckBox.nbLargeBrck.rightCBrck.nbBrckInFrac  > .nb-S-Brck-Tbody:after{
+    content: "";
+    background: url("img/cLargeBrckRight.png") no-repeat left center;
+    width: 5px;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
+}
+
+
+
+.nb-R-BrckBox.nbLargeBrck.rightSBrck.nbBrckInFrac > .nb-R-Brck-Tbody:after,
+.nb-Abs-BrckBox.nbLargeBrck.rightSBrck.nbBrckInFrac > .nb-Abs-Brck-Tbody:after,
+.nb-C-BrckBox.nbLargeBrck.rightSBrck.nbBrckInFrac > .nb-C-Brck-Tbody:after{
+    content: "";
+    background: url("img/squareLargeBrckRight.png") no-repeat center center;
+    width: 6px;
+    height: 100%;
+    background-size: 5px 90%;
+    right: 0;
+}
+
+
+.nb-C-BrckBox.nbLargeBrck.rightAbsBrck > .nb-C-Brck-Tbody:after, .nb-S-BrckBox.nbLargeBrck.rightAbsBrck > .nb-S-Brck-Tbody:after,
+.nb-R-BrckBox.nbLargeBrck.rightAbsBrck > .nb-R-Brck-Tbody:after{
+    content: "";
+    background: url("img/absLargeBrck.png") no-repeat center center;
+    width: 2.5px;
+    height: 100%;
+    background-size: 1.5px 90%;
+    right: 0;
+}
+
+
+
+.nb-Abs-BrckBox.nbBrckInFrac.rightRoundBrck > .nb-Abs-Brck-Tbody:after{
+    content: ")";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+    right:-2px;
+}
+
+.nb-Abs-BrckBox.nbBrckInFrac.rightCBrck > .nb-Abs-Brck-Tbody:after{
+    content: "}";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+    right:-3px;
+}
+
+.nb-Abs-BrckBox.nbBrckInFrac.rightSBrck > .nb-Abs-Brck-Tbody:after{
+    content: "]";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-family: 'MJXc-TeX-size2-Rw';
+    font-weight: 100;
+    right:-2px;
+}
+
+.nbBrckInFrac.rightAbsBrck > .nb-C-Brck-Tbody:after, .nbBrckInFrac.rightAbsBrck > .nb-S-Brck-Tbody:after {
+    content: "|";
+    font-size: 30px;
+    font-family: 'caseBrck-old';
+    font-weight: 100;
+    right: 0.01em;
 }
 
 .nb-C-Brck-Tbody:before {
@@ -1626,7 +1858,7 @@
     border-spacing: 0px;
 }
 .nbCaseBrck{
-    font-size:38px;
+    font-size: 50px;
     font-family: 'caseBrck';
     font-weight: 100;
 }
@@ -1641,10 +1873,18 @@
     border-spacing: 0px;
 }
 .nbThrCaseBrck{
-    font-size:65px;
-    font-family: "MapoDacapo";
-    font-weight: 100;
+    background: url("img/cLargeBrckLeft.png") no-repeat center left;
+    width: 10px;
+    font-size: 0px;
+    background-size: 8px 80%;
+    color:rgb(0,0,0,0);
+    caret-color: black;
 }
+.nbThrCaseBrck.grayBorderBox{
+    font-size: 50px !important;
+}
+
+
 .nbThrCaseFir, .nbThrCaseSec, .nbThrCaseThr{
     min-width: 20px;
 }

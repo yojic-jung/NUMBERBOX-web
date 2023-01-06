@@ -657,7 +657,10 @@ height: 1.6em;
 
 
 .shortCutKey .nbCaseBrck{
-    font-size:20px;
+    font-family: 'caseBrck-old';
+    font-size: 20px;
+    background: unset;
+    color: white;
 }
 
 .shortCutKey .nbCaseBrckBox .borderBox{
@@ -676,8 +679,10 @@ height: 1.6em;
 }
 
 .shortCutKey .nbThrCaseBrck{
-    font-family: "caseBrck";
-    font-size:20px;
+    font-family: 'caseBrck-old';
+    font-size: 20px;
+    background: unset;
+    color: white;
 }
 
 .numberBox{

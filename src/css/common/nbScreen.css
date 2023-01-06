@@ -94,6 +94,18 @@
     background:rgb(84, 114, 190);
 }
 
+.circleUI2{
+    display: inline-block;
+    background:rgb(30, 79, 143);
+    color:white;
+    width:20px;
+    height:20px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+}
 
 .svcPosbBtn, .svcImPosbBtn, .svcInspectBtn, .svcErrBtn{
     font-family: Roboto;

@@ -319,6 +319,24 @@
         top:-0.88em !important;
     }
 
+    /* 분수용 괄호 절댓값 굵기 줄이기 */
+    .mathDocsA4Frame .nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:before{
+        width: 2.5px;
+        background-size: 1px 90%;
+    }
+
+    .mathDocsA4Frame .nb-Abs-BrckBox.nbLargeBrck > .nb-Abs-Brck-Tbody:after{
+        width: 2.5px;
+        background-size: 1px 90%;
+    }
+
+    .mathDocsA4Frame .nb-C-BrckBox.nbLargeBrck.rightAbsBrck > .nb-C-Brck-Tbody:after,  .mathDocsA4Frame .nb-S-BrckBox.nbLargeBrck.rightAbsBrck > .nb-S-Brck-Tbody:after,
+    .mathDocsA4Frame .nb-R-BrckBox.nbLargeBrck.rightAbsBrck > .nb-R-Brck-Tbody:after{
+        background: url("img/absLargeBrck.png") no-repeat center center;
+        width: 2.5px;
+        background-size: 1px 90%;
+    }
+    
     /* 로그 함수(자연로그 포함) 
     .mathDocsA4Frame .nbLogBox{
         vertical-align: -0.685em;

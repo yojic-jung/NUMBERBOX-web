@@ -1746,3 +1746,46 @@
     padding: 40px 20px;
     border-radius: 10px;
   }
+
+  .hourGlassSubDesc{
+    display: inline-block;
+    font-size: 14px;
+    line-height: 180%;
+    margin-top: 10px;
+  }
+
+  .pageBtnWrap{
+    text-align: center;
+    margin: 15px 0;
+  }
+
+  .goPreviousBtn, .goNextBtn{
+    cursor: pointer;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-family: 'jejuGothic';
+    background: gray;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+  }
+
+  .pageInput{
+    font-size: 16px;
+    margin-left: 15px;
+    padding: 5px;
+    width: 30px;
+    text-align: center;
+  }
+
+    .pageInput::-webkit-outer-spin-button,
+    .pageInput::-webkit-inner-spin-button {
+        appearance: none;
+        -webkit-appearance: none;
+    }
+    
+  .pageCntWrap{
+    margin-right: 15px;
+  }

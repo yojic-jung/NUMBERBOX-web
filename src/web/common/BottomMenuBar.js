@@ -44,13 +44,16 @@ const BottomMenuBar = ()=>{
             </div>
             <div className='bottom-company-info'>
                 <div className='comp-info-div'>
-                    상호 <span className='comp-info-title'>엔명의수학</span>
+                    상호 <span className='comp-info-title'>N명의수학</span>
                     대표자 <span className='comp-info-title'>정요직</span>
                     개인정보보호담당자 <span className='comp-info-title'>정요직</span>
                 </div>
-                 
                 <div className='comp-info-div'>
-                    | &nbsp; EMAIL. dywlr74@naver.com
+                    사업자 등록번호 <span className='comp-info-title'>531-10-02189</span>
+                    <span className='hide'>통신판매업 신고 <span className='comp-info-title'></span></span>
+                </div>   
+                <div className='comp-info-div'>
+                    <span className='comp-info-title'>서울특별시 강남구 영동대로 602, t176 &nbsp; | &nbsp; TEL. 02-878-1176 &nbsp; | &nbsp; EMAIL. dywlr74@naver.com</span>
                 </div>
                 <div className='comp-info-div'>
                     <span className='comp-info-title'>Copyright(c) N명의수학. All Rights Reserved.</span>

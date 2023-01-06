@@ -40,11 +40,37 @@ const nbToTexConvert =
         {"formulType":"nbThrCasekBox", "toTex": " {cases {"+"val1Point"+"#"+"val2Point"+"#"+"val3Point"+"}}", "val1Class" : "nbThrCaseFir", "val2Class" : "nbThrCaseSec", "val3Class" : "nbThrCaseThr"}
     ]
 
+//nbBox 수식 tex 문법 변환 규칙
+const nbToTexConvertOnlyExistInTex = [
+        {"texCase": "nb-Abs-BrckBox-noRightBrck", "formulType":"nb-Abs-BrckBox", "toTex": " LEFT | "+"val1Point"+" RIGHT . ", "val1Class" : "nb-Abs-BrckBase"},
+        {"texCase": "nb-Abs-BrckBox-noLeftBrck", "formulType":"nb-Abs-BrckBox", "toTex": " LEFT . "+"val1Point"+" RIGHT | ", "val1Class" : "nb-Abs-BrckBase"},
+        {"texCase": "nb-Abs-BrckBox-rightRoundBrck", "formulType":"nb-Abs-BrckBox", "toTex": " LEFT | "+"val1Point"+" RIGHT ) ", "val1Class" : "nb-Abs-BrckBase"},
+        {"texCase": "nb-Abs-BrckBox-rightCBrck", "formulType":"nb-Abs-BrckBox", "toTex": " LEFT | "+"val1Point"+" RIGHT } ", "val1Class" : "nb-Abs-BrckBase"},
+        {"texCase": "nb-Abs-BrckBox-rightSBrck", "formulType":"nb-Abs-BrckBox", "toTex": " LEFT | "+"val1Point"+" RIGHT ] ", "val1Class" : "nb-Abs-BrckBase"},
+
+        {"texCase": "nb-R-BrckBox-noRightBrck", "formulType":"nb-R-BrckBox", "toTex": " LEFT ( "+"val1Point"+" RIGHT . ", "val1Class" : "nb-R-BrckBase"},
+        {"texCase": "nb-R-BrckBox-noLeftBrck", "formulType":"nb-R-BrckBox", "toTex": " LEFT . "+"val1Point"+" RIGHT ) ", "val1Class" : "nb-R-BrckBase"},
+        {"texCase": "nb-R-BrckBox-rightAbsBrck", "formulType":"nb-R-BrckBox", "toTex": " LEFT ( "+"val1Point"+" RIGHT | ", "val1Class" : "nb-R-BrckBase"},
+        {"texCase": "nb-R-BrckBox-rightCBrck", "formulType":"nb-R-BrckBox", "toTex": " LEFT ( "+"val1Point"+" RIGHT } ", "val1Class" : "nb-R-BrckBase"},
+        {"texCase": "nb-R-BrckBox-rightSBrck", "formulType":"nb-R-BrckBox", "toTex": " LEFT ( "+"val1Point"+" RIGHT ] ", "val1Class" : "nb-R-BrckBase"},
+
+        {"texCase": "nb-C-BrckBox-noRightBrck", "formulType":"nb-C-BrckBox", "toTex": " LEFT { "+"val1Point"+" RIGHT . ", "val1Class" : "nb-C-BrckBase"},
+        {"texCase": "nb-C-BrckBox-noLeftBrck", "formulType":"nb-C-BrckBox", "toTex": " LEFT . "+"val1Point"+" RIGHT } ", "val1Class" : "nb-C-BrckBase"},
+        {"texCase": "nb-C-BrckBox-rightAbsBrck", "formulType":"nb-C-BrckBox", "toTex": " LEFT { "+"val1Point"+" RIGHT | ", "val1Class" : "nb-C-BrckBase"},
+        {"texCase": "nb-C-BrckBox-rightRoundBrck", "formulType":"nb-C-BrckBox", "toTex": " LEFT { "+"val1Point"+" RIGHT ) ", "val1Class" : "nb-C-BrckBase"},
+        {"texCase": "nb-C-BrckBox-rightSBrck", "formulType":"nb-C-BrckBox", "toTex": " LEFT { "+"val1Point"+" RIGHT ] ", "val1Class" : "nb-C-BrckBase"},
+
+        {"texCase": "nb-S-BrckBox-noRightBrck", "formulType":"nb-S-BrckBox", "toTex": " LEFT [ "+"val1Point"+" RIGHT . ", "val1Class" : "nb-S-BrckBase"},
+        {"texCase": "nb-S-BrckBox-noLeftBrck", "formulType":"nb-S-BrckBox", "toTex": " LEFT . "+"val1Point"+" RIGHT ] ", "val1Class" : "nb-S-BrckBase"},
+        {"texCase": "nb-S-BrckBox-rightAbsBrck", "formulType":"nb-S-BrckBox", "toTex": " LEFT [ "+"val1Point"+" RIGHT | ", "val1Class" : "nb-S-BrckBase"},
+        {"texCase": "nb-S-BrckBox-rightRoundBrck", "formulType":"nb-S-BrckBox", "toTex": " LEFT [ "+"val1Point"+" RIGHT ) ", "val1Class" : "nb-S-BrckBase"},
+        {"texCase": "nb-S-BrckBox-rightCBrck", "formulType":"nb-S-BrckBox", "toTex": " LEFT [ "+"val1Point"+" RIGHT } ", "val1Class" : "nb-S-BrckBase"},
+    ]
 // '/' 기호 처리 안함
 const engCheck =/^[a-zA-Z]*$/; 
 const numCheck =/^[0-9]*$/; 
 const fomulCheck1 =/^[π±×÷ʹ∘⦁∏≡≈≠≤≥<>+\-=\|\[\]\(\)]*$/;
-const fomulCheck2 =/^[∅∪∩⊃⊂⊇⊆∋∈∌∉⊄]*$/;
+const fomulCheck2 =/^[∅∪∩⊃⊂⊇⊆∋∈∌∉⊄⊅]*$/;
 const fomulCheck3 =/^[αβγδθρμω∂στφ∞Δ≈≡∝∽]*$/;
 const fomulCheck4 =/^[\{\}]*$/; //중괄호 수식에서 사라지는 문제 해결(수식 밖 중괄호 처리)
 
@@ -54,39 +80,41 @@ const fomulCheck4 =/^[\{\}]*$/; //중괄호 수식에서 사라지는 문제 해
 */
 //db화 필요 박스 수식과 텍스트 수식 구분 칼럼 필요, 문법 변환 위해 보여지는 수식 안 보이는 수식 구분 필요
 export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"}, 
-    {texGrammer: " TIMES ", nbFormula : "×"}, {texGrammer: "{TIMES", nbFormula : "{×"},
+    {texGrammer: " TIMES ", nbFormula : "×"}, {texGrammer: "{TIMES ", nbFormula : "{×"},
     {texGrammer: " DIVIDE ", nbFormula : "÷"}, {texGrammer: "{DIVIDE ", nbFormula : "{÷"}, 
-    {texGrammer: " CIRC ", nbFormula : "∘"}, {texGrammer: "{CIRC", nbFormula : "{∘"},
-    {texGrammer: " VDOTS ", nbFormula : "⋮"}, {texGrammer: "{VDOTS", nbFormula : "{⋮"},
-    {texGrammer: " CDOTS ", nbFormula : "⋯"}, {texGrammer: "{CDOTS", nbFormula : "{⋯"}, //CDOTS과 CDOT 순서 바뀌면 안됨
-    {texGrammer: " CDOT ", nbFormula : "·"}, {texGrammer: "{CDOT", nbFormula : "{·"},
-    {texGrammer: " BECAUSE ", nbFormula : "∵"}, {texGrammer: "{BECAUSE", nbFormula : "{∵"},
-    {texGrammer: " THEREFORE ", nbFormula : "∴"}, {texGrammer: "{THEREFORE", nbFormula : "{∴"},
+    {texGrammer: " CIRC ", nbFormula : "∘"}, {texGrammer: "{CIRC ", nbFormula : "{∘"},
+    {texGrammer: " VDOTS ", nbFormula : "⋮"}, {texGrammer: "{VDOTS ", nbFormula : "{⋮"},
+    {texGrammer: " CDOTS ", nbFormula : "⋯"}, {texGrammer: "{CDOTS ", nbFormula : "{⋯"}, //CDOTS과 CDOT 순서 바뀌면 안됨
+    {texGrammer: " CDOT ", nbFormula : "·"}, {texGrammer: "{CDOT ", nbFormula : "{·"},
+    {texGrammer: " BECAUSE ", nbFormula : "∵"}, {texGrammer: "{BECAUSE ", nbFormula : "{∵"},
+    {texGrammer: " THEREFORE ", nbFormula : "∴"}, {texGrammer: "{THEREFORE ", nbFormula : "{∴"},
     {texGrammer: " !=", nbFormula : "≠"}, {texGrammer: "{!=", nbFormula : "{≠"}, 
-    {texGrammer: " LEQ ", nbFormula : "≤"}, {texGrammer: "{LEQ", nbFormula : "{≤"},
-    {texGrammer: " GEQ ", nbFormula : "≥"}, {texGrammer: "{GEQ", nbFormula : "{≥"},
-    {texGrammer: " EMPTYSET ", nbFormula : "∅"}, {texGrammer: "{EMPTYSET", nbFormula : "{∅"}, 
-    {texGrammer: " CUP ", nbFormula : "∪"}, {texGrammer: "{CUP", nbFormula : "{∪"},
-    {texGrammer: " SMALLINTER ", nbFormula : "∩"}, {texGrammer: "{SMALLINTER", nbFormula : "{∩"},
-    {texGrammer: " SUPERSET ", nbFormula : "⊃"}, {texGrammer: "{SUPERSET", nbFormula : "{⊃"}, 
-    {texGrammer: " SUBSET ", nbFormula : "⊂"}, {texGrammer: "{SUBSET", nbFormula : "{⊂"},
-    {texGrammer: " SUPSETEQ ", nbFormula : "⊇"}, {texGrammer: "{SUPSETEQ", nbFormula : "{⊇"},
-    {texGrammer: " SUBSETEQ ", nbFormula : "⊆"}, {texGrammer: "{SUBSETEQ", nbFormula : "{⊆"}, 
-    {texGrammer: " OWNS ", nbFormula : "∋"}, {texGrammer: "{OWNS", nbFormula : "{∋"},
-    {texGrammer: " IN ", nbFormula : "∈"}, {texGrammer: "{IN", nbFormula : "{∈"},
-    {texGrammer: " NOWNS ", nbFormula : "∌"}, {texGrammer: "{NOWNS", nbFormula : "{∌"}, 
-    {texGrammer: " NOTIN ", nbFormula : "∉"}, {texGrammer: "{NOTIN", nbFormula : "{∉"},
-    {texGrammer: " NSUBSET ", nbFormula : "⊄"}, {texGrammer: "{NSUBSET", nbFormula : "{⊄"},
-    {texGrammer: " alpha ", nbFormula : "α"}, {texGrammer: "{alpha", nbFormula : "{α"},
-    {texGrammer: " beta ", nbFormula : "β"}, {texGrammer: "{beta", nbFormula : "{β"}, 
-    {texGrammer: " gamma ", nbFormula : "γ"},  {texGrammer: "{gamma", nbFormula : "{γ"},
-    {texGrammer: " delta ", nbFormula : "δ"}, {texGrammer: "{delta", nbFormula : "{δ"},
-    {texGrammer: " theta ", nbFormula : "θ"}, {texGrammer: "{theta", nbFormula : "{θ"}, 
-    {texGrammer: " rho ", nbFormula : "ρ"}, {texGrammer: "{rho", nbFormula : "{ρ"},
-    {texGrammer: " mu ", nbFormula : "μ"}, {texGrammer: "{mu", nbFormula : "{μ"},
-    {texGrammer: " omega ", nbFormula : "ω"}, {texGrammer: "{omega", nbFormula : "{ω"}, 
-    {texGrammer: " PARTIAL ", nbFormula : "∂"}, {texGrammer: "{PARTIAL", nbFormula : "{∂"},
-    {texGrammer: " sigma ", nbFormula : "σ"}, {texGrammer: "{sigma", nbFormula : "{σ"},
+    {texGrammer: " LEQ ", nbFormula : "≤"}, {texGrammer: "{LEQ ", nbFormula : "{≤"},
+    {texGrammer: " GEQ ", nbFormula : "≥"}, {texGrammer: "{GEQ ", nbFormula : "{≥"},
+    {texGrammer: " EMPTYSET ", nbFormula : "∅"}, {texGrammer: "{EMPTYSET ", nbFormula : "{∅"}, 
+    {texGrammer: " CUP ", nbFormula : "∪"}, {texGrammer: "{CUP ", nbFormula : "{∪"},
+    {texGrammer: " SMALLINTER ", nbFormula : "∩"}, {texGrammer: "{SMALLINTER ", nbFormula : "{∩"},
+    {texGrammer: " SUPERSET ", nbFormula : "⊃"}, {texGrammer: "{SUPERSET ", nbFormula : "{⊃"}, 
+    {texGrammer: " SUBSET ", nbFormula : "⊂"}, {texGrammer: "{SUBSET ", nbFormula : "{⊂"},
+    {texGrammer: " SUPSETEQ ", nbFormula : "⊇"}, {texGrammer: "{SUPSETEQ ", nbFormula : "{⊇"},
+    {texGrammer: " SUBSETEQ ", nbFormula : "⊆"}, {texGrammer: "{SUBSETEQ ", nbFormula : "{⊆"}, 
+    {texGrammer: " OWNS ", nbFormula : "∋"}, {texGrammer: "{OWNS ", nbFormula : "{∋"},
+    {texGrammer: " IN ", nbFormula : "∈"}, {texGrammer: "{IN ", nbFormula : "{∈"},
+    {texGrammer: " NOWNS ", nbFormula : "∌"}, {texGrammer: "{NOWNS ", nbFormula : "{∌"}, 
+    {texGrammer: " NOTIN ", nbFormula : "∉"}, {texGrammer: "{NOTIN ", nbFormula : "{∉"},
+    {texGrammer: " NSUBSET ", nbFormula : "⊄"}, {texGrammer: "{NSUBSET ", nbFormula : "{⊄"},
+    {texGrammer: " NSUPSET ", nbFormula : "⊅"}, {texGrammer: "{NSUBSET ", nbFormula : "{⊅"},
+
+    {texGrammer: " alpha ", nbFormula : "α"}, {texGrammer: "{alpha ", nbFormula : "{α"},
+    {texGrammer: " beta ", nbFormula : "β"}, {texGrammer: "{beta ", nbFormula : "{β"}, 
+    {texGrammer: " gamma ", nbFormula : "γ"},  {texGrammer: "{gamma ", nbFormula : "{γ"},
+    {texGrammer: " delta ", nbFormula : "δ"}, {texGrammer: "{delta ", nbFormula : "{δ"},
+    {texGrammer: " theta ", nbFormula : "θ"}, {texGrammer: "{theta ", nbFormula : "{θ"}, 
+    {texGrammer: " rho ", nbFormula : "ρ"}, {texGrammer: "{rho ", nbFormula : "{ρ"},
+    {texGrammer: " mu ", nbFormula : "μ"}, {texGrammer: "{mu ", nbFormula : "{μ"},
+    {texGrammer: " omega ", nbFormula : "ω"}, {texGrammer: "{omega ", nbFormula : "{ω"}, 
+    {texGrammer: " PARTIAL ", nbFormula : "∂"}, {texGrammer: "{PARTIAL ", nbFormula : "{∂"},
+    {texGrammer: " sigma ", nbFormula : "σ"}, {texGrammer: "{sigma ", nbFormula : "{σ"},
     {texGrammer: " tau ", nbFormula : "τ"}, {texGrammer: "{tau ", nbFormula : "{τ"}, 
     {texGrammer: " phi ", nbFormula : "φ"}, {texGrammer: "{phi ", nbFormula : "{φ"},
     {texGrammer: " INF ", nbFormula : "∞"}, {texGrammer: "{INF ", nbFormula : "{∞"},
@@ -95,9 +123,9 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: " ANGLE ", nbFormula : "∠"},  {texGrammer: "{ANGLE ", nbFormula : "{∠"},
     {texGrammer: " BOT ", nbFormula : "⊥"},  {texGrammer: "{BOT ", nbFormula : "{⊥"},
     {texGrammer: "==", nbFormula : "≡"}, 
-    {texGrammer: " PROPTO ", nbFormula : "∝"}, {texGrammer: "{PROPTO", nbFormula : "{∝"},
-    {texGrammer: " pi ", nbFormula : "π"}, {texGrammer: "{pi", nbFormula : "{π"},
-    {texGrammer: " SMALLPROD ", nbFormula : "∏"},  {texGrammer: "{SMALLPROD", nbFormula : "{∏"},
+    {texGrammer: " PROPTO ", nbFormula : "∝"}, {texGrammer: "{PROPTO ", nbFormula : "{∝"},
+    {texGrammer: " pi ", nbFormula : "π"}, {texGrammer: "{pi ", nbFormula : "{π"},
+    {texGrammer: " SMALLPROD ", nbFormula : "∏"},  {texGrammer: "{SMALLPROD ", nbFormula : "{∏"},
     {texGrammer: "rarrow", nbFormula : "→"},
     {texGrammer: "larrow", nbFormula : "←"},
     {texGrammer: "uparrow", nbFormula : "↑"},
@@ -124,20 +152,19 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: "SIM", nbFormula : "nbCustomWaveText"},
     {texGrammer: "BULLET ", nbFormula : "⦁"},
     {texGrammer: " vert", nbFormula : "|"}, {texGrammer: "{vert ", nbFormula : "|"},
-    {texGrammer: "LEFT .", nbFormula : ""},
-    {texGrammer: "LEFT.", nbFormula : ""},
     ]
 
 /*
 * 정의 : hwp tex문법 to nbFormul 규칙 변수(box요소)
 */
 export const replaceTexToNbBoxFormul = [
-    {texGrammer: "LEFT|", formulId : 82},
+    {texGrammer: "LEFT|", formulId : 82},//Left.(999)로 들어온 경우 82,83,84,85 문법 모두 리턴해줌 formulId 바뀌면 안됨
     {texGrammer: "LEFT(", formulId : 83},
     {texGrammer: "LEFT{", formulId : 84},
     {texGrammer: "LEFT[", formulId : 85},
-
-    //{texGrammer: "LEFT.", formulId : 999},
+    {texGrammer: "LEFT.", formulId : 999},  
+    {texGrammer: "LEFT)", formulId : 1001},  
+    {texGrammer: "LEFT]", formulId : 1002},
 
     {texGrammer: "BOX", formulId : 115},
     {texGrammer: "over", formulId : 5},
@@ -162,12 +189,15 @@ export const replaceTexToNbBoxFormul = [
     {texGrammer: "dyad", formulId : 40},
     {texGrammer: "dot", formulId : 9},
     {texGrammer: "hat", formulId : 10},
-    {texGrammer: "bold", formulId : 1000},
+    
 
     {texGrammer: "cases", formulId : 89},
     {texGrammer: "^", formulId : 6}, //지수와 밑은 다른 문법에서도 사용되므로 가장 나중에 변환
     {texGrammer: "_", formulId : 7},
     //{texGrammer: "sqrt", formulId : 18}
+
+    //N명의 수학에 존재하지 않는 수식문법 처리
+    {texGrammer: "bold", formulId : 1000}
 ]
 
 
@@ -304,28 +334,81 @@ export const cvt_convertHtmlToTex = (contentsDiv) => {
             let isConverted = false;
             InnerLoop : for(let j=0; j<nbToTexConvert.length; j++) {
                 if(nbBoxes[i].classList.contains(nbToTexConvert[j].formulType)){
-                    let val = nbBoxes[i].querySelector("."+nbToTexConvert[j].val1Class).innerText;
+                    //파일 변환시 borderBox 삭제하여 들어오도록 처리되는 부분 있음(다시 등록되거나 다운 될 때 에러 나는 경우 처리 필요)
+                    //ex. 시그마 nbSigmaSumBase(한컴에서는 sup, sub에만 입력하여 nbSigmaSumBase를 파일 변환시 삭제함)
+                    let val;
+                    if(nbBoxes[i].querySelector("."+nbToTexConvert[j].val1Class) === null){
+                        val = "";
+                    }else{
+                        val = nbBoxes[i].querySelector("."+nbToTexConvert[j].val1Class).innerText;
+                    }
+                    
                     if(val === "\n"){
                         val = "";
                     }
 
                     let toTex = nbToTexConvert[j].toTex;
+
+                    //tex문법에서만 사용되는 방식 변환(괄호 서로 다름)
+                    if(nbToTexConvert[j].formulType === "nb-R-BrckBox" || nbToTexConvert[j].formulType === "nb-C-BrckBox"
+                    || nbToTexConvert[j].formulType === "nb-S-BrckBox" || nbToTexConvert[j].formulType === "nb-Abs-BrckBox"){
+                        for(let k=0;k<nbToTexConvertOnlyExistInTex.length; k++){
+                            if(nbBoxes[i].classList.contains("noRightBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-noRightBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }else if(nbBoxes[i].classList.contains("noLeftBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-noLeftBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }else if(nbBoxes[i].classList.contains("rightAbsBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-rightAbsBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }else if(nbBoxes[i].classList.contains("rightCBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-rightCBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }else if(nbBoxes[i].classList.contains("rightSBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-rightSBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }else if(nbBoxes[i].classList.contains("rightRoundBrck")){
+                                if(nbToTexConvertOnlyExistInTex[k].texCase === nbToTexConvert[j].formulType+"-rightRoundBrck"){
+                                    toTex = nbToTexConvertOnlyExistInTex[k].toTex;
+                                }
+                            }
+                        }
+                    }
+
                     toTex =  toTex.replace("val1Point", val);
                     if(nbToTexConvert[j].val2Class !== undefined){
-                        let val2 = nbBoxes[i].querySelector("."+nbToTexConvert[j].val2Class).innerText;
+                        let val2;
+                        if(nbBoxes[i].querySelector("."+nbToTexConvert[j].val2Class) === null){
+                            val2 = "";
+                        }else{
+                            val2 = nbBoxes[i].querySelector("."+nbToTexConvert[j].val2Class).innerText;
+                        }
                         if(val2 === "\n"){
                             val2 = "";
                         }
                         toTex =  toTex.replace("val2Point", val2);
                     }
                     if(nbToTexConvert[j].val3Class !== undefined){
-                        let val3 = nbBoxes[i].querySelector("."+nbToTexConvert[j].val3Class).innerText;
+                        let val3;
+                        if(nbBoxes[i].querySelector("."+nbToTexConvert[j].val2Class) === null){
+                            val3 = "";
+                        }else{
+                            val3 = nbBoxes[i].querySelector("."+nbToTexConvert[j].val2Class).innerText;
+                        }
                         if(val3 === "\n"){
                             val3 = "";
                         }
 
                         toTex =  toTex.replace("val3Point", val3);
                     }
+
+
                     nbBoxes[i].outerHTML = toTex;
                     isConverted = true;
                     break InnerLoop;
@@ -894,6 +977,31 @@ export const  cvt_findLeftBrck = async (texArr, strtIdx) => {
 }
 
 /*
+*  정의 : 인덱스 기준 오른쪽에 있는 LEFT, RIGHT 리턴 함수(한컴 괄호 수식문법 짝맞추기)
+*/
+export const cvt_findRight_LeftRight = async (texArr, strtIdx) => {
+    let brckIdx=0;
+    let isStarted = false;
+    let strtBrckIdx = null;
+    let endBrckIdx = null;
+    for(let i=strtIdx; i<texArr.length; i++){
+        if(texArr.substring(i, i+4) === "LEFT"){
+            if(strtBrckIdx === null) strtBrckIdx=i+1;
+            brckIdx++;
+            isStarted = true;
+        }else if(texArr.substring(i, i+5) === "RIGHT"){
+            brckIdx--;
+        }
+
+        if(brckIdx === 0 && isStarted){
+            endBrckIdx=i;
+            break;
+        }
+    }
+    return {strtBrckIdx, endBrckIdx};
+}
+
+/*
 * 정의 : tex변환 함수
 * 설명 : 문법에 알맞은 함수 호출 후 결과 리턴
 */
@@ -912,21 +1020,18 @@ export const cvt_convertTexToNbFormul = async (formulId, texGrammer, texIndex, n
         return await cvt_convertRootTexToHtml(texGrammer, texIndex, nbFormulHTML);
     //분수용 절댓값
     }else if(formulId === 82){   
-        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "RIGHT|");
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT|");
     //분수용 소괄호
     }else if(formulId === 83){   
-        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "RIGHT)");
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT(");
     //분수용 중괄호
     }else if(formulId === 84){   
-        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "RIGHT}");
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT{");
     //분수용 대괄호
     }else if(formulId === 85){   
-        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "RIGHT]");
-    //분수용 괄호(오른쪽 괄호만 있는 경우)
-    }else if(formulId === 999){   
-        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML);
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT[");
     //삼각함수
-    }else if(formulId === 23 || formulId === 24 || formulId === 25|| formulId === 34 || formulId === 35 || formulId === 36){   //삼각함수
+    }else if(formulId === 23 || formulId === 24 || formulId === 25|| formulId === 34 || formulId === 35 || formulId === 36){ 
         return await cvt_convertTrigonTexToHtml(texGrammer, texIndex, nbFormulHTML);
     //조건박스
     }else if(formulId === 115){   
@@ -973,12 +1078,21 @@ export const cvt_convertTexToNbFormul = async (formulId, texGrammer, texIndex, n
     //악센트
     }else if(formulId === 10){   
         return await cvt_convertAccentTexToHtml(texGrammer, texIndex, nbFormulHTML);
-    //경우의수(2가지)
+    //연립방정식(2, 3, 4가지 경우)
     }else if(formulId === 89){   
         return await cvt_convertCasesTexToHtml(texGrammer, texIndex, nbFormulHTML);
     //bold
     }else if(formulId === 1000){   
         return await cvt_convertBoldTexToHtml(texGrammer, texIndex, nbFormulHTML);
+    //분수용 괄호 LEFT.
+    }else if(formulId === 999){   
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT.");
+    //분수용 괄호 LEFT)
+    }else if(formulId === 1001){   
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT)");
+    //분수용 괄호 LEFT]
+    }else if(formulId === 1002){   
+        return await cvt_convertBrckTexToHtml(texGrammer, texIndex, nbFormulHTML, "LEFT]");
     }
 }
 
@@ -1103,66 +1217,129 @@ export const cvt_convertRootTexToHtml = async (texGrammer, texIndex, nbFormulHTM
 * 정의 : tex변환 함수(분수용 괄호)
 * 설명 : 변환한 html요소와 문법 시작 인덱스와 끝 인덱스를 리턴
 */
-export const cvt_convertBrckTexToHtml = async (texGrammer, texIndex, nbFormulHTML, rightBrckTex) =>{
+export const cvt_convertBrckTexToHtml = async (texGrammer, texIndex, nbFormulHTML, leftBrckTex) =>{
     //LEFT 더 있는지 체크(RIGHT보다 먼저 나오는지가 중요)
-    let chkIdx = texIndex+5
-    let leftCnt = 0;
-    if(rightBrckTex==="RIGHT)"){
-        while(texGrammer.substr(chkIdx).indexOf("LEFT(")>-1){
-            if(texGrammer.substr(chkIdx).indexOf("LEFT(") < texGrammer.substr(chkIdx).indexOf("RIGHT)")){
-                chkIdx += texGrammer.substr(chkIdx).indexOf("LEFT(")+5;
-                leftCnt++;
-            }else{
-                break;
+    let leftRightIdx =  await cvt_findRight_LeftRight(texGrammer, texIndex);
+    //null나왔을 때 리턴 처리
+    if(leftRightIdx.strtBrckIdx === null || leftRightIdx.endBrckIdx === null ){
+        return null;
+    }
+    let rightBrckTex = texGrammer.substring(leftRightIdx.endBrckIdx, leftRightIdx.endBrckIdx+6);
+
+    let convertNbFormulBox = document.createElement('span');
+    if(leftBrckTex === "LEFT."){
+        let nbFormulGrammer;
+        if(rightBrckTex==="RIGHT)"){
+            nbFormulGrammer = nbFormulHTML.filter((element) => {
+                return (element.id === 83)
+            });
+        }else if(rightBrckTex === "RIGHT}"){
+            nbFormulGrammer = nbFormulHTML.filter((element) => {
+                return (element.id === 84)
+            });
+        }else if(rightBrckTex === "RIGHT]"){
+            nbFormulGrammer = nbFormulHTML.filter((element) => {
+                return (element.id === 85)
+            });
+        }else if(rightBrckTex === "RIGHT|"){
+            nbFormulGrammer = nbFormulHTML.filter((element) => {
+                return (element.id === 82)
+            });
+        }else if(rightBrckTex === "RIGHT."){
+            let tmpSpan = document.createElement("span");
+            tmpSpan.innerText = texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx);
+            convertNbFormulBox.append(tmpSpan);
+            tmpSpan.classList.add("forTexCheck");
+            //여기서 리턴 처리하기
+            return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
+        //괄호 반대로 들어온 경우 안에 내용과 괄호만 리턴
+        }else if(rightBrckTex === "RIGHT(" || rightBrckTex === "RIGHT{" || rightBrckTex === "RIGHT["){
+            let tmpSpan = document.createElement("span");
+            tmpSpan.innerText = texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx)+rightBrckTex[5];
+            convertNbFormulBox.append(tmpSpan);
+            tmpSpan.classList.add("forTexCheck");
+
+            return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
+        }else{
+            return null;
+        }
+        convertNbFormulBox.innerHTML = nbFormulGrammer[0].nbGrammer;
+        convertNbFormulBox.querySelector(".nbBox").classList.add("noLeftBrck");
+    //괄호 반대로 들어온 경우 안에 내용과 괄호만 리턴
+    }else if(leftBrckTex === "LEFT)" || leftBrckTex === "LEFT]"){
+        let tmpSpan = document.createElement("span");
+        let brck = rightBrckTex[5];
+        if(rightBrckTex[5] === ".") brck ="";
+        tmpSpan.innerText = texGrammer.substring(texIndex+4, leftRightIdx.endBrckIdx)+brck;
+        convertNbFormulBox.append(tmpSpan);
+        tmpSpan.classList.add("forTexCheck");
+
+        return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
+    }else{
+        if(leftBrckTex === "LEFT|"){    //괄호 반대로 들어온 경우 안에 내용과 괄호만 리턴
+            if(rightBrckTex === "RIGHT(" || rightBrckTex === "RIGHT{" || rightBrckTex === "RIGHT["){
+                let tmpSpan = document.createElement("span");
+                tmpSpan.innerText = texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx)+rightBrckTex[5];
+                convertNbFormulBox.append(tmpSpan);
+                tmpSpan.classList.add("forTexCheck");
+    
+                return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
             }
+        }
+        convertNbFormulBox.innerHTML = nbFormulHTML;
+    }
+    
+
+    convertNbFormulBox.querySelector(".borderBox").innerText = texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx);
+    
+    //보더박스에 들어있는 tex검사 위해
+    convertNbFormulBox.querySelector(".borderBox").classList.add("forTexCheck");
+    if(rightBrckTex==="RIGHT)"){
+        if(leftBrckTex !== "LEFT("){
+            convertNbFormulBox.querySelector(".nbBox").classList.add("rightRoundBrck");
         }
     }else if(rightBrckTex === "RIGHT}"){
-        while(texGrammer.substr(chkIdx).indexOf("LEFT{")>-1){
-            if(texGrammer.substr(chkIdx).indexOf("LEFT{") < texGrammer.substr(chkIdx).indexOf("RIGHT}")){
-                chkIdx += texGrammer.substr(chkIdx).indexOf("LEFT{")+5;
-                leftCnt++;
-            }else{
-                break;
-            }
+        if(leftBrckTex !== "LEFT{"){
+            convertNbFormulBox.querySelector(".nbBox").classList.add("rightCBrck");
         }
     }else if(rightBrckTex === "RIGHT]"){
-        while(texGrammer.substr(chkIdx).indexOf("LEFT[")>-1){
-            if(texGrammer.substr(chkIdx).indexOf("LEFT[") < texGrammer.substr(chkIdx).indexOf("RIGHT]")){
-                chkIdx += texGrammer.substr(chkIdx).indexOf("LEFT[")+5;
-                leftCnt++;
-            }else{
-                break;
+        if(leftBrckTex !== "LEFT["){
+            convertNbFormulBox.querySelector(".nbBox").classList.add("rightSBrck");
+        }else{
+            //괄호 적분 체크
+            //바로 옆에 _{} 있는지 체크 _{} 바로 옆에 ^{} 있는지 체크
+            if(texGrammer.substr(leftRightIdx.endBrckIdx+6, 2)==="_{"){
+                let rightUnderBrckIdx = await cvt_findRightBrck(texGrammer, leftRightIdx.endBrckIdx);
+                if(texGrammer.substr(rightUnderBrckIdx.endBrckIdx+1, 2)==="^{") {
+                    let rightSupBrckIdx = await cvt_findRightBrck(texGrammer, rightUnderBrckIdx.endBrckIdx+1);
+                    let convertNbFormulBox = document.createElement('span');
+                    convertNbFormulBox.innerHTML = '<table class="nbIntBrckBox nbBox"><tbody class="nbIntBrckTbody"><tr><td class="nbIntBrckBase borderBox"><br></td></tr></tbody><tbody class="nbIntBrckTbody2"><tr><td class="nbIntBrckSupBase borderBox"><br></td></tr><tr><td class="nbIntBrckSubBase borderBox"><br></td></tr></tbody></table>';
+                    
+                    convertNbFormulBox.querySelector(".nbIntBrckBase").innerText = texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx);
+                    convertNbFormulBox.querySelector(".nbIntBrckSubBase").innerText = texGrammer.substring(rightUnderBrckIdx.strtBrckIdx, rightUnderBrckIdx.endBrckIdx);
+                    convertNbFormulBox.querySelector(".nbIntBrckSupBase").innerText = texGrammer.substring(rightSupBrckIdx.strtBrckIdx, rightSupBrckIdx.endBrckIdx);
+        
+                    //보더박스에 들어있는 tex검사 위해
+                    convertNbFormulBox.querySelector(".nbIntBrckBase").classList.add("forTexCheck");
+                    convertNbFormulBox.querySelector(".nbIntBrckSubBase").classList.add("forTexCheck");
+                    convertNbFormulBox.querySelector(".nbIntBrckSupBase").classList.add("forTexCheck");
+
+                    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightSupBrckIdx.endBrckIdx+1};
+                }
             }
         }
     }else if(rightBrckTex === "RIGHT|"){
-        while(texGrammer.substr(chkIdx).indexOf("LEFT|")>-1){
-            if(texGrammer.substr(chkIdx).indexOf("LEFT|") < texGrammer.substr(chkIdx).indexOf("RIGHT|")){
-                chkIdx += texGrammer.substr(chkIdx).indexOf("LEFT|")+5;
-                leftCnt++;
-            }else{
-                break;
-            }
+        if(leftBrckTex !== "LEFT|"){
+            convertNbFormulBox.querySelector(".nbBox").classList.add("rightAbsBrck");
         }
-    }
+    }else if(rightBrckTex === "RIGHT."){
+        convertNbFormulBox.querySelector(".nbBox").classList.add("noRightBrck");
 
-    let rightCloseBrckIdx = texGrammer.indexOf(rightBrckTex);
-    for(let i=0; i<leftCnt; i++){
-        rightCloseBrckIdx += texGrammer.substr(rightCloseBrckIdx+6).indexOf(rightBrckTex)+6;
-    }
-
-    
-    if(rightCloseBrckIdx < 0){
-        rightCloseBrckIdx = texGrammer.indexOf("RIGHT.");
-        for(let i=0; i<leftCnt; i++){
-            rightCloseBrckIdx += texGrammer.substr(rightCloseBrckIdx+6).indexOf("RIGHT.")+6;
-        }
-
-        //괄호 안 닫힌 경우
-        if(rightCloseBrckIdx>-1){
-            //#이 포함된 경우 (경우의 수 2가지)
-            if(texGrammer.substring(texIndex+4, rightCloseBrckIdx).indexOf("#")>-1){
-                let brckIdx = await cvt_findRightBrck(texGrammer, texIndex+5);
-                let innerTexGrm = texGrammer.substring(brckIdx.strtBrckIdx, brckIdx.endBrckIdx).split("#");
+        //#이 포함된 경우 (경우의 수 2가지)
+        if(leftBrckTex === "LEFT{"){
+            if(texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx).indexOf("#")>-1){
+                let brckIdx = await cvt_findRightBrck(texGrammer.substring(texIndex+5, leftRightIdx.endBrckIdx), 0);
+                let innerTexGrm = texGrammer.substring(brckIdx.strtBrckIdx+texIndex+5, brckIdx.endBrckIdx+texIndex+5).split("#");
                 if(innerTexGrm.length !== 2 && innerTexGrm.length !== 3){
                     return null
                 }
@@ -1170,66 +1347,39 @@ export const cvt_convertBrckTexToHtml = async (texGrammer, texIndex, nbFormulHTM
                     //경우의수(2가지)
                     let convertNbFormulBox = document.createElement('span');
                     convertNbFormulBox.innerHTML = '<table class="nbCaseBrckBox nbBox" ><tbody><tr><td rowspan="2" class="nbCaseBrck writeDisable borderBox">{</td><td class="nbCaseFir borderBox"><br></td></tr><tr><td class="nbCaseSec borderBox"><br></td></tr></tbody></table>';
-
+    
                     convertNbFormulBox.querySelector(".nbCaseFir").innerText = innerTexGrm[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
                     convertNbFormulBox.querySelector(".nbCaseSec").innerText = innerTexGrm[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
-
+    
                     //보더박스에 들어있는 tex검사 위해
                     convertNbFormulBox.querySelector(".nbCaseFir").classList.add("forTexCheck");
                     convertNbFormulBox.querySelector(".nbCaseSec").classList.add("forTexCheck");
-                    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightCloseBrckIdx+6};
+                    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
                 }else{
                     //경우의수(3가지)
                     let convertNbFormulBox = document.createElement('span');
                     convertNbFormulBox.innerHTML = '<table class="nbThrCasekBox nbBox"><tbody><tr><td rowspan="3" class="nbThrCaseBrck writeDisable borderBox">{</td><td class="nbThrCaseFir borderBox"><br></td></tr><tr><td class="nbThrCaseSec borderBox"><br></td></tr><tr><td class="nbThrCaseThr borderBox"><br></td></tr></tbody></table>';
-
+    
                     convertNbFormulBox.querySelector(".nbThrCaseFir").innerText = innerTexGrm[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
                     convertNbFormulBox.querySelector(".nbThrCaseSec").innerText = innerTexGrm[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
                     convertNbFormulBox.querySelector(".nbThrCaseThr").innerText = innerTexGrm[2].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
-
+    
                     //보더박스에 들어있는 tex검사 위해
                     convertNbFormulBox.querySelector(".nbThrCaseFir").classList.add("forTexCheck");
                     convertNbFormulBox.querySelector(".nbThrCaseSec").classList.add("forTexCheck");
                     convertNbFormulBox.querySelector(".nbThrCaseThr").classList.add("forTexCheck");
-                    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightCloseBrckIdx+6};
+                    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
                 }
                 
             }
-
-            let convertNbFormulBox = document.createElement('span');
-            convertNbFormulBox.innerHTML = texGrammer.substring(texIndex+4, rightCloseBrckIdx);
-            //tex검사 위해
-            convertNbFormulBox.classList.add("forTexCheck");
-            return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightCloseBrckIdx+6};
         }
+        
+    }else{
         return null;
     }
 
-    
-    //적분 체크
-    if(rightBrckTex === "RIGHT]"){
-        //바로 옆에 _{} 있는지 체크 _{} 바로 옆에 ^{} 있는지 체크
-        if(texGrammer.substr(rightCloseBrckIdx+6, 2)==="_{"){
-            let rightUnderBrckIdx = await cvt_findRightBrck(texGrammer, rightCloseBrckIdx);
-            if(texGrammer.substr(rightUnderBrckIdx.endBrckIdx+1, 2)==="^{") {
-                let rightSupBrckIdx = await cvt_findRightBrck(texGrammer, rightUnderBrckIdx.endBrckIdx+1);
-                let convertNbFormulBox = document.createElement('span');
-                convertNbFormulBox.innerHTML = '<table class="nbIntBrckBox nbBox"><tbody class="nbIntBrckTbody"><tr><td class="nbIntBrckBase borderBox"><br></td></tr></tbody><tbody class="nbIntBrckTbody2"><tr><td class="nbIntBrckSupBase borderBox"><br></td></tr><tr><td class="nbIntBrckSubBase borderBox"><br></td></tr></tbody></table>';
-                
-                convertNbFormulBox.querySelector(".nbIntBrckBase").innerText = texGrammer.substring(texIndex+5, rightCloseBrckIdx);
-                convertNbFormulBox.querySelector(".nbIntBrckSubBase").innerText = texGrammer.substring(rightUnderBrckIdx.strtBrckIdx, rightUnderBrckIdx.endBrckIdx);
-                convertNbFormulBox.querySelector(".nbIntBrckSupBase").innerText = texGrammer.substring(rightSupBrckIdx.strtBrckIdx, rightSupBrckIdx.endBrckIdx);
-    
-                //보더박스에 들어있는 tex검사 위해
-                convertNbFormulBox.querySelector(".nbIntBrckBase").classList.add("forTexCheck");
-                convertNbFormulBox.querySelector(".nbIntBrckSubBase").classList.add("forTexCheck");
-                convertNbFormulBox.querySelector(".nbIntBrckSupBase").classList.add("forTexCheck");
-
-                return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightSupBrckIdx.endBrckIdx+1};
-            }
-        }
+    /*
     //이항계수 체크
-    }else if(rightBrckTex === "RIGHT)"){
         let pileIdx = texGrammer.indexOf("pile");
         if(pileIdx>-1 && leftCnt === 0){
             let rightBrckIdx = await cvt_findRightBrck(texGrammer, pileIdx);
@@ -1245,52 +1395,14 @@ export const cvt_convertBrckTexToHtml = async (texGrammer, texIndex, nbFormulHTM
                 convertNbFormulBox.querySelector(".nbBinomCoFir").classList.add("forTexCheck");
                 convertNbFormulBox.querySelector(".nbBinomCoFir").classList.add("forTexCheck");
 
-                return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":texGrammer.indexOf(rightBrckTex)+6};
+                return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":texGrammer.indexOf(leftBrckTex)+6};
             }
         }
-        
-    }
-    /*
-    //바깥쪽에 분수용 괄호 있는지 체크(안쪽부터 실행되면 변환 제대로 안됨)
-    //분수용 괄호 순서가 |, ( {, [ 이지만 데이터는 이 순서와 다르게 들어와 안쪽 실행되고 바깥쪽 실행될 수 있음(ex, left[ left{ )
-    if(rightBrckTex === "right|"){
-        if((texGrammer.toLowerCase().indexOf("left(") > -1 && texGrammer.toLowerCase().indexOf("left(") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left{") > -1 && texGrammer.toLowerCase().indexOf("left{") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left[") >-1 && texGrammer.toLowerCase().indexOf("left[") < texIndex)){
-            return "skip";
-        }
-    }else if(rightBrckTex === "right)"){
-        if((texGrammer.toLowerCase().indexOf("left|") > -1 && texGrammer.toLowerCase().indexOf("left|") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left{") > -1 && texGrammer.toLowerCase().indexOf("left{") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left[") > -1 && texGrammer.toLowerCase().indexOf("left[") < texIndex)){
-            return "skip";
-        }
-    }else if(rightBrckTex === "right}"){
-        if((texGrammer.toLowerCase().indexOf("left|") > -1 && texGrammer.toLowerCase().indexOf("left|") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left(") > -1 && texGrammer.toLowerCase().indexOf("left(") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left[") > -1 && texGrammer.toLowerCase().indexOf("left[") < texIndex)){
-            return "skip";
-        }
-    }else if(rightBrckTex === "right]"){
-        if((texGrammer.toLowerCase().indexOf("left|") > -1 && texGrammer.toLowerCase().indexOf("left|") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left(") > -1 && texGrammer.toLowerCase().indexOf("left(") < texIndex)
-        || (texGrammer.toLowerCase().indexOf("left{") > -1 && texGrammer.toLowerCase().indexOf("left{") < texIndex)){
-            return "skip";
-        }
-    }
     */
+
     
-
-    let convertNbFormulBox = document.createElement('span');
-    convertNbFormulBox.innerHTML = nbFormulHTML;
-
-    convertNbFormulBox.querySelector(".borderBox").innerText = texGrammer.substring(texIndex+5, rightCloseBrckIdx);
-    
-    //보더박스에 들어있는 tex검사 위해
-    convertNbFormulBox.querySelector(".borderBox").classList.add("forTexCheck");
-
     //html 및 문법 시작 idx와 끝 idx 리턴
-    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":rightCloseBrckIdx+6};
+    return {"nbFormulBox":convertNbFormulBox, "strtIdx":texIndex, "endIdx":leftRightIdx.endBrckIdx+6};
 }
 
 /*
@@ -1777,7 +1889,7 @@ export const cvt_convertAccentTexToHtml = async (texGrammer, texIndex, nbFormulH
 }
 
 /*
-* 정의 : tex변환 함수(경우의수, 2가지)
+* 정의 : tex변환 함수(연립방정식(2, 3, 4가지 경우))
 * 설명 : 변환한 html요소와 문법 시작 인덱스와 끝 인덱스를 리턴
 */
 export const cvt_convertCasesTexToHtml = async (texGrammer, texIndex, nbFormulHTML) =>{
@@ -1792,25 +1904,38 @@ export const cvt_convertCasesTexToHtml = async (texGrammer, texIndex, nbFormulHT
     convertNbFormulBox.innerHTML = nbFormulHTML;
     let casesStr = texGrammer.substring(rightBrckIdx.strtBrckIdx, rightBrckIdx.endBrckIdx);
     casesStr = casesStr.split("#")
-    if(casesStr.length !== 2 && casesStr.length !== 3){
+    if(casesStr.length !== 2 && casesStr.length !== 3 && casesStr.length !== 4){
         return null;
     }
 
     if(casesStr.length === 2){
-        //경우의수(2가지)
+        //연립방정식 2가지 경우
         convertNbFormulBox.querySelector(".nbCaseFir").innerText = casesStr[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
         convertNbFormulBox.querySelector(".nbCaseSec").innerText = casesStr[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
     
         //보더박스에 들어있는 tex검사 위해
         convertNbFormulBox.querySelector(".nbCaseFir").classList.add("forTexCheck");
         convertNbFormulBox.querySelector(".nbCaseSec").classList.add("forTexCheck");
-    }else{
-        //경우의수(3가지)
+    }else if(casesStr.length === 3){
+        //연립방정식 3가지 경우
         convertNbFormulBox.innerHTML = '<table class="nbThrCasekBox nbBox"><tbody><tr><td rowspan="3" class="nbThrCaseBrck writeDisable borderBox">{</td><td class="nbThrCaseFir borderBox"><br></td></tr><tr><td class="nbThrCaseSec borderBox"><br></td></tr><tr><td class="nbThrCaseThr borderBox"><br></td></tr></tbody></table>';
 
         convertNbFormulBox.querySelector(".nbThrCaseFir").innerText = casesStr[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
         convertNbFormulBox.querySelector(".nbThrCaseSec").innerText = casesStr[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
         convertNbFormulBox.querySelector(".nbThrCaseThr").innerText = casesStr[2].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
+
+        //보더박스에 들어있는 tex검사 위해
+        convertNbFormulBox.querySelector(".nbThrCaseFir").classList.add("forTexCheck");
+        convertNbFormulBox.querySelector(".nbThrCaseSec").classList.add("forTexCheck");
+        convertNbFormulBox.querySelector(".nbThrCaseThr").classList.add("forTexCheck");
+    }else{
+        //연립방정식 4가지 경우
+        convertNbFormulBox.innerHTML = '<table class="nbThrCasekBox nbBox"><tbody><tr><td rowspan="3" class="nbThrCaseBrck writeDisable borderBox">{</td><td class="nbThrCaseFir borderBox"><br></td></tr><tr><td class="nbThrCaseSec borderBox"><br></td></tr><tr><td class="nbThrCaseThr borderBox"><br></td></tr></tbody></table>';
+
+        convertNbFormulBox.querySelector(".nbThrCaseFir").innerText = casesStr[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
+        convertNbFormulBox.querySelector(".nbThrCaseSec").innerText = casesStr[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
+        convertNbFormulBox.querySelector(".nbThrCaseThr").innerText = casesStr[2].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;")
+                                                                        +"<br/>"+casesStr[3].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");;
 
         //보더박스에 들어있는 tex검사 위해
         convertNbFormulBox.querySelector(".nbThrCaseFir").classList.add("forTexCheck");
