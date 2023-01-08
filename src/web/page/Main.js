@@ -151,9 +151,10 @@ return (
         </div>
 
         <div className='mainSubRootDiv3'>
-            <div className='mainSubDiv2Title'>한글파일(hwp)로 나의 제작 문제 다운받기</div>
+            <div className='mainSubDiv2Title'>한글파일(hwp)과 호환</div>
             <div className='mainSubDesc1'>
-                사용자가 제작한 문제를 한글파일(hwp)로 변환하여 다운 받을 수 있습니다.
+                N명의수학에서 제작한 문제를 한글파일(hwp)로 변환하여 다운 받을 수 있고<br/>
+                한글파일로 제작된 문제를 업로드하여 N명의수학에서 DB화하여 사용할 수 있습니다.
             </div>
             <div className='mainSubBox first hwp'>
                 <img className='mainImgUI hwp1' src={hwpConverImg1} alt=""/>
@@ -250,10 +251,24 @@ return (
                     <div>
                         <div className='mainSubDescTitle third mobile'>한글파일(hwp)로 다운</div>
                         <div className='mainSubDescContents mobile'>
-                                내가 제작한 수학문제들을 한글파일(hwp)로<br/>
-                                변환하여 다운 받을 수 있습니다.<br/>
+                                
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className='mainSubDiv3 mobile'>
+                <div>
+                    <div className='mainSubTitle mobile'>한글파일(hwp)과 호환</div>
+                    <div className='mainSubDesc'>
+                        사용자가 제작한 수학문제를 한글파일(hwp)로<br/>
+                        변환하여 다운 받을 수 있으며,<br/>
+                        한글파일로 만들어진 문제를 업로드하여<br/>
+                        N명의수학에서 DB화 하여 사용할 수 있습니다.
+                    </div>
+                </div>
+                <div className='relative alignRight'>
+                    <img className='mainImgUI hwp1' src={hwpConverImg1} alt=""/>
+                    <img className='mainImgUI hwp2' src={hwpConverImg2} alt=""/>
                 </div>
             </div>
             <div className='mainSubDiv3 mobile'>
@@ -278,7 +293,10 @@ return (
                     <div className='mainSubRootRadiusTitle'>수식 편집기</div>
                     <div>편리한 제작툴로 문제를 빠르게 만들 수 있고 한글파일(hwp)로 다운 받을 수 있어요!</div>
                 </div>
-
+                <div className='mainSubRootRadiusDiv sixth'>
+                    <div className='mainSubRootRadiusTitle'>파일 변환</div>
+                    <div>사용자 제작 문제를 한글파일(hwp)로 다운 받을 수 있으며, 한글 파일을 업로드하여 문제를 등록할 수도 있어요!</div>
+                </div>
                 <div className='mainSubRootRadiusDiv second'>
                     <div className='mainSubRootRadiusTitle'>학습지 제작</div>
                     <div>N명의 수학에서 제공하는 문제들로 학습지를 만들어 사용할 수 있어요!</div>

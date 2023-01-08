@@ -1,3 +1,5 @@
+import {nb_S3ImgToBase64} from 'js/common/common_nb.js';
+
 //수식 변수명 중복으로 여러개 등록되어있는 것 고유화 작업
 const inAccurateNbBoxesList = 
 [
@@ -80,78 +82,83 @@ const fomulCheck4 =/^[\{\}]*$/; //중괄호 수식에서 사라지는 문제 해
 */
 //db화 필요 박스 수식과 텍스트 수식 구분 칼럼 필요, 문법 변환 위해 보여지는 수식 안 보이는 수식 구분 필요
 export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"}, 
-    {texGrammer: " TIMES ", nbFormula : "×"}, {texGrammer: "{TIMES ", nbFormula : "{×"},
-    {texGrammer: " DIVIDE ", nbFormula : "÷"}, {texGrammer: "{DIVIDE ", nbFormula : "{÷"}, 
-    {texGrammer: " CIRC ", nbFormula : "∘"}, {texGrammer: "{CIRC ", nbFormula : "{∘"},
-    {texGrammer: " VDOTS ", nbFormula : "⋮"}, {texGrammer: "{VDOTS ", nbFormula : "{⋮"},
-    {texGrammer: " CDOTS ", nbFormula : "⋯"}, {texGrammer: "{CDOTS ", nbFormula : "{⋯"}, //CDOTS과 CDOT 순서 바뀌면 안됨
-    {texGrammer: " CDOT ", nbFormula : "·"}, {texGrammer: "{CDOT ", nbFormula : "{·"},
-    {texGrammer: " BECAUSE ", nbFormula : "∵"}, {texGrammer: "{BECAUSE ", nbFormula : "{∵"},
-    {texGrammer: " THEREFORE ", nbFormula : "∴"}, {texGrammer: "{THEREFORE ", nbFormula : "{∴"},
-    {texGrammer: " !=", nbFormula : "≠"}, {texGrammer: "{!=", nbFormula : "{≠"}, 
-    {texGrammer: " LEQ ", nbFormula : "≤"}, {texGrammer: "{LEQ ", nbFormula : "{≤"},
-    {texGrammer: " GEQ ", nbFormula : "≥"}, {texGrammer: "{GEQ ", nbFormula : "{≥"},
-    {texGrammer: " EMPTYSET ", nbFormula : "∅"}, {texGrammer: "{EMPTYSET ", nbFormula : "{∅"}, 
-    {texGrammer: " CUP ", nbFormula : "∪"}, {texGrammer: "{CUP ", nbFormula : "{∪"},
-    {texGrammer: " SMALLINTER ", nbFormula : "∩"}, {texGrammer: "{SMALLINTER ", nbFormula : "{∩"},
-    {texGrammer: " SUPERSET ", nbFormula : "⊃"}, {texGrammer: "{SUPERSET ", nbFormula : "{⊃"}, 
-    {texGrammer: " SUBSET ", nbFormula : "⊂"}, {texGrammer: "{SUBSET ", nbFormula : "{⊂"},
-    {texGrammer: " SUPSETEQ ", nbFormula : "⊇"}, {texGrammer: "{SUPSETEQ ", nbFormula : "{⊇"},
-    {texGrammer: " SUBSETEQ ", nbFormula : "⊆"}, {texGrammer: "{SUBSETEQ ", nbFormula : "{⊆"}, 
-    {texGrammer: " OWNS ", nbFormula : "∋"}, {texGrammer: "{OWNS ", nbFormula : "{∋"},
-    {texGrammer: " IN ", nbFormula : "∈"}, {texGrammer: "{IN ", nbFormula : "{∈"},
-    {texGrammer: " NOWNS ", nbFormula : "∌"}, {texGrammer: "{NOWNS ", nbFormula : "{∌"}, 
-    {texGrammer: " NOTIN ", nbFormula : "∉"}, {texGrammer: "{NOTIN ", nbFormula : "{∉"},
-    {texGrammer: " NSUBSET ", nbFormula : "⊄"}, {texGrammer: "{NSUBSET ", nbFormula : "{⊄"},
-    {texGrammer: " NSUPSET ", nbFormula : "⊅"}, {texGrammer: "{NSUBSET ", nbFormula : "{⊅"},
+    {texGrammer: "TIMES ", nbFormula : "×"},
+    {texGrammer: "DIVIDE ", nbFormula : "÷"},
+    {texGrammer: "BIGCIRC ", nbFormula : "○"},
+    {texGrammer: "CIRC ", nbFormula : "∘"}, 
+    {texGrammer: "VDOTS ", nbFormula : "⋮"}, 
+    {texGrammer: "CDOTS ", nbFormula : "⋯"}, //CDOTS과 CDOT 순서 바뀌면 안됨
+    {texGrammer: "CDOT ", nbFormula : "·"}, 
+    {texGrammer: "BECAUSE ", nbFormula : "∵"}, 
+    {texGrammer: "THEREFORE ", nbFormula : "∴"}, 
+    {texGrammer: "!=", nbFormula : "≠"}, 
+    {texGrammer: "LEQ ", nbFormula : "≤"}, 
+    {texGrammer: "GEQ ", nbFormula : "≥"},
+    {texGrammer: "EMPTYSET ", nbFormula : "∅"},
+    {texGrammer: "CUP ", nbFormula : "∪"},
+    {texGrammer: "SMALLINTER ", nbFormula : "∩"},
+    {texGrammer: "NOTIN ", nbFormula : "∉"},
+    {texGrammer: "INF ", nbFormula : "∞"},
+    {texGrammer: "IN ", nbFormula : "∈"},
+    {texGrammer: "SUPERSET ", nbFormula : "⊃"},
+    {texGrammer: "SUBSETEQ ", nbFormula : "⊆"},
+    {texGrammer: "NSUBSET ", nbFormula : "⊄"},
+    {texGrammer: "SUBSET ", nbFormula : "⊂"},
+    {texGrammer: "SUPSETEQ ", nbFormula : "⊇"},
+    
+    {texGrammer: "NOWNS ", nbFormula : "∌"},
+    {texGrammer: "OWNS ", nbFormula : "∋"},
+    
+    {texGrammer: "NSUPSET ", nbFormula : "⊅"},
 
-    {texGrammer: " alpha ", nbFormula : "α"}, {texGrammer: "{alpha ", nbFormula : "{α"},
-    {texGrammer: " beta ", nbFormula : "β"}, {texGrammer: "{beta ", nbFormula : "{β"}, 
-    {texGrammer: " gamma ", nbFormula : "γ"},  {texGrammer: "{gamma ", nbFormula : "{γ"},
-    {texGrammer: " delta ", nbFormula : "δ"}, {texGrammer: "{delta ", nbFormula : "{δ"},
-    {texGrammer: " theta ", nbFormula : "θ"}, {texGrammer: "{theta ", nbFormula : "{θ"}, 
-    {texGrammer: " rho ", nbFormula : "ρ"}, {texGrammer: "{rho ", nbFormula : "{ρ"},
-    {texGrammer: " mu ", nbFormula : "μ"}, {texGrammer: "{mu ", nbFormula : "{μ"},
-    {texGrammer: " omega ", nbFormula : "ω"}, {texGrammer: "{omega ", nbFormula : "{ω"}, 
-    {texGrammer: " PARTIAL ", nbFormula : "∂"}, {texGrammer: "{PARTIAL ", nbFormula : "{∂"},
-    {texGrammer: " sigma ", nbFormula : "σ"}, {texGrammer: "{sigma ", nbFormula : "{σ"},
-    {texGrammer: " tau ", nbFormula : "τ"}, {texGrammer: "{tau ", nbFormula : "{τ"}, 
-    {texGrammer: " phi ", nbFormula : "φ"}, {texGrammer: "{phi ", nbFormula : "{φ"},
-    {texGrammer: " INF ", nbFormula : "∞"}, {texGrammer: "{INF ", nbFormula : "{∞"},
-    {texGrammer: " DELTA ", nbFormula : "Δ"}, {texGrammer: "{DELTA ", nbFormula : "{Δ"}, 
-    {texGrammer: " DEG ", nbFormula : "°"},  {texGrammer: "{DEG ", nbFormula : "{°"},
-    {texGrammer: " ANGLE ", nbFormula : "∠"},  {texGrammer: "{ANGLE ", nbFormula : "{∠"},
-    {texGrammer: " BOT ", nbFormula : "⊥"},  {texGrammer: "{BOT ", nbFormula : "{⊥"},
+    {texGrammer: "alpha ", nbFormula : "α"},
+    {texGrammer: "beta ", nbFormula : "β"},
+    {texGrammer: "gamma ", nbFormula : "γ"},
+    {texGrammer: "delta ", nbFormula : "δ"},
+    {texGrammer: "theta ", nbFormula : "θ"},
+    {texGrammer: "rho ", nbFormula : "ρ"},
+    {texGrammer: "mu ", nbFormula : "μ"},
+    {texGrammer: "omega ", nbFormula : "ω"},
+    {texGrammer: "PARTIAL ", nbFormula : "∂"},
+    {texGrammer: "sigma ", nbFormula : "σ"},
+    {texGrammer: "tau ", nbFormula : "τ"},
+    {texGrammer: "phi ", nbFormula : "φ"},
+    
+    {texGrammer: "DELTA ", nbFormula : "Δ"},
+    {texGrammer: "DEG ", nbFormula : "°"},
+
+    {texGrammer: "TRIANGLE ", nbFormula : "△"},
+    {texGrammer: "MSANGLE ", nbFormula : "∡"},
+    {texGrammer: "ANGLE ", nbFormula : "∠"},
+
+    {texGrammer: "BOT ", nbFormula : "⊥"}, 
     {texGrammer: "==", nbFormula : "≡"}, 
-    {texGrammer: " PROPTO ", nbFormula : "∝"}, {texGrammer: "{PROPTO ", nbFormula : "{∝"},
-    {texGrammer: " pi ", nbFormula : "π"}, {texGrammer: "{pi ", nbFormula : "{π"},
-    {texGrammer: " SMALLPROD ", nbFormula : "∏"},  {texGrammer: "{SMALLPROD ", nbFormula : "{∏"},
-    {texGrammer: "rarrow", nbFormula : "→"},
-    {texGrammer: "larrow", nbFormula : "←"},
-    {texGrammer: "uparrow", nbFormula : "↑"},
-    {texGrammer: "downarrow", nbFormula : "↓"},
-    {texGrammer: "RARROW", nbFormula : "⇒"},
-    {texGrammer: "LARROW", nbFormula : "⇐"},
-    {texGrammer: "UPARROW", nbFormula : "⇑"},
-    {texGrammer: "DOWNARROW", nbFormula : "⇓"},
+    {texGrammer: "PROPTO ", nbFormula : "∝"},
+    {texGrammer: "pi ", nbFormula : "π"},
+    {texGrammer: "SMALLPROD ", nbFormula : "∏"},
+    {texGrammer: "rarrow ", nbFormula : "→"},
+    {texGrammer: "larrow ", nbFormula : "←"},
+    {texGrammer: "uparrow ", nbFormula : "↑"},
+    {texGrammer: "downarrow ", nbFormula : "↓"},
+    {texGrammer: "RARROW ", nbFormula : "⇒"},
+    {texGrammer: "LARROW ", nbFormula : "⇐"},
+    {texGrammer: "UPARROW ", nbFormula : "⇑"},
+    {texGrammer: "DOWNARROW ", nbFormula : "⇓"},
 
     {texGrammer: "NEARROW ", nbFormula : "↗"},
     {texGrammer: "SEARROW ", nbFormula : "↘"},
     {texGrammer: "NWARROW ", nbFormula : "↖"},
     {texGrammer: "SWARROW ", nbFormula : "↙"},
 
-    {texGrammer: "BIGCIRC", nbFormula : "○"},
-    {texGrammer: "MSANGLE", nbFormula : "∡"},
-    {texGrammer: "CENTIGRADE", nbFormula : "℃"},
-    {texGrammer: "FAHRENHEIT", nbFormula : "℉"},
-    {texGrammer: "TRIANGLE", nbFormula : "△"},
-
+    {texGrammer: "CENTIGRADE ", nbFormula : "℃"},
+    {texGrammer: "FAHRENHEIT ", nbFormula : "℉"},
+   
     {texGrammer: "'", nbFormula : "ʹ"},
     {texGrammer: "prime", nbFormula : "ʹ"},
     
     {texGrammer: "SIM", nbFormula : "nbCustomWaveText"},
     {texGrammer: "BULLET ", nbFormula : "⦁"},
-    {texGrammer: " vert", nbFormula : "|"}, {texGrammer: "{vert ", nbFormula : "|"},
+    {texGrammer: "vert", nbFormula : "|"}
     ]
 
 /*
@@ -719,7 +726,13 @@ export const cvt_makeJsonForHwp = async (innerContents) => {
         //이미지 처리
         }else if(innerContents.nodeName==="IMG"){
             innerObj.contentsType="img";
-            innerObj.contents = innerContents.src.split(",")[1];
+            if(innerContents.src.indexOf("base64")<0){
+                let imgBase64Result = await nb_S3ImgToBase64(innerContents.src );
+                innerObj.contents = imgBase64Result.split(",")[1];
+            }else{
+                innerObj.contents = innerContents.src.split(",")[1];
+            }
+            
             innerObj.imgWidth = parseInt(innerContents.style.width.replace("px", ""));
             innerObj.imgHeight = parseInt(innerContents.style.height.replace("px", ""));
             
@@ -1904,7 +1917,7 @@ export const cvt_convertCasesTexToHtml = async (texGrammer, texIndex, nbFormulHT
     convertNbFormulBox.innerHTML = nbFormulHTML;
     let casesStr = texGrammer.substring(rightBrckIdx.strtBrckIdx, rightBrckIdx.endBrckIdx);
     casesStr = casesStr.split("#")
-    if(casesStr.length !== 2 && casesStr.length !== 3 && casesStr.length !== 4){
+    if(casesStr.length === 1){
         return null;
     }
 
@@ -1929,13 +1942,18 @@ export const cvt_convertCasesTexToHtml = async (texGrammer, texIndex, nbFormulHT
         convertNbFormulBox.querySelector(".nbThrCaseSec").classList.add("forTexCheck");
         convertNbFormulBox.querySelector(".nbThrCaseThr").classList.add("forTexCheck");
     }else{
-        //연립방정식 4가지 경우
+        //연립방정식 4가지 이상인 경우 경우
         convertNbFormulBox.innerHTML = '<table class="nbThrCasekBox nbBox"><tbody><tr><td rowspan="3" class="nbThrCaseBrck writeDisable borderBox">{</td><td class="nbThrCaseFir borderBox"><br></td></tr><tr><td class="nbThrCaseSec borderBox"><br></td></tr><tr><td class="nbThrCaseThr borderBox"><br></td></tr></tbody></table>';
 
         convertNbFormulBox.querySelector(".nbThrCaseFir").innerText = casesStr[0].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
         convertNbFormulBox.querySelector(".nbThrCaseSec").innerText = casesStr[1].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
+        
+        let additionalCases ="";
+        for(let i=3; i<casesStr.length; i++){
+            additionalCases+="<br/>"+casesStr[i].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");
+        }
         convertNbFormulBox.querySelector(".nbThrCaseThr").innerText = casesStr[2].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;")
-                                                                        +"<br/>"+casesStr[3].replaceAll("&gt;", "임시꺽새변형999").replaceAll("&lt;", "임시변형888").replaceAll("&", "&nbsp;").replaceAll("임시꺽새변형999", "&gt;").replaceAll("임시변형888", "&lt;");;
+                                                                 +additionalCases       
 
         //보더박스에 들어있는 tex검사 위해
         convertNbFormulBox.querySelector(".nbThrCaseFir").classList.add("forTexCheck");

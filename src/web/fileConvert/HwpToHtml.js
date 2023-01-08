@@ -1018,6 +1018,7 @@ return (
                 </div>
                 <NbWebEditor parentMethod={()=>{}}></NbWebEditor>
                 <div id="myHwpContents" className='myHwpContents contentEditClass onlyEdit' contentEditable={true} spellCheck={false} onKeyDown={(event) => {reg_preventKeyEvent(event, true);}} onKeyUp={(event) => {reg_dressYellowBox();reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);reg_vacantTextNodeRemove(event, "myHwpContents");nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("myHwpContents");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+                <div className='bugFixDiv'></div>
             </div>
         </div>
         :

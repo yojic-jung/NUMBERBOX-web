@@ -22,7 +22,8 @@ const MembersStatistic = () => {
     const [docsUsageByProfile, setDocsUsageByProfile] = useState(new Array());
     const [docsUsageByProfileAndDay, setDocsUsageByProfileAndDay] = useState(new Array());
     const [docsUsageByDay, setDocsUsageByDay] = useState(new Array());
-    
+    const [fileConvertStatistic, setFileConvertStatistic] = useState(new Array());
+
     const [memberMathContentsCnt, setMemberMathContentsCnt] = useState(new Array());
 
 
@@ -32,6 +33,7 @@ const MembersStatistic = () => {
             let statistic1 = await nb_dataFetch("/takeMembersStatistic", true);
             let statistic2 = await nb_dataFetch("/mathDocs/mathDocsUsageStatistic", true);
             let statistic3 = await nb_dataFetch("/mathInfo/mathContentsStatistic", true);
+            let statistic4 = await nb_dataFetch("/convert/fileConvertStatistic", true);
 
             setMembersInfoKey(1);
             setMembersInfo(statistic1.membersInfo)
@@ -44,6 +46,7 @@ const MembersStatistic = () => {
             setReLoginRatioPerMonth(statistic1.reLoginRatioPerMonth);
 
             setMemberMathContentsCnt(statistic3.memberMathContentsCnt);
+            setFileConvertStatistic(statistic4.fileConvertStatistic);
 
             setDocsUsage(statistic2.docsUsage);
             setDocsUsageByProfile(statistic2.docsUsageByProfile)
@@ -129,6 +132,10 @@ const MembersStatistic = () => {
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;문제 제작 분포 통계&gt;</div>
                         <StatisticTable title="문제 제작 사용자" statisticArr={memberMathContentsCnt} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                    </div>
+                    <div className='statisticGrpDiv'>
+                        <div className='statisticGrpTitle'>&lt;파일변환 사용 통계&gt;</div>
+                        <StatisticTable title="프로필별 파일변환 사용 통계" statisticArr={fileConvertStatistic} hasRowName={false} unit='' totalOpt={true} ratioOpt={false}></StatisticTable>
                     </div>
                 </div>
             </div>

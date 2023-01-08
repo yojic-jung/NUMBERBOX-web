@@ -419,6 +419,18 @@
     background-position: 80% 90%;
 }
 
+.mainSubRootRadiusDiv.first{
+    background:#091f68 url("img/formula.png") no-repeat;
+    background-size: 60px;
+    background-position: 80% 90%;
+}
+
+.mainSubRootRadiusDiv.sixth{
+    background:#091f68 url("img/fileConvert.png") no-repeat;
+    background-size: 60px;
+    background-position: 80% 90%;
+}
+
 
 
 .mainSubRootRadiusTitle{

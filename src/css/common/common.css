@@ -1789,3 +1789,7 @@
   .pageCntWrap{
     margin-right: 15px;
   }
+
+  .bugFixDiv{
+    height: 100px;
+  }

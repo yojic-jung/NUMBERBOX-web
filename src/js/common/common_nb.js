@@ -374,6 +374,23 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
     output.classList.add('hide');
   }
 
+  
+/*
+* 정의 : S3이미지를 base64로 인코딩
+*/
+export const nb_S3ImgToBase64 = async (url) => {
+  let base64Str = "";
+  await fetch(url).then(response => response.blob())
+  .then(blob => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  }).then(dataUrl => {
+    base64Str = dataUrl;
+  }));
+  return base64Str;
+}
 /*
 * 정의 : base64 이미지를 파일로 변환
 */
