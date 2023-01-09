@@ -361,7 +361,7 @@
 }
 
 .mainSubRootRadiusInnerWrap{
-    width: 300%;
+    width: 350%;
     display: flex;
     gap: 20px;
 }
@@ -519,6 +519,15 @@
     width: 90%;
     margin:auto;
 }
+
+.mainImgUI.hwp1.mobile{
+    width: 90%;
+    margin:auto;
+    box-shadow: 0 0 3px gray;
+    padding: 5px;
+    border-radius: 10px;
+}
+
 .mainImgUI.hwp2{
     position:absolute;
     bottom: 0;
@@ -664,7 +673,7 @@
 }
 
 .mainSubDiv3.mobile{
-    width: 90%;
+    width: 100%;
     padding: 20px 0;
 }
 
@@ -679,7 +688,13 @@
     padding: 10px;
     z-index: 2;
 }
-
+.grayBack{
+    background-color: #f4f3f3;
+}
+.mainSubDivWrap3{
+    width: 90%;
+    margin: auto;
+}
 .mainSubDiv3 .mainSubBox.first{
     width: 50%;
     position: absolute;

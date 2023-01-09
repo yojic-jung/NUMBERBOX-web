@@ -252,8 +252,6 @@
         /* print-color-adjust, filter 속성은 html, body에 선언해야 버그가 가장 안 일어남 */
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
-        filter:opacity(1);
-        -webkit-filter:opacity(1);  /*제거하면 루트 box-shadow 실선 나타남*/
     }
     
     .tmpHideDivForPrint{
@@ -266,6 +264,11 @@
         border-bottom-style: none !important;;
     }
 
+    .mathDocsA4Frame .nbRootBase, .mathDocsA4Frame .nbOverlineBase,
+     .mathDocsA4Frame .nbRightArrowBase, .mathDocsA4Frame .nbBiDirArrowBase{
+        box-shadow : unset;
+        border-top: 1px solid black;
+    }
     /* 박스 쉐도우 실선 나타나는 현상은 transform:translate: ; 속성에 의해 나타남
     window.print 사용시 나타나는 인쇄 팝업창에 transform:translate: ; 속성 사용되는 걸로 추정
     실제 출력시 회색 실선 나타나지 않음 */

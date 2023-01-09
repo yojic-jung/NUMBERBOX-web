@@ -248,40 +248,38 @@ return (
                              사용자가 새로운 변형 문제로 만들 수 있습니다.<br/>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className='mainSubDiv3 mobile'>
+                <div className='mainSubDivWrap3'>
                     <div>
-                        <div className='mainSubDescTitle third mobile'>한글파일(hwp)로 다운</div>
-                        <div className='mainSubDescContents mobile'>
-                                
+                        <div className='mainSubTitle mobile'>한글파일(hwp)과 호환</div>
+                        <div className='mainSubDesc'>
+                            사용자가 제작한 수학문제를 한글파일(hwp)로<br/>
+                            변환하여 다운 받을 수 있으며,<br/>
+                            한글파일로 만들어진 문제를 업로드하여<br/>
+                            N명의수학에서 DB화 하여 사용할 수 있습니다.
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className='mainSubDiv3 mobile'>
-                <div>
-                    <div className='mainSubTitle mobile'>한글파일(hwp)과 호환</div>
-                    <div className='mainSubDesc'>
-                        사용자가 제작한 수학문제를 한글파일(hwp)로<br/>
-                        변환하여 다운 받을 수 있으며,<br/>
-                        한글파일로 만들어진 문제를 업로드하여<br/>
-                        N명의수학에서 DB화 하여 사용할 수 있습니다.
+                    <div className='relative alignRight'>
+                        <img className='mainImgUI hwp1 mobile' src={hwpConverImg1} alt=""/>
+                        <img className='mainImgUI hwp2' src={hwpConverImg2} alt=""/>
                     </div>
                 </div>
-                <div className='relative alignRight'>
-                    <img className='mainImgUI hwp1' src={hwpConverImg1} alt=""/>
-                    <img className='mainImgUI hwp2' src={hwpConverImg2} alt=""/>
-                </div>
             </div>
-            <div className='mainSubDiv3 mobile'>
-                <div>
-                    <div className='mainSubTitle mobile'>도형 및 그래프 공유(그래프 제작 툴)</div>
-                    <div className='mainSubDesc'>
-                    수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.<br/>
-                    또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
+            <div className='mainSubDiv3 mobile grayBack'>
+                <div className='mainSubDivWrap3'>
+                    <div >
+                        <div className='mainSubTitle mobile'>도형 및 그래프 공유(그래프 제작 툴)</div>
+                        <div className='mainSubDesc'>
+                        수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.<br/>
+                        또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
+                        </div>
                     </div>
-                </div>
-                <div className='relative alignRight'>
-                    <div className='mainSubBox first'><img className='mainImgUI' src={main3} alt=""/></div>
-                    <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
+                    <div className='relative alignRight'>
+                        <div className='mainSubBox first'><img className='mainImgUI' src={main3} alt=""/></div>
+                        <div className='mainSubBox second'><img className='mainImgUI' src={mainResourceMake} alt=""/></div>
+                    </div>
                 </div>
             </div>
 
