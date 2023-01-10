@@ -380,7 +380,13 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {	//outputId�
 */
 export const nb_S3ImgToBase64 = async (url) => {
   let base64Str = "";
-  await fetch(url).then(response => response.blob())
+  await fetch(url, {
+    method: 'GET',	// 방식은 get
+    credentials: 'include',
+    headers: {
+    },
+    cache: 'no-cache',  //cache 없어야 정상 다운됨
+}).then(response => response.blob())
   .then(blob => new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onloadend = () => resolve(reader.result)
