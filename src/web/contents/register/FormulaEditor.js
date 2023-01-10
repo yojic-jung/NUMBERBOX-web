@@ -385,6 +385,32 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					}else{		
 						await nb_licenseUiCheck();
 					}
+				}else if(contentsClassify===4){	//N명의수학만 셋팅
+					//가/나형 구분
+					document.getElementById("paperType").value = myContents["myContents"].mathContentsIpsi[0].paperType;
+					document.getElementById("cusOrgRefSelTitle").innerHTML = document.getElementById("paperType")[document.getElementById("paperType").selectedIndex].innerText;
+					document.getElementById("cusOrgRefSelDiv").classList.add("nbCustomSelected");
+
+					//홀수형 문제 번호
+					document.getElementById("oddQuesNum").value = myContents["myContents"].mathContentsIpsi[0].oddQuesNum;
+					document.getElementById("oddQuesNum").classList.add("customBlueBoxComplete");
+
+					//짝수형 문제 번호
+					document.getElementById("evenQuesNum").value = myContents["myContents"].mathContentsIpsi[0].evenQuesNum;
+					document.getElementById("evenQuesNum").classList.add("customBlueBoxComplete");
+
+					//시행연도
+					document.getElementById("impYear").value = myContents["myContents"].mathContentsIpsi[0].impYear;
+					document.getElementById("impYear").classList.add("customBlueBoxComplete");
+
+					//시행월
+					document.getElementById("impMonth").value = myContents["myContents"].mathContentsIpsi[0].impMonth;
+					document.getElementById("impMonth").classList.add("customBlueBoxComplete");
+
+					//출제기관
+					document.getElementById("manageIns").value = myContents["myContents"].mathContentsIpsi[0].manageIns;
+					document.getElementById("cusMathClassifySelTitle").innerHTML = document.getElementById("manageIns")[document.getElementById("manageIns").selectedIndex].innerText;
+					document.getElementById("cusMathClassifySelDiv").classList.add("nbCustomSelected");
 				}
 				
 				//문제 난이도
@@ -420,6 +446,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				
 				//유형
 				if(contentsClassify === 0) setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo+","+myContents["myContents"].mathContentsComp[0].seqNo);
+				else if(contentsClassify === 4) setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo+","+myContents["myContents"].mathContentsIpsi[0].seqNo);
 				else setUpdateModeUniqNo(myContents["myUnitInfo"].unitUniqNo+","+myContents["myContents"].typeNo+","+myContents["myContents"].contentsNo);
 				//수정시간 서버에서 수정 필요
 

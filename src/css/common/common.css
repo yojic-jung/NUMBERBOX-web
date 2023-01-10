@@ -41,6 +41,11 @@
 .marginTenVetical{
     margin:10px 0;
 }
+
+.marginBTen{
+    margin-bottom:10px;
+}
+
 .mini-title.marginBox{
     margin:10px 0 30px 0;
 }

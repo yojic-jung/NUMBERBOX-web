@@ -20,8 +20,6 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 	  let targetHtml = ["contents", "solution" ,"firNo" , "secNo", "thrNo", "fourNo", "fifNo", "answer"];
 	  // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈), 이미지 base64로 남아있는 것 한번 더 체크해서 변경
 	  const trimRegisterContents = async function() {
-		
-
 		document.getElementById("contentsOptBox").classList.remove("hide");
 		for(let i=0; i<targetId.length; i++){
 			document.getElementById(targetId[i]).classList.remove("hide");
@@ -40,7 +38,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 						if(brTag[brTag.length-1].closest(".nbBox") === null){
 							brTag[brTag.length-1].remove();
 							document.getElementById(targetHtml[i]).innerHTML = document.getElementById(targetId[i]).innerHTML;
-						} else{
+						}else{
 							break;
 						}
 					}else{
@@ -201,6 +199,40 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				alert("문제 구분탭에서 구분 유형을 선택 해주세요.");
 				return false;
 			}
+
+		}else if(contentsClassify === 4){	//N명의수학 수능/모의고사만 체크
+			let paperType = document.getElementById("paperType").value;
+			if(Number(paperType)===0){
+				alert("가/나형 구분을 선택해주세요.");
+				return false;
+			}
+			let oddQuesNum = document.getElementById("oddQuesNum").value;
+			if(oddQuesNum.length===0 || oddQuesNum.length>2){
+				alert("홀수형 번호를 입력해주세요.");
+				return false;
+			}
+			let evenQuesNum = document.getElementById("evenQuesNum").value;
+			if(evenQuesNum.length===0 || evenQuesNum.length>2){
+				alert("짝수형 번호를 입력해주세요.");
+				return false;
+			}
+			let impYear = document.getElementById("impYear").value;
+			if(impYear.length!==4){
+				alert("시행연도를 네자리로 입력해주세요.");
+				return false;
+			}
+			
+			let impMonth = document.getElementById("impMonth").value;
+			if(impMonth.length===0 || impMonth>12 || impMonth<1){
+				alert("시행월을 바르게 적어주세요.");
+				return false;
+			}
+
+			let manageIns = document.getElementById("manageIns").value;
+			if(Number(manageIns)===0){
+				alert("출제기관을 선택해주세요.");
+				return false;
+			}
 		}
 		
 		if(!isOnlyImgReg){
@@ -227,14 +259,17 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		//undo 초기화
 		await reg_undoRedoInitialize();
 		//수정모드로 들어온 경우
-		if(updateModeUniqNo!==""){
+		if(updateModeUniqNo!=="") {
 			let contentsNo = updateModeUniqNo.split(",");
 			formData.append("contentsNo", contentsNo[2]);
+			console.log(contentsNo[3]);
 			if(contentsClassify === 0) formData.append("mathContentsCompSeqNo", contentsNo[3]);	
+			else if(contentsClassify === 4) formData.append("mathContentsIpsiSeqNo", contentsNo[3]);	
 		}
 		
 		let returnObj;
-		if(contentsClassify === 0){
+		if(contentsClassify === 0 || contentsClassify === 4){
+			formData.append("contentsClassify", contentsClassify);
 			returnObj = await nb_formDataFetch("/mathInfo/registerContents",formData, true);
 		}else{
 			if(urlPath === "/contentsList" || urlPath === "/myRepository"){		//변형으로 셋팅
@@ -313,7 +348,13 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				orgSrcNo.value="";
 				orgSrcNo.classList.remove("customBlueBoxComplete");
 			}
-			
+			else if(contentsClassify === 4){		// N명의수학 문제 수능/모의고사 초기화
+				document.getElementById("oddQuesNum").value = "";
+				document.getElementById("oddQuesNum").classList.remove("nbCustomSelected");
+
+				document.getElementById("evenQuesNum").value = "";
+				document.getElementById("evenQuesNum").classList.remove("nbCustomSelected");
+			}
 
 			
 			await nb_closeBtn("contentsInfo")
@@ -404,15 +445,31 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				<UnitTypeCombo updateModeUniqNo={updateModeUniqNo} />
 				
 				<div>
-					<CustomSelBoxDown value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
+					{contentsClassify === 4 ?
+					<>
+					<CustomSelBoxDown value={[{"value":"2점", "originVal":"3"},{"value":"3점", "originVal":"4"},{"value":"4점", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
 					<select id="quesLevel" name="quesLevel" className="hide">
 						<option value="0">문제 난이도</option>
-						<option value="1">하</option>
-						<option value="2">중하</option>
-						<option value="3">중</option>
-						<option value="4">중상</option>
-						<option value="5">상</option>
+						<option value="1">오류</option>
+						<option value="2">오류</option>
+						<option value="3">2점</option>
+						<option value="4">3점</option>
+						<option value="5">4점</option>
 					</select>
+					</>
+					:<>
+						<CustomSelBoxDown value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
+						<select id="quesLevel" name="quesLevel" className="hide">
+							<option value="0">문제 난이도</option>
+							<option value="1">하</option>
+							<option value="2">중하</option>
+							<option value="3">중</option>
+							<option value="4">중상</option>
+							<option value="5">상</option>
+						</select>
+					</>
+					}
+					
 					
 					{contentsClassify === 0 &&
 					<>
@@ -477,6 +534,31 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 					</div>
 				</>
 				}
+
+				{contentsClassify === 4 &&
+					<>
+						<CustomSelBoxDown value={[{"value":"통합", "originVal":"1"},{"value":"가형", "originVal":"2"},{"value":"나형", "originVal":"3"} ]} cusSelId="cusOrgRefSel" originSel="paperType" title="가/나형 구분"></CustomSelBoxDown>
+						<select id="paperType" name="paperType" className="hide" >
+							<option value="0">가/나형 구분</option>
+							<option value="1">통합</option>
+							<option value="2">가형</option>
+							<option value="3">나형</option>
+						</select>
+
+						<input id="oddQuesNum" name ="oddQuesNum" type="number" className="customBlueBox marginBTen" placeholder="홀수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} />
+						<input id="evenQuesNum" name ="evenQuesNum" type="number" className="customBlueBox marginBTen" placeholder="짝수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} /><br/>
+						<input id="impYear" name ="impYear" type="number" className="customBlueBox" placeholder="시행연도" onBlur={event => nb_completeBlueBox(event, 1)} />
+						<input id="impMonth" name ="impMonth" type="number" className="customBlueBox" placeholder="시행월" onBlur={event => nb_completeBlueBox(event, 1)} />
+
+						<CustomSelBoxDown value={[{"value":"평가원", "originVal":"1"}, {"value":"교육청", "originVal":"2"}]} cusSelId="cusMathClassifySel" originSel="manageIns" title="출제기관"></CustomSelBoxDown>
+
+						<select id="manageIns" name="manageIns" className="hide">
+							<option value="0">출제기관</option>
+							<option value="1">평가원</option>
+							<option value="2">교육청</option>
+						</select>
+					</>
+					}
 				<div className='saveContentsDiv'>
 					<span id="saveContents" className='saveContents' onClick={()=>{contentsFinalValidation()}}>문제 등록</span>
 				</div>

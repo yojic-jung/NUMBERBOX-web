@@ -2211,3 +2211,11 @@ height: 1.6em;
     line-height: 160%;
     color:rgb(235, 41, 41);
 }
+
+.impYearSelBox, .impMonthSelBox{
+    font-size: 16px;
+    padding: 5px;
+    margin: 5px 10px 5px 5px;
+    outline: 1px solid black;;
+    border: unset;
+}

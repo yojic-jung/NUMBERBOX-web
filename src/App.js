@@ -16,6 +16,7 @@ import MyAccountDrop from 'web/contents/list/MyAccountDrop'
 import MyPageWrap from 'web/contents/list/MyPageWrap'
 import UserProfileWrap from 'web/contents/list/UserProfileWrap'
 import WorkContentsList from 'web/contents/list/WorkContentsList'
+import IpsiWorkContentsList from 'web/contents/list/IpsiWorkContentsList'
 import NotFound from 'web/page/NotFound'
 import {nb_isLogin} from 'js/common/common_nb.js';
 import GraphMake from 'web/mathResource/GraphMake';
@@ -25,6 +26,7 @@ import AdminSvcCenter from 'web/admin/AdminSvcCenter';
 import MathTypeCategory from 'web/admin/MathTypeCategory';
 import HwpToHtml from 'web/fileConvert/HwpToHtml';
 import MembersStatistic from 'web/admin/MembersStatistic';
+import AdminMenuBar from 'web/page/AdminMenuBar';
 
 
 const App = ()=>{
@@ -57,6 +59,7 @@ const App = ()=>{
                   <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
                   <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
                   <Route exact path="/admin/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
+                  <Route exact path="/admin/registerIpsiContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={4} /> : <Navigate to="/login" />} />
                   <Route exact path="/contentsList" element={<ContentsList /> } />
                   <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />
@@ -66,6 +69,9 @@ const App = ()=>{
                   <Route exact path="/myResource" element={nb_isLogin()  ? <MyPageWrap /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/userProfile" element={nb_isLogin()  ? <UserProfileWrap /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/admin/workContentsList" element={nb_isLogin()  ? <WorkContentsList /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/admin/ipsiWorkContentsList" element={nb_isLogin()  ? <IpsiWorkContentsList /> : <Navigate to="/login?isDirect=false" />} />
+                  <Route exact path="/admin/adminMenuBar" element={nb_isLogin()  ? <AdminMenuBar /> : <Navigate to="/login?isDirect=false" />} />
+                  
                   <Route exact path="/registerResource" element={nb_isLogin()  ?  <RegisterResource /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/shareResource" element={<ShareResource />} />
                   <Route exact path={"*"} element={<NotFound />} />

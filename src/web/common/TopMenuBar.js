@@ -133,11 +133,7 @@ return (
                 <table className='menu-list-table'>
                     <tbody>
                         <tr>
-                            {isAdmin && <td><Link className='manager-link' to="/admin/MembersStatistic">회원통계</Link></td>}
-                            <td><Link className='manager-link' to="/admin/workContentsList">작업내역</Link></td>
-                            <td><Link className='manager-link' to="/admin/registerContents">문제만들기</Link></td>
-                            {isAdmin && <td><Link className='manager-link' to="/admin/mathTypeCategory">유형카테고리</Link></td>}
-                            {isAdmin && <td><Link className='manager-link' to="/admin/adminSvcCenter">관리자센터</Link></td>}
+                            <td><Link className='manager-link' to="/admin/adminMenuBar">관리자 메뉴</Link></td>
                         </tr>
                     </tbody>
                 </table>
