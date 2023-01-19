@@ -4,15 +4,15 @@ import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/conten
 import {nb_extensionCheck2, nb_module_handleImageUpload, nb_formDataFetch} from 'js/common/common_nb.js';
 import editOutputScreen from 'img/editOutputScreen.PNG';
 import formulaFocusAsistDesc from 'img/formulaFocusAsistDesc.PNG';
-const NbWebEditor = ({parentMethod})=>{
+const NbWebEditor = ({parentMethod, showAsistDesc, showExceptBtn, isMultiMode})=>{
 
 	const tableUiShow = async function(event){
 		event.preventDefault();
-
-		if(document.getElementById('editTableUi').classList.contains('hide')){
-			document.getElementById('editTableUi').classList.remove('hide');
+		
+		if(event.target.closest(".editorToolBar").querySelector("#editTableUi").classList.contains('hide')){
+			event.target.closest(".editorToolBar").querySelector("#editTableUi").classList.remove('hide');
 		}else{
-			document.getElementById('editTableUi').classList.add('hide');
+			event.target.closest(".editorToolBar").querySelector("#editTableUi").classList.add('hide');
 		}
         
 		
@@ -46,6 +46,20 @@ const NbWebEditor = ({parentMethod})=>{
 		event.preventDefault();
 
 		if(style === "insertImage"){
+			//수식 안에서 이미지 삽입 금지(최상위 수식 뒤에 삽입)
+			let currentNode = window.getSelection().anchorNode
+			if(currentNode.classList === undefined){
+				currentNode = currentNode.parentElement;
+			}
+			if(currentNode.closest(".nbBox") !== null){
+				let rootFocusNbBox = currentNode.closest(".nbBox");
+				while(rootFocusNbBox.parentElement.closest('.nbBox')!==null){
+					rootFocusNbBox = rootFocusNbBox.parentElement.closest('.nbBox');
+				}
+				window.getSelection().getRangeAt(0).selectNode(rootFocusNbBox);
+				window.getSelection().collapseToEnd();
+			}
+
 			if(event.target.value === "") return;
 			//이미지 업로드
 			let formData = new FormData();
@@ -56,39 +70,55 @@ const NbWebEditor = ({parentMethod})=>{
 			let img=document.createElement("img");
 			if(window.getSelection().anchorNode !== null && window.getSelection().anchorNode.parentElement !== null
 			&& (
-				window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor") 
-				|| window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor")
-				|| window.getSelection().anchorNode.parentElement.closest(".myHwpContents")
+				window.getSelection().anchorNode.parentElement.closest(".contentsFormulaEditor")  !== null
+				|| window.getSelection().anchorNode.parentElement.closest(".solutionFormulaEditor") !== null
+				|| window.getSelection().anchorNode.parentElement.closest(".myHwpContents") !== null
 			) ){
 				let selection = document.getSelection();
 				let newRange = selection.getRangeAt(0);
-				newRange.insertNode(img);
-				window.getSelection().collapseToEnd();
+				if(newRange.startContainer.nodeName === "TR"){
+					newRange.startContainer.querySelector("td").append(img);
+					window.getSelection().collapseToEnd();
+				}else{
+					newRange.insertNode(img);
+					window.getSelection().collapseToEnd();
+				}
 			}else{
 				if(document.getElementById("myHwpContents") !== null && document.getElementById("myHwpContents") !== undefined){
 					document.getElementById("myHwpContents").append(img);
 				}else{
-					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
-						document.getElementById("contentsFormulaEditor").append(img);
+					if(isMultiMode){
+						event.target.closest(".multiContents").querySelector(".contentsFormulaEditor").append(img);
 					}else{
-						document.getElementById("solutionFormulaEditor").append(img);
+						if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+							document.getElementById("contentsFormulaEditor").append(img);
+						}else{
+							document.getElementById("solutionFormulaEditor").append(img);
+						}
 					}
+					
 				}
 			}
 			img.style.width=367+"px";
 			img.src=returnObj.s3ImgUrl;
 			let contentEditClass;
-			if(document.getElementById("contentsFormulaEditor") !==null){
-				 if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
-					 contentEditClass = document.getElementById("contentsFormulaEditor");
-					 document.getElementById("contents").value = contentEditClass.innerHTML;
-					 document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
-				 }else{
-					 contentEditClass = document.getElementById("solutionFormulaEditor");
-					 document.getElementById("solution").value = contentEditClass.innerHTML;
-					 document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
-				 }
+			if(isMultiMode){
+				event.target.closest(".multiContents").querySelector(".contents").value = event.target.closest(".multiContents").querySelector(".contentsFormulaEditor").innerHTML;
+				event.target.closest(".multiContents").querySelector(".solution").value = event.target.closest(".multiContents").querySelector(".solutionFormulaEditor").innerHTML;
+			}else{
+				if(document.getElementById("contentsFormulaEditor") !==null){
+					if(!document.getElementById("contentsFormulaEditor").classList.contains("hide")){
+						contentEditClass = document.getElementById("contentsFormulaEditor");
+						document.getElementById("contents").value = contentEditClass.innerHTML;
+						document.getElementById("ques-show-contents").innerHTML = contentEditClass.innerHTML
+					}else{
+						contentEditClass = document.getElementById("solutionFormulaEditor");
+						document.getElementById("solution").value = contentEditClass.innerHTML;
+						document.getElementById("ques-solution-contents").innerHTML = contentEditClass.innerHTML;
+					}
+				}
 			}
+			
 
 			event.target.value= "";
 			/*
@@ -170,18 +200,19 @@ const NbWebEditor = ({parentMethod})=>{
 		if(document.getSelection().isCollapsed) window.getSelection().collapseToEnd();	//셀렉션객체의 마지막 부분에 포커스 맞춤
 
 		//문제입력과 해설입력 창에만 적용
-		if(focusId == "contentsFormulaEditor" || focusId == "solutionFormulaEditor" || focusId === "myHwpContents"){
+		if(focusId === "contentsFormulaEditor" || focusId === "solutionFormulaEditor" || focusId === "myHwpContents" 
+		|| focusId.indexOf("contentsFormulaEditor") >-1 || focusId.indexOf("solutionFormulaEditor") >-1){
 			//정렬버그 해결
 			if(style === "justifyLeft" || style === "justifyCenter" || style === "justifyRight" ){
 				//복붙하여 span에 text-align적용되어 정렬 안되는 버그 해결
-				let span = document.getElementById(document.activeElement.id).querySelectorAll("span");
+				let span = document.activeElement.querySelectorAll("span");
 				for(let i=0; i<span.length; i++){
 					if(span[i].style.textAlign !== ""){
 						span[i].style.textAlign = ""
 					}
 				}
 				//수식요소 뒤에 공백 주어 라인 마지막에 수식 있는 경우 수식요소 재성성되는 문제 해결
-				let nbBoxes = document.getElementById(focusId).querySelectorAll(".nbBox");
+				let nbBoxes = document.activeElement.querySelectorAll(".nbBox");
 				for(let i=0; i<nbBoxes.length; i++){
 					let tmpNode = document.createElement('span');
 					tmpNode.innerHTML = "&nbsp;"
@@ -382,9 +413,45 @@ const NbWebEditor = ({parentMethod})=>{
 		document.getElementById("asistRootDiv").classList.remove('hide');
 	}
 
+	//사용불가(문항 제외 버튼 만들면 중간에 문항제외해도 form index가 앞에 있으면 disabled까지 끌고 올라감)
+	const disabledFormEle = async (event) => {
+		if(event.target.closest(".contentsRootDiv").classList.contains("disabled")){
+			event.target.innerText = "문항제외";
+			event.target.closest(".contentsRootDiv").classList.remove("disabled")
+			let formEle = event.target.closest(".contentsRootDiv").querySelectorAll("input, select, button, textarea");
+			for(let i=0; i<formEle.length; i++){
+				if(formEle[i].classList.contains("contentsExcept")) continue;
+				formEle[i].disabled = false;
+				formEle[i].classList.remove("disabledBox");
+			}
+			let editEle = event.target.closest(".contentsRootDiv").querySelectorAll(".contentEditClass");
+			for(let i=0; i<editEle.length; i++){
+				if(editEle[i].classList.contains("contentsExcept")) continue;
+				editEle[i].setAttribute("contenteditable", true);
+				editEle[i].classList.remove("disabledBox");
+			}
+		}else{
+			event.target.closest(".contentsRootDiv").classList.add("disabled")
+			event.target.innerText = "제외취소";
+			let formEle = event.target.closest(".contentsRootDiv").querySelectorAll("input, select, button, textarea");
+			for(let i=0; i<formEle.length; i++){
+				if(formEle[i].classList.contains("contentsExcept")) continue;
+				formEle[i].disabled = true;
+				formEle[i].classList.add("disabledBox");
+			}
+			let editEle = event.target.closest(".contentsRootDiv").querySelectorAll(".contentEditClass");
+			for(let i=0; i<editEle.length; i++){
+				if(editEle[i].classList.contains("contentsExcept")) continue;
+				editEle[i].setAttribute("contenteditable", false);
+				editEle[i].classList.add("disabledBox");
+			}
+		}
+		
+	}
+
   return (<>
     <div className="editorToolBar">
-		<button className="editInsertImage editorBtn" title="이미지 추가" onClick={(event)=>{event.preventDefault();document.getElementById("webEditImageFile").click()}}></button>	
+		<button className="editInsertImage editorBtn" title="이미지 추가" onClick={(event)=>{event.preventDefault();event.target.closest(".editorToolBar").querySelector("#webEditImageFile").click()}}></button>	
 
         <button className="editUnderLine editorBtn" title="밑줄" onClick={(event) => textEditor(event, 'underline')}>U</button>
         
@@ -420,8 +487,9 @@ const NbWebEditor = ({parentMethod})=>{
             <span className="editTableArrow">&#129171;</span>
         </button>
 
-		<div className="asistDescBtn" title="도움말" onClick={(event) => asistDesc(event)}></div>
-
+		{showAsistDesc && 
+			<div className="asistDescBtn" title="도움말" onClick={(event) => asistDesc(event)}></div>
+		}
 		<input id="webEditImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);textEditor(event, 'insertImage');}} />
 
         <div id="editTableUi" className="editTableUi hide">

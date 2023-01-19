@@ -2921,6 +2921,13 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 								undoArr.splice(spaceOrEnterIdx[i], 1);
 							}
 						} 
+						
+						if(undoArr.length>180){
+							let idx = undoArr.length-180;
+							for(let i=0; i<idx; i++){
+								undoArr.shift();
+							}
+						}
 						//undo 스택 메모리에 키 입력 전 데이터 추가
 						undoArr.push(currentData);	
 						redoArr = [];
@@ -3062,31 +3069,33 @@ const TCColResize = async () => {
 	if(!document.getSelection().isCollapsed){
 		return;
 	} 
+	
 	if (mousedown){
 		let distX = window.event.x - x; 
 		let width = parseInt(td_width) + parseInt(distX);
 		if(width>=10 ){
+			let tdIdx=0;
 			let tdLen = td.parentElement.childNodes.length;
 			let tagetNextIdx = -1;
 			let elseWidth = 0;		//타겟 td와 그 옆 요소를 제외한 totalWidth;
 			for(let i=0; i<tdLen; i++){
 				if(td.parentElement.childNodes[i]===td) {
+					tdIdx = i;
 					//타겟 td가 마지막 요소일 경우 너비변경 로직 종료
 					if(i===(tdLen-1)) return;
-
 					tagetNextIdx= i+1;
 				}else if(tagetNextIdx===i){
 				}else{
 					elseWidth += parseInt(td.parentElement.childNodes[i].style.width);
 				}
 			}
-
-			let nextDom = td.parentElement.childNodes[tagetNextIdx]
 			let nextDomWidth = 260-elseWidth-width;
 			if(nextDomWidth <= 10) return;
-			td.style.width =width+"px";
-			
-			nextDom.style.width = 260-elseWidth-width+"px";
+
+			//첫번째 row의 td에 스타일이 적용 되야 나머지 td에도 모두 적용됨
+			let firstRowTd = td.closest('.editInnerTable').querySelectorAll("tbody > tr > .innerTbTd");
+			firstRowTd[tdIdx].style.width = width+"px";
+			firstRowTd[tdIdx+1].style.width = 260-elseWidth-width+"px";
 		}
 	}
 }
@@ -3203,12 +3212,18 @@ export const reg_eraseEditTbUI = async (event ) =>{
 
 	let tagetDom = event.target.closest('button');
 	if(tagetDom==null) {
-		document.getElementById("editTableUi").classList.add("hide");
+		let editTableUi = document.getElementsByClassName("editTableUi")
+		for(let i=0; i<editTableUi.length; i++){
+			editTableUi[i].classList.add("hide");
+		}
 		return;
 	}
 	let targetId = tagetDom.id;
 	if (targetId !== "editTableBtn" || targetId !=="editTableBtn" ){
-		document.getElementById("editTableUi").classList.add("hide");
+		let editTableUi = document.getElementsByClassName("editTableUi")
+		for(let i=0; i<editTableUi.length; i++){
+			editTableUi[i].classList.add("hide");
+		}
 	} 
 }
 
@@ -4725,7 +4740,8 @@ export const reg_undoStackByClick = async (activeId) => {
 				activeUndoLength++;
 			}
 		});
-	
+		
+
 		//입력창 마다 최대 20개까지, 20개 넘는 경우 글자 단위 아닌 띄어쓰기 또는 엔터 단위로 설정
 		if(activeUndoLength >= 20){		
 			activeUndoLength = 0;
@@ -4740,6 +4756,14 @@ export const reg_undoStackByClick = async (activeId) => {
 				undoArr.splice(spaceOrEnterIdx[i], 1);
 			}
 		} 
+
+		if(undoArr.length>180){
+			let idx = undoArr.length-180;
+			for(let i=0; i<idx; i++){
+				undoArr.shift();
+			}
+		}
+
 		//undo 스택 메모리에 키 입력 전 데이터 추가
 		undoArr.push(currentData);	
 		redoArr = [];
@@ -4919,7 +4943,6 @@ export const reg_convertFigureTagRemove = (targetId) => {
 	if(window.getSelection().isCollapsed){
 		//워드, 한컴 복붙 하는 경우 p태그 생겨남
 		let figureTag = document.getElementById(targetId).getElementsByTagName("figure");
-
 		if(figureTag.length >0){
 			let tmpNode = document.createElement("img");
 			tmpNode.className = "tmpPositionDetect";
@@ -5008,12 +5031,14 @@ export const reg_removeResizeFrame = function (scrollMove) {
 
   let scrollYtoMovePrevPoint;
   let currentImage;
-  export const reg_enableImageResizeInDiv = (id) => {
+  export const reg_enableImageResizeInDiv = (id, isMultiMode) => {
 	  if (!(/chrome/i.test(navigator.userAgent) && /google/i.test(window.navigator.vendor))) {
 		  return;
 	  }
+
 	  let orgId = id;
 	  var editor = document.getElementById(id);
+	
 	  var resizing = false;
 	  
 	  var createDOM = function (elementType, className, styles) {
@@ -5391,7 +5416,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 		imgWidthHeightSetBtn.addEventListener('click', function(){
 			currentImage.style.width=imgWidthInput.value+"px";
 			currentImage.style.height=imgHeightInput.value+"px";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 
 			//팝업 박스 위에서 열린 경우 이미지 가로, 세로 조절 팝업 위치가 정확하지 않은 버그 해결
@@ -5408,7 +5433,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px auto";
 			currentImage.style.verticalAlign="unset";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
   
@@ -5417,7 +5442,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px 10px 10px auto";
 			currentImage.style.verticalAlign="unset";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
 	
@@ -5426,7 +5451,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="unset";
 			currentImage.style.margin="10px 10px 10px 10px";
 			currentImage.style.verticalAlign="unset";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
 	
@@ -5435,7 +5460,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="left";
 			currentImage.style.margin="10px";
 			currentImage.style.verticalAlign="unset";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
 	
@@ -5444,7 +5469,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="right";
 			currentImage.style.margin="10px";
 			currentImage.style.verticalAlign="unset";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
 		imgAlignCenterLikeChar.addEventListener('click', function(){
@@ -5452,7 +5477,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 			currentImage.style.float="unset";
 			currentImage.style.margin="0px";
 			currentImage.style.verticalAlign="middle";
-			imgAttributeChageShow();
+			imgAttributeChageShow(isMultiMode);
 			reset();
 		})
 
@@ -5518,7 +5543,7 @@ export const reg_removeResizeFrame = function (scrollMove) {
 				if(document.querySelector('.top-border') !== null && document.querySelector('.left-border') !== null){
 					currentImage.style.width = document.querySelector('.top-border').offsetWidth + 'px';
 					currentImage.style.height = document.querySelector('.left-border').offsetHeight + 'px';
-					imgAttributeChageShow();
+					imgAttributeChageShow(isMultiMode);
 					refresh();
 					currentImage.click();
 					resizing = false;
@@ -5675,7 +5700,9 @@ export const reg_removeResizeFrame = function (scrollMove) {
 	  });
   }
 
-  const imgAttributeChageShow = () =>{
+  const imgAttributeChageShow = (isMultiMode) =>{
+			if(isMultiMode) return;
+
 			let imgAlignDiv = document.querySelectorAll(".imgAlignDiv");
 			for(let i=0; i<imgAlignDiv.length; i++){
 				imgAlignDiv[i].remove();

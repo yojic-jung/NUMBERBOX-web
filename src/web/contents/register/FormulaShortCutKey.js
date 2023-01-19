@@ -50,7 +50,11 @@ const FormulaShortCutKey  = ({compId, keyName, parentShortCutKey, parentMethod})
         if( !(focusId === "contentsFormulaEditor" || focusId === "solutionFormulaEditor"
         || focusId === "firNoFormulaEditor" || focusId === "secNoFormulaEditor"
         || focusId === "thrNoFormulaEditor" || focusId === "fourNoFormulaEditor"
-        || focusId === "fifNoFormulaEditor" || focusId === "answerFormulaEditor" || focusId === "myHwpContents") ){
+        || focusId === "fifNoFormulaEditor" || focusId === "answerFormulaEditor" || focusId === "myHwpContents"
+        || focusId.indexOf("contentsFormulaEditor") > -1 || focusId.indexOf("solutionFormulaEditor") > -1
+        || focusId.indexOf("firNoFormulaEditor") > -1 || focusId.indexOf("secNoFormulaEditor") > -1
+        || focusId.indexOf("thrNoFormulaEditor") > -1 || focusId.indexOf("fourNoFormulaEditor") > -1
+        || focusId.indexOf("fifNoFormulaEditor") > -1 || focusId.indexOf("answerFormulaEditor") > -1) ){
             //셀렉트 상태에서 수식 탭 버튼 클릭하면 activeElement가 버튼으로 셋팅되어 anchorNode의 부모요소 파악
             if(!window.getSelection().isCollapsed && (window.getSelection().anchorNode.parentElement.closest(".contentEditClass") !== null)){
             }else{

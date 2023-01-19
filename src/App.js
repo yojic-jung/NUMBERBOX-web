@@ -7,6 +7,7 @@ import NaverLoginSuccess from 'web/page/NaverLoginSuccess'
 import SignUp from 'web/page/SignUp'
 import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker'
 import RegisterContents from 'web/contents/register/RegisterContents'
+import RegisterContentsMulti from 'web/contents/register/RegisterContentsMulti'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import RegisterResource from 'web/mathResource/RegisterResource'
 import ShareResource from 'web/mathResource/ShareResource'
@@ -59,7 +60,7 @@ const App = ()=>{
                   <Route exact path="/makeContents" element={<RegisterContents contentsClassify={1} />} />
                   <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
                   <Route exact path="/admin/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
-                  <Route exact path="/admin/registerIpsiContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={4} /> : <Navigate to="/login" />} />
+                  <Route exact path="/admin/registerIpsiContentsMulti" element={nb_isLogin()  ? <RegisterContentsMulti contentsClassify={4} /> : <Navigate to="/login" />} />
                   <Route exact path="/contentsList" element={<ContentsList /> } />
                   <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />

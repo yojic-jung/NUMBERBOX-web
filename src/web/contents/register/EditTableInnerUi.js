@@ -8,12 +8,16 @@ const EditTableInnerUi = ({parentMethod})=>{
     };
     
     useEffect(()=>{
-        let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
-		for(let i=0; i<tdList.length; i++){
-			tdList[i].addEventListener('mouseover', cellUIFunction);
-			tdList[i].addEventListener('click', addEditTable);
-		}
-        window.addEventListener('click',reg_eraseEditTbUI);
+        let editTableUi = document.getElementsByClassName('editTableUi');
+        for(let j=0; j<editTableUi.length; j++){
+            let tdList = editTableUi[j].getElementsByTagName('button');
+            for(let i=0; i<tdList.length; i++){
+                tdList[i].addEventListener('mouseover', cellUIFunction);
+                tdList[i].addEventListener('click', addEditTable);
+            }
+            window.addEventListener('click',reg_eraseEditTbUI);
+        }
+        
         return () => removeAddedEvent();
     },[])
 
@@ -24,15 +28,19 @@ const EditTableInnerUi = ({parentMethod})=>{
     };
 
     const addCellUiClass = async (rowIdx, colIdx) => {
-		let tdList = document.getElementById('editTableUi').getElementsByTagName('button');
-		for(let i=0; i<tdList.length; i++){
-			if(tdList[i].dataset.row<=rowIdx && tdList[i].dataset.col<=colIdx){
-				tdList[i].classList.add('selectedTd');
-			}else{
-				tdList[i].classList.remove('selectedTd');
-			}
-		}
-		document.getElementById('nByNtag').innerHTML= (Number(rowIdx)+1)+"&#9747;"+(Number(colIdx)+1)
+        let editTableUi = document.getElementsByClassName('editTableUi');
+        for(let j=0; j<editTableUi.length; j++){
+            if(editTableUi[j].classList.contains("hide")) continue;
+            let tdList = editTableUi[j].getElementsByTagName('button');
+            for(let i=0; i<tdList.length; i++){
+                if(tdList[i].dataset.row<=rowIdx && tdList[i].dataset.col<=colIdx){
+                    tdList[i].classList.add('selectedTd');
+                }else{
+                    tdList[i].classList.remove('selectedTd');
+                }
+            }
+            editTableUi[j].querySelector('.nByNtag').innerHTML= (Number(rowIdx)+1)+"&#9747;"+(Number(colIdx)+1)
+        }
 	}
 
     
@@ -58,7 +66,6 @@ const EditTableInnerUi = ({parentMethod})=>{
                 let colNode= document.createElement('td');
                 colNode.className = "innerTbTd";
                 colNode.id = "innerTbTd"+i+j;
-                
                 colNode.style.width= 260/cellIdx+"px";
                 if(!isNoneTdBorder) colNode.className ="innerTbTd noneBorderTd"
                 let brNode = document.createElement('br');
@@ -69,16 +76,22 @@ const EditTableInnerUi = ({parentMethod})=>{
         }
 
         let targetDomId ;
-        if(document.getElementById('myHwpContents') !== null && document.getElementById('myHwpContents')!==undefined){
-            targetDomId = "myHwpContents";
+        if(document.getElementsByClassName("formulEditMultiDiv").length !== 0){
+            targetDomId = "multiMode"
         }else{
-            if(!document.getElementById('contentsFormulaEditor').classList.contains('hide')) targetDomId="contentsFormulaEditor";
-            else targetDomId="solutionFormulaEditor";
+            if(document.getElementById('myHwpContents') !== null && document.getElementById('myHwpContents')!==undefined){
+                targetDomId = "myHwpContents";
+            }else{
+                if(!document.getElementById('contentsFormulaEditor').classList.contains('hide')) targetDomId="contentsFormulaEditor";
+                else targetDomId="solutionFormulaEditor";
+            }
         }
         
-
         //포커스를 한번도 주지 않은 경우(새로고침 후 클릭 한번 안한 경우)
         if(document.getSelection().focusNode==null){
+            //문제 멀티 등록에서는 포커스 없으면 리턴
+            if(targetDomId === "multiMode") return;
+
             await reg_undoStackByClick(targetDomId);
             document.getElementById(targetDomId).appendChild(tmpNode);
             let range = document.createRange();
@@ -132,27 +145,45 @@ const EditTableInnerUi = ({parentMethod})=>{
         } 
         //테이블 안에 테이블 생성 금지[end]
 
+        //contentEditClass가 아닌 곳에 포커스 잡혀 표가 엉뚱한 곳에 삽입되는 문제 해결(표 생성 UI, 배경에 클릭 이후 삽입하면 엉뚱한 곳에 생김)
+        let currentNode = window.getSelection().anchorNode
+        if(currentNode.classList === undefined){
+            currentNode = currentNode.parentElement;
+        }
+        if(currentNode.closest(".contentEditClass") === null){
+            return;
+        }
+        
         const selection = document.getSelection();
         const newRange = selection.getRangeAt(0);
         selection.removeAllRanges();
         selection.addRange(newRange);
         let focusId =document.activeElement.id;
-
         if(focusId !== targetDomId){
-            document.getElementById(targetDomId).focus()
+            //문제 멀티 등록에서는 포커스 없으면 리턴
+            if(targetDomId === "multiMode"){
+                if(focusId.indexOf("contentsFormulaEditor") < 0 && focusId.indexOf("solutionFormulaEditor") < 0) return;
+            }
+
+            document.activeElement.focus()
             let tmpCaretPoint= document.createElement('span');
 		    tmpCaretPoint.className = "tmpCaretPoint";
 		    tmpCaretPoint.innerHTML = ".";
-            document.getElementById(targetDomId).appendChild(tmpCaretPoint);
+            document.activeElement.appendChild(tmpCaretPoint);
             window.getSelection().getRangeAt(0).selectNode(tmpCaretPoint);
             window.getSelection().collapseToStart();
             tmpCaretPoint.remove();
-            await reg_undoStackByClick(targetDomId);
-            document.getElementById(targetDomId).appendChild(tmpNode);
+
+
+            if(targetDomId !== "multiMode") await reg_undoStackByClick(targetDomId);
+            document.activeElement.appendChild(tmpNode);
+
         }else{ //포커스 있으면 그대로 진행
             if( !document.getSelection().isCollapsed ){
                 if(await reg_reGenerFormulBugFix(false)) return;
             }
+            
+
             await reg_undoStackByClick(targetDomId);
             window.getSelection().getRangeAt(0).insertNode(tmpNode);
             let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
@@ -178,7 +209,10 @@ const EditTableInnerUi = ({parentMethod})=>{
             innerTbTd[i].addEventListener('mousemove', reg_tbCellMouseMove);
         }
 
-        document.getElementById("editTableUi").classList.add("hide");
+        let editTableUi = document.getElementsByClassName('editTableUi');
+        for(let i=0; i<editTableUi.length; i++){
+            editTableUi[i].classList.add("hide");
+        }
         event.stopPropagation();
 
         //show화면에 적용

@@ -32,6 +32,32 @@
     position: relative;
 }
 
+.formulEditMultiDiv{
+    width: 1000px;
+    min-width: 670px;
+    padding:10px 0px;
+    position: relative;
+    margin:auto;
+}
+.formulEditMultiDiv .topShortkeyDiv {
+    width: 800px;
+    margin-left: auto;
+}
+
+.formulEditMultiDiv .fixedTopMenu{
+    transform: translateX(25%);
+}
+
+.contentsRootDiv .editorToolBar{
+    margin-left: 0;
+}
+
+.twoGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap:5px;
+}
+
 .contentsInfo{
     line-height:120%;
     width:600px;
@@ -46,6 +72,106 @@
     z-index: 11;
 }
 
+.contentsInfo-idx{
+    padding:10px 10px 10px 10px;
+    font-family: 'jejuGothic';
+    font-size: 18px;
+    color:dimgray;
+}
+
+.contentsInfo-multi{
+    width: 180px;
+    background: rgb(244, 244, 244);
+    padding: 5px 5px 5px 0;
+    border-right:1px solid rgb(175, 174, 174);
+}
+
+.contentsInfo-multi .impYear, .contentsInfo-multi .impMonth,
+.contentsInfo-multi .wrongRatio, .contentsInfo-multi .oddQuesNum, .contentsInfo-multi .evenQuesNum{
+    margin-right: 0;
+    padding-left:  5px;
+}
+
+.contentsInfo .impYear {
+    margin: 5px 3px 20px 0;
+    width: 60px;
+    padding: 0 5px;
+    text-align: center;
+}
+
+.contentsInfo .impMonth {
+    margin: 5px 3px 20px 10px;
+    width: 40px;
+    padding: 0 5px;
+    text-align: center;
+}
+
+.contentsInfo  .oddQuesNum,  .contentsInfo  .evenQuesNum{
+    width: 50px;
+    padding: 0 5px;
+    text-align: center;
+} 
+
+.contentsExcept{
+    font-size: 14px;
+    position: absolute;
+    border: none;
+    display: inline-block;
+    width: 70px;
+    font-family: 'jejuGothic';
+    background: rgb(157, 168, 180);
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+}
+
+
+.disabled .contentsExcept{
+    background: rgb(221, 93, 61);
+}
+
+
+.contentsInfo .wrongRatio{
+    margin-right: 3px;
+}
+
+.impYear::-webkit-outer-spin-button,
+.impYear::-webkit-inner-spin-button,
+.impMonth::-webkit-outer-spin-button,
+.impMonth::-webkit-inner-spin-button,
+.oddQuesNum::-webkit-outer-spin-button,
+.oddQuesNum::-webkit-inner-spin-button,
+.evenQuesNum::-webkit-outer-spin-button,
+.evenQuesNum::-webkit-inner-spin-button,
+.evenQuesNum::-webkit-outer-spin-button,
+.wrongRatio::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.contentsInfo-multi .oddQuesNum, .contentsInfo-multi .evenQuesNum{
+    width: 40px;
+    margin:5px 0;
+}
+
+
+
+.contentsInfo-multi .impYear{
+    width: 50px;
+}
+
+.contentsInfo-multi .impMonth{
+    width: 30px;
+}
+
+.contentsInfo-multi .wrongRatio{
+    width: 30px;
+    text-align: center;
+}
 
 .contentsFormulaEditor[placeholder]:empty::before, .multiChoiceView[placeholder]:empty::before {
     content: attr(placeholder);
@@ -76,6 +202,10 @@
     overflow: hidden;
     margin-top: 1px;
     outline: 1px solid gray;
+}
+
+.contentsFormulaEditor.multi, .solutionFormulaEditor.multi{
+    width:387px;
 }
 
 .fakeDiv{
@@ -154,6 +284,12 @@
     padding:5px;
     margin:5px;
 }
+
+.contentsInfo-multi #subject, .contentsInfo-multi #firUnit, .contentsInfo-multi #secUnit, 
+.contentsInfo-multi #thrUnit, .contentsInfo-multi #quesType, .contentsInfo-multi #quesLevel{
+    font-size:13px;
+}
+
 #subject:focus, #firUnit:focus, #secUnit:focus, #thrUnit:focus, #quesType:focus, #quesLevel:focus
 ,#orgSrcNo:focus, #orgSrcRef:focus, #answer:focus, #firNo:focus, #secNo:focus, #thrNo:focus, #fourNo:focus, #fifNo:focus, #multi-answer:focus{
     outline: none;
@@ -479,6 +615,127 @@
 .multiChoiceWrap{
     display: flex;
     align-items: center;
+}
+
+.multiChoiceView.multi{
+    width: 320px;
+}
+
+.ansSolOptBox.multi{
+    padding-left: 20px;
+}
+
+.addContentsBtn{
+    cursor: pointer;
+    text-align: center;
+    padding: 15px;
+    outline: 1px solid rgb(152, 152, 152);
+    background: rgb(176, 176, 176);
+    color:rgb(255, 255, 255);
+    font-family: 'jejuGothic';
+    position: relative;
+}
+
+.initContentsCntBtn{
+    font-family: 'jejuGothic';
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    right: 15px;
+    padding: 5px;
+}
+
+.allCheckBtn{
+    float: right;
+    clear: both;
+    cursor: pointer;
+    margin-left: 10px;
+    display: inline-block;
+    width: 50px;
+    height: 16px;
+    line-height: 16px;
+    background:  url("img/allCheck.png") no-repeat left center;
+    background-size: 16px;
+    vertical-align: middle;
+    position: relative;
+    font-size: 12px;
+    color:black;
+    padding-left: 20px;
+}
+
+.allCheckBtn:hover{
+    background:  url("img/allCheckComplete.png") no-repeat left center;
+    background-size: 16px;
+}
+
+.allCheckBtn:hover .allCheckBtnDesc{
+    visibility:visible;
+}
+
+.allCheckBtnTmp{
+    visibility: hidden;
+}
+
+.allCheckBtnDesc{
+    line-height: 130%;
+    font-size: 14px;
+    font-family: 'jejuGothic';
+    display: inline-block;
+    visibility: hidden;
+    width: 180px;
+    text-align: left;
+    background: black;
+    color: white;
+    border-radius: 5px;
+    padding: 8px 10px;
+    opacity: 0.9;
+    position: absolute;
+    top: -2px;
+    transform: translateY(-100%);
+    left: 0;
+    z-index: 3;
+}
+
+.allCheckBtnDesc.long{
+    width: 210px;
+}
+
+.allCheckBtnSuccess{
+    text-align: center;
+    line-height: 130%;
+    font-size: 14px;
+    font-family: 'jejuGothic';
+    display: inline-block;
+    visibility: hidden;
+    width: 100px;
+    background: black;
+    color: white;
+    border-radius: 5px;
+    padding: 8px 10px;
+    opacity: 0.9;
+    position: absolute;
+    top: -2px;
+    transform: translateY(-100%);
+    left: 0;
+    z-index: 3;
+}
+
+.allCheckBtnSuccess.active{
+    visibility:visible;
+}
+
+.contentsRootDiv{
+    display: flex;
+    flex: 2 1;
+    height: 100%;
+    width: 1000px;
+    outline: 1px solid rgb(194, 194, 194);
+}
+
+.contentsRootPaddingDiv{
+    padding: 20px;  /*버그 픽스, 에디터 밑에 어느정도 여백 있어야 수식 기호창 제거되는 버그 해결*/
+    background: repeating-linear-gradient( 45deg, #dcdcdc, #d5d5d5 3px, #f0f0f0 3px, #e7e7e7 6px );
+    outline: 1px solid rgb(189, 189, 189);
 }
 
 .multiChoiceView{
@@ -1071,7 +1328,15 @@ height: 1.6em;
     background-size:15px;
     color:white;
 }
+.nbCustomSelected2{
+    background: rgb(84, 139, 202);
+    color:white;
+}
 
+.nbCustomSelected2 option{
+    background: white;
+    color: rgb(23, 104, 196);
+}
 
 /** nbCustomSel 박스 끝. **/
 

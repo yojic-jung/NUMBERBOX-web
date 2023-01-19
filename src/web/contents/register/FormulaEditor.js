@@ -6,7 +6,7 @@ import TabTable from 'web/common/TabTable'
 import TabButton from 'web/common/TabButton'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import RegisterContentsInfo from 'web/contents/register/RegisterContentsInfo';
-import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getCheckedVal, nb_base64ImgRegisterToS3,
+import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_extensionCheck2, nb_getCheckedVal, nb_base64ImgRegisterToS3, nb_formDataFetch,
 	nb_licenseUiCheck, nb_contentsSrcVal, nb_multiChoiceGridSet, nb_module_handleImageUpload, nb_fadeInOutA} from 'js/common/common_nb.js';
 import { reg_quesAnsTabClkEv, reg_preventKeyEvent, reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_formulaTapMoveEv,
 		reg_mMoveTdWidthChange, reg_selStartTdWidthChange, reg_unitTypeChange ,reg_selectUnitOrTypeData, reg_dressYellowBox, 
@@ -124,50 +124,54 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 	  const multiChoiceImageFile = async (event) =>{
 		let file = await nb_module_handleImageUpload(event)
 		if(file !== undefined){
+			//이미지 업로드
+			let formData = new FormData();
+			formData.append("actionId", 10);
+      		formData.append("imgPath", "editorImgUpld");
+			formData.append("multipartFile", event.target.files[0]);
+			let returnObj = await nb_formDataFetch("/common/imgUpload", formData, true);
+
 			let img=document.createElement("img");
+			img.src=returnObj.s3ImgUrl;
 			img.style.width=100+"px";
-			let reader  = new FileReader();
-			let contentEditClass;
 			document.getElementById(multiImgTargetId).append(img);
-			reader.onload = async () => {
-			   img.src=reader.result;
-			   if(multiImgTargetId === "firNoFormulaEditor" ){
-					contentEditClass = document.getElementById("firNoFormulaEditor");
-					document.getElementById("firNo").value = contentEditClass.innerHTML;
-					document.getElementById("firNoShow").innerHTML = contentEditClass.innerHTML;
-					document.getElementById("firDiv").classList.remove("hide")
-					nb_multiChoiceGridSet("multi-show");
 
-				}else if(multiImgTargetId === "secNoFormulaEditor"){
-					contentEditClass = document.getElementById("secNoFormulaEditor");
-					document.getElementById("secNo").value = contentEditClass.innerHTML;
-					document.getElementById("secNoShow").innerHTML = contentEditClass.innerHTML;
-					document.getElementById("secDiv").classList.remove("hide")
-					nb_multiChoiceGridSet("multi-show");
+			if(multiImgTargetId === "firNoFormulaEditor" ){
+				let contentEditClass = document.getElementById("firNoFormulaEditor");
+				document.getElementById("firNo").value = contentEditClass.innerHTML;
+				document.getElementById("firNoShow").innerHTML = contentEditClass.innerHTML;
+				document.getElementById("firDiv").classList.remove("hide")
+				nb_multiChoiceGridSet("multi-show");
 
-				}else if(multiImgTargetId === "thrNoFormulaEditor"){
-					contentEditClass = document.getElementById("thrNoFormulaEditor");
-					document.getElementById("thrNo").value = contentEditClass.innerHTML;
-					document.getElementById("thrNoShow").innerHTML = contentEditClass.innerHTML;
-					document.getElementById("thrDiv").classList.remove("hide")
-					nb_multiChoiceGridSet("multi-show");
+			}else if(multiImgTargetId === "secNoFormulaEditor"){
+				let contentEditClass = document.getElementById("secNoFormulaEditor");
+				document.getElementById("secNo").value = contentEditClass.innerHTML;
+				document.getElementById("secNoShow").innerHTML = contentEditClass.innerHTML;
+				document.getElementById("secDiv").classList.remove("hide")
+				nb_multiChoiceGridSet("multi-show");
 
-				}else if(multiImgTargetId === "fourNoFormulaEditor"){
-					contentEditClass = document.getElementById("fourNoFormulaEditor");
-					document.getElementById("fourNo").value = contentEditClass.innerHTML;
-					document.getElementById("fourNoShow").innerHTML = contentEditClass.innerHTML;
-					document.getElementById("fourDiv").classList.remove("hide")
-					nb_multiChoiceGridSet("multi-show");
+			}else if(multiImgTargetId === "thrNoFormulaEditor"){
+				let contentEditClass = document.getElementById("thrNoFormulaEditor");
+				document.getElementById("thrNo").value = contentEditClass.innerHTML;
+				document.getElementById("thrNoShow").innerHTML = contentEditClass.innerHTML;
+				document.getElementById("thrDiv").classList.remove("hide")
+				nb_multiChoiceGridSet("multi-show");
 
-				}else if(multiImgTargetId === "fifNoFormulaEditor"){
-					contentEditClass = document.getElementById("fifNoFormulaEditor");
-					document.getElementById("fifNo").value = contentEditClass.innerHTML;
-					document.getElementById("fifNoShow").innerHTML = contentEditClass.innerHTML;
-					document.getElementById("fifDiv").classList.remove("hide")
-					nb_multiChoiceGridSet("multi-show");
-				}
-			}; 
-			if (file) reader.readAsDataURL(file);
+			}else if(multiImgTargetId === "fourNoFormulaEditor"){
+				let contentEditClass = document.getElementById("fourNoFormulaEditor");
+				document.getElementById("fourNo").value = contentEditClass.innerHTML;
+				document.getElementById("fourNoShow").innerHTML = contentEditClass.innerHTML;
+				document.getElementById("fourDiv").classList.remove("hide")
+				nb_multiChoiceGridSet("multi-show");
+
+			}else if(multiImgTargetId === "fifNoFormulaEditor"){
+				let contentEditClass = document.getElementById("fifNoFormulaEditor");
+				document.getElementById("fifNo").value = contentEditClass.innerHTML;
+				document.getElementById("fifNoShow").innerHTML = contentEditClass.innerHTML;
+				document.getElementById("fifDiv").classList.remove("hide")
+				nb_multiChoiceGridSet("multi-show");
+			}
+
 			event.target.value= "";
 			return;
 		}
@@ -793,7 +797,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 				<div>
 					<TabTable tabList={quesAnsTabList} className="tabTable" clickEv={reg_quesAnsTabClkEv}></TabTable>
 				</div>
-				<NbWebEditor parentMethod={showFormulaEditor}></NbWebEditor>
+				<NbWebEditor parentMethod={showFormulaEditor} showAsistDesc={true} showExceptBtn={false} isMultiMode={false}></NbWebEditor>
                 <div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
                 <div id="solutionFormulaEditor" className="solutionFormulaEditor contentEditClass onlyEdit hide" contentEditable="true"  spellCheck={false} placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("solutionFormulaEditor");}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 				
@@ -848,7 +852,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<div className="mini-title">정답</div>
 					<div>
 						<div className="mini-title2">주관식 정답</div> 
-						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" spellCheck={false} onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)}></div>
+						<div id="answerFormulaEditor" className="answerFormulaEditor contentEditClass onlyEdit" contentEditable="true" spellCheck={false} onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_nbComplie(event);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>reg_tbPastePrevent(event)} onDrop={(event)=>event.preventDefault()}></div>
 						<textarea type="text" id="answer" name="answer" className="hide" defaultValue={answerText}></textarea>
 						
 						<div className="mini-title2">객관식 정답(선택) </div>

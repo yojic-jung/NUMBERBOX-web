@@ -101,6 +101,10 @@
     box-shadow: 0 0 4px red;
 }
 
+.redBoxValid2{
+    box-shadow: 0 0 10px red !important;
+}
+
 .bageText{
     color: rgb(189, 189, 189);
 }

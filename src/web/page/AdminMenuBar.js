@@ -31,7 +31,7 @@ return (
             {isAdmin &&
              <>
                 <div><Link className='manager-link' to="/admin/ipsiWorkContentsList"><span className='manager-menu-btn'>수능/모의고사 작업내역</span></Link></div>
-                <div><Link className='manager-link' to="/admin/registerIpsiContents"><span className='manager-menu-btn'>수능/모의고사 문제</span></Link></div>
+                <div><Link className='manager-link' to="/admin/registerIpsiContentsMulti"><span className='manager-menu-btn'>수능/모의고사 문제 만들기</span></Link></div>
                 <div><Link className='manager-link' to="/admin/mathTypeCategory"><span className='manager-menu-btn'>유형카테고리</span></Link></div>
                 <div><Link className='manager-link' to="/admin/adminSvcCenter"><span className='manager-menu-btn'>관리자센터</span></Link></div>
             </>

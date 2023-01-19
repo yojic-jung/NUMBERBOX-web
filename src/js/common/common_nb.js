@@ -724,19 +724,26 @@ export const nb_fCustomSelClose = async function(event){
 * nb_completeBlueBox 입력완료 블루박스
 */
 export const nb_completeBlueBox = async function(event, charLength){
-  let targetDom = document.getElementById(event.target.id);
-  if(targetDom.value.length < charLength){
-    document.getElementById(event.target.id).classList.remove("customBlueBoxComplete");
-  }else{
-    document.getElementById(event.target.id).classList.add("customBlueBoxComplete");
+    let targetDom = document.getElementById(event.target.id);
+    if(targetDom.value.length < charLength){
+      document.getElementById(event.target.id).classList.remove("customBlueBoxComplete");
+    }else{
+      document.getElementById(event.target.id).classList.add("customBlueBoxComplete");
+    }
+}
 
+export const nb_completeBlueBoxMulti = async function(event, charLength){
+  if(event.target.value.length < charLength){
+    event.target.classList.remove("customBlueBoxComplete");
+  }else{
+    event.target.classList.add("customBlueBoxComplete");
   }
 }
 
 /*
 * 상단 메뉴 고정 fixed 함수
 */
-export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDomId){
+export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDomId, parentFixedDomClassName, isLeft){
   let targetDom = document.getElementById(targetId);
   if(targetDomWidth===0)return;
 
@@ -752,7 +759,17 @@ export const nb_topMenuFixed = async function(targetId, targetDomWidth, parentDo
       
       if(targetDomWidth <620)targetDomWidth =620;
       targetDom.style.width =targetDomWidth+"px";
-      targetDom.style.left = document.getElementsByClassName("right")[0].getBoundingClientRect().left+"px";
+      if(parentFixedDomClassName !== undefined){
+        if(isLeft){
+          targetDom.style.marginLeft="unset"
+          targetDom.style.left = document.getElementsByClassName(parentFixedDomClassName)[0].getBoundingClientRect().left+"px";
+        }else{
+          targetDom.style.left="unset";
+          targetDom.style.marginLeft="auto"
+        }
+      }else{
+        targetDom.style.left = document.getElementsByClassName("right")[0].getBoundingClientRect().left+"px";
+      }
     }
 
     if(document.getElementsByClassName("fakeDiv")[0] !== undefined){

@@ -262,7 +262,6 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		if(updateModeUniqNo!=="") {
 			let contentsNo = updateModeUniqNo.split(",");
 			formData.append("contentsNo", contentsNo[2]);
-			console.log(contentsNo[3]);
 			if(contentsClassify === 0) formData.append("mathContentsCompSeqNo", contentsNo[3]);	
 			else if(contentsClassify === 4) formData.append("mathContentsIpsiSeqNo", contentsNo[3]);	
 		}
@@ -450,8 +449,6 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 					<CustomSelBoxDown value={[{"value":"2점", "originVal":"3"},{"value":"3점", "originVal":"4"},{"value":"4점", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
 					<select id="quesLevel" name="quesLevel" className="hide">
 						<option value="0">문제 난이도</option>
-						<option value="1">오류</option>
-						<option value="2">오류</option>
 						<option value="3">2점</option>
 						<option value="4">3점</option>
 						<option value="5">4점</option>
