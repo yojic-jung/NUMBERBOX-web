@@ -189,7 +189,6 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 	}
 
 	const multiChoicDefaultSetFunc = async (event) => {
-		console.log(event.ctrlKey && event.keyCode === 86);
 		if(event.ctrlKey && event.keyCode === 86){
 			if(event.target.innerHTML.indexOf("①") > -1 && event.target.innerHTML.indexOf("②") > -1 
 			&& event.target.innerHTML.indexOf("③") > -1 && event.target.innerHTML.indexOf("④") > -1 

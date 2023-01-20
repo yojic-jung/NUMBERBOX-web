@@ -132,7 +132,6 @@ const IpsiWorkContentsListy = ()=>{
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
             setImpYearList(returnObj.impYearList);
         }
-        console.log(fExecuteWidth);
         if(!fExecuteWidth){
             asyncUseEffect();
             document.body.addEventListener('click',nb_fCustomSelClose);
@@ -479,11 +478,11 @@ const IpsiWorkContentsListy = ()=>{
                 }
 
                 let quesLevel = "";
-                if(contentsMap.quesLevel=="1")quesLevel="하";
-                else if(contentsMap.quesLevel=="2")quesLevel="중하";
-                else if(contentsMap.quesLevel=="3")quesLevel="2점";
-                else if(contentsMap.quesLevel=="4")quesLevel="3점";
-                else if(contentsMap.quesLevel=="5")quesLevel="4점";
+                if(contentsMap.quesLevel===1)quesLevel="오류";
+                else if(contentsMap.quesLevel===2)quesLevel="오류";
+                else if(contentsMap.quesLevel===3)quesLevel="2점";
+                else if(contentsMap.quesLevel===4)quesLevel="3점";
+                else if(contentsMap.quesLevel===5)quesLevel="4점";
 
                 let paperType = "";
                 if(contentsMap.mathContentsIpsi[0].paperType===1) paperType="통합";
@@ -494,6 +493,13 @@ const IpsiWorkContentsListy = ()=>{
                 if(contentsMap.choiceAnswer===null)isBlank="hide";
 
                 let updateBtnId = "updateContenstBtn"+idx;
+
+                let manageIns = "";
+                if(contentsMap.mathContentsIpsi[0].manageIns === 1){
+                    manageIns = "평가원";
+                }else if(contentsMap.mathContentsIpsi[0].manageIns === 2){
+                    manageIns = "교육청";
+                }
 
                 let conImgPath;
                 if(contentsMap.contentsImg===null) conImgPath = "";
@@ -519,8 +525,14 @@ const IpsiWorkContentsListy = ()=>{
                                                         <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button>
                                                     </div>
                                                     <div>
-                                                        {contentsMap.mathContentsIpsi[0].impYear}년 {contentsMap.mathContentsIpsi[0].impMonth}월 [{paperType}]<br/>
-                                                        홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 오답률 : {contentsMap.mathContentsIpsi[0].wrongRatio}%<br/>
+                                                        {contentsMap.mathContentsIpsi[0].impYear}년 {contentsMap.mathContentsIpsi[0].impMonth}월&nbsp;
+                                                        {manageIns} [{paperType}]<br/>
+                                                        홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 배점 : {quesLevel}, 오답률 : {contentsMap.mathContentsIpsi[0].wrongRatio}%<br/>
+                                                        [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
+                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span> /
+                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.thrUnit}}></span>
+                                                        <br/>
+                                                        유형 : <span dangerouslySetInnerHTML={{__html:contentsMap.mathTypeInfo.quesType}}></span>
                                                     </div>
                                                 </div>
                                             </td>
