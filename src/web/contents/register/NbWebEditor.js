@@ -4,7 +4,7 @@ import {reg_undoStackByClick, reg_oneLineOneDiv, reg_undoArrPop} from 'js/conten
 import {nb_extensionCheck2, nb_module_handleImageUpload, nb_formDataFetch} from 'js/common/common_nb.js';
 import editOutputScreen from 'img/editOutputScreen.PNG';
 import formulaFocusAsistDesc from 'img/formulaFocusAsistDesc.PNG';
-const NbWebEditor = ({parentMethod, showAsistDesc, showExceptBtn, isMultiMode})=>{
+const NbWebEditor = ({parentMethod, showAsistDesc, showExceptBtn, isMultiMode, idx})=>{
 
 	const tableUiShow = async function(event){
 		event.preventDefault();
@@ -493,7 +493,7 @@ const NbWebEditor = ({parentMethod, showAsistDesc, showExceptBtn, isMultiMode})=
 		<input id="webEditImageFile" className='hide' type="file" accept="image/*" onChange={(event) => {nb_extensionCheck2(event);textEditor(event, 'insertImage');}} />
 
         <div id="editTableUi" className="editTableUi hide">
-                <EditTableInnerUi parentMethod={parentMethod}></EditTableInnerUi>
+                <EditTableInnerUi parentMethod={parentMethod} idx={idx}></EditTableInnerUi>
                 
             </div>
     </div>

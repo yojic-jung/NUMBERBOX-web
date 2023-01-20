@@ -216,6 +216,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				alert("짝수형 번호를 입력해주세요.");
 				return false;
 			}
+			
 			let impYear = document.getElementById("impYear").value;
 			if(impYear.length!==4){
 				alert("시행연도를 네자리로 입력해주세요.");
@@ -231,6 +232,12 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			let manageIns = document.getElementById("manageIns").value;
 			if(Number(manageIns)===0){
 				alert("출제기관을 선택해주세요.");
+				return false;
+			}
+
+			let wrongRatio = document.getElementById("wrongRatio").value;
+			if(wrongRatio.length===0 || wrongRatio.length>2){
+				alert("오답률을 입력해주세요.");
 				return false;
 			}
 		}
@@ -444,17 +451,8 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 				<UnitTypeCombo updateModeUniqNo={updateModeUniqNo} />
 				
 				<div>
-					{contentsClassify === 4 ?
+					{contentsClassify !== 4 &&
 					<>
-					<CustomSelBoxDown value={[{"value":"2점", "originVal":"3"},{"value":"3점", "originVal":"4"},{"value":"4점", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
-					<select id="quesLevel" name="quesLevel" className="hide">
-						<option value="0">문제 난이도</option>
-						<option value="3">2점</option>
-						<option value="4">3점</option>
-						<option value="5">4점</option>
-					</select>
-					</>
-					:<>
 						<CustomSelBoxDown value={[{"value":"하", "originVal":"1"},{"value":"중하", "originVal":"2"},{"value":"중", "originVal":"3"},{"value":"중상", "originVal":"4"},{"value":"상", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
 						<select id="quesLevel" name="quesLevel" className="hide">
 							<option value="0">문제 난이도</option>
@@ -534,6 +532,14 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 
 				{contentsClassify === 4 &&
 					<>
+						<CustomSelBoxDown value={[{"value":"평가원", "originVal":"1"}, {"value":"교육청", "originVal":"2"}]} cusSelId="cusMathClassifySel" originSel="manageIns" title="출제기관"></CustomSelBoxDown>
+
+						<select id="manageIns" name="manageIns" className="hide">
+							<option value="0">출제기관</option>
+							<option value="1">평가원</option>
+							<option value="2">교육청</option>
+						</select>
+
 						<CustomSelBoxDown value={[{"value":"통합", "originVal":"1"},{"value":"가형", "originVal":"2"},{"value":"나형", "originVal":"3"} ]} cusSelId="cusOrgRefSel" originSel="paperType" title="가/나형 구분"></CustomSelBoxDown>
 						<select id="paperType" name="paperType" className="hide" >
 							<option value="0">가/나형 구분</option>
@@ -542,18 +548,31 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 							<option value="3">나형</option>
 						</select>
 
-						<input id="oddQuesNum" name ="oddQuesNum" type="number" className="customBlueBox marginBTen" placeholder="홀수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} />
-						<input id="evenQuesNum" name ="evenQuesNum" type="number" className="customBlueBox marginBTen" placeholder="짝수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} /><br/>
 						<input id="impYear" name ="impYear" type="number" className="customBlueBox" placeholder="시행연도" onBlur={event => nb_completeBlueBox(event, 1)} />
 						<input id="impMonth" name ="impMonth" type="number" className="customBlueBox" placeholder="시행월" onBlur={event => nb_completeBlueBox(event, 1)} />
-
-						<CustomSelBoxDown value={[{"value":"평가원", "originVal":"1"}, {"value":"교육청", "originVal":"2"}]} cusSelId="cusMathClassifySel" originSel="manageIns" title="출제기관"></CustomSelBoxDown>
-
-						<select id="manageIns" name="manageIns" className="hide">
-							<option value="0">출제기관</option>
-							<option value="1">평가원</option>
-							<option value="2">교육청</option>
+						<br/><br/>
+						<span className='mini-title10 borderNone'>
+							홀수형&nbsp;&nbsp;
+							<input id="oddQuesNum" name ="oddQuesNum" type="number" className="customBlueBox oddQuesNum marginBTen" placeholder="홀수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} />
+						</span>
+						
+						<input id="evenQuesNum" name ="evenQuesNum" type="number" className="customBlueBox marginBTen hide" placeholder="짝수형 문제번호" onBlur={event => nb_completeBlueBox(event, 1)} /><br/>
+						
+						<div className='ipsiQuesLvWrap'>
+						<span className='mini-title10 borderNone'>배점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+						<CustomSelBoxDown value={[{"value":"2점", "originVal":"3"},{"value":"3점", "originVal":"4"},{"value":"4점", "originVal":"5"}]} cusSelId="cusQuesSel" originSel="quesLevel" title="문제 난이도"></CustomSelBoxDown>
+						<select id="quesLevel" name="quesLevel" className="hide">
+							<option value="0">배점</option>
+							<option value="3">2점</option>
+							<option value="4">3점</option>
+							<option value="5">4점</option>
 						</select>
+						</div>
+
+						
+						<span className='mini-title10 borderNone'>오답률&nbsp;&nbsp;
+						<input id="wrongRatio" name ="wrongRatio" type="number" className="wrongRatio customBlueBox marginFive" onBlur={event => nb_completeBlueBox(event, 1)}  placeholder=""/>&nbsp;%
+						</span>
 					</>
 					}
 				<div className='saveContentsDiv'>

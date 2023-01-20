@@ -20,6 +20,7 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 	const [thrNo, setThrNo] = useState("");
 	const [fourNo, setFourNo] = useState("");
 	const [fifNo, setFifNo] = useState("");
+	const [editorIdx, setEditorIdx] = useState(idx);
 
 	const[updateModeUniqNo, setUpdateModeUniqNo] = useState("");
 	const [subjectBox, setSubjectBox] = useState(new Array());
@@ -37,7 +38,6 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 			setSecUnitSelBox(mathUnitInfo["mathSecUnitInfo"]);
 			setThrUnitSelBox(mathUnitInfo["mathThrUnitInfo"]);
 		}
-		
 		asyncUseEffect();
 	}, []);
 
@@ -421,7 +421,7 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 				
 				<div className="mini-title10">문항번호</div>
 				<span className="mini-title11 paddingLTen">홀</span> <input id="oddQuesNum" name ={"mathContents["+idx+"].oddQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)}  onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter oddQuesNum customBlueBox" placeholder="홀수형"  />
-				&nbsp;<span className="mini-title11">짝</span> <input id="evenQuesNum" name ={"mathContents["+idx+"].evenQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter evenQuesNum customBlueBox" placeholder="짝수형"  /><br/>
+				&nbsp;<span className="mini-title11 hide">짝</span> <input id="evenQuesNum" defaultValue={0} name ={"mathContents["+idx+"].evenQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter evenQuesNum customBlueBox hide" placeholder="짝수형"  /><br/>
 				
 				<div className="mini-title10">문항 점수&nbsp;
 				<select id="quesLevel" name={"mathContents["+idx+"].quesLevel"} className="customBlueBox marginFive multi" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
@@ -437,7 +437,7 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 				</div>
 			</div>
 			<div>
-				<NbWebEditor parentMethod={()=>{}} showAsistDesc={false} showExceptBtn={true} isMultiMode={true}></NbWebEditor>
+				<NbWebEditor parentMethod={()=>{}} showAsistDesc={false} showExceptBtn={true} isMultiMode={true} idx={editorIdx}></NbWebEditor>
 				<div className="twoGrid">
 					<div id={"contentsFormulaEditor"+ordinalNum} className="contentsFormulaEditor contentEditClass onlyEdit multi" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor"+ordinalNum);removeRedBoxValid(event);multiChoicDefaultSetFunc(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event);}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 					<div id={"solutionFormulaEditor"+ordinalNum} className="solutionFormulaEditor contentEditClass onlyEdit multi" contentEditable="true"  spellCheck={false} placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("solutionFormulaEditor"+ordinalNum);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>

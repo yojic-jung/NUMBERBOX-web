@@ -1227,7 +1227,8 @@ const MathDocsMaker = ()=>{
                                             <div className='twoFlexLayout'>
                                                
                                                 <div>
-                                                    [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
+                                                    [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
+                                                    <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span>
                                                 </div>
                                             </div>
                                             <div>
@@ -1293,7 +1294,8 @@ const MathDocsMaker = ()=>{
                                                 <div className='twoFlexLayout'>
                                                    
                                                     <div>
-                                                        [{contentsMap.mathUnitInfo.subject}] {contentsMap.mathUnitInfo.secUnit}
+                                                        [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
+                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span>
                                                     </div>
                                                 </div>
                                                 <div>

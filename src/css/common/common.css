@@ -230,6 +230,10 @@
     padding:10px 0 10px 10px;
 }
 
+.borderNone{
+    border: none;
+}
+
 .mini-title11{
     font-size: 14px;
     font-family: 'jejuGothic';

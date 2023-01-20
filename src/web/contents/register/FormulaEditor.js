@@ -403,6 +403,10 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					document.getElementById("evenQuesNum").value = myContents["myContents"].mathContentsIpsi[0].evenQuesNum;
 					document.getElementById("evenQuesNum").classList.add("customBlueBoxComplete");
 
+					//오답률
+					document.getElementById("wrongRatio").value = myContents["myContents"].mathContentsIpsi[0].wrongRatio;
+					document.getElementById("wrongRatio").classList.add("customBlueBoxComplete");
+
 					//시행연도
 					document.getElementById("impYear").value = myContents["myContents"].mathContentsIpsi[0].impYear;
 					document.getElementById("impYear").classList.add("customBlueBoxComplete");

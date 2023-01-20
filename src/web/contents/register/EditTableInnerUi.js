@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import {nb_fadeInOutA} from 'js/common/common_nb.js'
 import {reg_eraseEditTbUI, reg_reGenerFormulBugFix, reg_tbCellMouseDown, reg_tbCellMouseMove, reg_undoStackByClick} from 'js/contents/register/contents_reg';
 
-const EditTableInnerUi = ({parentMethod})=>{
+const EditTableInnerUi = ({parentMethod, idx})=>{
 
     const removeAddedEvent = () => {
         window.removeEventListener('click',reg_eraseEditTbUI);		//EditTableInnerUi에서 추가된 표 추가ui 표 이외 요소 클릭이벤트 제거
@@ -9,10 +10,14 @@ const EditTableInnerUi = ({parentMethod})=>{
     
     useEffect(()=>{
         let editTableUi = document.getElementsByClassName('editTableUi');
+        if(idx !== undefined){
+            editTableUi = document.getElementsByClassName('editTableInner'+idx);
+        }
         for(let j=0; j<editTableUi.length; j++){
             let tdList = editTableUi[j].getElementsByTagName('button');
             for(let i=0; i<tdList.length; i++){
                 tdList[i].addEventListener('mouseover', cellUIFunction);
+                tdList[i].removeEventListener('click', addEditTable);
                 tdList[i].addEventListener('click', addEditTable);
             }
             window.addEventListener('click',reg_eraseEditTbUI);
@@ -50,7 +55,7 @@ const EditTableInnerUi = ({parentMethod})=>{
     const addEditTable = async (event)=>{
         event.preventDefault();
         tableIdx++;
-        let isNoneTdBorder = document.getElementById("tbBorderCheck").checked;
+        let isNoneTdBorder = event.target.closest(".editTableUi").querySelector("#tbBorderCheck").checked;
 
         //table 노드 생성
         let rowIdx = Number(event.target.dataset.row)+1
@@ -113,7 +118,7 @@ const EditTableInnerUi = ({parentMethod})=>{
             event.stopPropagation();
             return;
         }
-
+        
         //드래그가 수식에 걸쳐있는 경우 에디터 이벤트 적용X [start], (걸쳐있는 수식 요소 모두 제거 후 추가할지 결정 후 개발 필요)
         let startDom = document.getSelection().getRangeAt(0).startContainer.parentElement.closest('.nbBox');
         let endDom = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.nbBox')
@@ -151,6 +156,7 @@ const EditTableInnerUi = ({parentMethod})=>{
             currentNode = currentNode.parentElement;
         }
         if(currentNode.closest(".contentEditClass") === null){
+            alert("표를 넣을 곳을 클릭해주세요.");
             return;
         }
         
@@ -221,7 +227,7 @@ const EditTableInnerUi = ({parentMethod})=>{
 
 
   return (              <>
-                            <div>   
+                            <div className={'editTableInner'+idx}>   
                                     <div>
                                         <label id="tbBorderDesc" className='tbBorderDesc'>
                                         <input id="tbBorderCheck" type="checkbox" defaultChecked/>

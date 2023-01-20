@@ -890,18 +890,16 @@ export const nb_contentsSrcVal = async function(event, isUpdtMode) {
 export const  nb_multiChoiceGridSet = async (className) => {
   let multiShowDiv = document.getElementsByClassName(className);
   let maxWidth;
-  
   for(let i=0; i<multiShowDiv.length; i++){
       multiShowDiv[i].classList.remove("oneDivGrid");
       multiShowDiv[i].classList.remove("twoDivGrid");
       multiShowDiv[i].classList.remove("threeDivGrid");
-
       maxWidth = multiShowDiv[i].querySelector(".firDiv").offsetWidth;
       if(maxWidth < multiShowDiv[i].querySelector(".secDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".secDiv").offsetWidth;
       if(maxWidth < multiShowDiv[i].querySelector(".thrDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".thrDiv").offsetWidth;
       if(maxWidth < multiShowDiv[i].querySelector(".fourDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fourDiv").offsetWidth;
       if(maxWidth < multiShowDiv[i].querySelector(".fifDiv").offsetWidth) maxWidth =multiShowDiv[i].querySelector(".fifDiv").offsetWidth;
-
+    
       if(maxWidth<190 && maxWidth>120)  multiShowDiv[i].classList.add("twoDivGrid");
       else if(maxWidth<=120) multiShowDiv[i].classList.add("threeDivGrid");
       else multiShowDiv[i].classList.add("oneDivGrid");

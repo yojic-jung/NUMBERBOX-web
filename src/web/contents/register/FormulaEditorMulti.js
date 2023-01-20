@@ -116,7 +116,6 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
-			
 			//reg_enableImageResizeInDiv('contentsFormulaEditor');
 			//reg_enableImageResizeInDiv('solutionFormulaEditor');
 			
@@ -421,6 +420,7 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 					return false;
 				}
 
+				/*
 				if(currentContentsDiv.querySelector("#evenQuesNum").value.length === 0 || currentContentsDiv.querySelector("#evenQuesNum").value.length>2){
 					alert("짝수형 번호를 입력해주세요.")
 					currentContentsDiv.querySelector("#evenQuesNum").scrollIntoView({ block: "center"});
@@ -428,6 +428,7 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 					currentContentsDiv.querySelector("#evenQuesNum").classList.add("redBoxValid2");
 					return false;
 				}
+				*/
 
 				if(Number(currentContentsDiv.querySelector("#quesLevel").value) === 0){
 					alert("배점 정보를 선택 해주세요.")

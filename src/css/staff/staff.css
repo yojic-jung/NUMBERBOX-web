@@ -107,9 +107,9 @@
 }
 
 .contentsInfo  .oddQuesNum,  .contentsInfo  .evenQuesNum{
-    width: 50px;
+    width: 90px;
     padding: 0 5px;
-    text-align: center;
+    text-align:center;
 } 
 
 .contentsExcept{
@@ -170,6 +170,12 @@
 
 .contentsInfo-multi .wrongRatio{
     width: 30px;
+    text-align: center;
+}
+
+.wrongRatio{
+    width: 60px;
+    padding-right: 20px;
     text-align: center;
 }
 
@@ -1622,6 +1628,17 @@ height: 1.6em;
 .workListUnitType .nbWrapSelBox{
     display: inline-block;
 }
+
+.ipsiQuesLvWrap .nbWrapSelBox{
+    display: inline-block;
+    width: 70px;
+}
+
+.ipsiQuesLvWrap .nbWrapSelBox .nbCustomSel.nbCustom4{
+    display: inline-block;
+    width: 100px;
+}
+
 .orangeBtn{
     font-family: 'jejuGothic';
     background-color: rgb(255, 187, 0);

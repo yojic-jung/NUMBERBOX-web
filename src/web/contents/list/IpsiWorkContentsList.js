@@ -132,12 +132,12 @@ const IpsiWorkContentsListy = ()=>{
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
             setImpYearList(returnObj.impYearList);
         }
+        console.log(fExecuteWidth);
         if(!fExecuteWidth){
             asyncUseEffect();
             document.body.addEventListener('click',nb_fCustomSelClose);
         }else{
             if(contentsList.length!==0){
-                nb_multiChoiceGridSet("quesConMultiShow");
             }
             fExecuteWidth = false;
         }
@@ -438,6 +438,7 @@ const IpsiWorkContentsListy = ()=>{
         }
 
         const takeIpsiContents = async () => {
+            fExecuteWidth = true;
             let impYearSelVal = document.getElementById("impYearSelBox").value;
             let impMonthSelVal = document.getElementById("impMonthSelBox").value;
             let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal, true);
@@ -445,6 +446,7 @@ const IpsiWorkContentsListy = ()=>{
             setWorkListChanged(false);
             setWorkListChanged(true);
             setContentsLen(ipsiContents.mathContentsList.length);
+            nb_multiChoiceGridSet("quesConMultiShow");
         }
 
         const impYearOptList = impYearList.map( (contentsMap, idx) => {
@@ -518,7 +520,7 @@ const IpsiWorkContentsListy = ()=>{
                                                     </div>
                                                     <div>
                                                         {contentsMap.mathContentsIpsi[0].impYear}년 {contentsMap.mathContentsIpsi[0].impMonth}월 [{paperType}]<br/>
-                                                        홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 짝수형 번호 : {contentsMap.mathContentsIpsi[0].evenQuesNum} [{quesLevel}]<br/>
+                                                        홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 오답률 : {contentsMap.mathContentsIpsi[0].wrongRatio}%<br/>
                                                     </div>
                                                 </div>
                                             </td>
