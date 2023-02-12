@@ -1283,6 +1283,10 @@
     padding:0 10px;
 }
 
+.paddingNone{
+    padding : 0 !important
+}
+
 .backLightGray{
     background-color: rgb(239, 238, 238);
 }
@@ -1844,4 +1848,126 @@
 
   .bugFixDiv{
     height: 100px;
+  }
+
+/*
+*
+*/
+
+.range-slider-container {
+    margin: 10px 0 10px 0;
+    padding: 10px;
+}
+  
+  .slider {
+    position: relative;
+    width: 200px;
+  }
+  
+  .slider__track,
+  .slider__range,
+  .slider__left-value,
+  .slider__right-value {
+    position: absolute;
+  }
+  
+  .slider__track,
+  .slider__range {
+    border-radius: 3px;
+    height: 5px;
+  }
+  
+  .slider__track {
+    background-color: #ced4da;
+    width: 100%;
+    z-index: 1;
+  }
+  
+  .slider__range {
+    background-color: #4ac6bf;
+    z-index: 2;
+  }
+  
+  .slider__left-value,
+  .slider__right-value {
+    font-family: 'jejuGothic';
+    margin: 15px 20px 5px 0px;
+    color: rgb(23, 104, 196);
+  }
+  
+  .slider__left-value {
+    left: 6px;
+  }
+  
+  .slider__right-value {
+    right: -4px;
+  }
+  
+  .slider-value-div{
+    padding:10px;
+  }
+
+  /* Removing the default appearance */
+  .thumb,
+  .thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .thumb {
+    pointer-events: none;
+    position: absolute;
+    height: 0;
+    width: 200px;
+    outline: none;
+  }
+  
+  .thumb--zindex-3 {
+    z-index: 3;
+  }
+  
+  .thumb--zindex-4 {
+    z-index: 4;
+  }
+  
+  .thumb--zindex-5 {
+    z-index: 5;
+  }
+  
+  /* For Chrome browsers */
+  .thumb::-webkit-slider-thumb {
+    background-color: #4fd3cd;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 1px 1px #ced4da;
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    margin-top: 4px;
+    pointer-events: all;
+    position: relative;
+    right: -3px;
+  }
+  .thumb.left-thumb::-webkit-slider-thumb {
+    left:-3px;
+  }
+  
+  /* For Firefox browsers */
+  .thumb::-moz-range-thumb {
+    background-color: #f1f5f7;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 1px 1px #ced4da;
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+    margin-top: 4px;
+    pointer-events: all;
+    position: relative;
+    right: -3px;
+  }
+  
+
+  .thumb.left-thumb::-moz-range-thumb {
+    left:-3px;
   }

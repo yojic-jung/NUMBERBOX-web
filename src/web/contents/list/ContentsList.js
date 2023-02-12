@@ -531,12 +531,23 @@ const ContentsList = ()=>{
                     await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
                     setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.", 2000);
                 }else{
-                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId=0&conentsNo='+contentsNoParam);
+                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId=0&contentsno='+contentsNoParam);
+                    
                     setConRepoInfoList(returnObj["mathconRepoInfo"]);
                     setConLikeInfoList(returnObj["mathConLikeInfo"]);
                     setContentsList(returnObj["mathContents"]);
                     if(hasNotiPhrases)  await nb_fadeInOut("정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.", 2000);
                     else  await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
+
+                    if(contentsNoParam === "allUserContents"){
+                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
+                        for(let i=0; i<allBtn.length; i++){
+                        }
+                    }else{
+                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
+                        for(let i=0; i<allBtn.length; i++){
+                        }
+                    }
                 }
                 
             }

@@ -11,6 +11,7 @@ import CustomBarChart from "web/common/CustomBarChart";
 import { ReactSortable } from "react-sortablejs";
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
+import MultiRangeSlider from 'web/common/MultiRangeSlider';
 import MathDocsPaperA from 'web/contents/mathDocs/MathDocsPaperA';
 import makePdf from "js/common/makePdf";
 import {reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
@@ -42,7 +43,14 @@ const MathDocsMaker = ()=>{
     const [errContentsNo, setErrContentsNo] = useState(0);
     const [errType, setErrType] = useState(0);
     const [showMathPaper, setShowMathPaper] = useState(false);
-
+    const [isIpsiContents, setIsIpsiContents] = useState(false);
+    const [minVal, setMinVal] =useState(0);
+    const [maxVal, setMaxVal] =useState(100);
+    const [minYear, setMinYear] =useState(0);
+    const [maxYear, setMaxYear] =useState(0);
+    const [impMinYear, setImpMinYear] =useState(0);
+    const [impMaxYear, setImpMaxYear] =useState(0);
+    const [impYearRender, setImpYearRender] =useState(false);
 
     const removeAddedEvent = async ()=>{
         window.removeEventListener('popstate', gotoPreviousStep);
@@ -61,6 +69,28 @@ const MathDocsMaker = ()=>{
             let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectList(jsonObj["mathSubjectInfo"])
             unitListSetFunction(jsonObj["mathSubjectInfo"], jsonObj["mathSecUnitInfo"], jsonObj["mathThrUnitInfo"]);
+
+            let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
+            let impYearMin=0;
+            let impYearMax=0;
+            for(let i=0; i<returnObj.impYearList.length; i++){
+                if(i===0){
+                    impYearMin=returnObj.impYearList[i];
+                    impYearMax=returnObj.impYearList[i];
+                }
+                if(returnObj.impYearList[i]<impYearMin){
+                    impYearMin=returnObj.impYearList[i]
+                }
+                if(returnObj.impYearList[i]>impYearMax){
+                    impYearMax=returnObj.impYearList[i]
+                }
+            }
+            setImpMaxYear(impYearMax);
+            setImpMinYear(impYearMin);
+            setMaxYear(impYearMax);
+            setMinYear(impYearMin);
+            setImpYearRender(true);
+            
             if(param !== ""){
                 document.getElementById("page-transit").classList.remove("hide");
                 document.getElementById("page-transit-img").classList.remove("hide");
@@ -78,7 +108,9 @@ const MathDocsMaker = ()=>{
         let jsonObj = await nb_dataFetch('/mathDocs/mathDocsByMyMathDocsPage?docsNo='+mathDocsNo, true);
         let mathContentsList = jsonObj["mathContentsList"];
         let mathDocsPaper = jsonObj["mathDocsPaper"];
-        
+
+        let barArr = [];
+        let ipsiConCnt=0;
         let lv1Len=0;
         let lv2Len=0;
         let lv3Len=0;
@@ -87,32 +119,74 @@ const MathDocsMaker = ()=>{
         let multiConCnt = 0;
         let essayConCnt = 0;
         for(let i=0; i<mathContentsList.length; i++){
+            if(mathContentsList[i].contentsClassify === 4){
+                ipsiConCnt++;
+            }
             if(mathContentsList[i].multiChoiceType==="M"){
                 multiConCnt +=1;
             }else{
                 essayConCnt +=1;
             }
-            if(mathContentsList[i].quesLevel === 1){
-                lv1Len +=1;
-            }else if(mathContentsList[i].quesLevel === 2){
-                lv2Len +=1;
-            }else if(mathContentsList[i].quesLevel === 3){
-                lv3Len +=1;
-            }else if(mathContentsList[i].quesLevel === 4){
-                lv4Len +=1;
-            }else if(mathContentsList[i].quesLevel === 5){
-                lv5Len +=1;
-            }
         }
 
+        let showWrongRatioChart = false;
+        //수능 문제가 절반 이상이면 오답률로 차트 제공(하, 중하, 중은 60%미만 중상은 70~80%, 상은 70~80%로 셋팅)
+        if(ipsiConCnt > mathContentsList.length-ipsiConCnt){
+            setIsIpsiContents(true);
+            showWrongRatioChart = true;
+            for(let i=0; i<mathContentsList.length; i++){
+                if(mathContentsList[i].contentsClassify === 4){
+                    if(mathContentsList[i].wrongRatio < 60){
+                        lv1Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70){
+                        lv2Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80){
+                        lv3Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90){
+                        lv4Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 90){
+                        lv5Len +=1;
+                    }
+                }else{
+                    if(mathContentsList[i].quesLevel === 1 || mathContentsList[i].quesLevel === 2 || mathContentsList[i].quesLevel === 3){
+                        lv1Len +=1;
+                    }else if(mathContentsList[i].quesLevel === 4){
+                        lv2Len +=1;
+                    }else if(mathContentsList[i].quesLevel === 5){
+                        lv3Len +=1;
+                    }
+                }
+            }
+
+            barArr = [{"labelName":"60%미만", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+                {"labelName":"60%~70%", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+                {"labelName":"70%~80%", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+                {"labelName":"80%~90%", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+                {"labelName":"90%~100%", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        }else{  //수능 문제가 절반이 안되는 경우 난이도별로 차트 제공
+            setIsIpsiContents(false);
+            for(let i=0; i<mathContentsList.length; i++){
+                if(mathContentsList[i].quesLevel === 1){
+                    lv1Len +=1;
+                }else if(mathContentsList[i].quesLevel === 2){
+                    lv2Len +=1;
+                }else if(mathContentsList[i].quesLevel === 3){
+                    lv3Len +=1;
+                }else if(mathContentsList[i].quesLevel === 4){
+                    lv4Len +=1;
+                }else if(mathContentsList[i].quesLevel === 5){
+                    lv5Len +=1;
+                }
+            }
+            barArr = [{"labelName":"하", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+                {"labelName":"중하", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+                {"labelName":"중", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+                {"labelName":"중상", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+                {"labelName":"상", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        }
         setShowChart(false);
         setConTotalCnt(mathContentsList.length);
         setMathContentsList(mathContentsList);
-        let barArr = [{"labelName":"하", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
-        {"labelName":"중하", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
-        {"labelName":"중", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
-        {"labelName":"중상", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
-        {"labelName":"상", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
         setConArrByLvOnBar(barArr);
         let pieArr = [
             {"labelName":"객관식", "value":multiConCnt ,"className":"multiChoicePieLabel", "backgroundColor":"rgb(13, 53, 149, 0.2)"},
@@ -135,6 +209,12 @@ const MathDocsMaker = ()=>{
         document.getElementById("docsPreviousPage").classList.remove("hide");
         document.getElementById("page-transit").classList.add("hide");
         document.getElementById("page-transit-img").classList.add("hide");
+
+        if(showWrongRatioChart){
+            document.getElementById("barChartTitle").innerText = "오답률별 문항 수"
+        }else{
+            document.getElementById("barChartTitle").innerText = "난이도별 문항 수"
+        }
     }
 
     const pagePerConCnt = (event) => {
@@ -193,6 +273,122 @@ const MathDocsMaker = ()=>{
         window.history.pushState("", "학습지 만들기 2단계", '/makeMathDocsTwoStep');
     }
 
+    const ipsiConFirstStepCheck = async () => {
+        let isIpsiMonthChecked = false;
+        let ipsiMonthDom = document.getElementsByName("ipsiMonth");
+
+        let ipsiMonth = "";
+        for(let i=0; i<ipsiMonthDom.length; i++){
+            if(ipsiMonthDom[i].checked){
+                if(ipsiMonth===""){
+                    ipsiMonth+=ipsiMonthDom[i].value;
+                }else{
+                    ipsiMonth+=","+ipsiMonthDom[i].value;
+                }
+                isIpsiMonthChecked = true;
+            }
+        }
+
+        if(!isIpsiMonthChecked){
+            alert("시행월을 선택해 주세요.");
+            return;
+        }
+
+        let typeBtn = document.getElementsByClassName("typeBtn")
+        let unitUniqNoAndTypeNo = "";
+        for(let i=0; i< typeBtn.length; i++){
+            if(!typeBtn[i].classList.contains("active")) continue;
+            if(unitUniqNoAndTypeNo === ""){
+                unitUniqNoAndTypeNo += typeBtn[i].dataset.unitUniqNo+","+typeBtn[i].dataset.typeNo;
+            }else{
+                unitUniqNoAndTypeNo += "-"+typeBtn[i].dataset.unitUniqNo+","+typeBtn[i].dataset.typeNo;
+            }
+        }
+
+        let level = document.getElementsByName("level");
+        let quesLevel="";
+        for(let i=0; i<level.length; i++){
+            if(level[i].checked){
+                if(quesLevel===""){
+                    quesLevel+=level[i].value;
+                }else{
+                    quesLevel+=","+level[i].value;
+                }
+            }
+        }
+
+        let conCntInput = document.getElementById("conCntInput").value;
+        let ipsiYearMin =  document.getElementsByName("ipsiYearMin")[0].value;
+        let ipsiYearMax =  document.getElementsByName("ipsiYearMax")[0].value;
+        let wrongRatioMin = document.getElementsByName("wrongRatioMin")[0].value;
+        let wrongRatioMax = document.getElementsByName("wrongRatioMax")[0].value;
+        let jsonObj = await nb_dataFetch('/mathDocs/mathDocsIpsi?unitUniqNoAndTypeNoList='+unitUniqNoAndTypeNo+"&quesLevel="+quesLevel+"&conCnt="+conCntInput+"&wrongRatioMin="+wrongRatioMin+"&wrongRatioMax="+wrongRatioMax+"&ipsiYearMin="+ipsiYearMin+"&ipsiYearMax="+ipsiYearMax+"&ipsiMonth="+ipsiMonth, true);
+        document.getElementById("ipsiContentsSelWrap").classList.add('hide');
+        let mathContentsList = jsonObj["mathContentsList"];
+        let lv1Len=0;
+        let lv2Len=0;
+        let lv3Len=0;
+        let lv4Len=0;
+        let lv5Len=0;
+
+        let multiConCnt = 0;
+        let essayConCnt = 0;
+        for(let i=0; i<mathContentsList.length; i++){
+            if(mathContentsList[i].multiChoiceType==="M"){
+                multiConCnt +=1;
+            }else{
+                essayConCnt +=1;
+            }
+            if(mathContentsList[i].wrongRatio < 60){
+                lv1Len +=1;
+            }else if(mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70){
+                lv2Len +=1;
+            }else if(mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80){
+                lv3Len +=1;
+            }else if(mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90){
+                lv4Len +=1;
+            }else if(mathContentsList[i].wrongRatio >= 90){
+                lv5Len +=1;
+            }
+        }
+      
+        setShowChart(false);
+        setConTotalCnt(mathContentsList.length);
+        setMathContentsList(mathContentsList);
+        let barArr = [{"labelName":"60% 미만", "value": lv1Len ,"backgroundColor":"rgb(13, 53, 149, 0.2)"},
+        {"labelName":"60%~70%", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+        {"labelName":"70%~80%", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+        {"labelName":"80%~90%", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+        {"labelName":"90%~99%", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        setConArrByLvOnBar(barArr);
+        let pieArr = [
+            {"labelName":"객관식", "value":multiConCnt ,"className":"multiChoicePieLabel", "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+            {"labelName":"주관식", "value":essayConCnt ,"className":"essayPieLabel", "backgroundColor":"rgb(13, 53, 149, 0.7)"}]
+        setConArrByMultiOnPie(pieArr);
+        setShowChart(true);
+        document.getElementById("mathDocsDesc").innerHTML = "문제를 교체하거나 추가하여 학습지를 완성해 보세요.";
+        document.getElementById("mathDocsFirstStep").classList.add("hide");
+        await nb_multiChoiceGridSet("quesConMultiShow");
+        window.scrollTo(0, 0);
+        setIsSearchedMyCon(false);
+        setIsSearchedMyRepo(false);
+
+        let docsSubTitle = "";
+        if(ipsiYearMin !== ipsiYearMax){
+            docsSubTitle = ipsiYearMin+"~"+ipsiYearMax+"년 시행 기출";
+        }else{
+            docsSubTitle = ipsiYearMin+"년 시행 기출";
+        }
+         
+
+        document.getElementById("docsGrade").value = "고3";
+        document.getElementById("docsTitle").value ="수능 및 모의고사";
+        document.getElementById("docsSubTitle").value = docsSubTitle;
+        window.history.pushState("", "학습지 만들기 2단계", '/makeMathDocsTwoStep');
+
+        document.getElementById("barChartTitle").innerText = "오답률별 문항 수"
+    }
+
     const firstStepCheck = async () => {
         if(!nb_isLogin()) {
             if(isBrowser) alert("로그인 이후 사용해 주시기 바랍니다.");
@@ -236,7 +432,11 @@ const MathDocsMaker = ()=>{
         }
 
         if(!isLevelChecked){
-            alert("난이도를 선택해 주세요.");
+            if(isIpsiContents){
+                alert("배점을 선택해 주세요.");
+            }else{
+                alert("난이도를 선택해 주세요.");
+            }
             return;
         }
 
@@ -249,6 +449,11 @@ const MathDocsMaker = ()=>{
 
         if (conCntInput<1 || conCntInput>100) {    
             alert("문항 수는 1문항 이상 100문항 이하로 입력해주시기 바랍니다.");
+            return;
+        }
+
+        if(isIpsiContents){
+            document.getElementById("ipsiContentsSelWrap").classList.remove("hide");
             return;
         }
 
@@ -345,6 +550,8 @@ const MathDocsMaker = ()=>{
         document.getElementById("docsTitle").value = document.getElementsByClassName("mathDocsUnitBtn active")[0].dataset.subjectInfo +" 학습지";
         document.getElementById("docsSubTitle").value = subTitle;
         window.history.pushState("", "학습지 만들기 2단계", '/makeMathDocsTwoStep');
+
+        document.getElementById("barChartTitle").innerText = "난이도별 문항 수"
     }
 
     const gotoPreviousStep = () =>{
@@ -358,7 +565,98 @@ const MathDocsMaker = ()=>{
         document.getElementById("mathDocsThrStep").classList.remove("hide");
     }
 
+    /*
+    * 정의 : 수능모의고사 문제 클릭 이벤트
+    */
+    const ipsiContentsSelect = async (event) => {
+        //수능 모의고사 문제는 다른 문제와 같이 사용될 수 없음
+        let mathDocsUnitBtn = document.getElementsByClassName("mathDocsUnitBtn");
+        for(let i=0; i<mathDocsUnitBtn.length; i++){
+            if(mathDocsUnitBtn[i].classList.contains("active") && event.target !== mathDocsUnitBtn[i]){
+                mathDocsUnitBtn[i].click();
+            }
+        }
+
+        let subjectBtnWrap = document.getElementsByClassName("subjectBtnWrap");
+        for(let i=0; i<subjectBtnWrap.length; i++){
+            if(!event.target.classList.contains("active")){
+                if(subjectBtnWrap[i].dataset.subjectInfo.indexOf("중등")>-1 || subjectBtnWrap[i].dataset.subjectInfo.indexOf("고등")>-1){
+                    continue;
+                }
+                subjectBtnWrap[i].classList.remove("hide");
+
+                if(event.target.dataset.typeExist === "false"){
+                    let unitUniqNoList = "";
+                    let thrUnitBtn = subjectBtnWrap[i].querySelectorAll(".thrUnitBtn");
+                    for(let j=0; j<thrUnitBtn.length; j++){
+                        if(j === 0){
+                            unitUniqNoList += thrUnitBtn[j].dataset.unitUniqNo;
+                        }else{
+                            unitUniqNoList += ","+thrUnitBtn[j].dataset.unitUniqNo;
+                        }
+                    }
+                    let jsonObj = await nb_dataFetch('/mathInfo/typeInfoList?unitUniqNoList='+unitUniqNoList, true);
+                    let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll(".thrUnitBtnWrap");
+                    let mathTypeInfoList = jsonObj["mathTypeInfoList"];
+                    for(let j=0; j<thrUnitBtnWrap.length; j++){
+                        for(let k=0; k<mathTypeInfoList.length; k++){
+                            if(thrUnitBtnWrap[j].querySelector(".thrUnitBtn ").dataset.unitUniqNo === mathTypeInfoList[k].mathTypeDomain.unitUniqNo){
+                                let tmpDiv = document.createElement("div");
+                                tmpDiv.className="typeBtnWrap hide"
+                                let tmpSpan = document.createElement("span");
+                                tmpSpan.innerHTML = mathTypeInfoList[k].quesType;
+                                tmpSpan.className="typeBtn"
+                                tmpSpan.dataset.unitUniqNo = mathTypeInfoList[k].mathTypeDomain.unitUniqNo;
+                                tmpSpan.dataset.typeNo = mathTypeInfoList[k].mathTypeDomain.typeNo;
+                                tmpSpan.addEventListener("click", typeClickFunction);
+                                tmpDiv.append(tmpSpan);
+                                thrUnitBtnWrap[j].append(tmpDiv);
+                            }
+                        }
+                        
+                    }
+                }
+
+                //폴드 다 접기
+                if(subjectBtnWrap[i].querySelector(".subjectFoldBtn").classList.contains("active")){
+                    subjectBtnWrap[i].querySelector(".subjectFoldBtn").click();
+                }
+            }else{
+                subjectBtnWrap[i].classList.add("hide");
+                let activeBtn = subjectBtnWrap[i].querySelectorAll(".active");
+                for(let i=0; i<activeBtn.length; i++){
+                    if(!(activeBtn[i].classList.contains("subjectFoldBtn") || activeBtn[i].classList.contains("secUnitFoldBtn")
+                    || activeBtn[i].classList.contains("thrUnitFoldBtn"))){
+                        activeBtn[i].classList.remove("active")
+                    }
+                }
+            }
+           
+        }
+        event.target.dataset.typeExist = "true";
+
+        
+        if(event.target.classList.contains("active")){
+            event.target.classList.remove("active");
+            setIsIpsiContents(false);
+        }else{
+            event.target.classList.add("active");
+            if(!isIpsiContents){
+                let quesLvDom = document.getElementsByName("level");
+                for(let i=0; i<quesLvDom.length; i++){
+                    quesLvDom[i].checked = false;
+                }
+            }
+            setIsIpsiContents(true);
+        }
+    }
+
     const unitSelect = async (event) => {
+        //일반 문제는 수능 모의고사 문제와 같이 사용될 수 없음
+        if(document.querySelector(".mathDocsUnitBtn.ipsi").classList.contains("active")){
+            document.querySelector(".mathDocsUnitBtn.ipsi").click();
+        }
+
         let subjectBtnWrap = document.getElementsByClassName("subjectBtnWrap");
         for(let i=0; i<subjectBtnWrap.length; i++){
             if(!event.target.classList.contains("active")){
@@ -410,12 +708,19 @@ const MathDocsMaker = ()=>{
                 }
                 
             }
-           
         }
+
         if(event.target.classList.contains("active")){
             event.target.classList.remove("active");
         }else{
             event.target.classList.add("active");
+            if(isIpsiContents){
+                let quesLvDom = document.getElementsByName("level");
+                for(let i=0; i<quesLvDom.length; i++){
+                    quesLvDom[i].checked = false;
+                }
+            }
+            setIsIpsiContents(false);
         }
     }
 
@@ -820,6 +1125,7 @@ const MathDocsMaker = ()=>{
 
         let multiConCnt = 0;
         let essayConCnt = 0;
+        /*
         for(let i=0; i<newContentsList.length; i++){
             if(newContentsList[i].multiChoiceType==="M"){
                 multiConCnt +=1;
@@ -838,13 +1144,84 @@ const MathDocsMaker = ()=>{
                 lv5Len +=1;
             }
         }
+        */
+
+        let ipsiConCnt = 0;
+        for(let i=0; i<mathContentsList.length; i++){
+            if(mathContentsList[i].contentsClassify === 4){
+                ipsiConCnt++;
+            }
+            if(mathContentsList[i].multiChoiceType==="M"){
+                multiConCnt +=1;
+            }else{
+                essayConCnt +=1;
+            }
+        }
+
+        let barArr = [];
+        //수능 문제가 절반 이상이면 오답률로 차트 제공(하, 중하, 중은 60%미만 중상은 70~80%, 상은 70~80%로 셋팅)
+        if(ipsiConCnt > mathContentsList.length-ipsiConCnt){
+            //setIsIpsiContents(true);
+            document.getElementById("barChartTitle").innerText = "오답률별 문항 수"
+            for(let i=0; i<mathContentsList.length; i++){
+                if(mathContentsList[i].contentsClassify === 4){
+                    if(mathContentsList[i].wrongRatio < 60){
+                        lv1Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70){
+                        lv2Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80){
+                        lv3Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90){
+                        lv4Len +=1;
+                    }else if(mathContentsList[i].wrongRatio >= 90){
+                        lv5Len +=1;
+                    }
+                }else{
+                    if(mathContentsList[i].quesLevel === 1 || mathContentsList[i].quesLevel === 2 || mathContentsList[i].quesLevel === 3){
+                        lv1Len +=1;
+                    }else if(mathContentsList[i].quesLevel === 4){
+                        lv2Len +=1;
+                    }else if(mathContentsList[i].quesLevel === 5){
+                        lv3Len +=1;
+                    }
+                }
+            }
+
+            barArr = [{"labelName":"60%미만", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+                {"labelName":"60%~70%", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+                {"labelName":"70%~80%", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+                {"labelName":"80%~90%", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+                {"labelName":"90%~100%", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        }else{  //수능 문제가 절반이 안되는 경우 난이도별로 차트 제공
+            //setIsIpsiContents(false);
+            document.getElementById("barChartTitle").innerText = "난이도별 문항 수"
+            for(let i=0; i<mathContentsList.length; i++){
+                if(mathContentsList[i].quesLevel === 1){
+                    lv1Len +=1;
+                }else if(mathContentsList[i].quesLevel === 2){
+                    lv2Len +=1;
+                }else if(mathContentsList[i].quesLevel === 3){
+                    lv3Len +=1;
+                }else if(mathContentsList[i].quesLevel === 4){
+                    lv4Len +=1;
+                }else if(mathContentsList[i].quesLevel === 5){
+                    lv5Len +=1;
+                }
+            }
+            barArr = [{"labelName":"하", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
+                {"labelName":"중하", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
+                {"labelName":"중", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
+                {"labelName":"중상", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
+                {"labelName":"상", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        }
+
+
+
+
+
         setConTotalCnt(newContentsList.length);
         setMathContentsList(newContentsList);
-        let barArr = [{"labelName":"하", "value": lv1Len , "backgroundColor":"rgb(13, 53, 149, 0.2)"},
-        {"labelName":"중하", "value": lv2Len , "backgroundColor":"rgb(13, 53, 149, 0.4)"},
-        {"labelName":"중", "value": lv3Len , "backgroundColor":"rgb(13, 53, 149, 0.7)"},
-        {"labelName":"중상", "value": lv4Len , "backgroundColor":"rgb(13, 53, 149)"},
-        {"labelName":"상", "value": lv5Len , "backgroundColor":"rgb(7, 39, 113)"}];
+        
         setConArrByLvOnBar(barArr);
         let pieArr = [
             {"labelName":"객관식", "value":multiConCnt ,"className":"multiChoicePieLabel", "backgroundColor":"rgb(13, 53, 149, 0.2)"},
@@ -884,10 +1261,10 @@ const MathDocsMaker = ()=>{
     }
 
 
-    const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo) => {
+    const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo, contentsClassify) => {
         document.getElementById("mathDocsSimConAdd").classList.remove("hide");
         document.getElementById("mathDocsSimConAdd").dataset.contentsNo = contentsNo;
-        let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo='+unitUniqNo+"+&typeNo="+typeNo, true);
+        let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo='+unitUniqNo+"&typeNo="+typeNo+"&contentsClassify="+contentsClassify, true);
         let newContentsList =  jsonObj["mathSimilarConList"].filter((contentsMap, idx) => {
             let isSame = true;
             for(let i=0; i<mathContentsList.length; i++){
@@ -1173,7 +1550,16 @@ const MathDocsMaker = ()=>{
         //프린트 후 프린트시 입혀진 속성 다시 제거하기
         document.getElementById("mathContents").classList.remove("mathDocsTmpDivForHeightBugFix");
     }
-   
+
+    const initImpRangeSlider = async(minVal, maxVal) => {
+        setMinYear(minVal);
+        setMaxYear(maxVal);
+    }
+
+    const initWrongRatioRangeSlider = async(minVal, maxVal) => {
+        setMinVal(minVal);
+        setMaxVal(maxVal);
+    }
 
     const subjectInfoList = subjectList.map( (subjectInfo) => {
         //중등인 경우 
@@ -1411,6 +1797,17 @@ const MathDocsMaker = ()=>{
                     if(contentsMap.solutionImg===null) solImgPath = "";
                     else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.solutionImgPath+contentsMap.solutionImg;
                    
+                    let lvScore = "";
+                    if(contentsMap.contentsClassify === 4){
+                        if(contentsMap.quesLevel === 3){
+                            lvScore="2점";
+                        }else if(contentsMap.quesLevel === 4){
+                            lvScore="3점";
+                        }else if(contentsMap.quesLevel === 5){
+                            lvScore="4점";
+                        }
+                    }
+
                     return  <div id="workContentsDiv" className="workContentsDiv" key={idx}> 
                                     <table className='workListTable'>
                                         <tbody>
@@ -1431,10 +1828,29 @@ const MathDocsMaker = ()=>{
                                                                 </div>
                                                             </div>
                                                             <div id="workSolShow" className='solShow'>
+                                                                {contentsMap.contentsClassify === 4 && 
+                                                                    <div>
+                                                                        <div>
+                                                                            <span className='mini-title6'>출처</span>&nbsp;&nbsp;
+                                                                            {contentsMap.impYear+1}학년도 {contentsMap.impMonth === 11 ? "수능" : contentsMap.impMonth+"월 모의고사"} {contentsMap.paperType === 2 && "가형" } {contentsMap.paperType === 3 && "나형" } {contentsMap.oddQuesNum+"번"} (시행 {contentsMap.impYear}/{contentsMap.impMonth}) 
+                                                                        </div>
+                                                                        <div>
+                                                                            <span className='mini-title6'>배점</span>&nbsp;&nbsp;
+                                                                            {lvScore}&nbsp;&nbsp;<span className='mini-title6'>오답률</span>&nbsp;&nbsp;{contentsMap.wrongRatio}%
+                                                                        </div>
+                                                                        <div>
+                                                                            <span className='mini-title6'>단원정보</span>&nbsp;&nbsp;
+                                                                            <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span> &gt;&nbsp;
+                                                                            <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span> &gt;&nbsp;
+                                                                            <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.thrUnit}}></span> &gt;&nbsp;
+                                                                            <span dangerouslySetInnerHTML={{__html:contentsMap.mathTypeInfo.quesType}}></span> 
+                                                                        </div>
+                                                                    </div>}
                                                                 <span className='mini-title6'>해설</span>
                                                                 <div id="solImg-show" className={"solImg-show "+isSolImgHide}>
                                                                     <img src={solImgPath} id="solutionImgOutput" alt="" />
                                                                 </div>
+                                                                
                                                                 <div className='solContents' dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div> 
                                                             </div>
                                                         </div>
@@ -1466,20 +1882,45 @@ return (
                 <div className='mini-title3'>&#8251; N명의수학은 현재 중등 1학기 수학 문제들만 제공 중입니다. 주기적인 업데이트로 새로운 문제들을 추가 제공 예정입니다.</div>
                 <div className="mathDocsSubjectInfoDiv">
                     {subjectInfoList}
+                    <div className='hide'> <span className="mathDocsGrade">대입</span><span className='mathDocsUnitBtn ipsi' data-type-exist="false" onClick={(event)=>{ipsiContentsSelect(event)}}>수능모의고사</span></div>
                 </div>
                 <div className="mathDocsSubjectListDiv"></div>
                 <div className='bottomFixed'>
                 <div className='mathDocsLevelDiv'>
                     <div className='inBlock'>
+                        {isIpsiContents ?
+                        <table className='levelSelTb'>
+                            <tbody>
+                                <tr>
+                                    <td>배점</td>
+                                    <td className='levelSelTd paddingNone'>
+                                    <label className='levelSelLabel' htmlFor='level1'>
+                                        <input type="checkbox" id="level1" name="level" value="3" className='hide' /> 2점
+                                    </label>
+                                    </td>
+                                    <td className='levelSelTd paddingNone'>
+                                        <label className='levelSelLabel' htmlFor='level3'>
+                                            <input type="checkbox" id="level3" name="level" value="4" className='hide' /> 3점
+                                        </label>
+                                    </td>
+                                    <td className='levelSelTd paddingNone'> 
+                                        <label className='levelSelLabel' htmlFor='level5'>
+                                            <input type="checkbox" id="level5" name="level" value="5" className='hide' /> 4점
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        :
                         <table className='levelSelTb'>
                             <tbody>
                                 <tr>
                                     <td>난이도</td>
-                                        <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
-                                        <label htmlFor='level1'>
-                                            <input type="radio" id="level1" name="level" value="1" className='hide' /> 하
-                                        </label>
-                                        </td>
+                                    <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
+                                    <label htmlFor='level1'>
+                                        <input type="radio" id="level1" name="level" value="1" className='hide' /> 하
+                                    </label>
+                                    </td>
                                     <td className='levelSelTd' onClick={(event)=>{levelSelect(event)}}>
                                         <label htmlFor='level3'>
                                             <input type="radio" id="level3" name="level" value="3" className='hide' /> 중
@@ -1493,6 +1934,10 @@ return (
                                 </tr>
                             </tbody>
                         </table>
+                        }
+                        
+
+                        
                     </div>
                     <div className='inBlock'>
                         <table className='levelSelTb'>
@@ -1515,6 +1960,41 @@ return (
                     <div className='inBlock orangeBtn nextStep' onClick={(event)=>{firstStepCheck()}}>다음단계</div>
                 </div>
                 </div>
+
+                <div id="ipsiContentsSelWrap" className='blindBox hide'>
+                    <div id="ipsiContentsSelBox" className='ipsiContentsSelBox'>
+                        <div className='closeBtn2' onClick={()=>{document.getElementById("ipsiContentsSelWrap").classList.add("hide")}}>X</div>
+                        <div className='mathDocsIpsiTitle'>시행연월 <span className='mathDocsWrongRatio'>{minYear} ~ {maxYear}년</span></div>
+                        <div className='mathDocsIpsiDiv year'>
+                            {impYearRender &&
+                                <MultiRangeSlider name="ipsiYear" min={impMinYear} max={impMaxYear} onChange={() => {}} parentMethod={initImpRangeSlider}/>
+                            }
+                        </div>
+                        <div className='mathDocsIpsiDiv month'>
+                            <span className='mathDocIpsiConBtn'>
+                                <label className='levelSelLabel' htmlFor='ipsiMonth'>
+                                    <input type="checkbox" id="ipsiMonth" name="ipsiMonth" value="11" className='hide' /> 11월(수능)
+                                </label>
+                            </span> 
+                            <span className='mathDocIpsiConBtn'>
+                                <label className='levelSelLabel' htmlFor='ipsiMonth2'>
+                                    <input type="checkbox" id="ipsiMonth2" name="ipsiMonth" value="9" className='hide' /> 9월
+                                </label>
+                            </span> 
+                            <span className='mathDocIpsiConBtn'>
+                                <label className='levelSelLabel' htmlFor='ipsiMonth3'>
+                                    <input type="checkbox" id="ipsiMonth3" name="ipsiMonth" value="6" className='hide' /> 6월
+                                </label>
+                            </span>
+                        </div>
+                        <div className='mathDocsIpsiTitle'>오답률 <span className='mathDocsWrongRatio'>{minVal}% ~ {maxVal}%</span></div>
+                        <MultiRangeSlider name="wrongRatio" min={0} max={100} onChange={() => {}} parentMethod={initWrongRatioRangeSlider}/>
+                        <div className='paddingTen'></div>
+                        <div className='alignCenter marginTen'>
+                            <div className='inBlock orangeBtn alignCenter' onClick={(event)=>{ipsiConFirstStepCheck()}}>다음단계</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             {showChart &&
@@ -1524,7 +2004,7 @@ return (
                             <div id="chartWrap" className='chartWrap'> 
                                 <div className='conTotalCnt'>총 문항 수 : {conTotalCnt}문항</div>
                                 <div className='chartTitleWrap'>
-                                    <span className='barChartTitle'>난이도별 문항 수</span>
+                                    <span id="barChartTitle" className='barChartTitle'>난이도별 문항 수</span>
                                     <span className='pieChartTitle'>객관식 주관식 분포</span>
                                 </div>
                                 <CustomBarChart barArr={conArrByLvOnBar}/>
@@ -1677,7 +2157,7 @@ return (
                                                                 <div className='bi-jutify-align backLightGray'>
                                                                     <div><span className='quesNumber paddingLTen'>{quesNumber}</span></div>
                                                                     <div className='alignRight'>
-                                                                        <div className='mathDocsConChngBtn' onClick={()=>{takeSimilarContents(contentsMap.unitUniqNo, contentsMap.mathTypeInfo.mathTypeDomain.typeNo, contentsMap.contentsNo)}}>문항 교체</div>
+                                                                        <div className='mathDocsConChngBtn' onClick={()=>{takeSimilarContents(contentsMap.unitUniqNo, contentsMap.mathTypeInfo.mathTypeDomain.typeNo, contentsMap.contentsNo, contentsMap.contentsClassify)}}>문항 교체</div>
                                                                     </div>
                                                                 </div>
                                                             </td>

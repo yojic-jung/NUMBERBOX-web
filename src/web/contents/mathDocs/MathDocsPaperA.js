@@ -769,7 +769,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
 
             //해설 채우기
             let ansSolDiv = document.getElementsByClassName("ansSolDiv");
-            document.getElementById("mathoDocsSolution").innerHTML = solutionPaper;
+            //document.getElementById("mathoDocsSolution").innerHTML = solutionPaper;
             for(let i=0; i<ansSolDiv.length; i++){
                 let tmpSpan = document.createElement("span");
                 tmpSpan.innerHTML = ansSolDiv[i].innerHTML;
@@ -844,7 +844,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                 <div className="mathDocsPaperWrap onlyContents">
                     <div className='mathDocsPaperContentsWrap onlyContents'>
                         <div className='paperContentsLeft'>
-                            <div className='mathDocsPaperAnsTitle'><span className='ellipseUi'>정답</span></div>
+                            <div className='mathDocsPaperAnsTitle'><span className='ellipseUi'>정답 및 해설</span></div>
                             <div className='mathDocsPaperAnswer'></div>
                         </div>
                         <div className='paperContentsRight'>

@@ -94,13 +94,25 @@
     padding:10px;
 }
 
-.mathDocsGrade{
+.mathDocsGrade, .mathDocsIpsiTitle{
     font-family:'jejuGothic';
     margin:5px 20px 5px 0px;
     color: rgb(23, 104, 196);
 }
 
-.mathDocsUnitBtn{
+.mathDocsIpsiTitle{
+    margin-top: 15px;
+}
+
+.mathDocsWrongRatio{
+    vertical-align: mi;
+    color: rgb(109, 166, 231);
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.mathDocsUnitBtn, .mathDocIpsiConBtn{
     font-family:'jejuGothic';
     padding:5px;
     margin:5px;
@@ -110,21 +122,47 @@
     cursor: pointer;
 }
 
-.mathDocsUnitBtn:hover{
+.mathDocsUnitBtn:hover, .mathDocIpsiConBtn:hover{
     color: rgb(23, 104, 196);
     border:2px solid rgb(23, 104, 196);
 }
 
 .levelSelTd:hover, .conCntSelTd:hover{
+    cursor: pointer;
     color: rgb(23, 104, 196);
     border:2px solid rgb(23, 104, 196);
 }
 
-.mathDocsUnitBtn.active{
+.levelSelTd label:hover, .mathDocIpsiConBtn:hover, .mathDocIpsiConBtn label:hover{
+    cursor: pointer;
+}
+.mathDocsUnitBtn.active, .mathDocIpsiConBtn.active{
     color:white;
     background-color: rgb(23, 104, 196);
     border:2px solid rgb(173, 209, 250);
 }
+
+.mathDocIpsiConBtn.wrongRatio{
+    width: 70px;
+    padding: 5px 10px;
+    cursor: unset;
+    text-align: left;
+    outline: unset;
+
+}
+
+.mathDocIpsiConBtn.wrongRatio:hover{
+    border:2px solid rgb(173, 209, 250);
+}
+.mathDocIpsiConBtn.wrongRatio::placeholder {
+    color:lightgray;
+}
+
+.mathDocIpsiConBtn:has(input[type="checkbox"]:checked) {
+    color: white;
+    background-color: rgb(23, 104, 196);
+}
+
 
 .subjectFoldBtn, .secUnitFoldBtn, .thrUnitFoldBtn{
     color:rgb(184, 184, 184);
@@ -229,6 +267,12 @@
     border:2px solid rgb(173, 209, 250);
     border-radius: 4px;
 }
+
+.levelSelTb td:has(input[type="checkbox"]:checked) {
+    color: white;
+    background-color: rgb(23, 104, 196);
+}
+
 .previousStep{
     position: absolute;
     top:50%;
@@ -260,7 +304,31 @@
     background-color: rgb(23, 104, 196);
 }
 
+.levelSelLabel{
+    display: inline-block;
+    padding: 4px 8px;
+}
 
+.ipsiContentsSelBox{
+    width: 500px;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    text-align: left;
+}
+
+.mathDocsIpsiDiv{
+    padding: 15px 5px;
+}
+
+.mathDocsIpsiDiv.month{
+    font-size: 14px;
+    padding: 0px 5px;
+    margin-bottom: 40px;
+}
 /* 수식 */
 
 .mathDocsRootDiv .nbRootBase{

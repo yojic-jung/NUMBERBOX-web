@@ -110,21 +110,26 @@ const AdminSvcCenter = ()=>{
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink2").classList.remove("hide");
                 document.getElementById("orgContentsLink2").href = "/admin/workContentsList?contentsNo="+errReport.contentsNo;
+                document.getElementById("orgContentsLink3").classList.remove("hide");
+                document.getElementById("orgContentsLink3").href = "/admin/ipsiWorkContentsList?contentsNo="+errReport.contentsNo;
             }else if(errReport.errType === 2){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "컨텐츠 번호 : "+errReport.contentsNo;
                 document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink3").classList.add("hide");
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink").innerHTML = "컨텐츠 열기"
                 document.getElementById("orgContentsLink").href = "/shareResource?resourceNo="+errReport.contentsNo;
             }else if(errReport.errType === 3){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "학습지 번호 : "+errReport.contentsNo;
                 document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink3").classList.add("hide");
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink").innerHTML = "학습지 열기"
                 document.getElementById("orgContentsLink").href = "/makeMathDocs?docsNo="+errReport.contentsNo;
             }else if(errReport.errType === 5){
                 document.getElementById("detailedErrReportConNoAdmin").innerHTML = "파일 번호 : "+errReport.contentsNo;
                 document.getElementById("orgContentsLink2").classList.add("hide");
+                document.getElementById("orgContentsLink3").classList.add("hide");
                 document.getElementById("orgContentsLink").classList.remove("hide");
                 document.getElementById("orgContentsLink").innerHTML = "파일 열기"
                 document.getElementById("orgContentsLink").href = "/fileConvert?convertNo="+errReport.contentsNo;
@@ -133,6 +138,7 @@ const AdminSvcCenter = ()=>{
         }else{
             document.getElementById("orgContentsLink").classList.add("hide");
             document.getElementById("orgContentsLink2").classList.add("hide");
+            document.getElementById("orgContentsLink3").classList.add("hide");
             document.getElementById("detailedErrReportConNoAdmin").classList.add("hide");
         }
 
@@ -291,8 +297,9 @@ return (
                 <div className='alignLeft'>사용자 브라우저 : <span id="userOsAndBrowser"></span></div>
                 <div id="detailedErrReportConNoAdmin" className='detailedErrReportConNoAdmin hide'></div>
                 <div className='alignLeft'>
-                    <a id="orgContentsLink" href="/" target='_blank'>문제 열기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a id="orgContentsLink2" href="/" target='_blank' className='hide'>작업내역에서 문제 열기</a>
+                    <a id="orgContentsLink" href="/" target='_blank'>사용자 문제 열기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a id="orgContentsLink2" href="/" target='_blank' className='hide'>N명의수학 문제 열기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a id="orgContentsLink3" href="/" target='_blank' className='hide'>입시 문제 열기</a>
                 </div>
                 <div className='alignLeft'>문의 내용 :</div>
                 <div id="detailedReportContentsAdmin" className='detailedReportContentsAdmin'></div>

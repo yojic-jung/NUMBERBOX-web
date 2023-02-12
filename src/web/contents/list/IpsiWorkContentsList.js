@@ -2,7 +2,8 @@ import React, {useState, useEffect } from 'react';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import EmptyList from 'web/common/EmptyList';
 import {nb_dataFetch} from 'js/common/common_nb.js';
-import {nb_isAdmin, nb_fCustomSelClose, nb_formDataFetch, nb_formDataFileFetch,  nb_dateFormat, nb_confirmBox, nb_fadeInOut, nb_fadeInOutA, nb_promptBox, nb_detectScrollPosition, nb_moveToScroll, 
+import {nb_isAdmin, nb_fCustomSelClose, nb_formDataFetch, nb_formDataFileFetch,  nb_dateFormat, 
+    nb_confirmBox, nb_fadeInOut, nb_fadeInOutA, nb_promptBox, nb_detectScrollPosition, nb_moveToScroll, nb_getParameterByName,
     nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_topMenuFixed2} from 'js/common/common_nb.js';
 import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
@@ -128,9 +129,13 @@ const IpsiWorkContentsListy = ()=>{
     }
 
     useEffect(()=>{
+        let param2 = nb_getParameterByName("contentsNo");
         const asyncUseEffect = async function(){
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
             setImpYearList(returnObj.impYearList);
+            if(param2 !== ""){
+                searchWorkListByContentsNo(param2, false)
+            }
         }
         if(!fExecuteWidth){
             asyncUseEffect();
@@ -145,7 +150,39 @@ const IpsiWorkContentsListy = ()=>{
         return () => removeAddedEvent();
         }, [contentsList]);
 
+        const searchWorkListByContentsNo = async function(contentsNoParam, hasNotiPhrases){
+            let returnObj = await nb_dataFetch("/mathInfo/takeIpsiContentsByContentsNo?contentsNo="+contentsNoParam, true);
+            console.log(returnObj);
+            if(returnObj.error!=undefined){
+                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+            }
 
+            if(returnObj["isSuccess"]){
+                fExecuteWidth = true;
+                if(returnObj["mathContentsList"].length===0){
+                    setContentsList(returnObj["mathContentsList"]);
+                    await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
+                    setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.", 2000);
+                }else{
+                    window.history.pushState("", "문제검색", '/admin/ipsiWorkContentsList?unitUniqId=0&contentsNo='+contentsNoParam);
+                    
+                    setContentsList(returnObj["mathContentsList"]);
+                    if(hasNotiPhrases)  await nb_fadeInOut("정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.", 2000);
+                    else  await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
+
+                    if(contentsNoParam === "allUserContents"){
+                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
+                        for(let i=0; i<allBtn.length; i++){
+                        }
+                    }else{
+                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
+                        for(let i=0; i<allBtn.length; i++){
+                        }
+                    }
+                }
+                
+            }
+        }
 
         //테스트필요
         //관리자만 다운 가능

@@ -472,28 +472,28 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 						if(brTag[brTag.length-1].closest(".nbBox") === null){
 							brTag[brTag.length-1].remove();
 							if(contentEditClass[i].id.indexOf("contentsFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#contents").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#contents").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("solutionFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#solution").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#solution").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("firNoFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#firNo").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#firNo").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("secNoFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#secNo").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#secNo").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("thrNoFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#thrNo").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#thrNo").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("fourNoFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#fourNo").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#fourNo").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("fifNoFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#fifNo").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#fifNo").innerText = contentEditClass[i].innerHTML;
 
 							}else if(contentEditClass[i].id.indexOf("answerFormulaEditor") > -1){
-								contentEditClass[i].closest(".contentsRootDiv").querySelector("#answer").innerHTML = contentEditClass[i].innerHTML;
+								contentEditClass[i].closest(".contentsRootDiv").querySelector("#answer").innerText = contentEditClass[i].innerHTML;
 								
 							}
 						}else{
@@ -512,28 +512,28 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 			await reg_removeStyleAttribute(contentEditClass[i].id);
 
 			if(contentEditClass[i].id.indexOf("contentsFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#contents").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#contents").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("solutionFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#solution").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#solution").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("firNoFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#firNo").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#firNo").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("secNoFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#secNo").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#secNo").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("thrNoFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#thrNo").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#thrNo").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("fourNoFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#fourNo").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#fourNo").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("fifNoFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#fifNo").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#fifNo").innerText = contentEditClass[i].innerHTML;
 
 			}else if(contentEditClass[i].id.indexOf("answerFormulaEditor") > -1){
-				contentEditClass[i].closest(".contentsRootDiv").querySelector("#answer").innerHTML = contentEditClass[i].innerHTML;
+				contentEditClass[i].closest(".contentsRootDiv").querySelector("#answer").innerText = contentEditClass[i].innerHTML;
 				
 			}
 		}
