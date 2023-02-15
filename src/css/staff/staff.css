@@ -1862,6 +1862,11 @@ height: 1.6em;
 .compTbTbody tr:last-of-type{
     border-bottom:2px solid rgb(1, 152, 122);
 }
+
+.compRegisterTb input.grayBack{
+    background: rgb(204, 204, 204);
+}
+
 .compRegisterTb input{
     background: rgb(254, 254, 254);
     padding:4px;

@@ -1882,7 +1882,7 @@ return (
                 <div className='mini-title3'>&#8251; N명의수학은 현재 중등 1학기 수학 문제들만 제공 중입니다. 주기적인 업데이트로 새로운 문제들을 추가 제공 예정입니다.</div>
                 <div className="mathDocsSubjectInfoDiv">
                     {subjectInfoList}
-                    <div className='hide'> <span className="mathDocsGrade">대입</span><span className='mathDocsUnitBtn ipsi' data-type-exist="false" onClick={(event)=>{ipsiContentsSelect(event)}}>수능모의고사</span></div>
+                    <div className=''> <span className="mathDocsGrade">대입</span><span className='mathDocsUnitBtn ipsi' data-type-exist="false" onClick={(event)=>{ipsiContentsSelect(event)}}>수능모의고사</span></div>
                 </div>
                 <div className="mathDocsSubjectListDiv"></div>
                 <div className='bottomFixed'>

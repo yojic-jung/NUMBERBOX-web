@@ -27,6 +27,7 @@ const IpsiWorkContentsListy = ()=>{
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
     const [workListChanged, setWorkListChanged] = useState(true); 
     const [emptyListMsg, setEmptyListMsg] = useState("수능/모의고사의 시행연월을 선택하여 원하는 문제를 찾아보세요.");
+    const [compDelTr, setCompDelTr] = useState(""); 
 
     const removeAddedEvent = () => {
         window.removeEventListener('scroll', nb_detectScrollPosition);
@@ -152,7 +153,6 @@ const IpsiWorkContentsListy = ()=>{
 
         const searchWorkListByContentsNo = async function(contentsNoParam, hasNotiPhrases){
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiContentsByContentsNo?contentsNo="+contentsNoParam, true);
-            console.log(returnObj);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }
@@ -484,6 +484,298 @@ const IpsiWorkContentsListy = ()=>{
             setContentsLen(ipsiContents.mathContentsList.length);
             nb_multiChoiceGridSet("quesConMultiShow");
         }
+        
+        const makeManageIns = async function() {
+            return '<option value="0">출제기관</option><option value="1">평가원</option><option value="2">교육청</option>'
+        }
+
+        const makePaperType = async function() {
+            return '<option value="0">가/나형 구분</option><option value="1">통합</option><option value="2">가형</option><option value="3">나형</option>';
+        }
+        
+        const compDelPrompt = async function(){
+            let inputVal = document.getElementById("promptInput").value;
+            if(inputVal !== "삭제"){
+                document.getElementById("promptInput").classList.add("shake")
+                setTimeout(function(){
+                    document.getElementById("promptInput").classList.remove("shake")
+                }, 500);
+                return;
+            }
+            document.getElementById("promptBoxClose").click();
+
+            let ipsiSeqNo = compDelTr.querySelector(".ipsiSeqNo");
+            let ipsiContentsNo = compDelTr.querySelector(".ipsiContentsNo");
+            let returnObj = await nb_dataFetch("/mathInfo/delIpsiContents?seqNo="+ipsiSeqNo.value+"&contentsNo="+ipsiContentsNo.value, true);
+            if(returnObj.isSuccess) {
+                compDelTr.remove();
+                //성공한 객체로 바꾸기
+                contentsList.forEach(function(element){
+                if(element.contentsNo ===  Number(returnObj.successObj[0].contentsNo)){
+                    element.mathContentsComp = returnObj.successObj;
+                    return false;
+                    }
+                });
+                //comp 모달 상태변화로 유사문제 등록갯수 초기화
+                setWorkListChanged(false);
+                setWorkListChanged(true);
+                await nb_multiChoiceGridSet("quesConMultiShow");
+                await nb_fadeInOut("정상적으로 삭제 되었습니다.", 2000);
+            }else if(returnObj.isSuccess === false){
+                await nb_fadeInOutA("삭제가 취소되었습니다.\n문제정보는 최소 1개 이상 등록 되어있어야 합니다.", 2000);
+            }
+        }
+
+        const compContentsDel = async function(event){
+            let targetTr = event.target.closest("tr");
+            setCompDelTr(targetTr);
+            let ipsiSeqNo = targetTr.querySelector(".ipsiSeqNo");
+            if(ipsiSeqNo === null){
+                targetTr.remove();
+            }else{
+                await nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.");
+            }
+        }
+
+        const compAddRow = async function(){
+            let compTbTbody = document.getElementsByClassName("compTbTbody")[0];
+            let rowIdx =  Number(compTbTbody.lastElementChild.dataset.rowIdx)+1;
+            let tr = document.createElement("tr");
+            tr.dataset.rowIdx = rowIdx
+            let td1 = document.createElement("td");
+            td1.className="seqNoAndRefTd"
+            let refOptBox = await makeManageIns();
+            let sel1 = document.createElement("select");
+            sel1.name="mathContentsIpsi["+rowIdx+"].manageIns"
+            sel1.innerHTML = refOptBox;
+            sel1.className = "manageIns";
+            let contentsNo = document.getElementById("compPopUp").dataset.contentsNo
+            let input0 = document.createElement("input");
+            input0.type= "number";
+            input0.className = "ipsiContentsNo hide"
+            input0.name="mathContentsIpsi["+rowIdx+"].contentsNo"
+            input0.value = contentsNo;
+            td1.append(sel1); 
+            td1.append(input0);
+
+            let td2 = document.createElement("td");
+            let sel2 = document.createElement("select");
+            sel2.className = "paperType";
+            let mathTypeClassifyOpt = await makePaperType();
+            sel2.name="mathContentsIpsi["+rowIdx+"].paperType"
+            sel2.innerHTML = mathTypeClassifyOpt;
+            td2.append(sel2); 
+            
+            let td3 = document.createElement("td");
+            let input3 = document.createElement("input");
+            input3.type= "number";
+            input3.className = "impYear grayBack";
+            input3.name="mathContentsIpsi["+rowIdx+"].impYear"
+            input3.value = compTbTbody.querySelector("tr").querySelector(".impYear").value;
+            input3.readOnly = true;
+            td3.append(input3); 
+
+            let td4 = document.createElement("td");
+            let input4 = document.createElement("input");
+            input4.type= "number";
+            input4.className = "impMonth grayBack";
+            input4.name="mathContentsIpsi["+rowIdx+"].impMonth"
+            input4.value = compTbTbody.querySelector("tr").querySelector(".impMonth").value;
+            input4.readOnly = true;
+            td4.append(input4); 
+
+            let td5 = document.createElement("td");
+            let input5 = document.createElement("input");
+            input5.type= "number";
+            input5.className = "oddQuesNum";
+            input5.name="mathContentsIpsi["+rowIdx+"].oddQuesNum"
+            td5.append(input5); 
+
+            let td6 = document.createElement("td");
+            let input6 = document.createElement("input");
+            input6.type= "number";
+            input6.className = "wrongRatio";
+            input6.name="mathContentsIpsi["+rowIdx+"].wrongRatio"
+            td6.append(input6); 
+
+            let td7 = document.createElement("td");
+            let span = document.createElement("span");
+            span.className = "compDelBtn"
+            span.addEventListener("click", compContentsDel);
+            span.innerText = "삭제";
+            td7.append(span); 
+
+            tr.append(td1);
+            tr.append(td2);
+            tr.append(td3);
+            tr.append(td4);
+            tr.append(td5);
+            tr.append(td6);
+            tr.append(td7);
+            compTbTbody.append(tr);
+        }
+
+        const compContentsReg = async function(){
+            let compTbBody = document.getElementById("compTbTbody");
+            let compTbTr = compTbBody.querySelectorAll("tr")
+            for(let i=0; i<compTbTr.length; i++){
+                let manageIns = compTbTr[i].querySelector(".manageIns");
+                let paperType = compTbTr[i].querySelector(".paperType");
+                let impYear = compTbTr[i].querySelector(".impYear");
+                let impMonth = compTbTr[i].querySelector(".impMonth");
+                let oddQuesNum = compTbTr[i].querySelector(".oddQuesNum");
+                let wrongRatio = compTbTr[i].querySelector(".wrongRatio");
+                if(Number(manageIns.value) === 0){
+                    alert((i+1)+"번째 행의 출제기관 선택해주세요.");
+                    return false;
+                }
+                if(Number(paperType.value) === 0 ){
+                    alert((i+1)+"번째 행의 가/나형 구분을 선택해주세요.");
+                    return false;
+                }
+        
+                if(impYear.value.length !== 4 || impYear.value<0){
+                    alert((i+1)+"번째 행의 시행연도를 바르게 입력해주세요.");
+                    return false;
+                }
+
+                if(impMonth.value > 12 || impMonth.value<1){
+                    alert((i+1)+"번째 행의 시행월을 바르게 입력해주세요.");
+                    return false;
+                }
+
+                if(oddQuesNum.value > 30 || oddQuesNum.value<1){
+                    alert((i+1)+"번째 행의 홀수형 번호를 바르게 입력해주세요.");
+                    return false;
+                }
+
+                if(wrongRatio.value > 100 || wrongRatio.value<0){
+                    alert((i+1)+"번째 행의 오답률을 바르게 입력해주세요.");
+                    return false;
+                }
+            }
+
+            let formData = new FormData(document.getElementById("ipsiContentsForm"));
+            let returnObj = await nb_formDataFetch("/mathInfo/registerIpsiContents",formData, true);
+            if(returnObj.error!==undefined){
+                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
+            }else if(returnObj.isSuccess){
+                //성공한 객체로 바꾸기
+                contentsList.forEach(function(element){
+                    if(element.contentsNo ===  Number(returnObj.successObj[0].contentsNo)){
+                        element.mathContentsIpsi = returnObj.successObj;
+                        return false;
+                    }
+                });
+                //comp 모달 상태변화로 유사문제 등록갯수 초기화
+                setWorkListChanged(false);
+                setWorkListChanged(true);
+
+                await compContentsPopUpClose();
+                await nb_multiChoiceGridSet("quesConMultiShow");
+                await nb_fadeInOut("문제정보가 정상적으로 수정 되었습니다.", 2000);
+
+            }
+        }
+
+        const compContentsPopUpClose = async function(){
+            document.getElementById("compPopUpScreen").classList.add("hide");
+            document.getElementById("compTbTbody").innerText = "";
+        }
+
+        const compContentsPopUp = async function(event){
+            let contentsNo = event.target.dataset.contentsNo;
+            document.getElementById("compPopUp").dataset.contentsNo = contentsNo;
+            document.getElementById("compPopUpScreen").classList.remove("hide");
+            let compContentsList = contentsList.filter((element)=>{
+                return element.contentsNo === Number(contentsNo);
+            })
+            let compTbTbody = document.getElementById("compTbTbody");
+            for(let i=0; i<compContentsList[0].mathContentsIpsi.length; i++){
+                let tr = document.createElement("tr");
+                tr.dataset.rowIdx = i;
+                let td1 = document.createElement("td");
+                td1.className="seqNoAndRefTd"
+                let input = document.createElement("input");
+                input.type= "number";
+                input.name="mathContentsIpsi["+i+"].contentsNo"
+                input.className="ipsiContentsNo hide"
+                input.value = compContentsList[0].mathContentsIpsi[i].contentsNo;
+                let input0 = document.createElement("input");
+                input0.type= "number";
+                input0.name="mathContentsIpsi["+i+"].seqNo"
+                input0.className="ipsiSeqNo hide"
+                input0.value = compContentsList[0].mathContentsIpsi[i].seqNo;
+                let sel1 = document.createElement("select");
+                let refOptBox = await makeManageIns();
+                sel1.name="mathContentsIpsi["+i+"].manageIns"
+                sel1.innerHTML = refOptBox;
+                sel1.className = "manageIns";
+                td1.append(input);
+                td1.append(input0);
+                td1.append(sel1); 
+                sel1.value = compContentsList[0].mathContentsIpsi[i].manageIns;
+
+                let td2 = document.createElement("td");
+                let sel2 = document.createElement("select");
+                let mathTypeClassifyOpt = await makePaperType();
+                sel2.name="mathContentsIpsi["+i+"].paperType"
+                sel2.innerHTML = mathTypeClassifyOpt;
+                sel2.className="paperType";
+                td2.append(sel2); 
+                sel2.value = compContentsList[0].mathContentsIpsi[i].paperType;
+
+                let td3 = document.createElement("td");
+                let input3 = document.createElement("input");
+                input3.type= "number";
+                input3.name="mathContentsIpsi["+i+"].impYear";
+                input3.className="impYear grayBack";
+                input3.value = compContentsList[0].mathContentsIpsi[i].impYear;
+                input3.readOnly = true;
+                td3.append(input3); 
+
+                let td4 = document.createElement("td");
+                let input4 = document.createElement("input");
+                input4.type= "number";
+                input4.name="mathContentsIpsi["+i+"].impMonth"
+                input4.className="impMonth grayBack";
+                input4.readOnly = true;
+                input4.value = compContentsList[0].mathContentsIpsi[i].impMonth;
+                td4.append(input4); 
+                
+                let td5 = document.createElement("td");
+                let input5 = document.createElement("input");
+                input5.type= "number";
+                input5.name="mathContentsIpsi["+i+"].oddQuesNum"
+                input5.className="oddQuesNum"
+                input5.value = compContentsList[0].mathContentsIpsi[i].oddQuesNum;
+                td5.append(input5); 
+
+                let td6 = document.createElement("td");
+                let input6 = document.createElement("input");
+                input6.type= "number";
+                input6.name="mathContentsIpsi["+i+"].wrongRatio"
+                input6.className="wrongRatio"
+                input6.value = compContentsList[0].mathContentsIpsi[i].wrongRatio;
+                td6.append(input6); 
+
+                let td7 = document.createElement("td");
+                let span = document.createElement("span");
+                span.className = "compDelBtn"
+                span.addEventListener("click", compContentsDel);
+                span.innerText = "삭제";
+                td7.append(span); 
+
+                tr.append(td1);
+                tr.append(td2);
+                tr.append(td3);
+                tr.append(td4);
+                tr.append(td5);
+                tr.append(td6);
+                tr.append(td7);
+                compTbTbody.append(tr);
+            }
+        }
 
         const impYearOptList = impYearList.map( (contentsMap, idx) => {
             return (<option key={idx} value={contentsMap}>{contentsMap}</option>)
@@ -573,7 +865,11 @@ const IpsiWorkContentsListy = ()=>{
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>정답 및 해설</td>
+                                            <td>정답 및 해설
+                                                <div className="compContentsBtn relative" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{compContentsPopUp(event)}}>
+                                                    문제정보
+                                                </div>
+                                            </td>
                                             <td>서비스 여부</td>
                                         </tr>
                                     </thead>
@@ -642,6 +938,18 @@ const IpsiWorkContentsListy = ()=>{
                 <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>
                 <div id='conListScrollToBottom' className='conListScrollToBottom' tooltip="맨 아래로" onClick={()=>{nb_moveToScroll(false);}}></div>
             </div>
+            <div id="promptBoxScreen" className='promptBoxScreen hide'>
+                <div id="promptBox" className='promptBox'>
+                    <div className='promptBoxTop'><span id="promptBoxClose" className="promptBoxClose" onClick={()=>{document.getElementById("promptBoxScreen").classList.add('hide'); document.getElementById("promptInput").value="";}}>X</span></div>
+                    <div id="promptMsg" className="promptMsg"></div>
+                    <div className='promptInputDiv'>
+                        <input id="promptInput" className='promptInput' type="text" onKeyDown={(event)=>{if(event.keyCode===13){compDelPrompt()} }}/>
+                    </div>
+                    <div className='alignCenter'>
+                        <span id="promptBoxBtn" className='promptBoxBtn' onClick={()=>{compDelPrompt()}}>확인</span>
+                    </div>
+                </div>
+            </div>
 
                 { !modalState &&
                 <div>
@@ -685,6 +993,24 @@ const IpsiWorkContentsListy = ()=>{
                 { modalState  && <FormulaEditor contentsNo={contentsNo} contentsClassify={4}/>}
             </div>
             <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
+            <div id="compPopUpScreen" className='compPopUpScreen hide'>
+                <div id="compPopUp" className='compPopUp'>
+                    <div id="compPopUpClose" className="compPopUpClose" onClick={ (event) => {compContentsPopUpClose(event);}}>X</div>
+                    <form id="ipsiContentsForm" method="post">
+                        <span className='compAddRow' onClick={()=>{compAddRow()}}>행 추가</span>
+                        <table className='compRegisterTb'>
+                            <thead className='compRegisterTbHead'>
+                                <tr>
+                                <td>출제기관</td><td>가/나형 구분</td><td>시행연도</td><td>시행월</td><td>홀수형 번호</td><td>오답률</td><td></td>
+                                </tr>
+                            </thead>
+                            <tbody id="compTbTbody" className='compTbTbody'>
+                            </tbody>
+                        </table>
+                        <div className='alignCenter'><span className='compRegBtn' onClick={()=>{compContentsReg()}}>등록하기</span></div>
+                    </form>
+                </div>
+            </div>
             <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
                 <div id="confirmBox" className='confirmBox'>
                     <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{hwpDownPopUpClose();}}>X</span></div>
