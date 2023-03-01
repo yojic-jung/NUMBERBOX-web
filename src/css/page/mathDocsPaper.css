@@ -316,7 +316,14 @@
      .mathDocsA4Frame .nbBiDirSubBox, .mathDocsA4Frame .nbTrigonBox {
         vertical-align: -0.375em;
     }
-    
+
+    .mathDocsA4Frame .nbFracExpTmp .nbRootBox {
+        vertical-align: text-bottom;
+    }
+    .mathDocsA4Frame .nbFracExpTmp .nbRootBase::before {
+        top: 0.005em;
+    }
+
     /*직선 화살표 위치 버그*/
     .nbBiDirArrowBase::after, .nbBiDirArrowBase::before, .nbRightArrowBase::after{
         top:-0.88em !important;
@@ -340,6 +347,11 @@
         background-size: 1px 90%;
     }
     
+    /* ln 박스 */
+    .mathDocsA4Frame .nbLnBoxTbody{
+        top: 3px;
+    }
+
     /* 로그 함수(자연로그 포함) 
     .mathDocsA4Frame .nbLogBox{
         vertical-align: -0.685em;
