@@ -751,7 +751,7 @@ const MathDocsPaperA = ({perPageCnt, mathContentsList, mathDocsTitle, mathDocsSu
                 let rightSecond = document.createElement("div");
                 rightSecond.className = "eightArrPageCon firstPage rightSecond";
                 let rightThird = document.createElement("div");
-                rightThird.className = "eightArrPageCon firstPage rightFourth";
+                rightThird.className = "eightArrPageCon firstPage rightThird";
                 let rightFourth = document.createElement("div");
                 rightFourth.className = "eightArrPageCon firstPage rightFourth";
                 document.getElementById("firstPageRightWrap").append(rightFirst);

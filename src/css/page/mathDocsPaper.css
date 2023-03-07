@@ -352,6 +352,19 @@
         top: 3px;
     }
 
+    /* 지수 루트 */
+    .mathDocsA4Frame .nbExpBox .nbRootBox{
+        vertical-align : text-bottom;
+    }
+
+    .mathDocsA4Frame .nbExpBox .nbRootBase{
+        padding-top: 0;
+    }
+
+    .mathDocsA4Frame .nbExpBox .nbRootBase::before {
+        top:-0.105em;
+        left: -0.805em;
+    }
     /* 로그 함수(자연로그 포함) 
     .mathDocsA4Frame .nbLogBox{
         vertical-align: -0.685em;

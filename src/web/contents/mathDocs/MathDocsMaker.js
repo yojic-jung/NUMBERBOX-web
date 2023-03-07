@@ -1571,7 +1571,7 @@ const MathDocsMaker = ()=>{
                        </span>
             }
             if(subjectInfo.mainVal.includes("1-2") ||  subjectInfo.mainVal.includes("2-2") ||  subjectInfo.mainVal.includes("3-2")){
-                return <></>;
+                return <span key={subjectInfo.unitUniqNo}></span>;
             }
             if( subjectInfo.mainVal.includes("3-2")){
                 return <span key={subjectInfo.unitUniqNo}>
@@ -1580,6 +1580,8 @@ const MathDocsMaker = ()=>{
                        </span>
             }
             return <span className="mathDocsUnitBtn" key={subjectInfo.unitUniqNo} data-subject-info={subjectInfo.mainVal} data-type-exist="false" onClick={(event)=>{unitSelect(event)}}>{subjectInfo.mainVal.replace("중등 ","")}</span>
+        }else{
+            return <span key={subjectInfo.unitUniqNo}></span>;
         }
     });
 

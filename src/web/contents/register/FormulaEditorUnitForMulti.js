@@ -188,8 +188,17 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 		}
 	}
 
+	let isPressedCtrlV = false
 	const multiChoicDefaultSetFunc = async (event) => {
-		if(event.ctrlKey && event.keyCode === 86){
+		if(event.type === "keydown"){
+			if(event.ctrlKey && event.keyCode === 86){
+				isPressedCtrlV=true;
+			}else{
+				isPressedCtrlV=false;
+			}
+			return;
+		}
+		if(isPressedCtrlV){
 			if(event.target.innerHTML.indexOf("①") > -1 && event.target.innerHTML.indexOf("②") > -1 
 			&& event.target.innerHTML.indexOf("③") > -1 && event.target.innerHTML.indexOf("④") > -1 
 			&& event.target.innerHTML.indexOf("⑤") > -1){
@@ -438,7 +447,7 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 			<div>
 				<NbWebEditor parentMethod={()=>{}} showAsistDesc={false} showExceptBtn={true} isMultiMode={true} idx={editorIdx}></NbWebEditor>
 				<div className="twoGrid">
-					<div id={"contentsFormulaEditor"+ordinalNum} className="contentsFormulaEditor contentEditClass onlyEdit multi" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor"+ordinalNum);removeRedBoxValid(event);multiChoicDefaultSetFunc(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event);}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+					<div id={"contentsFormulaEditor"+ordinalNum} className="contentsFormulaEditor contentEditClass onlyEdit multi" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event);multiChoicDefaultSetFunc(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor"+ordinalNum);removeRedBoxValid(event);multiChoicDefaultSetFunc(event)}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event);}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 					<div id={"solutionFormulaEditor"+ordinalNum} className="solutionFormulaEditor contentEditClass onlyEdit multi" contentEditable="true"  spellCheck={false} placeholder="해설을 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}}  onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("solutionFormulaEditor"+ordinalNum);}} onClick={()=>reg_dressYellowBox()} onMouseDown={()=>{reg_selectCheck()}}  onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
 					<textarea id="contents" className="contents hide" name={"mathContents["+idx+"].contents"} defaultValue={contentsText}></textarea>
 					<textarea id="solution" className="solution hide" name={"mathContents["+idx+"].solution"} defaultValue={solutionText}></textarea>
