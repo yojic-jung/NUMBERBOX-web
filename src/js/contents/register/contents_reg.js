@@ -3293,6 +3293,8 @@ export const reg_removeSelectionBackColor = async () => {
 * 정의 : 수식요소셀렉트(드래그)시 nbBox 테이블 요소 배경색 설정
 */
 export const reg_dressSelectionBackColor = async () => {
+	document.getElementById("topShortkeyDiv").classList.remove("hide");	//수식 단축키 UI 사라지는 버그 키업 이벤트에서 해결(커서 이동에 따른 스크롤 자동이동 이벤트 없앤 후 생긴 버그 여기서 해결) 
+
 	let nbSelectionDiv = document.querySelectorAll(".nbSelectionDiv");
 	for(let i=0; i<nbSelectionDiv.length; i++){
 		nbSelectionDiv[i].classList.remove("nbSelectionDiv");
@@ -3315,7 +3317,6 @@ export const reg_dressSelectionBackColor = async () => {
 		
 		
 	}
-	
 }
 
 

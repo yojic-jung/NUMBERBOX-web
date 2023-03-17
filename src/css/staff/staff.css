@@ -24,6 +24,10 @@
     height: calc(100% + 15vh);
 }
 
+.makeContentsLinkDiv.multi{
+    height: unset;
+}
+
 .right{
     width:50%;
     min-width: 670px;
@@ -669,12 +673,17 @@
     padding-left: 20px;
 }
 
+.licChkBtn{
+    position: relative;
+    display: inline-block;
+}
+
 .allCheckBtn:hover{
     background:  url("img/allCheckComplete.png") no-repeat left center;
     background-size: 16px;
 }
 
-.allCheckBtn:hover .allCheckBtnDesc{
+.allCheckBtn:hover .allCheckBtnDesc, .licChkBtn:hover .licChkBtnDesc{
     visibility:visible;
 }
 
@@ -682,7 +691,7 @@
     visibility: hidden;
 }
 
-.allCheckBtnDesc{
+.allCheckBtnDesc, .licChkBtnDesc{
     line-height: 130%;
     font-size: 14px;
     font-family: 'jejuGothic';
@@ -700,6 +709,34 @@
     transform: translateY(-100%);
     left: 0;
     z-index: 3;
+}
+
+.licChkBtnDesc{
+    padding: 8px 10px;
+    width: 200px;
+    top:0;
+    left: unset;
+    right: 0;
+    transform: translate(100%, -100%);
+}
+
+.licChkBtnDesc.multi div{
+    padding-left: 15px;
+    position: relative;
+
+}
+.licChkBtnDesc.multi div::before{
+    content: '1.';
+    position: absolute;
+    left: -3px;
+}
+
+.licChkBtnDesc.multi div:nth-child(2):before{
+    content: '2.';
+}
+
+.licChkBtnDesc.multi div:nth-child(3)::before{
+    content: '3.';
 }
 
 .allCheckBtnDesc.long{

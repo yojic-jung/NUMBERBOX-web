@@ -61,6 +61,7 @@ const App = ()=>{
                   <Route exact path="/makeContentsForImg" element={<RegisterContentsForImg />} />
                   <Route exact path="/admin/registerContents" element={nb_isLogin()  ? <RegisterContents contentsClassify={0} /> : <Navigate to="/login" />} />
                   <Route exact path="/admin/registerIpsiContentsMulti" element={nb_isLogin()  ? <RegisterContentsMulti contentsClassify={4} /> : <Navigate to="/login" />} />
+                  <Route exact path="/makeMultiContents" element={nb_isLogin()  ? <RegisterContentsMulti contentsClassify={1} /> : <Navigate to="/login" />} />
                   <Route exact path="/contentsList" element={<ContentsList /> } />
                   <Route exact path="/myProfile" element={nb_isLogin()  ? <MyProfile /> : <Navigate to="/login?isDirect=false" />} />
                   <Route exact path="/myAccountDrop" element={nb_isLogin()  ? <MyAccountDrop /> : <Navigate to="/login?isDirect=false" />} />

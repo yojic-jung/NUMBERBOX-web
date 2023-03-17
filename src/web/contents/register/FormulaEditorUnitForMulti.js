@@ -1,4 +1,6 @@
 import React, { useState, useEffect} from "react";
+import licensePublic from 'img/license-public.png'
+import licensePrivate from 'img/license-private.png'
 import NbWebEditor from 'web/contents/register/NbWebEditor'
 import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_formDataFetch, nb_extensionCheck2, nb_base64ImgRegisterToS3,nb_completeBlueBoxMulti,
 	    nb_multiChoiceGridSet, nb_module_handleImageUpload, nb_fadeInOutA} from 'js/common/common_nb.js';
@@ -9,7 +11,7 @@ import { event } from "jquery";
 
 let shortCutKeyList;
 let multiImgTargetId;
-const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathUnitInfo}) => {
+const FormulaEditorUnitForMulti = ({contentsClassify, customId, ordinalNum, classNames, idx, mathUnitInfo}) => {
 	const [isMyContents, setIsMyContents] = useState(true);
 	const [contentsText, setContentsText] = useState("");	// 사용자 입력 문제
 	const [solutionText, setSolutionText] = useState("");	// 사용자 입력 해설
@@ -289,12 +291,27 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 				window.getSelection().collapseToEnd()
 			}
 		}
-		
-		
-
 	}
 
-	
+	const shareSttsChange = async function(event, shareStts){
+		if(shareStts){
+			event.target.closest(".licenseWrapDiv").querySelector("#licOptDiv").classList.remove("lowerOpacity");
+			event.target.closest(".licenseWrapDiv").querySelector("#onlineLicStts").checked = false;
+			event.target.closest(".licenseWrapDiv").querySelector("#onlineLicStts").disabled = false;
+
+			event.target.closest(".licenseWrapDiv").querySelector("#perLicStts").checked = false;
+			event.target.closest(".licenseWrapDiv").querySelector("#perLicStts").disabled = false;
+
+			event.target.closest(".licenseWrapDiv").querySelector("#entLicStts").checked = false;
+			event.target.closest(".licenseWrapDiv").querySelector("#entLicStts").disabled = false;
+		}else{
+			event.target.closest(".licenseWrapDiv").querySelector("#licOptDiv").classList.add("lowerOpacity");
+			event.target.closest(".licenseWrapDiv").querySelector("#onlineLicStts").disabled = true;
+			event.target.closest(".licenseWrapDiv").querySelector("#perLicStts").disabled = true;
+			event.target.closest(".licenseWrapDiv").querySelector("#entLicStts").disabled = true;
+		}
+	  }
+
 	const formulaConvert = async (event) => {
 		let evIdName = event.target.id
 		event.stopPropagation();
@@ -327,13 +344,45 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 
 	const allCheckFunction = async (event, successDescId, targetId, targetId2, addClassName) => {
 		let contentsRootDiv = document.querySelectorAll(".contentsRootDiv");
-		if(Number(contentsRootDiv[0].querySelector("#"+targetId).value) === 0) return;
-		for(let i=0; i<contentsRootDiv.length; i++){
-			if(!contentsRootDiv[0].querySelector("#"+targetId).classList.contains("active")){
-				contentsRootDiv[i].querySelector("#"+targetId).value = contentsRootDiv[0].querySelector("#"+targetId).value;
-				contentsRootDiv[i].querySelector("#"+targetId).classList.add(addClassName)
+		
+		if(targetId === "shareSttsPublic"){
+			for(let i=0; i<contentsRootDiv.length; i++){
+				if(contentsRootDiv[0].querySelector("#shareSttsPublic").checked){
+					contentsRootDiv[i].querySelector("#shareSttsPublic").checked=contentsRootDiv[0].querySelector("#shareSttsPublic").checked;
+					contentsRootDiv[i].querySelector("#shareSttsPrivate").checked= !contentsRootDiv[0].querySelector("#shareSttsPublic").checked;
+					contentsRootDiv[i].querySelector("#licOptDiv").classList.remove("lowerOpacity");
+					contentsRootDiv[i].querySelector("#onlineLicStts").disabled = false;
+					contentsRootDiv[i].querySelector("#perLicStts").disabled = false;
+					contentsRootDiv[i].querySelector("#entLicStts").disabled = false;
+
+					contentsRootDiv[i].querySelector("#onlineLicStts").checked = contentsRootDiv[0].querySelector("#onlineLicStts").checked
+					contentsRootDiv[i].querySelector("#perLicStts").checked = contentsRootDiv[0].querySelector("#perLicStts").checked
+					contentsRootDiv[i].querySelector("#entLicStts").checked = contentsRootDiv[0].querySelector("#entLicStts").checked
+				}
+				if(contentsRootDiv[0].querySelector("#shareSttsPrivate").checked){
+					contentsRootDiv[i].querySelector("#licOptDiv").classList.add("lowerOpacity");
+					contentsRootDiv[i].querySelector("#shareSttsPrivate").checked=contentsRootDiv[0].querySelector("#shareSttsPrivate").checked;
+					contentsRootDiv[i].querySelector("#shareSttsPublic").checked= !contentsRootDiv[0].querySelector("#shareSttsPrivate").checked;
+					
+					contentsRootDiv[i].querySelector("#onlineLicStts").checked = false;
+					contentsRootDiv[i].querySelector("#perLicStts").checked = false;
+					contentsRootDiv[i].querySelector("#entLicStts").checked = false;
+					
+					contentsRootDiv[i].querySelector("#onlineLicStts").disabled = true;
+					contentsRootDiv[i].querySelector("#perLicStts").disabled = true;
+					contentsRootDiv[i].querySelector("#entLicStts").disabled = true;
+				}
+			}
+		}else{
+			if(Number(contentsRootDiv[0].querySelector("#"+targetId).value) === 0) return;
+			for(let i=0; i<contentsRootDiv.length; i++){
+				if(!contentsRootDiv[0].querySelector("#"+targetId).classList.contains("active")){
+					contentsRootDiv[i].querySelector("#"+targetId).value = contentsRootDiv[0].querySelector("#"+targetId).value;
+					contentsRootDiv[i].querySelector("#"+targetId).classList.add(addClassName)
+				}
 			}
 		}
+		
 		if(targetId2 !== undefined){
 			if(contentsRootDiv[0].querySelector("#"+targetId2).value === 0 || contentsRootDiv[0].querySelector("#"+targetId2).value === "") return;
 			for(let i=0; i<contentsRootDiv.length; i++){
@@ -386,63 +435,140 @@ const FormulaEditorUnitForMulti = ({customId, ordinalNum, classNames, idx, mathU
 					{quesTypeOptBox}
 				</select>
 				<input id="typeNo" type="number" name={"mathContents["+idx+"].typeNo"} className="hide" />
-				<br/>
 				
-				<div className="mini-title10">출제기관
-					{ordinalNum ==="1st" && 
-					<span id="manageInsAllCheck" className="allCheckBtn" onClick={(event)=>{removeRedBoxValid(event);allCheckFunction(event, "manageInsSuccess", "manageIns", undefined, "nbCustomSelected2")}}>
-						일괄등록
-						<div id="manageInsSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
-						<div className="allCheckBtnDesc">모든 문항에 출제기관 일괄적용</div>
-					</span>}
-				</div>
-				<select id="manageIns" name={"mathContents["+idx+"].manageIns"} className="customBlueBox marginFive"onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
-					<option value="0">선택</option>
-					<option value="1">평가원</option>
-					<option value="2">교육청</option>
-				</select>
-				<div className="mini-title10">가/나형 구분
-					{ordinalNum ==="1st" && 
-					<span id="paperTypeAllCheck" className="allCheckBtn" onClick={(event)=>{removeRedBoxValid(event);allCheckFunction(event, "paperTypeSuccess", "paperType", undefined, "nbCustomSelected2")}}>
-						일괄등록
-						<div className="allCheckBtnDesc long">모든 문항에 가/나형 구분 일괄적용</div>
-						<div id="paperTypeSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
-					</span>}
-				</div>
-				<select id="paperType" name={"mathContents["+idx+"].paperType"} className="customBlueBox marginFive" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
-					<option value="0">선택</option>
-					<option value="1">통합</option>
-					<option value="2">가형</option>
-					<option value="3">나형</option>
-				</select>
+				{contentsClassify === 1 && 
+					<>
+						<select id="quesLevel" name={"mathContents["+idx+"].quesLevel"} className="customBlueBox marginFive" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
+							<option value="0">문제 난이도</option>
+							<option value="1">하</option>
+							<option value="2">중하</option>
+							<option value="3">중</option>
+							<option value="4">중상</option>
+							<option value="5">상</option>
+						</select>
+						<br/>
+						<br/>
+						<div id="licenseRootDiv">
+							<div className="mini-title10">
+								라이선스
+								{ordinalNum ==="1st" && 
+								<span id="shareSttsAllCheck" className="allCheckBtn" onClick={(event)=>{allCheckFunction(event, "shareSttsSuccess", "shareSttsPublic", undefined, "nbCustomSelected2")}}>
+									일괄적용
+									<div id="shareSttsSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
+									<div className="allCheckBtnDesc">모든 문항에 라이선스 범위 일괄적용</div>
+								</span>
+								}
+							</div>
+							<div className='licenseWrapDiv'>
+								<table className="licTable">
+									<tbody>
+										<tr>
+											<td>
+												<label className="licChkBtn">
+													<input id='shareSttsPublic' type="radio" value="1" name={"mathContents["+idx+"].shareStts"} className='licensePublicBtn' onChange={(event)=>{shareSttsChange(event, true)}}/><img src={licensePublic} className="licensePublicImg" alt="license-public"/>
+													<span className='licPublicTitle'>공개</span>
+													<div className="licChkBtnDesc multi">
+														<div>플랫폼 내 모든 사용자에게 공개</div>
+														<div>'변형문제 만들기' 서비스를 통한 2차 저작물 제작 허용</div>
+														<div>교육 기관에서 비영리목적의 학습 자료로서 사용 허용</div>
+													</div>
+												</label>
+											</td>
+											
+										</tr>
+										<tr>
+											<td>
+												<label>
+													<input id='shareSttsPrivate' type="radio" value="0" name={"mathContents["+idx+"].shareStts"} className='licensePrivateBtn' onChange={(event)=>{shareSttsChange(event, false)}} defaultChecked/><img src={licensePrivate} className="licensePrivateImg" alt="license-public"/><span className='licPrivateTitle'>비공개</span>
+												</label>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div id="licOptDiv" className="lowerOpacity">
+									<div className='licDivFir'>
+										<label className="licChkBtn">
+											<input id="onlineLicStts" type="checkbox" name={"mathContents["+idx+"].onlineLicStts"} value="1" disabled/> 인터넷 강의 허용
+											<span className='licChkBtnDesc'>외부 동영상 플랫폼에서 출처 표시 하에 문제 사용 및 노출 허용</span>
+										</label>
+									</div> 
+									<div className='licDiv'>
+										<label className="licChkBtn">
+											<input id="perLicStts" type="checkbox" name={"mathContents["+idx+"].perLicStts"} value="1" disabled/> 개인 강사 교재 허용
+											<span className='licChkBtnDesc'>기업용 출판이 아닌 개인 강사 교재에 문제 수록 허용</span>
+										</label>
+									</div> 
+									<div className='licDiv'>
+										<label className="licChkBtn">
+											<input id="entLicStts" type="checkbox" name={"mathContents["+idx+"].entLicStts"} value="1" disabled/> 출판사 교재 허용
+											<span className='licChkBtnDesc'>기업용 출판 교재에 문제 수록 허용</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</>
+				}
+				{contentsClassify === 4 && 
+					<>
+						<div className="mini-title10">출제기관
+							{ordinalNum ==="1st" && 
+							<span id="manageInsAllCheck" className="allCheckBtn" onClick={(event)=>{removeRedBoxValid(event);allCheckFunction(event, "manageInsSuccess", "manageIns", undefined, "nbCustomSelected2")}}>
+								일괄적용
+								<div id="manageInsSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
+								<div className="allCheckBtnDesc">모든 문항에 출제기관 일괄적용</div>
+							</span>}
+						</div>
+						<select id="manageIns" name={"mathContents["+idx+"].manageIns"} className="customBlueBox marginFive"onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
+							<option value="0">선택</option>
+							<option value="1">평가원</option>
+							<option value="2">교육청</option>
+						</select>
+						<div className="mini-title10">가/나형 구분
+							{ordinalNum ==="1st" && 
+							<span id="paperTypeAllCheck" className="allCheckBtn" onClick={(event)=>{removeRedBoxValid(event);allCheckFunction(event, "paperTypeSuccess", "paperType", undefined, "nbCustomSelected2")}}>
+								일괄적용
+								<div className="allCheckBtnDesc long">모든 문항에 가/나형 구분 일괄적용</div>
+								<div id="paperTypeSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
+							</span>}
+						</div>
+						<select id="paperType" name={"mathContents["+idx+"].paperType"} className="customBlueBox marginFive" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
+							<option value="0">선택</option>
+							<option value="1">통합</option>
+							<option value="2">가형</option>
+							<option value="3">나형</option>
+						</select>
 
-				<div className="mini-title10">시행연월
-					{ordinalNum ==="1st" &&
-					<span id="impYearMonthAllCheck" className="allCheckBtn" onClick={(event)=>{allCheckFunction(event, "impSuccess" , "impYear", "impMonth", "customBlueBoxComplete")}}>
-						일괄등록
-						<div className="allCheckBtnDesc">모든 문항에 시행연월 일괄적용</div>
-						<div id="impSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
-					</span>}
-				</div>
-				<input id="impYear" name ={"mathContents["+idx+"].impYear"} type="number" className="alignCenter impYear customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} placeholder="연도"/>년
-				<input id="impMonth" name ={"mathContents["+idx+"].impMonth"} type="number" className="alignCenter impMonth customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} placeholder="월"/>월<br/>
-				
-				<div className="mini-title10">문항번호</div>
-				<span className="mini-title11 paddingLTen">홀</span> <input id="oddQuesNum" name ={"mathContents["+idx+"].oddQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)}  onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter oddQuesNum customBlueBox" placeholder="홀수형"  />
-				&nbsp;<span className="mini-title11 hide">짝</span> <input id="evenQuesNum" defaultValue={0} name ={"mathContents["+idx+"].evenQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter evenQuesNum customBlueBox hide" placeholder="짝수형"  /><br/>
-				
-				<div className="mini-title10">문항 점수&nbsp;
-				<select id="quesLevel" name={"mathContents["+idx+"].quesLevel"} className="customBlueBox marginFive multi" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
-					<option value="0">배점</option>
-					<option value="3">2점</option>
-					<option value="4">3점</option>
-					<option value="5">4점</option>
-				</select>
-				</div>
+						<div className="mini-title10">시행연월
+							{ordinalNum ==="1st" &&
+							<span id="impYearMonthAllCheck" className="allCheckBtn" onClick={(event)=>{allCheckFunction(event, "impSuccess" , "impYear", "impMonth", "customBlueBoxComplete")}}>
+								일괄적용
+								<div className="allCheckBtnDesc">모든 문항에 시행연월 일괄적용</div>
+								<div id="impSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
+							</span>}
+						</div>
+						<input id="impYear" name ={"mathContents["+idx+"].impYear"} type="number" className="alignCenter impYear customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} placeholder="연도"/>년
+						<input id="impMonth" name ={"mathContents["+idx+"].impMonth"} type="number" className="alignCenter impMonth customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} placeholder="월"/>월<br/>
+						
+						<div className="mini-title10">문항번호</div>
+						<span className="mini-title11 paddingLTen">홀</span> <input id="oddQuesNum" name ={"mathContents["+idx+"].oddQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)}  onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter oddQuesNum customBlueBox" placeholder="홀수형"  />
+						&nbsp;<span className="mini-title11 hide">짝</span> <input id="evenQuesNum" defaultValue={0} name ={"mathContents["+idx+"].evenQuesNum"} type="number" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)} className="alignCenter evenQuesNum customBlueBox hide" placeholder="짝수형"  /><br/>
+						
+						<div className="mini-title10">문항 점수&nbsp;
+						<select id="quesLevel" name={"mathContents["+idx+"].quesLevel"} className="customBlueBox marginFive multi" onChange={(event)=>{selChanged(event);removeRedBoxValid(event)}}>
+							<option value="0">배점</option>
+							<option value="3">2점</option>
+							<option value="4">3점</option>
+							<option value="5">4점</option>
+						</select>
+						</div>
 
-				<div className="mini-title10">오답률&nbsp;&nbsp;
-				<input id="wrongRatio" name ={"mathContents["+idx+"].wrongRatio"} type="number" className="wrongRatio customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)}  placeholder=""/>&nbsp;%
-				</div>
+						<div className="mini-title10">오답률&nbsp;&nbsp;
+						<input id="wrongRatio" name ={"mathContents["+idx+"].wrongRatio"} type="number" className="wrongRatio customBlueBox marginFive" onBlur={event => nb_completeBlueBoxMulti(event, 1)} onKeyUp={(event)=>removeRedBoxValid(event)}  placeholder=""/>&nbsp;%
+						</div>
+					</>
+				}
+				
 			</div>
 			<div>
 				<NbWebEditor parentMethod={()=>{}} showAsistDesc={false} showExceptBtn={true} isMultiMode={true} idx={editorIdx}></NbWebEditor>

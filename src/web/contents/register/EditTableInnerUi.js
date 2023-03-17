@@ -166,24 +166,45 @@ const EditTableInnerUi = ({parentMethod, idx})=>{
         selection.addRange(newRange);
         let focusId =document.activeElement.id;
         if(focusId !== targetDomId){
+            let isExecuted = false; //테이블 삽입 실행여부
             //문제 멀티 등록에서는 포커스 없으면 리턴
             if(targetDomId === "multiMode"){
                 if(focusId.indexOf("contentsFormulaEditor") < 0 && focusId.indexOf("solutionFormulaEditor") < 0) return;
+
+                if( !document.getSelection().isCollapsed ){
+                    if(await reg_reGenerFormulBugFix(false)) return;
+                }
+                
+                if(document.activeElement.classList.contains("contentsFormulaEditor") || document.activeElement.classList.contains("solutionFormulaEditor")){
+                    await reg_undoStackByClick(focusId);
+                    window.getSelection().getRangeAt(0).insertNode(tmpNode);
+                    isExecuted = true;
+
+                    let tmpReGenerBugFix = document.getElementsByClassName("tmpReGenerBugFix");
+                    for(let i=0; i<tmpReGenerBugFix.length; i++){
+                        tmpReGenerBugFix[i].remove();
+                    }
+                    let tmpReGenerBugFix2 = document.getElementsByClassName("tmpReGenerBugFix2");
+                    for(let i=0; i<tmpReGenerBugFix2.length; i++){
+                        tmpReGenerBugFix2[i].remove();
+                    }
+                }
             }
 
-            document.activeElement.focus()
-            let tmpCaretPoint= document.createElement('span');
-		    tmpCaretPoint.className = "tmpCaretPoint";
-		    tmpCaretPoint.innerHTML = ".";
-            document.activeElement.appendChild(tmpCaretPoint);
-            window.getSelection().getRangeAt(0).selectNode(tmpCaretPoint);
-            window.getSelection().collapseToStart();
-            tmpCaretPoint.remove();
-
-
-            if(targetDomId !== "multiMode") await reg_undoStackByClick(targetDomId);
-            document.activeElement.appendChild(tmpNode);
-
+            if(!isExecuted){
+                document.activeElement.focus()
+                let tmpCaretPoint= document.createElement('span');
+                tmpCaretPoint.className = "tmpCaretPoint";
+                tmpCaretPoint.innerHTML = ".";
+                document.activeElement.appendChild(tmpCaretPoint);
+                window.getSelection().getRangeAt(0).selectNode(tmpCaretPoint);
+                window.getSelection().collapseToStart();
+                tmpCaretPoint.remove();
+    
+    
+                if(targetDomId !== "multiMode") await reg_undoStackByClick(targetDomId);
+                document.activeElement.appendChild(tmpNode);
+            }
         }else{ //포커스 있으면 그대로 진행
             if( !document.getSelection().isCollapsed ){
                 if(await reg_reGenerFormulBugFix(false)) return;

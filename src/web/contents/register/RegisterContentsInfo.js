@@ -500,21 +500,21 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 						<table className="licTable">
 							<tbody>
 								<tr>
-									<td><label><input id='shareSttsPublic' type="radio" value="1" name="shareStts" className='licensePublicBtn' onChange={()=>{shareSttsChange(true)}} defaultChecked/><img src={licensePublic} className="licensePublicImg" alt="license-public"/><span className='licPublicTitle'>공개</span></label></td>
+									<td><label><input id='shareSttsPublic' type="radio" value="1" name="shareStts" className='licensePublicBtn' onChange={()=>{shareSttsChange(true)}} /><img src={licensePublic} className="licensePublicImg" alt="license-public"/><span className='licPublicTitle'>공개</span></label></td>
 									<td><span className='licDesc'>플랫폼 내 모든 사용자에게 공개<br/> 
 									<span id="transLicenseDesc">플랫폼 내 '변형문제 만들기' 서비스를 통한 2차 저작물 제작 허용<br/></span>
 									공교육 및 사교육 기관에서 상업용 판매 목적 없는 학습 자료로서 사용 허용</span></td>
 								</tr>
 								<tr>
-									<td><label><input id='shareSttsPrivate' type="radio" value="0" name="shareStts" className='licensePrivateBtn' onChange={()=>{shareSttsChange(false)}}/><img src={licensePrivate} className="licensePrivateImg" alt="license-public"/><span className='licPrivateTitle'>비공개</span></label></td>
+									<td><label><input id='shareSttsPrivate' type="radio" value="0" name="shareStts" className='licensePrivateBtn' onChange={()=>{shareSttsChange(false)}} defaultChecked /><img src={licensePrivate} className="licensePrivateImg" alt="license-public"/><span className='licPrivateTitle'>비공개</span></label></td>
 									<td><span className='licDesc'>사용자 공유 X</span></td>
 								</tr>
 							</tbody>
 						</table>
-						<div id="licOptDiv">
-						<div className='licDivFir'><label><input id="onlineLicStts" type="checkbox" name="onlineLicStts" value="1"/> 인터넷 강의 허용</label><span className='licDesc'>&nbsp;(외부 동영상 플랫폼에서 출처 표시 하에 문제 사용 및 노출 허용)</span></div> 
-							<div className='licDiv'><label><input id="perLicStts" type="checkbox" name="perLicStts" value="1" /> 개인 강사 교재 허용</label><span className='licDesc'>&nbsp;(기업용 출판이 아닌 개인 강사 교재에 문제 수록 허용)</span></div> 
-							<div className='licDiv'><label><input id="entLicStts" type="checkbox" name="entLicStts" value="1"/> 출판사 교재 허용</label><span className='licDesc'>&nbsp;(기업용 출판 교재에 문제 수록 허용)</span></div>
+						<div id="licOptDiv" className="lowerOpacity">
+						<div className='licDivFir'><label><input id="onlineLicStts" type="checkbox" name="onlineLicStts" value="1" disabled/> 인터넷 강의 허용</label><span className='licDesc'>&nbsp;(외부 동영상 플랫폼에서 출처 표시 하에 문제 사용 및 노출 허용)</span></div> 
+							<div className='licDiv'><label><input id="perLicStts" type="checkbox" name="perLicStts" value="1" disabled/> 개인 강사 교재 허용</label><span className='licDesc'>&nbsp;(기업용 출판이 아닌 개인 강사 교재에 문제 수록 허용)</span></div> 
+							<div className='licDiv'><label><input id="entLicStts" type="checkbox" name="entLicStts" value="1" disabled/> 출판사 교재 허용</label><span className='licDesc'>&nbsp;(기업용 출판 교재에 문제 수록 허용)</span></div>
 						</div>
 					</div>
 				</div>

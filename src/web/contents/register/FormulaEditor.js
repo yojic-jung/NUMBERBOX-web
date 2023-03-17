@@ -744,13 +744,13 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 					<Link className='linkNoneCss' to="/makeContents">
 						<div className="relative">
 							<div className="makeContentsBtn active"></div>
-							<div className="makeContentsForImgBtnDesc">문제 직접 만들기</div>
+							<div className="makeContentsForImgBtnDesc">문제 등록</div>
 						</div>
 					</Link>
-					<Link className='linkNoneCss' to="/makeContentsForImg">
+					<Link className='linkNoneCss' to="/makeMultiContents">
 						<div className="relative">
 							<div className="makeContentsForImgBtn"></div>
-							<div className="makeContentsForImgBtnDesc">이미지로 등록하기</div>
+							<div className="makeContentsForImgBtnDesc">문제 멀티 등록</div>
 						</div>
 					</Link>
 				</div>

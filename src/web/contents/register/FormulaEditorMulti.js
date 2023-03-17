@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import FormulaShortCutKey from './FormulaShortCutKey';
 import TabButton from 'web/common/TabButton'
 import FormulaEditorUnitForMulti from './FormulaEditorUnitForMulti'
-
+import {Link} from "react-router-dom";
 import {nb_isLogin, nb_topMenuFixed, nb_dataFetch, nb_formDataFetch, nb_base64ImgRegisterToS3ByTargetId, nb_moveToScroll,
 	nb_getByteLengthOfString, nb_fadeInOutA, nb_detectScrollPosition} from 'js/common/common_nb.js';
 import {reg_mDownTdWidthChange, reg_mUpTdWidthChange, reg_formulaTapMoveEv, reg_convertSpanToNoTag, reg_removeStyleAttribute,
@@ -112,7 +112,7 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 	,{id:"contentsRootDiv23", ordinalNum:"23th", className:"hide"},{id:"contentsRootDiv24", ordinalNum: "24th", className:"hide"},{id:"contentsRootDiv25", ordinalNum: "25th", className:"hide"},{id:"contentsRootDiv26", ordinalNum: "26th", className:"hide"},{id:"contentsRootDiv27", ordinalNum: "27th", className:"hide"},{id:"contentsRootDiv28", ordinalNum: "28th", className:"hide"}
 	,{id:"contentsRootDiv29", ordinalNum: "29th", className:"hide"},{id:"contentsRootDiv30", ordinalNum: "30th", className:"hide"}];
 	
-	const formulaEditorList = formulaEditorArr.map((contents, idx) => <FormulaEditorUnitForMulti key={contents.ordinalNum} customId={contents.id} ordinalNum={contents.ordinalNum} classNames={contents.className} idx={idx} mathUnitInfo={mathUnitInfo}/>);
+	const formulaEditorList = formulaEditorArr.map((contents, idx) => <FormulaEditorUnitForMulti key={contents.ordinalNum} contentsClassify={contentsClassify} customId={contents.id} ordinalNum={contents.ordinalNum} classNames={contents.className} idx={idx} mathUnitInfo={mathUnitInfo}/>);
 
 	useEffect(() => {
 		const asyncUseEffect = async function(){
@@ -345,41 +345,40 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 				}
 			}
 			
+			if(Number(currentContentsDiv.querySelector("#subject").value) === 0){
+				alert("과목 정보를 선택 해주세요.")
+				currentContentsDiv.querySelector("#subject").scrollIntoView({ block: "center"});
+				currentContentsDiv.querySelector("#subject").focus();
+				currentContentsDiv.querySelector("#subject").classList.add("redBoxValid2");
+				return false;
+			}
 
-			//멀티등록 문제 단원/정보 출처 validation
+			if(Number(currentContentsDiv.querySelector("#secUnit").value) === 0){
+				alert("대단원 정보를 선택 해주세요.")
+				currentContentsDiv.querySelector("#secUnit").scrollIntoView({ block: "center"});
+				currentContentsDiv.querySelector("#secUnit").focus();
+				currentContentsDiv.querySelector("#secUnit").classList.add("redBoxValid2");
+				return false;
+			}
+
+			if(Number(currentContentsDiv.querySelector("#thrUnit").value) === 0){
+				alert("중단원 정보를 선택 해주세요.")
+				currentContentsDiv.querySelector("#thrUnit").scrollIntoView({ block: "center"});
+				currentContentsDiv.querySelector("#thrUnit").focus();
+				currentContentsDiv.querySelector("#thrUnit").classList.add("redBoxValid2");
+				return false;
+			}
+
+			if(Number(currentContentsDiv.querySelector("#quesType").value) === 0){
+				alert("유형 정보를 선택 해주세요.")
+				currentContentsDiv.querySelector("#quesType").scrollIntoView({ block: "center"});
+				currentContentsDiv.querySelector("#quesType").focus();
+				currentContentsDiv.querySelector("#quesType").classList.add("redBoxValid2");
+				return false;
+			}
+
+			//수능 입시 문제 출처 validation
 			if(contentsClassify === 4){
-				if(Number(currentContentsDiv.querySelector("#subject").value) === 0){
-					alert("과목 정보를 선택 해주세요.")
-					currentContentsDiv.querySelector("#subject").scrollIntoView({ block: "center"});
-					currentContentsDiv.querySelector("#subject").focus();
-					currentContentsDiv.querySelector("#subject").classList.add("redBoxValid2");
-					return false;
-				}
-
-				if(Number(currentContentsDiv.querySelector("#secUnit").value) === 0){
-					alert("대단원 정보를 선택 해주세요.")
-					currentContentsDiv.querySelector("#secUnit").scrollIntoView({ block: "center"});
-					currentContentsDiv.querySelector("#secUnit").focus();
-					currentContentsDiv.querySelector("#secUnit").classList.add("redBoxValid2");
-					return false;
-				}
-
-				if(Number(currentContentsDiv.querySelector("#thrUnit").value) === 0){
-					alert("중단원 정보를 선택 해주세요.")
-					currentContentsDiv.querySelector("#thrUnit").scrollIntoView({ block: "center"});
-					currentContentsDiv.querySelector("#thrUnit").focus();
-					currentContentsDiv.querySelector("#thrUnit").classList.add("redBoxValid2");
-					return false;
-				}
-
-				if(Number(currentContentsDiv.querySelector("#quesType").value) === 0){
-					alert("유형 정보를 선택 해주세요.")
-					currentContentsDiv.querySelector("#quesType").scrollIntoView({ block: "center"});
-					currentContentsDiv.querySelector("#quesType").focus();
-					currentContentsDiv.querySelector("#quesType").classList.add("redBoxValid2");
-					return false;
-				}
-
 				if(Number(currentContentsDiv.querySelector("#manageIns").value) === 0){
 					alert("출제기관을 선택 해주세요.")
 					currentContentsDiv.querySelector("#manageIns").scrollIntoView({ block: "center"});
@@ -446,6 +445,14 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 					return false;
 				}
 
+			}else if(contentsClassify === 1){
+				if(Number(currentContentsDiv.querySelector("#quesLevel").value) === 0){
+					alert("문제난이도를 선택 해주세요.")
+					currentContentsDiv.querySelector("#quesLevel").scrollIntoView({ block: "center"});
+					currentContentsDiv.querySelector("#quesLevel").focus();
+					currentContentsDiv.querySelector("#quesLevel").classList.add("redBoxValid2");
+					return false;
+				}
 			}
 		}
 		await reg_undoRedoInitialize();
@@ -710,7 +717,13 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 				contentsRootPaddingDiv[i].classList.add("hide");
 		   }
 			*/
-			await nb_fadeInOutA("컨텐츠가 정상적으로 등록되었습니다.", 3000);
+			let conRegSucMsg = "정상적으로 등록되었습니다.";
+			if(contentsClassify === 1){
+				conRegSucMsg+="\n나의 제작문제 페이지에서 확인할 수 있습니다.";
+			}else if(contentsClassify === 4){
+				conRegSucMsg+="\n수능/모의고사 작업내역에서 확인할 수 있습니다.";
+			}
+			await nb_fadeInOutA(conRegSucMsg, 3000);
 			
 			await reg_undoRedoSetting();
 			setFormulaEditorArr(new Array());
@@ -784,7 +797,21 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 		</div>
 
 		<form method="post" id="contentsForm" encType="multipart/form-data">
-		<div>
+		<div className="twoFlexLayout">
+			<div id="makeContentsLinkDiv" className="makeContentsLinkDiv multi">
+				<Link className='linkNoneCss' to="/makeContents">
+					<div className="relative">
+						<div className="makeContentsBtn"></div>
+						<div className="makeContentsForImgBtnDesc">문제 직접 만들기</div>
+					</div>
+				</Link>
+				<Link className='linkNoneCss' to="/makeContentsForImg">
+					<div className="relative">
+						<div className="makeContentsForImgBtn active"></div>
+						<div className="makeContentsForImgBtnDesc">이미지로 등록하기</div>
+					</div>
+				</Link>
+			</div>
 			<div className="formulEditMultiDiv">
 				<div onClick={()=>{errReportBy("makeContents")}} className="errBtn makeContents"></div>
 				<div id="topShortkeyDiv" className="topShortkeyDiv">
