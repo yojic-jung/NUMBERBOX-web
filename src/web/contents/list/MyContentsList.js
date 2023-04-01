@@ -544,7 +544,7 @@ const MyContentsList = ({isMine, userNo})=>{
                                                         </span>
                                                     </>
                                                     }
-                                                    {isMine && !isImgRegContents && contentsMap.contentsClassify ===1 && 
+                                                    {isMine && !isImgRegContents && 
                                                         <span className='hwpDownImgWrap' onClick={(event)=>{nb_confirmBox("해당 문제를 한글파일로 다운받으시겠습니까?\n(업로드 및 다운로드 일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = event.target.closest(".contentsDiv").dataset.contentsNo}}>
                                                             <img className="hwpDownImg" src={hwpDownImg} alt=""/>
                                                             <div className="hwpDownDesc">한글 파일로 다운 받기</div>

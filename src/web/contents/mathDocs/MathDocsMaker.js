@@ -1578,6 +1578,12 @@ const MathDocsMaker = ()=>{
         if(!isValid){
             return;
         }
+        let returnObj = await nb_dataFetch("/myContentsCheckForHwpDown?contentsNo=all", true);
+
+        if(returnObj.contentsNo === -1){
+            return;
+        }
+
         document.getElementById("mathDocsThrStep").classList.add("hide");
         await cvt_htmlToTexAll("mathContents", ".contentsDiv", document.getElementById("docsTitle").value, document.getElementById("mathDocsOwner").value, true);
         saveMathDocsPaper();
