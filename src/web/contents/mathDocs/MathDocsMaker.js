@@ -4,6 +4,7 @@ import { BrowserView, MobileView, isBrowser} from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import { Outlet } from "react-router";
 import "css/page/mathDocs.css";
+import {cvt_htmlToTexAll} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 import {nb_isLogin, nb_dataFetch, nb_formDataFetch, nb_moveToScrollAllRange, nb_multiChoiceGridSet, nb_fadeInOutA, 
     nb_fadeInOutB, nb_confirmBox, nb_getParameterByName} from 'js/common/common_nb.js';
 import CustomPieChart from "web/common/CustomPieChart";
@@ -13,8 +14,8 @@ import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
 import MultiRangeSlider from 'web/common/MultiRangeSlider';
 import MathDocsPaperA from 'web/contents/mathDocs/MathDocsPaperA';
-import makePdf from "js/common/makePdf";
 import {reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
+import hourglass from 'img/hourglass.gif';
 
 let currentPath = "";
 const MathDocsMaker = ()=>{
@@ -51,6 +52,7 @@ const MathDocsMaker = ()=>{
     const [impMinYear, setImpMinYear] =useState(0);
     const [impMaxYear, setImpMaxYear] =useState(0);
     const [impYearRender, setImpYearRender] =useState(false);
+    const [isHangeulDown, setIsHangeulDown] =useState(false);
 
     const removeAddedEvent = async ()=>{
         window.removeEventListener('popstate', gotoPreviousStep);
@@ -1409,21 +1411,30 @@ const MathDocsMaker = ()=>{
         setErrContentsNo(0);
     }
 
-    const printMathDocsPaper = async () => {
+    const mathDocsTitleInfoValid = async () => {
         if(document.getElementById("docsGrade").value.length > 7){
             nb_fadeInOutB("학년은 7글자 이하로 입력 해주세요.", 2000);
-            return;
+            return false;
         }
         if(document.getElementById("docsTitle").value.length > 20){
             nb_fadeInOutB("학습지 제목은 20글자 이하로 입력 해주세요.", 2000);
-            return;
+            return false;
         }
         if(document.getElementById("docsSubTitle").value.length > 100){
             nb_fadeInOutB("학습지 부제목은 100글자 이하로 입력 해주세요.", 2000);
-            return;
+            return false;
         }
         if(document.getElementById("mathDocsOwner").value.length > 20){
             nb_fadeInOutB("출제자명은 20글자 이하로 입력 해주세요.", 2000);
+            return false;
+        }
+        return true;
+    }
+
+    const printMathDocsPaper = async () => {
+        setIsHangeulDown(false);
+        let isValid = await mathDocsTitleInfoValid();
+        if(!isValid){
             return;
         }
         document.getElementById("mathDocsThrStep").classList.add("hide");
@@ -1560,6 +1571,20 @@ const MathDocsMaker = ()=>{
         setMinVal(minVal);
         setMaxVal(maxVal);
     }
+
+    const hanguelDocsDown = async()=>{
+        setIsHangeulDown(true);
+        let isValid = await mathDocsTitleInfoValid();
+        if(!isValid){
+            return;
+        }
+        document.getElementById("mathDocsThrStep").classList.add("hide");
+        await cvt_htmlToTexAll("mathContents", ".contentsDiv", document.getElementById("docsTitle").value, document.getElementById("mathDocsOwner").value, true);
+        saveMathDocsPaper();
+        registerMathDocsUsage();
+    }
+
+
 
     const subjectInfoList = subjectList.map( (subjectInfo) => {
         //중등인 경우 
@@ -2146,6 +2171,17 @@ return (
                                     isConImgHide="";
                                 }
 
+                                let lvScore = "";
+                                if(contentsMap.contentsClassify === 4){
+                                    if(contentsMap.quesLevel === 3){
+                                        lvScore="2점";
+                                    }else if(contentsMap.quesLevel === 4){
+                                        lvScore="3점";
+                                    }else if(contentsMap.quesLevel === 5){
+                                        lvScore="4점";
+                                    }
+                                }
+
                                 let conImgPath;
                                 if(contentsMap.contentsImg===null) conImgPath = "";
                                 else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
@@ -2189,6 +2225,34 @@ return (
                                                                 <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.contentsNo, "문제 오류 신고", 1)}}></div>
                                                                 <div className='delBtn' onClick={()=>{contentsDel(contentsMap.contentsNo)}}></div>
                                                             </td>
+                                                            {isHangeulDown && <td  className='td2 hide'>
+                                                                <div className='solRootDiv'>
+                                                                    <div className='ansSolDiv'>
+                                                                        <div id="workAnsShow" className='ansShow'>
+                                                                            <div>
+                                                                                <div className='ansContents'>
+                                                                                    <span className='ansDesc mini-title6'>답 &nbsp;&nbsp;</span>
+                                                                                    <span className='multiAnswerSheet' dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
+                                                                                    <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <div id="workSolShow" className='solShow'>
+                                                                            <div className='solContents' >
+                                                                                    {contentsMap.contentsClassify === 4 && 
+                                                                                    <div>
+                                                                                        <div>
+                                                                                            {contentsMap.impYear+1}학년도 {contentsMap.impMonth === 11 ? "수능" : contentsMap.impMonth+"월 모의고사"} {contentsMap.paperType === 2 && "가형" } {contentsMap.paperType === 3 && "나형" } {contentsMap.oddQuesNum+"번"} [{lvScore}] &nbsp;
+                                                                                            <span className='mini-title6'>오답률</span>&nbsp;{contentsMap.wrongRatio}%
+                                                                                        </div>
+                                                                                    </div>}    
+                                                                                    <div dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div>
+                                                                            </div> 
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>}
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -2252,7 +2316,7 @@ return (
                         </table>
                     </div>
                 </div>
-                    <div className='mathDocsDown hide' onClick={()=>{makePdf("mathDocsPaperPdf");}}>학습지 다운</div>
+                    <div className='mathDocsDown' onClick={()=>{hanguelDocsDown();}}>학습지 한글다운</div>
                     <div className='mathDocsPrint' onClick={()=>{printMathDocsPaper();}}>학습지 출력</div>
             </div>
         </div>
@@ -2287,6 +2351,15 @@ return (
                 <div className="mathDocsErrBtn2" onClick={() =>{document.getElementById("mathDocsErrReportBox").classList.add("hide")}}>취소</div>
             </div>
        </div>
+
+       <div id="resDetailedTimeDesc" className='blindBox hide'>
+                <div id="hourGlassBox" className='resDetailedTimeDesc'>
+                    <div>
+                        <img className="hourglass" src={hourglass} alt=""/>
+                    </div>
+                    <div id="hourGlassDesc"></div>
+                </div>
+            </div>
        </BrowserView>
        <MobileView>
        <div id="mathDocsDesc" className='mathDocsPageTitle mini-title5 mobile'>원하는 단원을 선택하여 학습지를 만들어보세요.</div>

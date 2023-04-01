@@ -740,7 +740,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 		<form method="post" id="contentsForm" encType="multipart/form-data">
 		<div className="twoFlexLayout" >
 			<div className="left">
-				<div id="makeContentsLinkDiv" className="makeContentsLinkDiv hide">
+				<div id="makeContentsLinkDiv" className="makeContentsLinkDiv">
 					<Link className='linkNoneCss' to="/makeContents">
 						<div className="relative">
 							<div className="makeContentsBtn active"></div>

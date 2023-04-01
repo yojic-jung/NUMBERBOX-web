@@ -116,7 +116,7 @@ return (
             <div className='mainSubDiv1'>
                 <div>
                     <div className='mainSubBox2 first'><img className='mainImgUI' src={main1} alt=""/></div>
-                    <div className='mainSubTitle'>손쉬운 학습지 제작</div>
+                    <div className='mainSubTitle'>손쉬운 학습지 제작(한글파일 제공)</div>
                     <div className='mainSubDesc'>
                         학년, 단원, 유형을 선택하여 난이도 및 문항 수에 맞게 사용자가 원하는<br/>
                         형식과 문제로 학습지를 만들어 사용할 수 있습니다.

@@ -2404,16 +2404,16 @@
 
 .makeContentsBtn{
     background:  url("img/writeBtn.png") no-repeat center;
-    background-size: 20px;
+    background-size: 22px;
 }
 .makeContentsBtn.active{
     background:  url("img/writeBtnBlue.png") no-repeat center;
-    background-size: 20px;
+    background-size: 22px;
 }
 
 .makeContentsForImgBtn{
     background:  url("img/multiContentsBtn-gray.png") no-repeat center;
-    background-size: 22px;
+    background-size: 25px;
 }
 
 
@@ -2448,5 +2448,5 @@
 
 .makeContentsForImgBtn.active{
     background:  url("img/multiContentsBtn-blue.png") no-repeat center;
-    background-size: 22px;
+    background-size: 25px;
 }

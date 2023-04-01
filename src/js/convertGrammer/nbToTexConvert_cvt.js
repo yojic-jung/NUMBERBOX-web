@@ -1,4 +1,4 @@
-import {nb_S3ImgToBase64} from 'js/common/common_nb.js';
+import {nb_S3ImgToBase64, nb_dateFormat, nb_formDataFileFetch} from 'js/common/common_nb.js';
 
 //수식 변수명 중복으로 여러개 등록되어있는 것 고유화 작업
 const inAccurateNbBoxesList = 
@@ -2056,4 +2056,172 @@ export const cvt_convertBoldTexToHtml= async (texGrammer, texIndex, nbFormulHTML
     }
     
     
+}
+
+export const cvt_htmlToTexAll = async (rootId, subClassName, title, owner, isSolHide ) => {
+    let workListTable = document.getElementById(rootId).querySelectorAll(subClassName);
+    let tmpNewTex = new Array();
+    let conTitleObj = new Object();
+    conTitleObj.contentsTitle = new Object();
+    conTitleObj.contentsTitle.title = title
+    conTitleObj.contentsTitle.owner = owner
+    conTitleObj.contentsTitle.conCnt = workListTable.length.toString();
+    tmpNewTex.push(conTitleObj);
+    for(let idx=0; idx<workListTable.length;idx++){
+        if(isSolHide){
+            workListTable[idx].querySelector(".td2").classList.remove("hide");
+        }
+        let rootTb =  workListTable[idx];
+        let contentsArr = [{className:"ansContents", title:"[정답] "}, {className:"solContents", title:""},{className:"quesContents", title:""}, {id:"workMultiShow", className:"multiDivContents"}];
+        let hwpJsonArrForPython = new Array();
+        for(let i=0; i<contentsArr.length; i++){
+            if(contentsArr[i].className === "multiDivContents"){
+                //객관식 문제 아니면 건너뛰기
+                if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("hide")){
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara4";
+                    hwpJsonArrForPython.push(breakObj);
+                    continue;
+                }
+                
+                let tableObj = new Object();
+                tableObj.contentsType = "table";
+                tableObj.contentsDetailType = "table";
+                tableObj.borderStyle = "allNone";
+                if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("twoDivGrid")){
+                    tableObj.rowCnt = 3;
+                    tableObj.colCnt = 2;
+                    tableObj.colWidthList = [1, 1]
+                }else if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("threeDivGrid")){
+                    tableObj.rowCnt = 2;
+                    tableObj.colCnt = 3;
+                    tableObj.colWidthList = [1, 1, 1]
+                }else{
+                    tableObj.rowCnt = 5;
+                    tableObj.colCnt = 1;
+                    tableObj.colWidthList = [1]
+                }
+                tableObj.contents = new Array();
+                let multiChoiceContents = [{className:"firDivContents"}, {className:"secDivContents"}, {className:"thrDivContents"}, {className:"fourDivContents"}, {className:"fifDivContents"}]; 
+                for(let j=0; j<multiChoiceContents.length; j++){
+                    await cvt_initWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                    let quesContents = rootTb.querySelector("."+multiChoiceContents[j].className).cloneNode(true);
+                    await cvt_textNodeConvert(quesContents);
+                    let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                    let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                    let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+
+                    let tableCellContents = new Array();
+                    let num = "";
+                    if(j===0) num = "① ";
+                    else if(j===1) num = "② ";
+                    else if(j===2) num = "③ ";
+                    else if(j===3) num = "④ ";
+                    else if(j===4) num = "⑤ ";
+                    let tmpNumInnerObj = new Object();
+                    tmpNumInnerObj.contentsType = "text";
+                    tmpNumInnerObj.contents = num;
+                    let tmpNumObj = new Object();
+                    tmpNumObj.contents = tmpNumInnerObj;
+                    tmpNumObj.align = "alignLeft";
+                    tableCellContents.push(tmpNumObj);
+
+                    for(let k=0; k<newHwpJsonArr.length; k++){
+                        //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
+                        //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
+                        if(k===newHwpJsonArr.length-1 && newHwpJsonArr[k].contentsType==="BreakPara"){
+                            break;
+                        }
+                        let tmpObj = new Object();
+                        tmpObj.contents = newHwpJsonArr[k];
+                        tableCellContents.push(tmpObj);
+
+                    }
+                    tableObj.contents.push(tableCellContents);
+                    await cvt_initOrgWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
+                }
+                hwpJsonArrForPython.push(tableObj);
+
+                let breakObj = new Object();
+                breakObj.contentsType = "BreakPara4";
+                hwpJsonArrForPython.push(breakObj);
+            }else{
+                await cvt_initWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                let quesContents = rootTb.querySelector("."+contentsArr[i].className).cloneNode(true);
+                if(contentsArr[i].className === "ansContents") {
+                    if(quesContents.querySelector(".multiAnswerSheet").innerText.length !== 0){
+                        quesContents.querySelector(".multiAnswerSheet").innerText = quesContents.querySelector(".multiAnswerSheet").innerText+" ";
+                    }
+                    quesContents.querySelector(".answerSheet").prepend(quesContents.querySelector(".multiAnswerSheet"))
+                    quesContents = quesContents.querySelector(".answerSheet");
+                }
+                await cvt_textNodeConvert(quesContents);
+                let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+                let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+                await cvt_initOrgWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
+                let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+                let titleArr = new Array();
+
+                if(contentsArr[i].className === "ansContents"){
+                    let mizuObj = new Object();
+                    mizuObj.contentsType = "insertMizu";
+                    titleArr.push(mizuObj);
+                }else if(contentsArr[i].className === "quesContents"){
+                    let moveDocEnd = new Object();
+                    moveDocEnd.contentsType = "moveDocEnd";
+                    titleArr.push(moveDocEnd);
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    titleArr.push(breakObj);
+                }
+
+                if(contentsArr[i].className === "solContents"){
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    titleArr.push(breakObj);
+                }
+
+                let boldObj = new Object();
+                boldObj.contentsType = "CharShapeBold";
+                titleArr.push(boldObj);
+                let titleObj = new Object();
+                titleObj.contentsType = "text";
+                titleObj.contents = contentsArr[i].title;
+                titleArr.push(titleObj);
+                titleArr.push(boldObj);
+
+                
+                if(contentsArr[i].className === "solContents"){
+                    let breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    newHwpJsonArr.push(breakObj);
+                    breakObj = new Object();
+                    breakObj.contentsType = "BreakPara";
+                    newHwpJsonArr.push(breakObj);
+                    
+                }
+
+                newHwpJsonArr.unshift(...titleArr);
+
+                let breakObj = new Object();
+                breakObj.contentsType = "BreakPara";
+                hwpJsonArrForPython.push(...newHwpJsonArr);
+            }
+
+        }
+        tmpNewTex.push(...hwpJsonArrForPython);
+        if(isSolHide){
+            workListTable[idx].querySelector(".td2").classList.add("hide");
+        }
+        
+    }
+
+    let form = new FormData();
+    form.append("jsonString", JSON.stringify(tmpNewTex));
+    document.getElementById("resDetailedTimeDesc").classList.remove("hide");
+    document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n제작문제가 많을수록 시간이 더 걸릴 수 있습니다.\n잠시만 기다려 주세요...";
+    let nowDate = await nb_dateFormat("_");
+    let fileName = "[N명의수학]나의제작문제_"+nowDate+".hwp";
+    await nb_formDataFileFetch("/takeHwpFile", form, fileName);
+    document.getElementById("resDetailedTimeDesc").classList.add("hide");
 }
