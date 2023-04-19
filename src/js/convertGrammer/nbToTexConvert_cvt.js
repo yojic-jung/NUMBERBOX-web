@@ -96,6 +96,7 @@ export const replaceTexToNbFormul = [{texGrammer: "+-", nbFormula : "±"},
     {texGrammer: "GEQ ", nbFormula : "≥"},
     {texGrammer: "EMPTYSET ", nbFormula : "∅"},
     {texGrammer: "CUP ", nbFormula : "∪"},
+    {texGrammer: "CAP ", nbFormula : "∩"},
     {texGrammer: "SMALLINTER ", nbFormula : "∩"},
     {texGrammer: "NOTIN ", nbFormula : "∉"},
     {texGrammer: "INF ", nbFormula : "∞"},
@@ -782,6 +783,12 @@ export const cvt_makeJsonForHwp = async (innerContents) => {
             */
             innerObj.contentsDetailType = "table"
             innerObj.charAs = 0;  //글자처럼 취급하지 않음
+
+            //테이블 태그만 남은 경우(버그해결)
+            if(innerContents.childNodes.length === 0 || innerContents.childNodes[0].childNodes.length === 0){
+                innerObj.contentsType="BreakPara";
+                return innerObj;
+            }
             innerObj.rowCnt = innerContents.childNodes[0].childNodes.length
             innerObj.colCnt = innerContents.childNodes[0].childNodes[0].querySelectorAll(".innerTbTd").length
             //셀 너비 배열 셋팅[시작]
