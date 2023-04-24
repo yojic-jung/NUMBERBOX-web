@@ -118,7 +118,9 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 		const asyncUseEffect = async function(){
 			//reg_enableImageResizeInDiv('contentsFormulaEditor');
 			//reg_enableImageResizeInDiv('solutionFormulaEditor');
-			
+			if(contentsClassify !== 1){
+				document.getElementById("makeContentsLinkDiv").classList.add('hide');
+			}
 			let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
 			setIsFetchShotCutKey(true);

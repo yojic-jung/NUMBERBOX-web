@@ -1,15 +1,21 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect } from 'react';
 import {UnitTypeCombo} from 'web/common/UnitTypeCombo';
 import LicenseUi from 'web/common/LicenseUi.js';
 import { useLocation } from 'react-router-dom';
 import CustomSelBoxDown from 'web/common/CustomSelBoxDown'
+import ToggleButton from 'web/common/ToggleButton'
 import licensePublic from 'img/license-public.png'
 import licensePrivate from 'img/license-private.png'
 import {nb_closeBtn, nb_completeBlueBox, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, 
 	nb_base64ImgRegisterToS3ByTargetId, nb_getByteLengthOfString} from 'js/common/common_nb.js';
-import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, reg_removeStyleAttribute, reg_removeResizeFrame} from 'js/contents/register/contents_reg';
+import {reg_quesAnsTabClkEv, reg_undoRedoInitialize, reg_undoRedoSetting, reg_convertSpanToNoTag, 
+	reg_removeStyleAttribute, reg_removeResizeFrame, reg_unitTypeChange, reg_selectUnitOrTypeData} from 'js/contents/register/contents_reg';
 import { cvt_convertHtmlToTex} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg})=>{
+    const [unitList, setUnitList] = useState(new Array());
+	const [subjectList, setSubjectList] = useState(new Array());
+	const [isManyRec, setIsManyRec] = useState(false);
+
 	let urlPath = useLocation().pathname;
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
@@ -441,12 +447,137 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			await reg_quesAnsTabClkEv(trigEv);
 		}
 	  }
+
+	  const takeMathProblemAnalysis = async () => {
+		document.getElementById("ai-unit-screen-box").classList.add("hide");
+		let contentGrammer = document.createElement("div")
+		contentGrammer.innerHTML = document.getElementById("contentsFormulaEditor").innerHTML;
+		
+		let innerTbTd = contentGrammer.querySelectorAll(".innerTbTd");
+		for(let i=0;i<innerTbTd.length; i++){
+			innerTbTd[i].append(document.createTextNode("\n"));
+		}
+		let contentsDiv = await cvt_convertHtmlToTex(contentGrammer);
+		let newFormData = new FormData();
+		newFormData.append("contentsGram", contentsDiv.innerText);
+
+		let returnObj = await nb_formDataFetch("/mathInfo/mathUnitAnalysis",newFormData, true);
+		let unitListArr = returnObj.unitList;
+		setUnitList(unitListArr);
+
+		let prevSubject = "";
+		let subArr = new Array();
+		for(let i=0; i<returnObj.unitList.length;i++){
+			if(prevSubject === returnObj.unitList[i].subject){
+
+			}else{
+				let obj = new Object();
+				obj.unitUniqNo = returnObj.unitList[i].unitUniqNo;
+				obj.subject = returnObj.unitList[i].subject;
+				subArr.push(obj);
+			}
+			prevSubject = returnObj.unitList[i].subject;
+		}
+		setSubjectList(subArr);
+
+		if(returnObj.unitList.length>8){
+			setIsManyRec(true);
+		}else{
+			setIsManyRec(false);
+		}
+
+		document.getElementById("ai-unit-screen-box").classList.remove("hide");
+	  }
+
+	  const unitAutoMapping = async (unitUniqNo, subject, secUnit) =>{
+			//과목
+			document.getElementById("subject").value = subject;
+			document.getElementById("cusSelSubTitle").innerHTML =document.getElementById("subject")[document.getElementById("subject").selectedIndex].innerText;
+			document.getElementById("cusSelSubDiv").classList.add("nbCustomSelected");
+			let trigEv = new Object();
+			let sub    = new Object();
+			trigEv.target= sub;
+			trigEv.target.id= "subject";
+			await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
+
+			document.getElementById("secUnit").value =secUnit
+			document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
+			document.getElementById("cusSelSecUnitDiv").classList.add("nbCustomSelected");
+			trigEv.target.id= "secUnit";
+			await reg_unitTypeChange(trigEv, "cusSelThrUnit","thrUnit", true);
+			await reg_selectUnitOrTypeData("thrUnit", "cusSelThrUnitTitle",  "cusSelThrUnitDiv", unitUniqNo);
+			//유형 선택
+			const liBox = document.getElementById("cusSelThrUnit").querySelectorAll("li");
+			for(let i=0; i<liBox.length;i++){
+				if(Number(liBox[i].dataset.uniqNo) === unitUniqNo){
+					liBox[i].click();
+				}
+			}
+			document.getElementById("ai-unit-screen-box").classList.add("hide")
+	  }
+
+	  const openUnitList = async (unitUniqNo, subject) =>{
+		setIsManyRec(false);
+		let unitContentsList = document.getElementsByClassName("unitContentsList");
+		for(let i=0; i<unitContentsList.length; i++){
+			let unitContentsFirst = unitContentsList[i].querySelector(".unitContentsFirst");
+			let tmpSpan = document.createElement("span");
+			tmpSpan.innerHTML = subject;
+			if(unitContentsFirst.innerHTML!==tmpSpan.innerHTML){
+				unitContentsList[i].classList.add('hide')
+			}else{
+				unitContentsList[i].classList.remove('hide')
+			}
+		}
+	  }
+
+	  const subjectContentsList = subjectList.map( (unitMap, idx) => {
+		return <span className='blueSquareBox opacity' data-unit-uniq-no={unitMap.unitUniqNo} key={idx} onClick={()=>{openUnitList(unitMap.unitUniqNo, unitMap.subject)}} dangerouslySetInnerHTML={{__html:unitMap.subject}}>
+				</span>
+				
+	  })
+
+	  const unitContentsList = unitList.map( (unitMap, idx) => {
+		return <tr className='unitContentsList' data-unit-uniq-no={unitMap.unitUniqNo} key={idx} onClick={()=>{unitAutoMapping(unitMap.unitUniqNo, unitMap.subject, unitMap.secUnit)}}>
+					<td className='unitContentsFirst' dangerouslySetInnerHTML={{__html:unitMap.subject}}></td>
+					<td dangerouslySetInnerHTML={{__html:unitMap.secUnit}}></td>
+					<td dangerouslySetInnerHTML={{__html:unitMap.thrUnit}}></td>
+				</tr>
+	  })
+
   return (
     <>
 		<div id="formulaEditBlindBox" className="blindBox hide"></div>
+		<div id="ai-unit-screen-box" className="blindBox priority hide">
+			<div className='ai-unit-rec-wrap'>
+				<div className="closeBtn custom" onClick={ () => document.getElementById("ai-unit-screen-box").classList.add("hide")}>&#88;</div>
+				<div className='ai-unit-title'>AI분석 결과 아래와 같은 단원이 추론되었습니다.</div>
+				<div className="toggle-root-div custom2" onClick={()=>takeMathProblemAnalysis()}><span className='doble-circle'></span><span>다시 추천 받기</span></div>
+				<div className='ai-unit-back'>
+					<div className={isManyRec ? "hide" : ""}>
+						<table className='ai-unit-map' >
+							<tbody>
+								{unitContentsList.length===0 ? <tr><td className='none'>죄송합니다. 추천 결과가 없습니다.<br/>AI 단원 매핑 추천 결과는 구체적이고 상세한 설명의 문제일수록 정확합니다.</td></tr> : unitContentsList}
+							</tbody>
+						</table>
+					</div>
+					<div className={isManyRec ? "grid-custom":"grid-custom hide"}>
+						{subjectContentsList}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
 		<div id="contentsInfo" className="contentsInfo hide">
 				<div className="closeBtn" onClick={ () => nb_closeBtn("contentsInfo")}>&#88;</div>
-				<div className="mini-title3">문제 단원 및 유형 정보를 입력해 주세요.</div>
+				<div className="mini-title3 alignCenter">문제 단원 및 유형 정보를 입력해 주세요.</div>
+				{updateModeUniqNo==="" && <div className="toggle-root-div custom hide" onClick={()=>takeMathProblemAnalysis()}>
+					<span className='doble-circle'></span><span>AI 단원 매핑 추천 받기</span> 
+				</div>}
+				<div className='hide'>
+					<ToggleButton id="ai-unit-mapping-btn" title={"AI 단원 매핑 추천 받기"} parentMethod={()=>{takeMathProblemAnalysis()}}></ToggleButton>
+				</div>
 				
 				<UnitTypeCombo updateModeUniqNo={updateModeUniqNo} />
 				

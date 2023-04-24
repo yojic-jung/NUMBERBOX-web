@@ -23,8 +23,8 @@ return (
 
             {isManger &&
                 <>
-                    <div><Link className='manager-link' to="/admin/workContentsList"><span className='manager-menu-btn'>작업내역</span></Link></div>
-                    <div><Link className='manager-link' to="/admin/registerContents"><span className='manager-menu-btn'>문제만들기</span></Link></div>
+                    <div><Link className='manager-link' to="/admin/workContentsList"><span className='manager-menu-btn'>자체문제 작업내역</span></Link></div>
+                    <div><Link className='manager-link' to="/admin/registerContents"><span className='manager-menu-btn'>자체문제 만들기</span></Link></div>
                 </>
             }
 

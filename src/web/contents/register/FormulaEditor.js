@@ -206,7 +206,10 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			}
 			//reg_enableImageResizeInDiv('contentsFormulaEditor');
 			//reg_enableImageResizeInDiv('solutionFormulaEditor');
-			
+			if(contentsClassify !== 1){
+				document.getElementById("makeContentsLinkDiv").classList.add('hide');
+			}
+
 			let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
 			setShortCutKey(jsonObj);
 			setIsFetchShotCutKey(true);
@@ -261,6 +264,8 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			//수정모드
 			if(contentsNo!==undefined){
 				document.getElementById("makeContentsLinkDiv").classList.add("hide");
+				document.getElementById("ai-unit-mapping-btn").classList.add("hide");
+				
 				if(urlPath === "/contentsList" || urlPath === "/myRepository"){		//문제검색 페이지에서는 다른 사용자의 제작문제 접근 가능
 					myContents = await nb_dataFetch('/mathInfo/takeContentsByContentsNo?contentsno='+contentsNo, true);
 				}else{
