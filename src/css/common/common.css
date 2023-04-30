@@ -2127,7 +2127,7 @@
  .ai-unit-map tr td:first-child{
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    min-width: 50px;
+    min-width: 62px;
  }
 
  .ai-unit-map tr td:last-child{

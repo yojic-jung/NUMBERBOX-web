@@ -15,18 +15,25 @@ const MembersStatistic = () => {
     const [membesrCntByProfile, setMembesrCntByProfile] = useState(new Array());
     const [membesrCntBySignupDate, setMembesrCntBySignupDate] = useState(new Array());
 
+    const [monthlyMembersCnt, setMonthlyMembersCnt] = useState(new Array());
     const [dailyLoginUserCnt, setDailyLoginUserCnt] = useState(new Array());
+    const [monthlyLoginUserCnt, setMonthlyLoginUserCnt] = useState(new Array());
+    
     const [reLoginRatioPerMonth, setReLoginRatioPerMonth] = useState(new Array());
 
     const [docsUsage, setDocsUsage] = useState(new Array());
+    const [docsUsageByMonth, setDocsUsageByMonth] = useState(new Array());
     const [docsUsageByProfile, setDocsUsageByProfile] = useState(new Array());
     const [docsUsageByProfileAndDay, setDocsUsageByProfileAndDay] = useState(new Array());
     const [docsUsageByDay, setDocsUsageByDay] = useState(new Array());
     const [fileConvertStatistic, setFileConvertStatistic] = useState(new Array());
 
     const [memberMathContentsCnt, setMemberMathContentsCnt] = useState(new Array());
-
-
+    const [mathContentsCntByMonthly, setMathContentsCntByMonthly] = useState(new Array());
+    const [mathContentsCntByProfile, setMathContentsCntByProfile] = useState(new Array());
+    const [mathContentsCntByWeekday, setMathContentsCntByWeekday] = useState(new Array());
+    const [mathContentsCntByShareStts, setMathContentsCntByShareStts] = useState(new Array());
+    
     useEffect(() => {
         if(!isAdmin) window.location.href = "/";
         const asyncUseEffect = async () =>{
@@ -42,13 +49,20 @@ const MembersStatistic = () => {
             setMembesrCntByProAndHourPeriod(statistic1.membesrCntByProAndHourPeriod)
             setMembesrCntByProfile(statistic1.membesrCntByProfile)
             setMembesrCntBySignupDate(statistic1.membesrCntBySignupDate)
+            setMonthlyMembersCnt(statistic1.monthlyMembersCnt);
             setDailyLoginUserCnt(statistic1.dailyLoginUserCnt);
+            setMonthlyLoginUserCnt(statistic1.monthlyLoginUserCnt);
             setReLoginRatioPerMonth(statistic1.reLoginRatioPerMonth);
 
+            setMathContentsCntByMonthly(statistic3.mathContentsCntByMonthly);
+            setMathContentsCntByProfile(statistic3.mathContentsCntByProfile);
+            setMathContentsCntByWeekday(statistic3.mathContentsCntByWeekday);
+            setMathContentsCntByShareStts(statistic3.mathContentsCntByShareStts);
             setMemberMathContentsCnt(statistic3.memberMathContentsCnt);
             setFileConvertStatistic(statistic4.fileConvertStatistic);
 
             setDocsUsage(statistic2.docsUsage);
+            setDocsUsageByMonth(statistic2.docsUsageByMonth);
             setDocsUsageByProfile(statistic2.docsUsageByProfile)
             setDocsUsageByProfileAndDay(statistic2.docsUsageByProfileAndDay);
             setDocsUsageByDay(statistic2.docsUsageByDay);
@@ -113,25 +127,39 @@ const MembersStatistic = () => {
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;가입자 분포 통계&gt;</div>
+                        <StatisticTable title="최근 가입자 분포" statisticArr={membesrCntBySignupDate} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="월별 가입자 분포" statisticArr={monthlyMembersCnt} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
                         <StatisticTable title="시간대별 가입자 분포" statisticArr={membesrCntByHourPeriod} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
-                        <StatisticTable title="프로필/시간대별 가입자 분포" statisticArr={membesrCntByProAndHourPeriod} hasRowName={true} unit='명' totalOpt={true} ratioOpt={false}></StatisticTable>
-                        <StatisticTable title="날짜별 가입자 분포" statisticArr={membesrCntBySignupDate} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <div className='hide'>
+                            <StatisticTable title="프로필/시간대별 가입자 분포" statisticArr={membesrCntByProAndHourPeriod} hasRowName={true} unit='명' totalOpt={true} ratioOpt={false}></StatisticTable>
+                        </div>
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;접속자 분포 통계&gt;</div>
-                        <StatisticTable title="일일 접속자 분포" statisticArr={dailyLoginUserCnt} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="최근 접속자 분포" statisticArr={dailyLoginUserCnt} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="월별 접속자 분포" statisticArr={monthlyLoginUserCnt} hasRowName={false} unit='명' totalOpt={false} ratioOpt={false}></StatisticTable>
                         <StatisticTable title="월별 가입자 재접속 비율" statisticArr={reLoginRatioPerMonth} hasRowName={false} unit='%' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;학습지 분포 통계&gt;</div>
                         <StatisticTable title="학습지 사용률" statisticArr={docsUsage} hasRowName={false} unit='번' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="학습지 월별 사용률" statisticArr={docsUsageByMonth} hasRowName={false} unit='번' totalOpt={false} ratioOpt={false}></StatisticTable>
                         <StatisticTable title="요일별 학습지 사용률" statisticArr={docsUsageByDay} hasRowName={false} unit='번' totalOpt={true} ratioOpt={true}></StatisticTable>
                         <StatisticTable title="프로필별 학습지 사용률" statisticArr={docsUsageByProfile} hasRowName={false} unit='번' totalOpt={true} ratioOpt={true}></StatisticTable>
-                        <StatisticTable title="프로필/요일별 학습지 사용률" statisticArr={docsUsageByProfileAndDay} hasRowName={true} unit='번' totalOpt={true} ratioOpt={false}></StatisticTable>
+                        <div className='hide'>
+                            <StatisticTable title="프로필/요일별 학습지 사용률" statisticArr={docsUsageByProfileAndDay} hasRowName={true} unit='번' totalOpt={true} ratioOpt={false}></StatisticTable>
+                        </div>
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;문제 제작 분포 통계&gt;</div>
-                        <StatisticTable title="문제 제작 사용자" statisticArr={memberMathContentsCnt} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <StatisticTable title="사용자 제작 문제 수" statisticArr={mathContentsCntByMonthly} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="프로필별 사용자 제작 문제 수" statisticArr={mathContentsCntByProfile} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="요일별 사용자 제작 문제 수" statisticArr={mathContentsCntByWeekday} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        <StatisticTable title="전체 문제 구분" statisticArr={mathContentsCntByShareStts} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        <div className='hide'>
+                            <StatisticTable title="문제 제작 사용자" statisticArr={memberMathContentsCnt} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
+                        </div>
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;파일변환 사용 통계&gt;</div>

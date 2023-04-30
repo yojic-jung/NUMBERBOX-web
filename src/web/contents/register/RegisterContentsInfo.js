@@ -20,6 +20,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
     useEffect(() => {
 		document.body.addEventListener('click',(event)=>nb_fCustomSelClose(event));
 		if(isOnlyImgReg){ document.getElementById("transLicenseDesc").classList.add("hide");}
+		window.lastRunTime =0;
       },[]);
 
 	  let targetId = ["contentsFormulaEditor", "solutionFormulaEditor" ,"firNoFormulaEditor" , "secNoFormulaEditor", "thrNoFormulaEditor", "fourNoFormulaEditor", "fifNoFormulaEditor", "answerFormulaEditor"];
@@ -448,7 +449,40 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		}
 	  }
 
+	  const test = async () => {
+			let contentGrammer = document.createElement("div")
+			contentGrammer.innerHTML = document.getElementById("contentsFormulaEditor").innerHTML;
+			
+			let innerTbTd = contentGrammer.querySelectorAll(".innerTbTd");
+			for(let i=0;i<innerTbTd.length; i++){
+				innerTbTd[i].append(document.createTextNode("\n"));
+			}
+			let contentsDiv = await cvt_convertHtmlToTex(contentGrammer);
+			let newFormData = new FormData();
+			newFormData.append("contentsGram", contentsDiv.innerText);
+
+			let returnObj = await nb_formDataFetch("/mathInfo/mathAiCompContents",newFormData, true);
+			if(returnObj.existMsg) return;
+	  }
 	  const takeMathProblemAnalysis = async () => {
+		const now = new Date();
+		const currentTime = now.getTime();
+
+		// 1분 이상이 지난 경우 lastRunTime을 현재 시간으로 업데이트
+		if (currentTime - window.lastRunTime > 60000) {
+			window.lastRunTime = currentTime;
+			window.unitMappingHistory = [];
+		}
+
+		// 1분에 5번 이상 실행되지 않도록 제한
+		if (window.unitMappingHistory.length > 5) {
+			alert("AI 단원 매핑의 연속적인 사용은 지양해주시기 바랍니다.\n1분 후 다시 시도해주세요. (하루 사용량 100회 제한)")
+			return;
+		}else{
+			window.unitMappingHistory.push({ date: now });
+		}
+		window.lastRunTime = new Date().getTime();
+
 		document.getElementById("ai-unit-screen-box").classList.add("hide");
 		let contentGrammer = document.createElement("div")
 		contentGrammer.innerHTML = document.getElementById("contentsFormulaEditor").innerHTML;
@@ -462,6 +496,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		newFormData.append("contentsGram", contentsDiv.innerText);
 
 		let returnObj = await nb_formDataFetch("/mathInfo/mathUnitAnalysis",newFormData, true);
+		if(returnObj.existMsg) return;
 		let unitListArr = returnObj.unitList;
 		setUnitList(unitListArr);
 
@@ -479,13 +514,16 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			prevSubject = returnObj.unitList[i].subject;
 		}
 		setSubjectList(subArr);
-
 		if(returnObj.unitList.length>8){
 			setIsManyRec(true);
 		}else{
 			setIsManyRec(false);
 		}
 
+		let unitContentsList = document.getElementsByClassName("unitContentsList");
+		for(let i=0; i<unitContentsList.length; i++){
+			unitContentsList[i].classList.remove("hide");
+		}
 		document.getElementById("ai-unit-screen-box").classList.remove("hide");
 	  }
 
@@ -516,7 +554,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 			document.getElementById("ai-unit-screen-box").classList.add("hide")
 	  }
 
-	  const openUnitList = async (unitUniqNo, subject) =>{
+	  const openUnitList = async (event, subject) =>{
 		setIsManyRec(false);
 		let unitContentsList = document.getElementsByClassName("unitContentsList");
 		for(let i=0; i<unitContentsList.length; i++){
@@ -532,7 +570,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 	  }
 
 	  const subjectContentsList = subjectList.map( (unitMap, idx) => {
-		return <span className='blueSquareBox opacity' data-unit-uniq-no={unitMap.unitUniqNo} key={idx} onClick={()=>{openUnitList(unitMap.unitUniqNo, unitMap.subject)}} dangerouslySetInnerHTML={{__html:unitMap.subject}}>
+		return <span className='blueSquareBox opacity' data-unit-uniq-no={unitMap.unitUniqNo} key={idx} onClick={(event)=>{openUnitList(event, unitMap.subject)}} dangerouslySetInnerHTML={{__html:unitMap.subject}}>
 				</span>
 				
 	  })
@@ -572,7 +610,7 @@ const RegisterContentsInfo = ({parentMethod, updateModeUniqNo, contentsClassify,
 		<div id="contentsInfo" className="contentsInfo hide">
 				<div className="closeBtn" onClick={ () => nb_closeBtn("contentsInfo")}>&#88;</div>
 				<div className="mini-title3 alignCenter">문제 단원 및 유형 정보를 입력해 주세요.</div>
-				{updateModeUniqNo==="" && <div className="toggle-root-div custom hide" onClick={()=>takeMathProblemAnalysis()}>
+				{updateModeUniqNo==="" && <div className="toggle-root-div custom" onClick={()=>takeMathProblemAnalysis()}>
 					<span className='doble-circle'></span><span>AI 단원 매핑 추천 받기</span> 
 				</div>}
 				<div className='hide'>

@@ -1944,8 +1944,8 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 	if(!isMyContents){
 		if(!window.getSelection().isCollapsed){
 			if(!document.getSelection().isCollapsed && event.ctrlKey && (event.keyCode === 67 || event.keyCode === 88) && !event.altKey) {
-				event.preventDefault();
-				return;
+				//event.preventDefault();
+				//return;
 			}
 		}
 	}

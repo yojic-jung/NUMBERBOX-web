@@ -95,8 +95,8 @@ const FormulaEditorUnitForMulti = ({contentsClassify, customId, ordinalNum, clas
 		if(!isMyContents){
 			if(!window.getSelection().isCollapsed){
 				if(!document.getSelection().isCollapsed && event.ctrlKey && (event.keyCode === 67 || event.keyCode === 88) && !event.altKey) {
-					await nb_fadeInOutA("다른 사용자의 문제(변형문제 포함)는 복사가 불가합니다.", 2000);
-					return;
+					//await nb_fadeInOutA("다른 사용자의 문제(변형문제 포함)는 복사가 불가합니다.", 2000);
+					//return;
 				}
 			}
 		}
