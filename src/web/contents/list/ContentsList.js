@@ -5,11 +5,10 @@ import { useLocation } from 'react-router-dom';
 import {Link} from "react-router-dom";
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import EmptyList from 'web/common/EmptyList';
-import {nb_dataFetch} from 'js/common/common_nb.js';
 import CustomUnitSelBox from 'web/common/CustomUnitSelBox';
 import UnitSelBox from 'web/common/UnitSelBox';
 import DetailedContentsWrap from 'web/common/DetailedContentsWrap';
-import {nb_isLogin, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, nb_closeBtn, nb_detectScrollPosition, nb_moveToScroll,
+import {nb_dataFetch, nb_isLogin, nb_fCustomSelClose, nb_formDataFetch, nb_fadeInOut, nb_licenseUiCheck, nb_closeBtn, nb_detectScrollPosition, nb_moveToScroll,
     nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_getParameterByName, nb_topMenuFixed2} from 'js/common/common_nb.js';
 import {reg_unitTypeChange, reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import "css/common/nbScreen.css";
@@ -23,7 +22,8 @@ let subjectVal;
 let secUnitVal;
 let thrUnitVal;
 let currentPath = "";
-let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
+let curPageNum = 0;
+let pageVolume = 100;
 const ContentsList = ()=>{
     let location = useLocation();
 
@@ -64,7 +64,6 @@ const ContentsList = ()=>{
 
 
     const modalPopupClose = async (event, isSearch) =>{
-        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
@@ -95,18 +94,20 @@ const ContentsList = ()=>{
         await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
         */
 
-        document.getElementById("secUnit").value = secUnitVal;
-        document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
-        document.getElementById("cusSelSecUnitDiv").classList.add("nbCustomSelected");
-        trigEv.target.id= "secUnit";
-        await reg_unitTypeChange(trigEv, "cusSelThrUnit","thrUnit", true);
-
-        document.getElementById("thrUnit").value = thrUnitVal;
-        document.getElementById("cusSelThrUnitTitle").innerHTML =document.getElementById("thrUnit")[document.getElementById("thrUnit").selectedIndex].innerText;
-        document.getElementById("cusSelThrUnitDiv").classList.add("nbCustomSelected");
-        
-        
-
+        if(secUnitVal !== "대단원"){
+            document.getElementById("secUnit").value = secUnitVal;
+            document.getElementById("cusSelSecUnitTitle").innerHTML =document.getElementById("secUnit")[document.getElementById("secUnit").selectedIndex].innerText;
+            document.getElementById("cusSelSecUnitDiv").classList.add("nbCustomSelected");
+            trigEv.target.id= "secUnit";
+            await reg_unitTypeChange(trigEv, "cusSelThrUnit","thrUnit", true);
+        }
+        if(thrUnitVal !== "중단원"){
+            document.getElementById("thrUnit").value = thrUnitVal;
+            document.getElementById("cusSelThrUnitTitle").innerHTML =document.getElementById("thrUnit")[document.getElementById("thrUnit").selectedIndex].innerText;
+            document.getElementById("cusSelThrUnitDiv").classList.add("nbCustomSelected");
+            
+        }
+       
         //모달창에서 저장하기 버튼을 누른 경우에만 검색
         //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
         if(!event.isTrusted) {  //사용자가 문제 등록 한 경우
@@ -147,14 +148,6 @@ const ContentsList = ()=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
-        let scrollCheck = await setInterval(()=>{
-            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
-                let contentsDiv = document.getElementById("contentsRepo"+contentsNo);
-                contentsDiv.scrollIntoView({behavior: "auto", block: "center", inline: "center"});
-                clearInterval(scrollCheck);
-            }
-        }, 20)
-        
     }
     
     useEffect(()=>{
@@ -209,8 +202,16 @@ const ContentsList = ()=>{
 
 
         const historyBackSearchCondSetting = async (param)=> {
+            curPageNum=0
             let formData = new FormData(document.getElementById("workSearchForm"));
-            formData.append("unitUniqNo",param);
+            if(param.indexOf("-")>-1){
+                formData.append("unitUniqNoStr",param);
+            }else{
+                formData.append("unitUniqNo",param);
+            }
+            formData.append("curPageNum", curPageNum);
+            formData.append("pageVolume", pageVolume);
+            
             let returnObj = await nb_formDataFetch("/mathInfo/takeContentsList",formData, true);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
@@ -228,6 +229,12 @@ const ContentsList = ()=>{
                     setContentsList(returnObj["mathContents"]);
                 }
             }
+
+            if(returnObj.totalPageCnt > 1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+            }
            
 
             //이전 검색조건 셋팅
@@ -236,6 +243,9 @@ const ContentsList = ()=>{
         
             trigEv.target= sub;
             trigEv.target.id= "subject";
+
+            param = param.split("-")[0];
+            let searchCond = await nb_getParameterByName("searchCond");
 
             let subject = document.getElementById("subject");
             let selectedIdx = 0;
@@ -288,6 +298,8 @@ const ContentsList = ()=>{
                     selectedIdx = i;
                 }
             }
+
+            if(searchCond === "subject") return;
             secUnit.selectedIndex = selectedIdx;
             secUnitVal = secUnit.value;
             await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
@@ -304,6 +316,8 @@ const ContentsList = ()=>{
                     selectedIdx = i;
                 }
             }
+
+            if(searchCond === "secUnit") return;
             thrUnit.selectedIndex = selectedIdx;
             thrUnitVal = thrUnit.value;
             await reg_unitTypeChange(trigEv, "cusSelThrUnit","thrUnit", true);
@@ -462,17 +476,32 @@ const ContentsList = ()=>{
                     return false;
             }
             */
-            if(customSecUnit.innerText==="대단원" || secUnit.selectedIndex===0){
-                alert("대단원을 선택해주세요.");
-                return false;
-            }
-            if(customThrUnit.innerText==="중단원" || thrUnit.selectedIndex===0){
-                alert("중단원을 선택해주세요.");
-                return false;
-            }
 
+            let searchCond= "";
+            let unitUniqNoList= "";
+            if(customSecUnit.innerText==="대단원" || secUnit.selectedIndex===0){
+                searchCond="subject"
+                //unitUniqNo 가져오기 21001-21013
+                let returnObj = await nb_dataFetch("/mathInfo/takeUnitInfoList?col=subject&value="+subject[subject.selectedIndex].value, true);
+                unitUniqNoList=returnObj.mathUnitInfoList[0].unitUniqNo+"-"+returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length-1].unitUniqNo;
+            }else{
+                if(customThrUnit.innerText==="중단원" || thrUnit.selectedIndex===0){
+                    searchCond="secUnit"
+                    //unitUniqNo 가져오기 21001-21003
+                    let returnObj = await nb_dataFetch("/mathInfo/takeUnitInfoList?col=secUnit&value="+secUnit[secUnit.selectedIndex].value, true);
+                    unitUniqNoList=returnObj.mathUnitInfoList[0].unitUniqNo+"-"+returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length-1].unitUniqNo;
+                }
+            }
+            
+            curPageNum=0;
             let formData = new FormData(document.getElementById("workSearchForm"));
-            formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+            if(unitUniqNoList !== ""){
+                formData.append("unitUniqNoStr", unitUniqNoList);
+            }else{
+                formData.append("unitUniqNo", thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+            }
+            formData.append("curPageNum", curPageNum);
+            formData.append("pageVolume", pageVolume);
             // FormData의 값 확인
             /*
             for (var pair of formData.entries()) {
@@ -483,7 +512,11 @@ const ContentsList = ()=>{
            
             let param = nb_getParameterByName("unitUniqId")
             if(param !== thrUnit[thrUnit.selectedIndex].dataset.uniqNo){
-                window.history.pushState("", "문제검색", '/contentsList?unitUniqId='+thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+                if(unitUniqNoList !== ""){
+                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId='+unitUniqNoList+"&searchCond="+searchCond);
+                }else{
+                    window.history.pushState("", "문제검색", '/contentsList?unitUniqId='+thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+                }
             }
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
@@ -504,6 +537,11 @@ const ContentsList = ()=>{
                         setEmptyListMsg("검색 결과가 없습니다. 해당 단원에 등록되어있는 문제가 없습니다.", 2000);
                     } 
                 }else{
+                    if(curPageNum !== returnObj.totalPageCnt-1){
+                        document.getElementById("showMoreContents").classList.remove("hide");
+                    }else{
+                        document.getElementById("showMoreContents").classList.add("hide");
+                    }
                     setConRepoInfoList(returnObj["mathconRepoInfo"]);
                     setConLikeInfoList(returnObj["mathConLikeInfo"]);
                     setContentsList(returnObj["mathContents"]);
@@ -513,6 +551,32 @@ const ContentsList = ()=>{
                 
             }
 
+        }
+
+        const showMoreContents = async function(){
+            let formData = new FormData(document.getElementById("workSearchForm"));
+            let curSearchCond = await nb_getParameterByName("unitUniqId");
+
+            curPageNum++;
+            formData.append("curPageNum",curPageNum);
+            formData.append("pageVolume", pageVolume);
+            if(curSearchCond.indexOf("-")>-1){
+                formData.append("unitUniqNoStr",curSearchCond);
+            }else{
+                formData.append("unitUniqNo",curSearchCond);
+            }
+            let returnObj = await nb_formDataFetch("/mathInfo/takeContentsList",formData, true);
+            if(curPageNum !== returnObj.totalPageCnt-1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+            }
+            fExecuteWidth = true;
+
+            setConRepoInfoList([...conRepoInfoList, ...returnObj["mathconRepoInfo"]]);
+            setConLikeInfoList([...conLikeInfoList, ...returnObj["mathConLikeInfo"]]);
+            setContentsList([...contentsList, ...returnObj["mathContents"]]);
+            await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
         }
         
 
@@ -667,9 +731,6 @@ const ContentsList = ()=>{
                     isImgRegContents = true;
                 }
 
-                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
-                if(contentsList.length-1 === idx) isContentsListInitiated = true;
-                
                 return  <div id="workContentsDiv" className="contentsDiv userSearchPage" key={idx}> 
                                 <table className='workListTable userSearchPage'>
                                     <thead>
@@ -774,11 +835,12 @@ const ContentsList = ()=>{
                             : <EmptyList msg={emptyListMsg} imgName="searchList" addImgClass="" /> 
                         }
                         <DetailedContentsWrap isBasedParent={true} modalRepoChange={modalBaseRepoChange} modalLikeChange={modalBaseLikeChange}/>
-
                     </div>
                 </div>
             }
-                   
+            <div id="showMoreContents" className='showMoreContents hide' onClick={()=>{showMoreContents()}}>검색정보 더보기</div>
+            <div className='paddingFiveZero'></div>
+
             <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState  && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2}/>}

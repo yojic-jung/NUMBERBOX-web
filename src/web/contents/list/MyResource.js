@@ -1,36 +1,53 @@
 import React, {useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import EmptyList from 'web/common/EmptyList';
 import RegisterResourceInp from 'web/mathResource/RegisterResourceInp';
 import {Link} from "react-router-dom";
-import {nb_dataFetch, nb_formDataFetch, nb_fadeInOut, nb_fadeInOutA, nb_dataFileFetch, nb_promptBox} from 'js/common/common_nb.js';
+import PageNumBtn from 'web/common/PageNumBtn';
+import {nb_dataFetch, nb_fadeInOut, nb_dataFileFetch, nb_promptBox, nb_getParameterByName} from 'js/common/common_nb.js';
 import "css/common/common.css";
 import "css/common/nbFormula.css";
 import "css/staff/staff.css";
 import "css/resourceFile/shareResource.css";
-import hourglass from 'img/hourglass.gif';
 
 const MyResource = ()=>{
-
+    let location = useLocation();
     const [resourceList, setResourceList] = useState(new Array());
     const [resourceMenu, setResourceMenu] = useState(new Array());
     const [delResourceNo, setDelResourceNo] = useState(0);
-    const [emptyListMsg, setEmptyListMsg] = useState("나의 컨텐츠가 존재하지 않습니다.");
+    const [curPageNum, setCurPageNum] = useState(0);
+    const [totalPageCnt, setTotalPageCnt] = useState(0);
+    const pageVolume = 40;
+    const emptyListMsg = "나의 컨텐츠가 존재하지 않습니다.";
 
     useEffect(()=>{
         const asyncUseEffect = async function(){
+            if(location.pathname.indexOf("myResource")<0) return;
+            let param = nb_getParameterByName("pageNum")
             document.getElementById("myPageProd").classList.remove("active");
             document.getElementById("myPageRepo").classList.remove("active");
             document.getElementById("myMathDocs").classList.remove("active");
             document.getElementById("myResource").classList.add("active");
-            let returnObj= await nb_dataFetch("/mathInfo/takeMyResource", true);
+            let returnObj;
+            let movePage;
+            if(param !== ""){
+                movePage = Number(param)-1;
+                setCurPageNum(movePage)
+                returnObj= await nb_dataFetch("/mathInfo/takeMyResource?curPageNum="+movePage+"&pageVolume="+pageVolume, true);
+            }else{
+                movePage=curPageNum
+                returnObj= await nb_dataFetch("/mathInfo/takeMyResource?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            }
+            setTotalPageCnt(returnObj.totalPageCnt);
             let myResourceList = returnObj.myResourceList;
             let resourceMenuList = returnObj.resourceMenuList;
             setResourceList(myResourceList);
             setResourceMenu(resourceMenuList);
         }
         asyncUseEffect();
-        }, []);
+        return ()=>{}
+        }, [location]);
 
     const showDetailedRes = async (event, title, pptFileName, resourceNo, resourceCate) =>{
         if(event.target.classList.contains("reviseBtn") || event.target.classList.contains("delBtn")) return;
@@ -104,11 +121,16 @@ const MyResource = ()=>{
         document.getElementById("promptBoxClose").click();
         let returnObj = await nb_dataFetch("/mathInfo/myResourceDel?resourceNo="+Number(delResourceNo), true);
         if(!returnObj.existMsg){
-            let newMyResourceList = resourceList.filter((resourceMap, idx)=>{
-                if(resourceMap.resourceNo === Number(delResourceNo)) return false;
-                else return true;
-            });
-            setResourceList(newMyResourceList);
+            if(resourceList.length === 1 && curPageNum > 0){
+                returnObj= await nb_dataFetch("/mathInfo/takeMyResource?curPageNum="+(curPageNum-1)+"&pageVolume="+pageVolume, true);
+                window.history.pushState("", "나의 컨텐츠", '/myResource?pageNum='+curPageNum);
+                setCurPageNum(curPageNum-1)
+            }else{
+                returnObj= await nb_dataFetch("/mathInfo/takeMyResource?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            }
+            setResourceList(returnObj.myResourceList);
+            setTotalPageCnt(returnObj.totalPageCnt);
+
             nb_fadeInOut("정상적으로 삭제되었습니다.", 2000);
         }
     }
@@ -170,8 +192,6 @@ const MyResource = ()=>{
         document.getElementById("updateResouce").classList.remove("hide");
     }
 
-    
-
     const initResoureList = resourceList.map( (contentsMap, idx) => {
         return (<div id={"res-div-"+contentsMap.resourceNo} className="res-div" data-uniq-id={contentsMap.seqNo} key={idx}>
                     <div className='res-over-lay' onClick={(event)=>{showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.resourceNo, contentsMap.mathResourceCate)}}>
@@ -209,6 +229,7 @@ const MyResource = ()=>{
                     : <EmptyList msg={emptyListMsg} imgName="myResourceEmpty" addImgClass="miniSize" /> 
                 }
             </div>
+            {totalPageCnt > 1 && <PageNumBtn linkUrl="/myResource" additionParam="" curPageNum={curPageNum} totalPageCnt={totalPageCnt} /> } 
             <div id="resDetailedWrap" className='blindBox hide'>
                 <div className="resDetailedDiv">
                     <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>

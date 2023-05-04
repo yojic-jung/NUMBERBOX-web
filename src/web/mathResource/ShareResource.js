@@ -5,16 +5,24 @@ import { useLocation } from 'react-router-dom';
 import ResourceMenuBar from 'web/common/ResourceMenuBar';
 import RoundButtonList from 'web/common/RoundButtonList';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
+import PageNumBtn from 'web/common/PageNumBtn';
+import EmptyList from 'web/common/EmptyList';
 import {nb_isLogin, nb_dataFetch, nb_dataFileFetch, nb_getParameterByName} from 'js/common/common_nb.js';
 import "css/resourceFile/shareResource.css";
 
 let resourceMenuArr;
 const ShareResource = ()=>{
     let location = useLocation();
-    const [mainCate, setMainCate] = useState(new Array());	// 사용자 입력 문제
-    const [resourceList, setResourceList] = useState(new Array());	// 사용자 입력 문제
+
+    const [mainCateNo, setMainCateNo] = useState(nb_getParameterByName("mainCateNo")==="" ? 1 : nb_getParameterByName("mainCateNo"));
+    const [mainCate, setMainCate] = useState(new Array());
+    const [resourceList, setResourceList] = useState(new Array());
     const [resourceMenu, setResourceMenu] = useState(new Array());
     const [errContentsNo, setErrContentsNo] = useState(0);
+    const emptyListMsg = "해당 카테고리의 컨텐츠가 존재하지 않습니다.";
+    const [curPageNum, setCurPageNum] = useState(0);
+    const [totalPageCnt, setTotalPageCnt] = useState(0);
+    const pageVolume = 60;
 
     useEffect(() => {
         const asyncUseEffect = async function(){
@@ -36,12 +44,22 @@ const ShareResource = ()=>{
             document.getElementById("shareResource").classList.add("active")
             let param = nb_getParameterByName("mainCateNo");
             let param2 = nb_getParameterByName("resourceNo")
+            let param3 = nb_getParameterByName("pageNum")
+            let movePage=0;
             let returnObj;
             if(param2 !== ""){
                 returnObj = await nb_dataFetch('/mathInfo/takeResourceByResourceNo?resourceNo='+param2, true);
                 param = returnObj.resourceList[0].mathResourceCate[0].mainCateNo;
             }else{
-                returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param, true);
+                if(param3!==""){
+                    movePage = Number(param3)-1
+                    returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param+"&curPageNum="+movePage+"&pageVolume="+pageVolume, true);
+                }else{
+                    returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo='+param+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+                }
+                setMainCateNo(param);
+                setCurPageNum(movePage);
+                setTotalPageCnt(returnObj.totalPageCnt);
             }
             
             let cateMenu = document.querySelectorAll(".cateMenu");
@@ -49,21 +67,10 @@ const ShareResource = ()=>{
                 cateMenu[i].classList.remove("active")
             }
             document.getElementById("category-"+param).classList.add("active")
-            const initResoureList = returnObj["resourceList"].map( (contentsMap, idx) => {
-                return (<div id={"res-div-"+contentsMap.resourceNo} className="res-div" data-uniq-id={contentsMap.seqNo} key={idx}>
-                            <div className='res-over-lay' onClick={(event)=>{showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.resourceNo, contentsMap.mathResourceCate)}}>
-                                <span className='pptPageCnt'>{contentsMap.pptPageCnt}</span>
-                                <span className='down-ppt-btn' onClick={()=>{downPptFile("resourcePpt", contentsMap.pptName)}}></span>
-                                <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.resourceNo)}}></div>
-                            </div>
-                            <div className="img-title">{contentsMap.title}</div>
-                            <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.imgName} alt="컨텐츠 이미지"/>
-                        </div>);
-            });
-            setResourceList(initResoureList);
+            setResourceList(returnObj["resourceList"]);
         }
         asyncUseEffect();
-
+        return ()=>{}
     }, [location]);
 
     const errorReportOpen = async (resoureNo) => {
@@ -144,12 +151,29 @@ const ShareResource = ()=>{
             document.getElementById("customImgSliderContainerDiv").style.width = (i+1)*580+"px";
         }
     }
+
+
+  
+
+    const initResoureList = resourceList.map( (contentsMap, idx) => {
+        return (<div id={"res-div-"+contentsMap.resourceNo} className="res-div" data-uniq-id={contentsMap.seqNo} key={idx}>
+                    <div className='res-over-lay' onClick={(event)=>{showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.resourceNo, contentsMap.mathResourceCate)}}>
+                        <span className='pptPageCnt'>{contentsMap.pptPageCnt}</span>
+                        <span className='down-ppt-btn' onClick={()=>{downPptFile("resourcePpt", contentsMap.pptName)}}></span>
+                        <div className='errBtn' onClick={()=>{errorReportOpen(contentsMap.resourceNo)}}></div>
+                    </div>
+                    <div className="img-title">{contentsMap.title}</div>
+                    <img id={"res-img-"+contentsMap.resourceNo} className="res-img" src={process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.imgName} alt="컨텐츠 이미지"/>
+                </div>);
+    });
+
+
 return (
     <>    
     <Helmet>
         <title>컨텐츠 목록</title>
         <meta name="description" content="도형 및 그래프파일을 찾아보세요!"/>
-        <link rel="canonical" href="https://nsoohak.com/shareResource?mainCateNo=1" />
+        <link rel="canonical" href="https://nsoohak.com/shareResource?mainCateNo=1&pageNum=1" />
         <meta property="og:title" content="컨텐츠 목록" />
         <meta property="og:description" content="도형 및 그래프파일을 찾아보세요!" />
     </Helmet>
@@ -159,8 +183,13 @@ return (
         <RoundButtonList id="category" className="cateMenu" tabList={mainCate} dataId="mainCateNo" mainKey="mainCateName"  ></RoundButtonList>
      </div>
      <div className='resWrap'>
-        {resourceList}
+        {initResoureList}
      </div>
+     {initResoureList.length === 0 &&
+            <EmptyList msg={emptyListMsg} imgName="myRepoEmpty" addImgClass="miniSize" /> 
+        }
+     {totalPageCnt > 1 && <PageNumBtn linkUrl={"/shareResource"} additionParam={"&mainCateNo="+mainCateNo} curPageNum={curPageNum} totalPageCnt={totalPageCnt} /> } 
+     <div className='paddingFiveZero'></div>
      <div id="resDetailedWrap" className='blindBox hide'>
         <div className="resDetailedDiv">
             <div className='closeBtn2' onClick={()=>{document.getElementById("resDetailedWrap").classList.add("hide"); document.getElementsByClassName("customSliderBtn")[0].click();}}>X</div>
@@ -193,7 +222,7 @@ return (
         <RoundButtonList id="category" className="cateMenu" tabList={mainCate} dataId="mainCateNo" mainKey="mainCateName"  ></RoundButtonList>
      </div>
      <div className='resWrap'>
-        {resourceList}
+        {initResoureList}
      </div>
      <div id="resDetailedWrap" className='blindBox hide'>
         <div className="resDetailedDiv mobile">

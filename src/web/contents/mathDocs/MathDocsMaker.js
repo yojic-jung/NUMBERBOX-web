@@ -18,9 +18,13 @@ import {reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
 import hourglass from 'img/hourglass.gif';
 
 let currentPath = "";
+let curPageNumByProd = 0;
+let curPageNumByRepo = 0;
+let pageVolume = 100; 
 const MathDocsMaker = ()=>{
     let location = useLocation();
 
+    const [showFinalPopup, setShowFinalPopup] = useState(true);
     const [mathDocsNo, setMathDocsNo] = useState(0);
     const [isInnerPage, setIsInnerPage] = useState(false);
     const [mathDocsPerPageCnt, setMathDocsPerPageCnt] = useState(4);
@@ -111,6 +115,12 @@ const MathDocsMaker = ()=>{
         let mathContentsList = jsonObj["mathContentsList"];
         let mathDocsPaper = jsonObj["mathDocsPaper"];
 
+        if(jsonObj.mathDocsPaper.docsErrStts===3){
+            setShowFinalPopup(false);
+            document.getElementById("topMenuBar").classList.add("hide");
+            document.getElementsByClassName("manager-menu")[0].classList.add("hide");
+        }
+        
         let barArr = [];
         let ipsiConCnt=0;
         let lv1Len=0;
@@ -1006,7 +1016,8 @@ const MathDocsMaker = ()=>{
             document.getElementById("productFilterList").childNodes[0].click();
             return;
         }
-        let returnObj= await nb_dataFetch("/mathInfo/takeMyRepo", true);
+        curPageNumByRepo=0;
+        let returnObj= await nb_dataFetch("/mathInfo/takeMyRepo?curPageNum="+curPageNumByRepo+"&pageVolume="+pageVolume, true);
 
         let contentsNodeList =  returnObj.mathContents.filter((contentsMap, idx) => {
             let isSame = true;
@@ -1023,8 +1034,16 @@ const MathDocsMaker = ()=>{
 
         if(contentsNodeList.length === 0){
             document.getElementById("mathDocsMyRepoDesc").innerHTML = "저장소에 문제가 존재하지 않거나<br/>학습지에 이미 추가되었습니다.";
+            document.getElementById("mathDocsMyRepoDesc").classList.add("marginTopSevenZero")
         }else{
             document.getElementById("mathDocsMyRepoDesc").innerHTML = "";
+            document.getElementById("mathDocsMyRepoDesc").classList.remove("marginTopSevenZero")
+        }
+
+        if(returnObj.totalPageCnt > 1){
+            document.getElementById("showMoreContentsByRepo").classList.remove("hide");
+        }else{
+            document.getElementById("showMoreContentsByRepo").classList.add("hide");
         }
 
         setMyRepoContents(contentsArray);
@@ -1046,7 +1065,8 @@ const MathDocsMaker = ()=>{
             document.getElementById("productFilterList").childNodes[0].click();
             return;
         }
-        let returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList", true);
+        curPageNumByProd=0;
+        let returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList?curPageNum="+curPageNumByProd+"&pageVolume="+pageVolume, true);
         let contentsNodeList =  returnObj.myContentsList.filter((contentsMap, idx) => {
             let isSame = true;
             for(let i=0; i<mathContentsList.length; i++){
@@ -1057,9 +1077,18 @@ const MathDocsMaker = ()=>{
 
         if(contentsNodeList.length === 0){
             document.getElementById("mathDocsMyProdDesc").innerHTML = "나의 제작문제가 존재하지 않습니다.";
+            document.getElementById("mathDocsMyProdDesc").classList.add("marginTopSevenZero")
         }else{
             document.getElementById("mathDocsMyProdDesc").innerHTML = "";
+            document.getElementById("mathDocsMyProdDesc").classList.remove("marginTopSevenZero")
         }
+
+        if(returnObj.totalPageCnt > 1){
+            document.getElementById("showMoreContentsByProd").classList.remove("hide");
+        }else{
+            document.getElementById("showMoreContentsByProd").classList.add("hide");
+        }
+
         setMyProdContents(contentsNodeList);
         setIsSearchedMyCon(true);
         document.getElementById("mathDocsMyProd").classList.remove("hide")
@@ -1082,6 +1111,12 @@ const MathDocsMaker = ()=>{
             alert("이미 추가된 문제입니다.");
             return;
         }
+
+        if(conTotalCnt>=100){
+            alert("학습지는 최대 100문항까지 제작 가능합니다.");
+            return;
+        }
+
 
         let contentsList;
         if(addType === "myProd"){
@@ -1231,18 +1266,24 @@ const MathDocsMaker = ()=>{
         setConArrByMultiOnPie(pieArr);
 
         if(addType === "myProd"){
+            event.target.closest(".contentsDiv").classList.add("customHide");
+            /*
             let myProdCon = myProdContents.filter((contentsMap, idx) => {
                 if(contentsMap.contentsNo === contentsNo) return false;
                 else return true;
             });
             setMyProdContents(myProdCon);
+            */
         }
         else if(addType === "myRepo"){
+            event.target.closest(".contentsDiv").classList.add("customHide");
+            /*
             let myRepoCon = myRepoContents.filter((contentsMap, idx) => {
                 if(contentsMap.contentsNo === contentsNo) return false;
                 else return true;
             });
             setMyRepoContents(myRepoCon);
+            */
         }
         else {
             let simContents = similarContents.filter((contentsMap, idx) => {
@@ -1286,6 +1327,7 @@ const MathDocsMaker = ()=>{
 
     const contentsDel = async (contentsNo) => {
         let newContentsList =  mathContentsList.filter((contentsMap, idx) => {
+            
             if(contentsMap.contentsNo === contentsNo) return false;
             else return true;
         });
@@ -1328,6 +1370,20 @@ const MathDocsMaker = ()=>{
             {"labelName":"주관식", "value":essayConCnt ,"className":"essayPieLabel", "backgroundColor":"rgb(13, 53, 149, 0.7)"}];
         setConArrByMultiOnPie(pieArr);
         await nb_multiChoiceGridSet("quesConMultiShow");
+
+        let mathDocsMyProd = document.getElementById("mathDocsMyProd").querySelectorAll(".contentsDiv");
+        for(let i=0;i<mathDocsMyProd.length; i++){
+            if(Number(mathDocsMyProd[i].dataset.contentsNo) === contentsNo){
+                mathDocsMyProd[i].classList.remove("customHide");
+            }
+        }
+
+        let mathDocsMyRepo = document.getElementById("mathDocsMyRepo").querySelectorAll(".contentsDiv");
+        for(let i=0;i<mathDocsMyRepo.length; i++){
+            if(Number(mathDocsMyRepo[i].dataset.contentsNo) === contentsNo){
+                mathDocsMyRepo[i].classList.remove("customHide");
+            }
+        }
 
         nb_fadeInOutA("문제가 삭제 되었습니다.", 2000);
     }
@@ -1458,6 +1514,9 @@ const MathDocsMaker = ()=>{
     }
 
     const saveMathDocsPaper = async () =>{
+        if(!showFinalPopup){
+            return;
+        }
         if(isInnerPage) {
             nb_confirmBox("학습지를 수정하신 경우\n수정한 내용으로 저장됩니다. 저장하시겠습니까?")
         }else{
@@ -1590,7 +1649,65 @@ const MathDocsMaker = ()=>{
         registerMathDocsUsage();
     }
 
+    const showMoreContentsByProd = async function(){
+            //필터 풀기
+            if(document.getElementById("mySubFilterOff") !== null && document.getElementById("mySubFilterOff") !== undefined){
+                document.getElementById("mySubFilterOff").click();
+            }
+            curPageNumByProd++;
+            let returnObj
+            returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList?curPageNum="+curPageNumByProd+"&pageVolume="+pageVolume, true);
+            setMyProdContents([...myProdContents, ...returnObj.myContentsList]);
+            document.getElementById("mathDocsMyProd").classList.remove("hide")
+            await nb_multiChoiceGridSet("quesConMultiShow");
+            document.getElementById("subjectFilterList").childNodes[0].click();
+            document.getElementById("productFilterList").childNodes[0].click();
+            if(curPageNumByProd !== returnObj.totalPageCnt-1){
+                document.getElementById("showMoreContentsByProd").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContentsByProd").classList.add("hide");
+            }
+    }
 
+    const showMoreContentsByRepo = async function(){
+        //필터 풀기
+        if(document.getElementById("mySubFilterOff") !== null && document.getElementById("mySubFilterOff") !== undefined){
+            document.getElementById("mySubFilterOff").click();
+        }
+        curPageNumByRepo++;
+        let returnObj= await nb_dataFetch("/mathInfo/takeMyRepo?curPageNum="+curPageNumByRepo+"&pageVolume="+pageVolume, true);
+    
+        let contentsNodeList =  returnObj.mathContents.filter((contentsMap, idx) => {
+            let isSame = true;
+            for(let i=0; i<mathContentsList.length; i++){
+                if(contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
+            }
+            return isSame;
+        });
+
+        let contentsArray = [].slice.call(contentsNodeList, 0);
+        contentsArray.sort(function(a, b)  {
+            return Number(b.sysCreateDate) - Number(a.sysCreateDate);       //내림차순, 날짜 큰것 부터 작 순으로
+        });
+
+        if(returnObj.totalPageCnt > 1){
+            document.getElementById("showMoreContentsByRepo").classList.remove("hide");
+        }else{
+            document.getElementById("showMoreContentsByRepo").classList.add("hide");
+        }
+
+        setMyRepoContents([...myRepoContents, ...contentsArray]);
+        document.getElementById("mathDocsMyRepo").classList.remove("hide")
+        await nb_multiChoiceGridSet("quesConMultiShow");
+        document.getElementById("subjectFilterList").childNodes[0].click();
+        document.getElementById("productFilterList").childNodes[0].click();
+
+        if(curPageNumByRepo !== returnObj.totalPageCnt-1){
+            document.getElementById("showMoreContentsByRepo").classList.remove("hide");
+        }else{
+            document.getElementById("showMoreContentsByRepo").classList.add("hide");
+        }
+}
 
     const subjectInfoList = subjectList.map( (subjectInfo) => {
         //중등인 경우 
@@ -1636,7 +1753,7 @@ const MathDocsMaker = ()=>{
             sysDateStr += sysCreateDate[i];
         }
 
-        return  <div className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
+        return  <div className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sec-unit={contentsMap.mathUnitInfo.secUnit} data-sys-create-date={sysDateStr}> 
                         <table className='workListTable'>
                             <thead>
 
@@ -1703,7 +1820,7 @@ const MathDocsMaker = ()=>{
                 sysDateStr += sysCreateDate[i];
             }
     
-            return  <div className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
+            return  <div className="contentsDiv contentsDivForFilter" key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sec-unit={contentsMap.mathUnitInfo.secUnit} data-sys-create-date={sysDateStr}> 
                             <table className='workListTable'>
                                 <thead>
     
@@ -1775,9 +1892,16 @@ const MathDocsMaker = ()=>{
                                     <thead>
                                         <tr className='workListTBHead2'>
                                             <td>
-                                                <div className='alignRight'>
-                                                    <span className='simConAddBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "simCon")}}>추가</span>
-                                                    <span className='simConChngBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "conChng")}}>교체</span>
+                                                <div className='twoFlexLayout'>
+                                                <div className='twoFlexLayout'>
+                                                    <div>
+                                                        [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
+                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span>
+                                                    </div></div>
+                                                    <div classNam00e='alignRight'>
+                                                        <span className='simConAddBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "simCon")}}>추가 </span>
+                                                        <span className='simConChngBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "conChng")}}>교체 </span>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -1911,7 +2035,7 @@ return (
         </div>
         <div className='noSelect mathDocsRootDiv'>
             <div id="mathDocsFirstStep" className='mathDocsFirstStep'>
-                <div className='onlyMyProdOrRepoConBtn' onClick={()=>{onlyMyProdOrRepoContents();}}>나의 제작문제로 학습지 만들기</div>
+                <div className='onlyMyProdOrRepoConBtn hide' onClick={()=>{onlyMyProdOrRepoContents();}}>나의 제작문제로 학습지 만들기</div>
                 <div className='mini-title3'>&#8251; N명의수학은 현재 중등 1학기 수학 문제들만 제공 중입니다. 주기적인 업데이트로 새로운 문제들을 추가 제공 예정입니다.</div>
                 <div className="mathDocsSubjectInfoDiv">
                     {subjectInfoList}
@@ -2127,6 +2251,9 @@ return (
                                             </div>
                                             <div id="mathDocsMyProdDesc" className='mathDocsSimConDesc'></div>
                                         </div>
+                                        <div id="showMoreContentsByProd" className='showMoreContents hide' onClick={()=>{showMoreContentsByProd()}}>검색정보 더보기</div>
+                                        <div className='paddingFiveZero'></div>
+                                        
                                     </div>
                                     <div id="mathDocsMyRepo" className='mathDocsMyRepoDiv'>
                                         <div className='workList myContentsList'>
@@ -2134,6 +2261,8 @@ return (
                                             {myRepoContentsList}
                                             </div>
                                             <div id="mathDocsMyRepoDesc" className='mathDocsSimConDesc'></div>
+                                            <div id="showMoreContentsByRepo" className='showMoreContents hide' onClick={()=>{showMoreContentsByRepo()}}>검색정보 더보기</div>
+                                            <div className='paddingFiveZero'></div>
                                         </div>
                                     </div>
                             </div>
@@ -2269,7 +2398,7 @@ return (
                         <div className='bottomFixed'>
                             <div className='twoStepDiv'>
                                 <div id="docsPreviousBtn" className='inBlock orangeBorderBtn previousStep' onClick={()=>{window.history.back()}}>이전단계</div>
-                                <div id="docsPreviousPage" className='inBlock orangeBorderBtn previousStep hide' onClick={()=>{window.history.back()}}>이전 페이지</div>
+                                {showFinalPopup && <div id="docsPreviousPage" className='inBlock orangeBorderBtn previousStep hide' onClick={()=>{window.history.back()}}>이전 페이지</div>}
                                 <div id="docsMakeBtn" className='inBlock orangeBtn nextStep' onClick={()=>{twoStepCheck()}}>학습지 만들기</div>
                             </div>
                         </div>

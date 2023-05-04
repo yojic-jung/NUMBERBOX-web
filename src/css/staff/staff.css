@@ -711,14 +711,20 @@
     z-index: 3;
 }
 
+.allCheckBtnDesc.custom{
+    width: 210px;
+}
+
 .licChkBtnDesc{
     padding: 8px 10px;
-    width: 200px;
+    width: 230px;
+    line-height: 150%;
     top:0;
     left: unset;
     right: 0;
     transform: translate(100%, -100%);
 }
+
 
 .licChkBtnDesc.multi div{
     padding-left: 15px;
@@ -1438,11 +1444,20 @@ height: 1.6em;
 .nextStep{
     background-color: rgb(255, 166, 0);
 }
+
+.contentsCntWrap{
+    border-top:0.5px solid rgb(220, 220, 220);
+}
+
 /** workContentsList **/
 .workList{
     min-height: 300px;
-    margin-bottom:100px;
+    margin-bottom:80px;
     border-top:0.5px solid rgb(220, 220, 220);
+}
+
+.workList.custom{
+    border-top:unset;
 }
 
 .workList .contents-show{
@@ -1461,6 +1476,21 @@ height: 1.6em;
 .workContentsDiv{
     width:1200px;
     margin:auto;
+}
+
+.contentsDiv.custom{
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contentsDiv.custom2{
+    width:1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .contentsDiv{

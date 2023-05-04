@@ -70,12 +70,12 @@
     position: relative;
     border: 0.5px dashed gray;
     padding:15px 0;
-    min-height: 120px;
 }
 .resWrap{
     display: grid;
     padding:10px 0;
     gap: 5px;
+    min-height: 150px;
 }
 @media screen and (min-width: 1400px){
     .resWrap{

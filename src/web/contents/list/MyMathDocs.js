@@ -1,40 +1,52 @@
 import React, {useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import {Link} from "react-router-dom";
-import {nb_dataFetch, nb_fadeInOutA} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_fadeInOutA, nb_getParameterByName} from 'js/common/common_nb.js';
 import EmptyList from 'web/common/EmptyList';
+import PageNumBtn from 'web/common/PageNumBtn';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
-import MathDocsMaker from 'web/contents/mathDocs/MathDocsMaker';
 
 
 const MyMathDocs = ()=>{
-
-    const [emptyListMsg, setEmptyListMsg] = useState("저장된 학습지 내역이 없습니다.\n학습지를 생성하여 관리해보세요.");
+    let location = useLocation();
     const [mathDocsList, setMathDocsList] = useState(new Array());
     const [errContentsNo, setErrContentsNo] = useState(0);
-    const [isShowMathDocs, setIsShowMathDocs] = useState(false);
-    const [mathDocsNo, setMathDocsNo] = useState(0);
+    const [curPageNum, setCurPageNum] = useState(0);
+    const [totalPageCnt, setTotalPageCnt] = useState(0);
+    const pageVolume = 20;
+    const emptyListMsg="저장된 학습지 내역이 없습니다.\n학습지를 생성하여 관리해보세요.";
 
     useEffect(()=>{
+        if(location.pathname.indexOf("myMathDocs")<0) return;
+        let param = nb_getParameterByName("pageNum")
         const asyncUseEffect = async function(){
             document.getElementById("myPageProd").classList.remove("active");
             document.getElementById("myPageRepo").classList.remove("active");
             document.getElementById("myMathDocs").classList.add("active");
             document.getElementById("myResource").classList.remove("active");
-            let returnObj= await nb_dataFetch("/mathDocs/myMathDocs", true);
+            let returnObj;
+            let movePage;
+            if(param !== ""){
+                movePage = Number(param)-1;
+                setCurPageNum(movePage)
+                returnObj= await nb_dataFetch("/mathDocs/myMathDocs?curPageNum="+movePage+"&pageVolume="+pageVolume, true);
+            }else{
+                movePage=curPageNum
+                returnObj= await nb_dataFetch("/mathDocs/myMathDocs?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            }
             if(returnObj.isSuccess){
                 setMathDocsList(returnObj.myDocsList);
+                setTotalPageCnt(returnObj.totalPageCnt);
             }
+            
         }
         asyncUseEffect();
-    }, []);
+        return ()=>{}
+    }, [location]);
 
 
-    const docsPaperShow = async (docsNo) => {
-       // window.location.href = '/makeMathDocs?docsNo='+docsNo;
-        //setIsShowMathDocs(true);
-        //setMathDocsNo(docsNo);
-    }
+   
 
     
     const errorReportOpen = async (docsNo) => {
@@ -52,16 +64,18 @@ const MyMathDocs = ()=>{
     const docsPaperDel = async (docsNo) => {
         let returnObj= await nb_dataFetch("/mathDocs/delMyMathDocs?docsNo="+docsNo, true);
         if(returnObj.isSuccess){
-            let mathDocsListTmp = mathDocsList.filter(function(element, idx){
-                if(element.docsNo !==  Number(docsNo)){
-                    return element;
-                }
-            });
-            setMathDocsList(mathDocsListTmp);
+            if(mathDocsList.length === 1 && curPageNum > 0){
+                returnObj= await nb_dataFetch("/mathDocs/myMathDocs?curPageNum="+(curPageNum-1)+"&pageVolume="+pageVolume, true);
+                window.history.pushState("", "나의 컨텐츠", '/myMathDocs?pageNum='+curPageNum);
+                setCurPageNum(curPageNum-1)
+            }else{
+                returnObj= await nb_dataFetch("/mathDocs/myMathDocs?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            }
+            setMathDocsList(returnObj.myDocsList);
+            setTotalPageCnt(returnObj.totalPageCnt);
             nb_fadeInOutA("학습지가 정상적으로 삭제 되었습니다.", 2000);
         }
     }
-
 
     const doscList = mathDocsList.map((docs, idx) => {
         let docErrBtnClassName = 'errBtn docsList';
@@ -106,6 +120,7 @@ return (
                                         {doscList}
                                     </tbody>
                                 </table>
+                                {totalPageCnt > 1 && <PageNumBtn linkUrl="/myMathDocs" additionParam="" curPageNum={curPageNum} totalPageCnt={totalPageCnt} /> } 
                             </div>
                             }
                       

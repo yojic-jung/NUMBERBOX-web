@@ -1,5 +1,7 @@
 .hide{display:none !important;}
 
+.customHide{display:none !important;}
+
 .hidden{
     visibility: hidden;
 }
@@ -64,6 +66,10 @@
 
 .marginTopTenAuto{
     margin:10px auto 0 auto;
+}
+
+.marginTopSevenZero{
+    margin-top:70px;
 }
 
 .marginUpTen{
@@ -1005,9 +1011,24 @@
     border-radius: 5px;
     box-shadow: 0 0 0.625rem 0 rgb(0 0 0 / 10%);
     background-color: white;
-    
+    overflow-y: scroll;
+    max-height: 190px;
     z-index: 10;
 }
+
+.mySearchFilter-list.custom{
+    width: 190px;
+}
+
+.mySearchFilter-list::-webkit-scrollbar-thumb{
+    background: rgb(152, 175, 201);
+}
+.mySearchFilter-list::-webkit-scrollbar {width: 6px;}
+.mySearchFilter-list::-webkit-scrollbar-track {background: transparent; }
+.mySearchFilter-list::-webkit-scrollbar-thumb {background: #aeaeae; border-radius: 45px;}
+.mySearchFilter-list::-webkit-scrollbar-thumb:hover {background: #aeaeae;}
+
+
 .mySearchFilter-list li:first-child{
     border-top: 0.5px solid rgb(219, 219, 219);
 }
@@ -1772,6 +1793,29 @@
     letter-spacing: 1px;
 }
 
+.contentsCnt{
+    font-size: 13px;
+    color: rgb(59, 59, 59);
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+
+.showMoreContentsBtn{
+    display: inline-block;
+    background:rgb(30, 79, 143);
+    color:white;
+    width:13px;
+    height:13px;
+    border-radius: 50%;
+    font-size: 13px;
+    text-align: center;
+    line-height: 13px;
+    cursor: pointer;
+    font-family: 'SCDream4';
+    margin: 0 2px;
+}
+
 .hwpAllDownBtn{
     display: inline-block;
     font-family: Roboto;
@@ -1779,7 +1823,7 @@
     letter-spacing: 1px;
     border-radius: 2px;
     border:1px solid rgb(169, 169, 169);
-    color:rgb(150, 150, 150);
+    color:rgb(93, 96, 109);
     background: linear-gradient(#f5f5f5, #e5e5e5);
     cursor: pointer;
     font-size: 13px;
@@ -2189,4 +2233,45 @@
     color: white;
     font-family: 'jejuGothic';
     border-radius: 5px;
+ }
+
+ .showMoreContents{
+    font-family: 'jejuGothic';
+    cursor:pointer;
+    display: block;
+    width: 340px;
+    padding: 15px;
+    margin: 50px auto 0 auto;
+    color: rgb(84, 139, 202);
+    border: 1px solid gray;
+    text-align: center;
+ }
+
+
+ .pageNumBtnTable{
+    margin: 80px auto 0 auto;
+    border-spacing: 15px 0px;
+ }
+
+ .pageNumBtn{
+    font-family: 'jejuGothic';
+    color:rgb(2, 12, 55);
+    padding: 5px 8px;
+    border-radius: 5px;
+ }
+
+ .pageNumBtn.curPageBtn{
+    cursor: unset;
+    border: 2px solid rgb(2, 12, 55);
+ }
+
+ .pageNumBtn.nextBtn{
+    background-color: rgb(2, 12, 55);
+    color:white;
+ }
+
+ .pageNumBtn.prevBtn{
+    background-color:unset;
+    border: 2px solid rgba(194, 193, 193 );
+    color:rgb(151, 151, 151);
  }

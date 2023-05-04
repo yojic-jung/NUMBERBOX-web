@@ -1,4 +1,5 @@
 import React, {useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import FormulaEditor from 'web/contents/register/FormulaEditor'
 import EmptyList from 'web/common/EmptyList';
 import {nb_dataFetch} from 'js/common/common_nb.js';
@@ -15,8 +16,10 @@ let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정
 let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
 let yearVal;
 let monthVal;
-let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
+let curPageNum = 0;
+let pageVolume = 100;
 const IpsiWorkContentsListy = ()=>{
+    let location = useLocation();
 
     const [contentsList, setContentsList] = useState(new Array());
     const [impYearList, setImpYearList] = useState(new Array());
@@ -51,7 +54,6 @@ const IpsiWorkContentsListy = ()=>{
 
     //테스트필요
     const modalPopupClose = async (event, isSearch) =>{
-        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         await setModalState(false);
@@ -93,19 +95,6 @@ const IpsiWorkContentsListy = ()=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
-        let scrollCheck = await setInterval(()=>{
-            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
-                document.getElementById("root").style.overflow = "unset"
-                let svcInspectBtn = document.getElementsByClassName("svcInspectBtn");
-                for(let i=0; i<svcInspectBtn.length; i++){
-                    if(svcInspectBtn[i].dataset.contentsNo === contentsNo){
-                        svcInspectBtn[i].scrollIntoView({behavior: "auto", block: "center", inline: "center"});
-                        break;
-                    }
-                }
-                clearInterval(scrollCheck);
-            }
-        }, 200)
     }
     
     const svcSttsChange = async function(event){
@@ -130,29 +119,76 @@ const IpsiWorkContentsListy = ()=>{
     }
 
     useEffect(()=>{
-        let param2 = nb_getParameterByName("contentsNo");
+        let param = nb_getParameterByName("impYear")
+        let param2 = nb_getParameterByName("impMonth")
+        let param3 = nb_getParameterByName("contentsNo");
+
         const asyncUseEffect = async function(){
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
             setImpYearList(returnObj.impYearList);
-            if(param2 !== ""){
-                searchWorkListByContentsNo(param2, false)
+            if(param !== ""){
+                //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
+                historyBackSearchCondSetting(param, param2)
             }
+            if(param3 !== ""){
+                searchWorkListByContentsNo(param3, false)
+            }
+
+            if(param === "" && param2 === "" && param3 === ""){
+                fExecuteWidth = true;
+            
+                setContentsList([]);
+                setWorkListChanged(false);
+                setWorkListChanged(true);
+                setContentsLen(0);
+                nb_multiChoiceGridSet("quesConMultiShow");
+                document.getElementById("impYearSelBox").value = 0;
+                document.getElementById("impMonthSelBox").value = 0;
+            }
+            
         }
         if(!fExecuteWidth){
             asyncUseEffect();
             document.body.addEventListener('click',nb_fCustomSelClose);
         }else{
             if(contentsList.length!==0){
+                nb_multiChoiceGridSet("quesConMultiShow");
             }
             fExecuteWidth = false;
         }
         window.addEventListener('scroll', nb_detectScrollPosition);
         window.addEventListener('scroll', topMenuFixed);
         return () => removeAddedEvent();
-        }, [contentsList]);
+        }, [contentsList, location]);
+
+        const historyBackSearchCondSetting = async (param, param2)=> {
+            curPageNum=0
+            if(param2 === "") param2 =0;
+            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+param+"&impMonth="+param2+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            fExecuteWidth = true;
+            let ipsiMonth = await nb_dataFetch("/mathInfo/takeIpsiMonth?impYear="+param, true);
+            setImpMonthList(ipsiMonth.impMonthList);
+
+            setContentsList(ipsiContents.mathContentsList);
+            setWorkListChanged(false);
+            setWorkListChanged(true);
+            setContentsLen(ipsiContents.mathContentsList.length);
+            nb_multiChoiceGridSet("quesConMultiShow");
+            document.getElementById("impYearSelBox").value = param;
+            document.getElementById("impMonthSelBox").value = param2;
+
+            if(curPageNum !== ipsiContents.totalPageCnt-1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+                document.getElementById("showMoreContentsBtn").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+                document.getElementById("showMoreContentsBtn").classList.add("hide");
+            }
+        }
 
         const searchWorkListByContentsNo = async function(contentsNoParam, hasNotiPhrases){
             let returnObj = await nb_dataFetch("/mathInfo/takeIpsiContentsByContentsNo?contentsNo="+contentsNoParam, true);
+            window.history.pushState("", "수능문제검색", "/admin/ipsiWorkContentsList?contentsNo="+contentsNoParam);
             if(returnObj.error!=undefined){
                 alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
             }
@@ -345,15 +381,29 @@ const IpsiWorkContentsListy = ()=>{
         }
 
         const takeIpsiContents = async () => {
+            curPageNum=0;
             fExecuteWidth = true;
             let impYearSelVal = document.getElementById("impYearSelBox").value;
             let impMonthSelVal = document.getElementById("impMonthSelBox").value;
-            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal, true);
+            if(Number(impYearSelVal) === 0) {
+                alert("시행연도를 선택해주세요.");
+                return;
+            }
+            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            window.history.pushState("", "수능문제검색", "/admin/ipsiWorkContentsList?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal);
             setContentsList(ipsiContents.mathContentsList);
             setWorkListChanged(false);
             setWorkListChanged(true);
             setContentsLen(ipsiContents.mathContentsList.length);
             nb_multiChoiceGridSet("quesConMultiShow");
+
+            if(curPageNum !== ipsiContents.totalPageCnt-1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+                document.getElementById("showMoreContentsBtn").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+                document.getElementById("showMoreContentsBtn").classList.add("hide");
+            }
         }
         
         const makeManageIns = async function() {
@@ -708,9 +758,6 @@ const IpsiWorkContentsListy = ()=>{
                 if(contentsMap.solutionImg===null) solImgPath = "";
                 else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.solutionImgPath+contentsMap.solutionImg;
                 
-                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
-                if(contentsList.length-1 === idx) isContentsListInitiated = true;
-
                 return  <div id="workContentsDiv" className="workContentsDiv" key={idx} data-contents-no={contentsMap.contentsNo} > 
                                 <table className='workListTable'>
                                     <thead>
@@ -803,6 +850,27 @@ const IpsiWorkContentsListy = ()=>{
         });
 
 
+        const showMoreContents = async function(){
+            curPageNum++;
+            fExecuteWidth = true;
+            let impYearSelVal = document.getElementById("impYearSelBox").value;
+            let impMonthSelVal = document.getElementById("impMonthSelBox").value;
+            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            setContentsList([...contentsList, ...ipsiContents.mathContentsList]);
+            setWorkListChanged(false);
+            setWorkListChanged(true);
+            setContentsLen(contentsLen+ipsiContents.mathContentsList.length);
+            nb_multiChoiceGridSet("quesConMultiShow");
+
+            if(curPageNum !== ipsiContents.totalPageCnt-1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+                document.getElementById("showMoreContentsBtn").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+                document.getElementById("showMoreContentsBtn").classList.add("hide");
+            }
+        }
+
   return ( <>
             <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
                 <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
@@ -821,9 +889,8 @@ const IpsiWorkContentsListy = ()=>{
                     </div>
                 </div>
             </div>
-
+            <div>
                 { !modalState &&
-                <div>
                     <div id="workListUnitTypeRoot" className='workListUnitTypeRoot'>
                         <form method="post" id="workSearchForm">
                             <div id="workListUnitType" className='workListUnitType'>
@@ -842,23 +909,32 @@ const IpsiWorkContentsListy = ()=>{
                             </div>
                         </form>
                     </div>
-                    <div className='workList'>
+                }
+
+                {contentsLen !== 0 && 
+                <div className='contentsCntWrap'>
+                    <div id="con" className='contentsDiv custom2 mini-title2'>
+                        <span>변형 작업 문제 갯수 : {contentsLen}<span id="showMoreContentsBtn" className='showMoreContentsBtn hide' onClick={()=>{showMoreContents()}} >+</span></span>
+                        <span className='hwpAllDownBtn floatRight' onClick={()=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
+                    </div>
+                </div>
+                }
+
+                 { !modalState &&
+                    <div className='workList custom'>
                         {workListChanged && workContentsList.length !==0 ? 
                             <div className="contents-show" id="contents-show">
-                                {contentsLen !== 0 && 
-                                <div id="con" className='mini-title2'>
-                                    <span>변형 작업 문제 갯수 : {contentsLen}</span>
-                                    <span className='hwpAllDownBtn floatRight' onClick={()=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
-                                </div>
-                                
-                                }
                                 {workContentsList}
                             </div>
                             : <EmptyList msg={emptyListMsg} imgName="searchList"  addImgClass="" /> 
                         }
                     </div>
-                </div>
             }
+            </div>
+
+            <div id="showMoreContents" className='showMoreContents hide' onClick={()=>{showMoreContents()}}>검색정보 더보기</div>
+            <div className='paddingFiveZero'></div>
+
             <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState  && <FormulaEditor contentsNo={contentsNo} contentsClassify={4}/>}

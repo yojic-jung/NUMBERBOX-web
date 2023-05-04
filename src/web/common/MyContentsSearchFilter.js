@@ -4,12 +4,14 @@ import {Link} from "react-router-dom";
 
 const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
     const [subjectList, setSubjectList] = useState(new Array());
-    
+    const [secUnitList, setSecUnitList] = useState(new Array());
+
     useEffect(()=>{
         window.addEventListener('click', hideSearchFilter);
         const asyncUseEffect = async () =>{
             let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectList(jsonObj["mathSubjectInfo"]);
+            setSecUnitList(jsonObj["mathSecUnitInfo"]);
         }
         asyncUseEffect();
         return ()=>removeAddedEvent();
@@ -43,7 +45,7 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
                 mySearchFilter[i].classList.add("hide");
             }
         }
-
+       
     }
     
 
@@ -75,9 +77,29 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
 
     const myContentsSubFilter = async(event) =>{
         let target = event.target;
-        let targetSubject = target.innerHTML;
-        if(targetSubject==="전체"){ document.getElementById("mySubFilterTitle").innerText = "학년 및 과목";}
-        else {document.getElementById("mySubFilterTitle").innerText= target.innerText;}
+        let targetSubject = target.dataset.mainVal;
+        if(targetSubject==="전체"){ 
+            document.getElementById("mySubFilterTitle").innerText = "학년 및 과목";
+            let subjectFilterList = document.getElementById("subjectFilterUnitList").querySelectorAll("li");
+            for(let i=0; i<subjectFilterList.length; i++){
+                subjectFilterList[i].classList.add("hide");
+            }
+            subjectFilterList[0].classList.remove("hide");
+        }
+        else {
+            document.getElementById("mySubFilterTitle").innerText= target.innerText;
+            let subjectFilterList = document.getElementById("subjectFilterUnitList").querySelectorAll("li");
+            for(let i=0; i<subjectFilterList.length; i++){
+                if(targetSubject === subjectFilterList[i].dataset.parentVal){
+                    subjectFilterList[i].classList.remove("hide");
+                }else{
+                    subjectFilterList[i].classList.add("hide");
+                }
+            }
+            subjectFilterList[0].classList.remove("hide");
+        }
+        document.getElementById("mySubFilterTitle").dataset.currentVal = targetSubject;
+        document.getElementById("mySubFilterUnit").innerText = "대단원";
 
         let contentsDiv = document.getElementsByClassName("contentsDivForFilter");
         for(let i=0; i<contentsDiv.length; i++){
@@ -98,17 +120,76 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
                 filterdCnt++;
             }
         }
+         //필터링 문제 갯수 초기화
+        if(document.getElementById("searchFilterCnt") !== null && document.getElementById("searchFilterCnt") !== undefined){
+            document.getElementById("searchFilterCnt").innerText = filterdCnt
+        }
+        if(filterdCnt>0){
+            document.getElementById("filetedEmptyMsg").classList.add("hide");
+        }else{
+            document.getElementById("filetedEmptyMsg").classList.remove("hide");
+        }
+        
+    }
+
+    const myContentsSubFilterByUnit = async(event) =>{
+        let target = event.target;
+        let targetSecUnit = target.dataset.mainVal;
+        if(targetSecUnit==="전체"){ document.getElementById("mySubFilterUnit").innerText = "대단원";}
+        else {document.getElementById("mySubFilterUnit").innerText= target.innerText;}
+
+        let contentsDiv = document.getElementsByClassName("contentsDivForFilter");
+        for(let i=0; i<contentsDiv.length; i++){
+            //둘다 전체인 경우 => 필터 다 풀기
+           if(document.getElementById("mySubFilterTitle").dataset.currentVal === "전체" && targetSecUnit==="전체"){
+                contentsDiv[i].classList.remove("hide");
+                continue;
+            //과목 값 있고 대단원 전체 => 과목 값으로 필터링
+           }else if(document.getElementById("mySubFilterTitle").dataset.currentVal !== "전체" && targetSecUnit==="전체"){
+                if(document.getElementById("mySubFilterTitle").dataset.currentVal === contentsDiv[i].dataset.subject){
+                    contentsDiv[i].classList.remove("hide");
+                }else{
+                    contentsDiv[i].classList.add("hide");
+                }
+            //과목 값 있고 대단원 값 있음 => 과목, 대단원 값으로 필터링
+           }else if(document.getElementById("mySubFilterTitle").dataset.currentVal !== "전체" && targetSecUnit!=="전체"){
+                if(document.getElementById("mySubFilterTitle").dataset.currentVal === contentsDiv[i].dataset.subject
+                && targetSecUnit === contentsDiv[i].dataset.secUnit){
+                    contentsDiv[i].classList.remove("hide");
+                }else{
+                    contentsDiv[i].classList.add("hide");
+                }
+           }
+        }
+        let filterdCnt = 0;
+        for(let i=0; i<contentsDiv.length; i++){
+            if(!contentsDiv[i].classList.contains("hide")){
+                filterdCnt++;
+            }
+        }
+        //필터링 문제 갯수 초기화
+        if(document.getElementById("searchFilterCnt") !== null && document.getElementById("searchFilterCnt") !== undefined){
+            document.getElementById("searchFilterCnt").innerText = filterdCnt
+        }
+
         if(filterdCnt>0){
             document.getElementById("filetedEmptyMsg").classList.add("hide");
         }else{
             document.getElementById("filetedEmptyMsg").classList.remove("hide");
         }
     }
+
     const subjectFilterList = subjectList.map( (contentsMap, idx) => {
         return (
-            <li key={contentsMap.unitUniqNo} data-unit-uniq-no={contentsMap.unitUniqNo} onClick={(event)=>{myContentsSubFilter(event)}}>{contentsMap.mainVal}</li>
+            <li key={contentsMap.unitUniqNo} data-unit-uniq-no={contentsMap.unitUniqNo} data-main-val={contentsMap.mainVal} onClick={(event)=>{myContentsSubFilter(event)}} dangerouslySetInnerHTML={{__html:contentsMap.mainVal}}></li>
         );
     });
+    const secUnitFilterList = secUnitList.map( (contentsMap, idx) => {
+        return (
+            <li className='hide' key={contentsMap.unitUniqNo} data-unit-uniq-no={contentsMap.unitUniqNo}  data-parent-val={contentsMap.parentVal} data-main-val={contentsMap.mainVal} onClick={(event)=>{myContentsSubFilterByUnit(event)}} dangerouslySetInnerHTML={{__html:contentsMap.mainVal}}></li>
+        );
+    });
+    
     return (
             <>
                 <div className="bi-jutify-align2">
@@ -116,8 +197,15 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
                         <span className='relative'>
                             <span id="mySubFilterTitle" className="myConSeachFilter" onClick={()=>{seachFilterClick("subjectFilterList")}}>학년 및 과목</span>
                             <ul id="subjectFilterList" className="mySearchFilter-list hide">
-                                <li data-unit-uniq-no="00" onClick={(event)=>{myContentsSubFilter(event)}}>전체</li>
+                                <li id="mySubFilterOff" data-unit-uniq-no="00" data-main-val="전체" onClick={(event)=>{myContentsSubFilter(event)}}>전체</li>
                                 {subjectFilterList}
+                            </ul>
+                        </span>
+                        <span className='relative'>
+                            <span id="mySubFilterUnit" className="myConSeachFilter" onClick={()=>{seachFilterClick("subjectFilterUnitList")}}>대단원</span>
+                            <ul id="subjectFilterUnitList" className="mySearchFilter-list custom hide">
+                                <li data-unit-uniq-no="00" data-main-val="전체" onClick={(event)=>{myContentsSubFilterByUnit(event)}}>전체</li>
+                                {secUnitFilterList}
                             </ul>
                         </span>
                         <span className='relative'>

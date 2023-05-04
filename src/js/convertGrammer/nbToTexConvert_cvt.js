@@ -2067,6 +2067,10 @@ export const cvt_convertBoldTexToHtml= async (texGrammer, texIndex, nbFormulHTML
 
 export const cvt_htmlToTexAll = async (rootId, subClassName, title, owner, isSolHide ) => {
     let workListTable = document.getElementById(rootId).querySelectorAll(subClassName);
+    if(workListTable.length === 0){
+        alert("선택된 문제가 없습니다.\n다시 시도해주시기 바랍니다.");
+        return;
+    }
     let tmpNewTex = new Array();
     let conTitleObj = new Object();
     conTitleObj.contentsTitle = new Object();

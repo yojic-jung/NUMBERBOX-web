@@ -455,7 +455,7 @@ const FormulaEditorUnitForMulti = ({contentsClassify, customId, ordinalNum, clas
 								<span id="shareSttsAllCheck" className="allCheckBtn" onClick={(event)=>{allCheckFunction(event, "shareSttsSuccess", "shareSttsPublic", undefined, "nbCustomSelected2")}}>
 									일괄적용
 									<div id="shareSttsSuccess" className="allCheckBtnSuccess">일괄적용 완료</div>
-									<div className="allCheckBtnDesc">모든 문항에 라이선스 범위 일괄적용</div>
+									<div className={contentsClassify===4 ? "allCheckBtnDesc" : "allCheckBtnDesc custom"}>모든 문항에 라이선스 범위 일괄적용</div>
 								</span>
 								}
 							</div>
@@ -469,8 +469,8 @@ const FormulaEditorUnitForMulti = ({contentsClassify, customId, ordinalNum, clas
 													<span className='licPublicTitle'>공개</span>
 													<div className="licChkBtnDesc multi">
 														<div>플랫폼 내 모든 사용자에게 공개</div>
-														<div>'변형문제 만들기' 서비스를 통한 2차 저작물 제작 허용</div>
-														<div>교육 기관에서 비영리목적의 학습 자료로서 사용 허용</div>
+														<div>다른 사용자의 2차 저작물 제작 허용</div>
+														<div>교육 기관에서 비영리목적의<br/>학습 자료로서 사용 허용</div>
 													</div>
 												</label>
 											</td>
@@ -489,13 +489,13 @@ const FormulaEditorUnitForMulti = ({contentsClassify, customId, ordinalNum, clas
 									<div className='licDivFir'>
 										<label className="licChkBtn">
 											<input id="onlineLicStts" type="checkbox" name={"mathContents["+idx+"].onlineLicStts"} value="1" disabled/> 인터넷 강의 허용
-											<span className='licChkBtnDesc'>외부 동영상 플랫폼에서 출처 표시 하에 문제 사용 및 노출 허용</span>
+											<span className='licChkBtnDesc'>외부 동영상 플랫폼에서 출처 표시 하에<br/>문제 사용 및 노출 허용</span>
 										</label>
 									</div> 
 									<div className='licDiv'>
 										<label className="licChkBtn">
 											<input id="perLicStts" type="checkbox" name={"mathContents["+idx+"].perLicStts"} value="1" disabled/> 개인 강사 교재 허용
-											<span className='licChkBtnDesc'>기업용 출판이 아닌 개인 강사 교재에 문제 수록 허용</span>
+											<span className='licChkBtnDesc'>기업용 출판이 아닌 개인 강사 교재에<br/>문제 수록 허용</span>
 										</label>
 									</div> 
 									<div className='licDiv'>

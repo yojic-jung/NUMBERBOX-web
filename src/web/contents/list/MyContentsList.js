@@ -4,7 +4,7 @@ import FormulaEditor from 'web/contents/register/FormulaEditor'
 import RegisterContentsForImg from 'web/contents/register/RegisterContentsForImg'
 import "css/common/nbScreen.css";
 import {nb_dataFetch, nb_formDataFileFetch, nb_fadeInOut, nb_closeBtn, nb_modalScrollEnd, nb_modalScrollStrt, nb_multiChoiceGridSet, nb_licenseUiCheck, nb_promptBox
-    , nb_detectScrollPosition, nb_moveToScroll, nb_confirmBox, nb_dateFormat} from 'js/common/common_nb.js';
+    , nb_detectScrollPosition, nb_moveToScroll, nb_confirmBox, nb_dateFormat, nb_formDataFetch} from 'js/common/common_nb.js';
 import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
 import {cvt_htmlToTexAll, cvt_textNodeConvert, cvt_initWidthHeight, cvt_initOrgWidthHeight, cvt_convertHtmlToTex, cvt_makeJsonArrForHwp, cvt_combineFormul} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 import MyContentsSearchFilter from 'web/common/MyContentsSearchFilter';
@@ -20,8 +20,10 @@ let subjectVal;
 let firUnitVal;
 let secUnitVal;
 let thrUnitVal;
-let isContentsListInitiated = false;    //모달 팝업이후 컨텐츠가 모두 뿌려졌는지 판단여부
+let curPageNum = 0;
+let pageVolume = 100; 
 const MyContentsList = ({isMine, userNo})=>{
+
     const [contentsList, setContentsList] = useState(new Array());
     const [contentsNo, setContentsNo] = useState("");
     const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
@@ -47,7 +49,6 @@ const MyContentsList = ({isMine, userNo})=>{
 
 
     const modalPopupClose = async (event, isSearch) =>{
-        isContentsListInitiated = false;
         window.removeEventListener('click', reg_eraseEditTbUI);
         await nb_closeBtn("outerFormulaEditor"); 
         setModalState(false);
@@ -86,19 +87,6 @@ const MyContentsList = ({isMine, userNo})=>{
         } 
         await nb_multiChoiceGridSet("quesConMultiShow");
         nb_modalScrollEnd(scrollY)
-        let scrollCheck = await setInterval(()=>{
-            if(isContentsListInitiated){    //컨텐츠 모두 보여지면 원래 스크롤 위치로 복귀
-                let contentsDiv = document.getElementsByClassName("contentsDiv");
-                for(let i=0; i<contentsDiv.length; i++){
-                    if(contentsDiv[i].dataset.contentsNo === contentsNo){
-                        contentsDiv[i].scrollIntoView({behavior: "auto", block: "center", inline: "center"});
-                        break;
-                    }
-                }
-                clearInterval(scrollCheck);
-            }
-        }, 200)
-       
     }
     
 
@@ -116,14 +104,24 @@ const MyContentsList = ({isMine, userNo})=>{
             }
             
             let returnObj;
+            curPageNum=0;
             if(isMine){
-                returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList", true);
+                returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
             }else{
-                returnObj= await nb_dataFetch("/mathInfo/takeUserContentsList?userNo="+userNo, true);
+                returnObj= await nb_dataFetch("/mathInfo/takeUserContentsList?userNo="+userNo+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
                 setConRepoInfoList(returnObj.mathconRepoInfo);
                 setConLikeInfoList(returnObj.mathConLikeInfo);
             }
+            if(returnObj.totalPageCnt > 1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+                document.getElementById("showMoreContentsBtn").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+                document.getElementById("showMoreContentsBtn").classList.add("hide");
+            }
+
             setContentsList(returnObj.myContentsList);
+            document.getElementById("searchFilterCnt").innerText = returnObj.myContentsList.length
             if(returnObj.myContentsList.length === 0){
                 document.getElementById("mySubFilterTitle").classList.add("hide");
                 document.getElementById("mySortFilterTitle").classList.add("hide");
@@ -187,7 +185,7 @@ const MyContentsList = ({isMine, userNo})=>{
             });
         } 
         
-        const myContentsDel = async function(contentsNo){
+        const myContentsDel = async function(){
             let inputVal = document.getElementById("promptInput").value;
             if(inputVal !== "삭제"){
                 document.getElementById("promptInput").classList.add("shake")
@@ -200,10 +198,11 @@ const MyContentsList = ({isMine, userNo})=>{
             let returnObj = await nb_dataFetch("/mathInfo/myContentsDel?contentsno="+Number(delTargetConNo), true);
             if(!returnObj.existMsg){
                 let contentsListTmp = contentsList.filter(function(element, idx){
-                    if(element.contentsNo !==  Number(contentsNo)){
+                    if(element.contentsNo !==  Number(delTargetConNo)){
                         return element;
                     }
                 });
+                fExecuteWidth = true;
                 setContentsList(contentsListTmp);
                 if(contentsListTmp.length === 0){
                     document.getElementById("mySubFilterTitle").classList.add("hide");
@@ -212,11 +211,12 @@ const MyContentsList = ({isMine, userNo})=>{
                 }
                 let contentsDiv = document.getElementsByClassName("contentsDiv");
                 for(let i=0; i<contentsDiv.length; i++){
-                    if(Number(contentsDiv[i].dataset.contentsNo) === contentsNo){
+                    if(Number(contentsDiv[i].dataset.contentsNo) === delTargetConNo){
                         contentsDiv[i].remove();
                         break;
                     }
                 }
+                document.getElementById("searchFilterCnt").innerText = contentsListTmp.length;
                 nb_fadeInOut("정상적으로 삭제되었습니다.", 2000);
 
             }
@@ -232,7 +232,7 @@ const MyContentsList = ({isMine, userNo})=>{
             }
 
             if(contentsNo === "all"){
-                cvt_htmlToTexAll("contents-show", ".contentsDiv", "나의 제작문제", "", false);
+                cvt_htmlToTexAll("contents-show", ".contentsDiv:not(.hide)", "나의 제작문제", "", false);
                 hwpDownPopUpClose();
                 return;
             }
@@ -520,14 +520,11 @@ const MyContentsList = ({isMine, userNo})=>{
                     isImgRegContents = true;
                 }
 
-                //컨텐츠가 모두 뿌려진 이후 모달팝업클로즈 이벤트에서 수정한 위치로 스크롤 찾아감
-                if(contentsList.length-1 === idx) isContentsListInitiated = true;
-
                 let transContents = "";
                 if(contentsMap.contentsClassify === 2){
                     transContents = "transConDiv";
                 }
-                return  <div id="workContentsDiv" className={"contentsDiv contentsDivForFilter "+transContents} key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sys-create-date={sysDateStr}> 
+                return  <div id="workContentsDiv" className={"contentsDiv contentsDivForFilter "+transContents} key={idx}  data-contents-no={contentsMap.contentsNo} data-subject={contentsMap.mathUnitInfo.subject} data-sec-unit={contentsMap.mathUnitInfo.secUnit} data-sys-create-date={sysDateStr}> 
                                 <table className='workListTable'>
                                     <thead>
                                         <tr className='workListTBHead2'>
@@ -642,9 +639,77 @@ const MyContentsList = ({isMine, userNo})=>{
                             </div>
         });
 
+        const goToMathDocs = async () =>{
+            let contentsDivForFilter = document.querySelectorAll(".contentsDivForFilter:not(.hide)");
+            if(contentsDivForFilter.length===0){
+                alert("현재 페이지에 노출되어있는 문제가 없습니다.\n검색필터를 조정해주세요.");
+                return;
+            }
+
+            if(contentsDivForFilter.length>100){
+                alert("학습지는 최대 100문항까지 제작 가능합니다.\n100문항이 넘는 경우 사용자 검색필터링 조건으로 검색된\n상위 100문항만 학습지로 제작됩니다.");
+            }
+
+            let contentsNoList= "";
+            for(let i=0; i<contentsDivForFilter.length; i++){
+                contentsNoList+=contentsDivForFilter[i].dataset.contentsNo;
+
+                if(i>=99){
+                    break
+                }
+                if(i !== contentsDivForFilter.length-1){
+                    contentsNoList+=",";
+                }
+            }
+
+            document.title="나의 제작문제";
+            let formData = new FormData();
+            formData.append("docsGrade", "");
+            formData.append("docsTitle", "나의 제작문제");
+            formData.append("docsSubTitle", "");
+            formData.append("docsOwner", "");
+            formData.append("docsErrStts", 3);
+            formData.append("contentsNoList", contentsNoList);
+            let jsonObj = await nb_formDataFetch("/mathDocs/registerMathDocsPaper", formData, true);
+            window.open("/makeMathDocs?docsNo="+jsonObj.docsNo)
+        }
+
         const hwpDownPopUpClose = async () => {
             document.getElementById("confirmBoxScreen").classList.add("hide");
         }
+
+        const showMoreContents = async function(){
+            //필터 풀기
+            if(document.getElementById("mySubFilterOff") !== null && document.getElementById("mySubFilterOff") !== undefined){
+                document.getElementById("mySubFilterOff").click();
+            }
+
+            curPageNum++;
+            let returnObj
+            if(isMine){
+                
+                returnObj= await nb_dataFetch("/mathInfo/takeMyContentsList?curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+            }else{
+                returnObj= await nb_dataFetch("/mathInfo/takeUserContentsList?userNo="+userNo+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
+                setConRepoInfoList([...conRepoInfoList, ...returnObj.mathconRepoInfo]);
+                setConLikeInfoList([...conLikeInfoList, ...returnObj.mathConLikeInfo]);
+            }
+            fExecuteWidth=true;
+
+            document.getElementById("searchFilterCnt").innerText = contentsList.length+returnObj.myContentsList.length;
+            setContentsList([...contentsList, ...returnObj.myContentsList]);
+
+            if(curPageNum !== returnObj.totalPageCnt-1){
+                document.getElementById("showMoreContents").classList.remove("hide");
+                document.getElementById("showMoreContentsBtn").classList.remove("hide");
+            }else{
+                document.getElementById("showMoreContents").classList.add("hide");
+                document.getElementById("showMoreContentsBtn").classList.add("hide");
+            }
+            await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
+
+        }
+        
 
   return ( <>
   {isMine ? <Helmet>
@@ -671,14 +736,22 @@ const MyContentsList = ({isMine, userNo})=>{
             <MyContentsSearchFilter makeContentsShow={true} descMsg="" />
             : <MyContentsSearchFilter makeContentsShow={false} descMsg="" />
             }
+                <div className='contentsCntWrap'>
+                    <div className='contentsDiv custom'>
+                        {isMine && workContentsList.length !== 0 ? 
+                            <span className='hwpAllDownBtn' onClick={()=>{goToMathDocs()}}>학습지 만들기</span>
+                            :
+                            <span></span>
+                        }
+                        <span className='contentsCnt'>
+                            문제 수 : [<span id="searchFilterCnt"></span>/{workContentsList.length}
+                            <span id="showMoreContentsBtn" className='showMoreContentsBtn hide' onClick={()=>{showMoreContents()}} >+</span>]
+                        </span>
+                    </div>
+                </div>
                 { !modalState &&
                 <div>
-                    <div className='workList myContentsList'>
-                        <div className='contentsDiv'>
-                            {isMine && workContentsList.length !== 0 && 
-                                <span className='hwpAllDownBtn' onClick={(event)=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?\n(업로드 및 다운로드 일일 3회 제한)"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
-                            }
-                        </div>
+                    <div className='workList custom'>
                         <div className="contents-show filterContents" id="contents-show">
                         {workContentsList.length !== 0 ? 
                         <>
@@ -690,7 +763,8 @@ const MyContentsList = ({isMine, userNo})=>{
                     </div>
                 </div>
             }
-
+            <div id="showMoreContents" className='showMoreContents hide' onClick={()=>{showMoreContents()}}>검색정보 더보기</div>
+            <div className='paddingFiveZero'></div>
             <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
                 <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
                 { modalState && ( imgRegMode ?

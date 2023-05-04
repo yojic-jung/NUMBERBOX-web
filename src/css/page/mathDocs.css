@@ -736,38 +736,43 @@
 
 .mathDocsMyProdDiv .workList, .mathDocsMyRepoDiv .workList{
     border: unset;
+    margin-bottom: 0;
 }
 
 .myProdAddBtn, .myRepoAddBtn, .simConAddBtn, .simConChngBtn{
+    display: inline-block;
     cursor: pointer;
-    padding: 5px 0px;
-    color: #5596D8;
     border-radius: 10px;
     font-size: 14px;
     font-weight: normal;
     margin:0 12px;
+    padding: 0px 8px;
+    background: rgb(139, 169, 232);
+    border: 2px solid rgb(115, 146, 213);
+    color: white;
+    border-radius: 5px;
+    line-height: 160%;
 }
 
 .myProdAddBtn::after, .myRepoAddBtn::after, .simConAddBtn::after, .simConChngBtn::after{
-    content: '+';
+    content: '';
+    background:  url("img/addWhite.png") no-repeat center;
     display: inline-block;
     position: relative;
-    top:-5px;
     width: 10px;
     height: 10px;
     margin: auto;
-    vertical-align: top;
-    margin-left: 1px;
     background-size: 10px;
+    vertical-align: middle;
 }
 
 .simConChngBtn::after{
     content: '';
     top: 0px;
-    width: 14px;
-    height: 14px;
-    background:  url("img/conChange.png") no-repeat center;
-    background-size: 13px;
+    width: 16px;
+    height: 16px;
+    background:  url("img/conChangeWhite.png") no-repeat center;
+    background-size: 12px;
 }
 
 .mathDocsConChngBtn{
@@ -809,7 +814,6 @@
 .mathDocsSimConDesc{
     line-height: 140%;
     font-size: 18px;
-    margin-top:70px;
     font-family: 'jejuGothic';
     color: rgb(58, 103, 176);
 }

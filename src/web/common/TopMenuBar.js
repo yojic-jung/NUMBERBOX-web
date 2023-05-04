@@ -92,7 +92,7 @@ return (
                             <td><Link className='linkNoneCss' to="/makeMathDocs">학습지생성</Link></td>
                             <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
                             <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
-                            <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
+                            <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1&pageNum=1">컨텐츠</Link></td>
                             <td><span className='pointer' onClick={()=>{window.open("/fileConvert")}}>파일변환</span></td>
                             <td><Link className='linkNoneCss signLoginBtn' to="/login">로그인/회원가입</Link></td>
                         </tr>}
@@ -100,7 +100,7 @@ return (
                             <td><Link className='linkNoneCss' to="/makeMathDocs">학습지생성</Link></td>
                             <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
                             <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
-                            <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1">컨텐츠</Link></td>
+                            <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1&pageNum=1">컨텐츠</Link></td>
                             <td><span className='pointer' onClick={()=>{window.open("/fileConvert")}}>파일변환</span></td>
                             <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
                                 {imgPath === null ?
@@ -112,8 +112,8 @@ return (
                                     <Link className='linkNoneCss' to="/myProfile"><li>프로필</li></Link>
                                     <Link className='linkNoneCss' to="/myContentsList"><li>나의 제작문제</li></Link>
                                     <Link className='linkNoneCss' to="/myRepository"><li>나의 저장소</li></Link>
-                                    <Link className='linkNoneCss' to="/myMathDocs"><li>나의 학습지</li></Link>
-                                    <Link className='linkNoneCss' to="/myResource"><li>나의 컨텐츠</li></Link>
+                                    <Link className='linkNoneCss' to="/myMathDocs?pageNum=1"><li>나의 학습지</li></Link>
+                                    <Link className='linkNoneCss' to="/myResource?pageNum=1"><li>나의 컨텐츠</li></Link>
                                     <li onClick={()=>{document.getElementById("serviceCenter").classList.remove("hide")}}>고객센터</li>
                                     <li><div onClick={()=>logoutFunction()}>로그아웃</div></li>
                                 </ul>
