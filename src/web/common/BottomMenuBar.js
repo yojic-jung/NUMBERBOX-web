@@ -53,7 +53,7 @@ const BottomMenuBar = ()=>{
                     <span className='hide'>통신판매업 신고 <span className='comp-info-title'></span></span>
                 </div>   
                 <div className='comp-info-div'>
-                    <span className='comp-info-title'>서울특별시 강남구 영동대로 602, t176 &nbsp; | &nbsp; TEL. 02-878-1176 &nbsp; | &nbsp; EMAIL. dywlr74@naver.com</span>
+                    <span className='comp-info-title'>서울특별시 강남구 영동대로 602, t176 &nbsp; | &nbsp; EMAIL. dywlr74@naver.com</span>
                 </div>
                 <div className='comp-info-div'>
                     <span className='comp-info-title'>Copyright(c) N명의수학. All Rights Reserved.</span>
