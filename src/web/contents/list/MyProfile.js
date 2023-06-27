@@ -81,7 +81,7 @@ const MyProfile = ()=>{
             alert("해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 새로운 비밀번호로 변경하여 주시기 바랍니다.");
             document.getElementById("emailForPassFind").value = "";
         }else{
-            alert("해당 이메일의 계정이 존재하지 않습니다.\n만일, 계정이 존재 함에도 이 경고가 뜨는 경우 고객센터로 문의 해주시면 감사하겠습니다.");
+            alert("해당 이메일의 계정이 존재하지 않습니다.");
         }
     }
 
@@ -152,16 +152,6 @@ const MyProfile = ()=>{
                         <tr>
                             <td>이메일</td>
                             <td><span className='bolder'>{email}</span></td>
-                        </tr>
-                        <tr>
-                            <td>이름</td>
-                            <td className='bolder'>{name}</td>
-                        </tr>
-                        <tr>
-                            <td>휴대폰 번호</td>
-                            <td>
-                                <span className='bolder'>{phone}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className='customBtn' onClick={()=>onClickCertification()}>휴대폰 번호 변경</span>
-                            </td>
                         </tr>
                         <tr>
                             <td>비밀번호 변경</td>

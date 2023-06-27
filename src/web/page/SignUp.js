@@ -14,6 +14,7 @@ const SignUp = ()=>{
     const [merchantUid, setMerchantUid] = useState(0);
     const [merchantIdCode, setMerchantIdCode] = useState(0);
     const [isPhoneIdentified, setIsPhoneIdentified] = useState(false);
+    const [isEmailIdentified, setIsEmailIdentified] = useState(false);
     const [name, setName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [birth, setBirth] = useState("");
@@ -69,6 +70,7 @@ const SignUp = ()=>{
     
         /* 3. 콜백 함수 정의하기 */
         async function callback(response) {
+            console.log(response);
           const {
             success,
             merchant_uid,
@@ -78,6 +80,10 @@ const SignUp = ()=>{
           if (success) {
             alert('본인인증 성공');
             let returnData = await nb_dataFetch("/certifications/"+response.imp_uid, true);
+            console.log(returnData);
+            console.log(returnData.name);
+            console.log(returnData.phone);
+            console.log(returnData.birth);
             document.getElementById("phoneCertifyBtn").classList.remove("loginValDescUI");
             document.getElementById("phoneCertiValDesc").innerText = "";
             setIsPhoneIdentified(true)
@@ -91,6 +97,7 @@ const SignUp = ()=>{
 
     const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     const passRegex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;//패스워드 문자 숫자 특수문자 8-15자
+    const emailIdentifyRegex = /^[0-9]{6}$/;
 
     const fagreeStateBtn = () =>{
        let isChecked =  document.getElementById("agreeChk").checked;
@@ -163,6 +170,12 @@ const SignUp = ()=>{
                 document.getElementById("passChkValDesc").classList.remove("redText");
                 document.getElementById("passChkValDesc").classList.add("blueText");
             }
+        }else if(targetId === "emailIdCode"){
+            if(emailIdentifyRegex.test(targetValue)){
+                document.getElementById("emailCertifyBtn").classList.remove("disable");
+            }else{
+                document.getElementById("emailCertifyBtn").classList.add("disable");
+            }
         }
         
     }
@@ -216,6 +229,7 @@ const SignUp = ()=>{
             isValid = false;
         }
 
+        /*
         if(!isPhoneIdentified){
             document.getElementById("phoneCertiValDesc").innerText = "휴대폰 본인인증을 진행 해주세요.";
             document.getElementById("phoneCertiValDesc").classList.remove("blueText");
@@ -224,6 +238,8 @@ const SignUp = ()=>{
             window.scroll(0, document.getElementById("phoneCertifyBtn"));
             isValid = false;
         }
+        */
+
 
         if(password !== passwordChk){
             document.getElementById("passChkValDesc").innerText = "비밀번호가 일치하지 않습니다.";
@@ -263,23 +279,51 @@ const SignUp = ()=>{
         if(!isValid){
             return;
         }
-
-        let formData = new FormData(document.getElementById("signup-form"));
-        formData.append("userName", name);
-        formData.append("phoneNumber", phoneNumber);
-        formData.append("birth", birth);
-		let returnObj = await nb_formDataFetch("/signup",formData, true);
-        if(returnObj.isSuccess === "success"){
-            window.location.href = "/?succeedSignUp=1";
-        }else if(returnObj.isSuccess === "existsEmail"){
-            alert("이미 존재하는 이메일입니다.");
-        }else if(returnObj.isSuccess === "existsPhone"){
-            alert("이미 가입된 휴대폰 번호입니다. ");
-        }else if(returnObj.isSuccess === undefined){
-            alert("에러 ["+returnObj.error+"]");
-        }
+        
+        emailCertify();
     }
 
+    const emailCertify = async () => {
+        document.getElementById("emailIdCode").value="";
+
+        //이메일 인증코드 생성 메일 날리기
+        let email = document.getElementById("email").value;;
+        let returnVal = await nb_dataFetch("/createEmailIdCode?email="+email, true);
+        if(returnVal.isSuccess){
+            document.getElementById("userInpEmail").innerText=email;
+            document.getElementById("emailCertify").classList.remove("hide");
+        }else{
+            alert("이메일 인증 코드 발송에 실패하였습니다. 다시 시도해주시기 바랍니다.");
+        }
+        
+    }
+
+    const signupFinalReq = async (event) => {
+            //이메일 인증코드 입력하기
+            //인증코드 검증
+           if(event.target.classList.contains("disable")) return;
+
+            let formData = new FormData(document.getElementById("signup-form"));
+            formData.append("emailIdCode", document.getElementById("emailIdCode").value);
+            let returnObj = await nb_formDataFetch("/signup",formData, true);
+            if(returnObj.isSuccess === "success"){
+                window.location.href = "/?succeedSignUp=1";
+            }
+            else if(returnObj.isSuccess === "existsEmail"){
+                alert("이미 존재하는 이메일입니다.");
+            }
+            else if(returnObj.isSuccess === "emailIdCodeMissMatch"){
+                alert("이메일 인증코드가 일치하지 않습니다.");
+            }
+            else if(returnObj.isSuccess === "emailIdCodeExpired"){
+                alert("이메일 인증코드의 유효기간이 지났습니다.");
+            }
+            else if(returnObj.isSuccess === undefined){
+                alert("에러 ["+returnObj.error+"]");
+            }
+    }
+
+    
 return (
     <>
         <Helmet>
@@ -293,12 +337,26 @@ return (
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
             <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
             <div className='login-signup-desc'>N명의수학에 오신 것을 환영합니다!</div>
+            <div id="emailCertify" className='blindBox hide'>
+                <div className='emailCertifyDiv'>
+                    <div className='closeBtn2' onClick={()=>{document.getElementById("emailCertify").classList.add("hide")}}>X</div>
+                    <div className='emailCertifyTitle'>이메일 인증</div> 
+                    <div className='alignLeft marginBTwoZero'>입력하신 <span id="userInpEmail" className='userInpEmail'></span>로 인증코드를 보내드렸습니다.<br/>
+                        아래 입력창에 인증코드를 입력하여 주시기 바랍니다.
+                    </div> 
+                    <div className='alignCenter'>
+                        <input id="emailIdCode" className='login-input emailCertifyInp' type="text" placeholder='인증코드 입력...' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event)}} onBlur={(event)=>{sigUpValidEffect(event)}} />
+                        &nbsp;&nbsp;&nbsp;<span id="emailCertifyBtn" className='emailCertifyBtn disable'  onClick={(event)=>{signupFinalReq(event);}}>확인</span>
+                    </div>
+                </div>
+            </div>
             <div className="login-div">
                 <form id="signup-form" method="post">
                     <div className='login-input-div'>
-                        이메일<br/>
+                        이메일 <br/>
                         <input id="email" name="email" className="login-input" type="text" placeholder='이메일을 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event) => {emailKeyUpVal(event);enterKeyEv(event);}} onBlur={(event)=>{sigUpValidEffect(event)}} />
                     </div>
+
                     <div id="emailValDesc" className='loginValDesc'></div>
                     <div className='login-input-div'>
                         비밀번호<br/>
@@ -310,10 +368,10 @@ return (
                         <input  id="passwordChk" name="passwordChk" className="login-input" type="password" placeholder='비밀번호를 다시 입력해주세요' onFocus={()=>{removeLoginValDescUI();}} onKeyUp={(event)=>{sigUpValidEffect(event);enterKeyEv(event);}} />
                     </div>
                     <div id="passChkValDesc" className='loginValDesc'></div>
-                    <div className='login-input-div'>
+                    {false &&<div className='login-input-div'>
                         <div id="phoneCertifyBtn" className='phoneCertifyBtn' onClick={()=>{onClickCertification()}}>휴대폰 본인인증</div>
                         <div id="phoneCertiValDesc" className='loginValDesc'></div>
-                    </div>
+                    </div>}
                     
                     <div>
                     <div className='login-input-div'>

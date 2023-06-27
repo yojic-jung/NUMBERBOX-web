@@ -83,7 +83,7 @@ const EmailPassFind = ()=>{
             alert("해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 로그인 후 비밀번호를 변경하여 주시기 바랍니다.");
             document.getElementById("emailForPassFind").value = "";
         }else{
-            alert("해당 이메일의 계정이 존재하지 않습니다.\n만일, 계정이 존재 함에도 이 경고가 뜨는 경우 고객센터로 문의 해주시면 감사하겠습니다.");
+            alert("해당 이메일의 계정이 존재하지 않습니다.");
         }
     }
 
@@ -100,14 +100,14 @@ return (
             <div className='login-menu-title'><Link className='linkNoneCss' to="/">N명<span className="bottom-menu-title2">의</span>수학</Link></div>
             <div className='login-menu-back'><span className='pointer' onClick={()=>{navigate(-1);}}>&lt;뒤로가기</span></div>
             <div className='login-signup-desc'>N명의수학에 접속 하세요!</div>
-            <div className="login-div">
-                <div className='emailPassFindDiv'>
+            <div className="login-div minHeight">
+                {false && <div className='emailPassFindDiv'>
                     <div className='emailPassFindDesc'>가입시 등록하신 휴대폰 번호로 진행 해주세요.</div>
                     <div className='borderBox emailPassFind'>
                         <div id="phoneCertifyBtn" className='phoneCertifyBtn emailPassFind' onClick={()=>{onClickCertification()}}>휴대폰 본인인증</div>
                     </div>
                     <div className='login-btn emailPassFind' onClick={()=>{findEmail()}}>이메일 찾기</div>
-                </div>
+                </div>}
                 <div className='emailPassFindDiv'>
                     <div className='emailPassFindDesc'>이메일 주소로 임시 비밀번호를 보내 드립니다.</div>
                     <div>

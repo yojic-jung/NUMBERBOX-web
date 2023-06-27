@@ -125,7 +125,7 @@ return (<>
                     </div>
                     <div className='login-etc-info'>
                         <div><label><span id='checkCircle' className='active'></span><input onChange={()=>{fKeepLoginStateBtn()}} type="checkbox" id="emailSave" className='hide' defaultChecked/>로그인 상태 유지하기</label></div>
-                        <div id="emailPassFind"><Link className="linkNoneCss" to="/emailPassFind">아이디/비밀번호 찾기</Link></div>
+                        <div id="emailPassFind"><Link className="linkNoneCss" to="/emailPassFind">비밀번호 찾기</Link></div>
                     </div>
                     <div className="signUpDiv">N명의수학 계정이 없으신가요? <a className="signUpLink" href="/signup">회원가입</a></div><br/>
                 </form>

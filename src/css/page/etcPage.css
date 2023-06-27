@@ -67,6 +67,9 @@
     box-sizing: border-box;
 }
 
+.login-div.minHeight{
+    min-height:210px;
+}
 .login-input-div{
     width: 90%;
     margin:5px auto 0 auto;
@@ -188,6 +191,54 @@
 .signup-btn-div{
     width: 90%;
     margin:60px auto 10px auto;
+}
+
+.emailCertifyDiv{
+    font-family: 'jejuGothic';
+    line-height: 160%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 1rem rgb(0 0 0/7%);
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 400px;
+    z-index: 99;
+}
+
+.emailCertifyTitle{
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(194, 194, 194);
+}
+
+.emailCertifyInp{
+    width: 60%;
+}
+
+.emailCertifyBtn{
+    background-color: rgb(55, 113, 178);
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.emailCertifyBtn.disable{
+    cursor: unset;
+    background-color: rgb(55, 113, 178, 0.3);
+}
+
+.userInpEmail{
+    font-family: 'GowunDodum-Regular';
+    text-decoration: underline;
+    color:dimgray;
 }
 
 .loginValDesc{
