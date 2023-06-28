@@ -118,7 +118,7 @@ const MathDocsMaker = ()=>{
         if(jsonObj.mathDocsPaper.docsErrStts===3){
             setShowFinalPopup(false);
             document.getElementById("topMenuBar").classList.add("hide");
-            document.getElementsByClassName("manager-menu")[0].classList.add("hide");
+            if(document.getElementsByClassName("manager-menu")[0]!=null) document.getElementsByClassName("manager-menu")[0].classList.add("hide");
         }
         
         let barArr = [];

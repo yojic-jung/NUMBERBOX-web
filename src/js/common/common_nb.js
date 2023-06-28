@@ -10,7 +10,7 @@ export const nb_isManger = () => {
   let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
   let isManger =false;
   if(isLogin){
-    isManger = window.localStorage.getItem("role") === "MANAGER" || window.localStorage.getItem("role") === "ADMIN" ;
+    isManger = window.localStorage.getItem("role") === "MANAGER" || window.localStorage.getItem("role") === "TOP_TESTER"  || window.localStorage.getItem("role") === "ADMIN" ;
   }
   return isManger;
 }
@@ -24,6 +24,15 @@ export const nb_isAdmin = () => {
   return isAdmin;
 }
 
+
+export const nb_isTopTester = () => {
+  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isTopTester =false;
+  if(isLogin){
+    isTopTester = window.localStorage.getItem("role") === "TOP_TESTER";
+  }
+  return isTopTester;
+}
 /*
  * 정의 : web에서 was의 data를 fetch하는 공통 함수
  * 설명 : transitEffect는 spinner 효과 사용여부 판단

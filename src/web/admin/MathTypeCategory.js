@@ -1,17 +1,18 @@
 import React, {useState, useEffect } from 'react';
 import { ReactSortable } from "react-sortablejs";
-import {nb_dataFetch, nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin, nb_isTopTester} from 'js/common/common_nb.js';
 import { reg_convertSpanToNoTag, reg_removeStyleAttribute} from 'js/contents/register/contents_reg';
 
 const MathTypeCategory = ()=>{
     let isAdmin = nb_isAdmin();
+    let isTopTester = nb_isTopTester();
     let isTypeAppended = false; //유형변경, 삭제, 문제이동, 유형 추가 후 다시 초기화 할때, 유형 새롭게 모두 가져왔는지 구분 변수
     const [subjectList, setSubjectList] = useState(new Array());
     const [mathTypePopupContents, setMathTypePopupContents] = useState(new Array());
 
     useEffect(() => {
         const asyncUseEffect = async function(){
-            if(!isAdmin) window.location.href = "/";
+            if(!(isAdmin || isTopTester)) window.location.href = "/";
             let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
             setSubjectList(jsonObj["mathSubjectInfo"])
             unitListSetFunction(jsonObj["mathSubjectInfo"], jsonObj["mathSecUnitInfo"], jsonObj["mathThrUnitInfo"]);

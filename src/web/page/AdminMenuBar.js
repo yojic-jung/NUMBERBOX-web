@@ -2,7 +2,7 @@ import React, {useEffect } from 'react';
 import "css/main/main.css";
 import "css/common/common.css";
 import {Link} from "react-router-dom";
-import {nb_isLogin, nb_isManger, nb_isAdmin} from 'js/common/common_nb.js';
+import {nb_isLogin, nb_isManger, nb_isAdmin, nb_isTopTester} from 'js/common/common_nb.js';
 
 const AdminMenuBar = ()=>{
 
@@ -10,6 +10,8 @@ const AdminMenuBar = ()=>{
     //매니저 권한 임시 구현
     let isManger = nb_isManger();
     let isAdmin = nb_isAdmin();
+    let isTopTester = nb_isTopTester();
+
     useEffect(() => {
         
     },[]);
@@ -28,7 +30,7 @@ return (
                 </>
             }
 
-            {isAdmin &&
+            {(isAdmin || isTopTester) &&
              <>
                 <div><Link className='manager-link' to="/admin/ipsiWorkContentsList"><span className='manager-menu-btn'>수능/모의고사 작업내역</span></Link></div>
                 <div><Link className='manager-link' to="/admin/registerIpsiContentsMulti"><span className='manager-menu-btn'>수능/모의고사 문제 만들기</span></Link></div>

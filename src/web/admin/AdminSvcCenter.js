@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import "css/admin/admin.css";
-import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin, nb_isTopTester} from 'js/common/common_nb.js';
 
 const AdminSvcCenter = ()=>{
     let isAdmin = nb_isAdmin();
+    let isTopTester = nb_isTopTester();
     const [currentErrType, setCurrentErrType] = useState(0);
     const [oneToOneQuestion, setOneToOneQuestion] = useState(0);
     const [conErrCnt, setConErrCnt] = useState(0);
@@ -15,17 +16,21 @@ const AdminSvcCenter = ()=>{
     const [errList, setErrList] = useState(new Array());
 
     useEffect(() => {
-        if(!isAdmin) window.location.href = "/";
+        if(!(isAdmin || isTopTester)) window.location.href = "/";
         const asyncUseEffect = async () =>{
             let returnVal = await nb_dataFetch("/serviceCenter/takeErrReportCount?reportStts=0", true);
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportByAdmin?reportStts=0", true);
-            setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
+            if(!isTopTester){
+                setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
+                setErrList(returnObj.errReportList);
+            }
+            
             setmMathDocsErrCnt(returnVal.mathDocsErrCnt);
             setMakeContentsErrCnt(returnVal.makeContentsErrCnt);
             setConErrCnt(returnVal.conErrCnt);
             setResErrCnt(returnVal.resErrCnt);
             setFileConvertErrCnt(returnVal.fileConvertErrCnt)
-            setErrList(returnObj.errReportList);
+            
         }
 
         asyncUseEffect();
@@ -54,16 +59,20 @@ const AdminSvcCenter = ()=>{
         let returnVal = await nb_dataFetch("/serviceCenter/takeErrReportCount?reportStts="+reportStts, true);
         if(reportStts !== "-1"){
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportByAdmin?reportStts="+reportStts, true);
-            setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
+            if(!isTopTester){
+                setOneToOneQuestion(returnVal.oneToOneQuestionCnt);
+                setErrList(returnObj.errReportList);
+            }
+            
             setmMathDocsErrCnt(returnVal.mathDocsErrCnt);
             setMakeContentsErrCnt(returnVal.makeContentsErrCnt);
             setConErrCnt(returnVal.conErrCnt);
             setResErrCnt(returnVal.resErrCnt);
             setFileConvertErrCnt(returnVal.fileConvertErrCnt)
-            setErrList(returnObj.errReportList);
+           
         }else{
             let returnObj = await nb_dataFetch("/serviceCenter/takeErrReportSearchBySttsAndTypeByAdmin?reportStts="+reportStts+"&errType="+errType, true);
-            setErrList(returnObj.errReportList);
+            if(!isTopTester) setErrList(returnObj.errReportList);
         }
     }
 
@@ -281,9 +290,17 @@ return (
                         <td>등록일</td>
                         <td className='reportStts admin'>상태</td>
                     </tr>
-                    {mathDocsErrReportList}
+                    {!isTopTester &&
+                        mathDocsErrReportList 
+                    }
                 </tbody>
             </table>
+            {isTopTester &&
+                <div>
+                    <br/>
+                    <div className='alignCenter marginTen fontEmphasis'>관리자 외 접근 불가</div>
+                </div>
+            }
         </div>
         <div id="detailedAdminQna" className='blindBox hide'>
             <div className='detailedErrReportAdminWrap'>

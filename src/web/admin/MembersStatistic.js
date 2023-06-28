@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin} from 'js/common/common_nb.js';
+import {nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin, nb_isTopTester} from 'js/common/common_nb.js';
 import "css/admin/admin.css";
 import StatisticTable from 'web/common/StatisticTable'
 
 const MembersStatistic = () => {
     let isAdmin = nb_isAdmin();
+    let isTopTestest = nb_isTopTester();
     const [isShow, setIsShow] = useState(false);
     
     const [membersInfoKey, setMembersInfoKey] = useState(new Array());
@@ -35,7 +36,7 @@ const MembersStatistic = () => {
     const [mathContentsCntByShareStts, setMathContentsCntByShareStts] = useState(new Array());
     
     useEffect(() => {
-        if(!isAdmin) window.location.href = "/";
+        if(!(isAdmin || isTopTestest)) window.location.href = "/";
         const asyncUseEffect = async () =>{
             let statistic1 = await nb_dataFetch("/takeMembersStatistic", true);
             let statistic2 = await nb_dataFetch("/mathDocs/mathDocsUsageStatistic", true);
@@ -101,13 +102,18 @@ const MembersStatistic = () => {
             document.getElementById("sortByLoginiDate").classList.add("active");
         }
     }
+
+    const showRecentSignupUser = () =>{
+        if(isAdmin) document.getElementById("lastSignupUser").classList.remove("hide");
+    }
+
     return (
         <div className="MembersStatisticRootDiv">
             {isShow &&
 
             <div>
                 <div>
-                    <span id="" className='customBtn' onClick={()=>{document.getElementById("lastSignupUser").classList.remove("hide")}}>최신 가입자 정보 조회</span>
+                    {isAdmin && <span id="" className='customBtn' onClick={()=>{showRecentSignupUser()}}>최신 가입자 정보 조회</span>}
                 </div>
                 <div id="lastSignupUser" className='blindBox hide'>
                     <div className='statisticFixedDiv'>
@@ -122,7 +128,7 @@ const MembersStatistic = () => {
                 <div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;회원 분포 통계&gt;</div>
-                        <StatisticTable title="연령별 회원 분포" statisticArr={membersCntByAge} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        {isAdmin && <StatisticTable title="연령별 회원 분포" statisticArr={membersCntByAge} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>}
                         <StatisticTable title="프로필별 회원 분포" statisticArr={membesrCntByProfile} hasRowName={false} unit='명' totalOpt={true} ratioOpt={true}></StatisticTable>
                     </div>
                     <div className='statisticGrpDiv'>
