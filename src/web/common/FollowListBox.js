@@ -56,7 +56,7 @@ const FollowListBox = ({followArray, isFollowings, parentMethod})=>{
     const myFollowList = followList.map( (followUser, idx) => {
         let profileImgPath=defaultProfile;
         if(followUser.profileImgPath !== null && followUser.profileImgName !== null){
-            profileImgPath=followUser.profileImgPath+followUser.profileImgName;
+            profileImgPath=process.env.REACT_APP_DB_HOST+followUser.profileImgPath+followUser.profileImgName;
         }
         if(isFollowing){
             return (

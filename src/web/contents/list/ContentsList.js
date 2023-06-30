@@ -481,14 +481,16 @@ const ContentsList = ()=>{
             let unitUniqNoList= "";
             if(customSecUnit.innerText==="대단원" || secUnit.selectedIndex===0){
                 searchCond="subject"
+                let formData = new FormData();
+                formData.append("subject", subject[subject.selectedIndex].value);
                 //unitUniqNo 가져오기 21001-21013
-                let returnObj = await nb_dataFetch("/mathInfo/takeUnitInfoList?col=subject&value="+subject[subject.selectedIndex].value, true);
+                let returnObj = await nb_formDataFetch("/mathInfo/takeUnitInfoList", formData, true);
                 unitUniqNoList=returnObj.mathUnitInfoList[0].unitUniqNo+"-"+returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length-1].unitUniqNo;
             }else{
                 if(customThrUnit.innerText==="중단원" || thrUnit.selectedIndex===0){
                     searchCond="secUnit"
                     //unitUniqNo 가져오기 21001-21003
-                    let returnObj = await nb_dataFetch("/mathInfo/takeUnitInfoList?col=secUnit&value="+secUnit[secUnit.selectedIndex].value, true);
+                    let returnObj = await nb_dataFetch("/mathInfo/takeUnitInfoList?value="+secUnit[secUnit.selectedIndex].value, true);
                     unitUniqNoList=returnObj.mathUnitInfoList[0].unitUniqNo+"-"+returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length-1].unitUniqNo;
                 }
             }

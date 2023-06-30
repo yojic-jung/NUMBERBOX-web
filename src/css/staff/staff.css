@@ -2060,6 +2060,7 @@ height: 1.6em;
     height: 20px !important;
     vertical-align: middle !important;;
     margin:0 5px 0 0 !important;;
+    border-radius: 10px;
 }
 .transConDesc{
     font-family: 'jejuGothic';
