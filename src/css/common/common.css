@@ -1346,6 +1346,23 @@
     background-size: 20px;
 }
 
+.refresh{
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background:  url("img/refresh.png") no-repeat center;
+    background-size: 20px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.refresh:hover{
+    width: 20px;
+    height: 20px;
+    background:  url("img/refresh-gray.png") no-repeat center;
+    background-size: 20px;
+}
 
 .errBtn{
     display: inline-block;
@@ -1535,6 +1552,13 @@
     overflow-y: scroll;
     max-height: 450px;
 }
+.myQnaMenu{
+    padding-left: 20px;
+}
+
+.myQnAList{
+    display: flex;
+}
 
 .questionText{
     width: 95%;
@@ -1590,7 +1614,7 @@
 }
 
 .myQnATbContents{
-    width:280px;
+    width:260px;
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;

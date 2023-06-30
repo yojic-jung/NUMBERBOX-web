@@ -218,7 +218,7 @@ const MathDocsMaker = ()=>{
         document.getElementById("mathDocsOwner").value = mathDocsPaper.docsOwner;
 
         document.getElementById("docsPreviousBtn").classList.add("hide");
-        document.getElementById("docsPreviousPage").classList.remove("hide");
+        if(document.getElementById("docsPreviousPage")!==null) document.getElementById("docsPreviousPage").classList.remove("hide");
         document.getElementById("page-transit").classList.add("hide");
         document.getElementById("page-transit-img").classList.add("hide");
 
@@ -1307,6 +1307,7 @@ const MathDocsMaker = ()=>{
     const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo, contentsClassify) => {
         document.getElementById("mathDocsSimConAdd").classList.remove("hide");
         document.getElementById("mathDocsSimConAdd").dataset.contentsNo = contentsNo;
+        if(contentsClassify===1) contentsClassify=0;    //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
         let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo='+unitUniqNo+"&typeNo="+typeNo+"&contentsClassify="+contentsClassify, true);
         let newContentsList =  jsonObj["mathSimilarConList"].filter((contentsMap, idx) => {
             let isSame = true;
@@ -1898,7 +1899,7 @@ const MathDocsMaker = ()=>{
                                                         [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
                                                         <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span>
                                                     </div></div>
-                                                    <div classNam00e='alignRight'>
+                                                    <div className='alignRight'>
                                                         <span className='simConAddBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "simCon")}}>추가 </span>
                                                         <span className='simConChngBtn' data-contents-no={contentsMap.contentsNo} onClick={(event)=>{myProdConOrRepoConOrSimConAdd(event, "conChng")}}>교체 </span>
                                                     </div>

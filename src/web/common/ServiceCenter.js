@@ -27,6 +27,11 @@ const ServiceCenter = ({myNickName})=>{
         }
     }
 
+    const serviceCenterRefresh = async (event, targetId) =>{
+        let returnVal = await nb_dataFetch("/serviceCenter/takeMyErrReport", true);
+        setMyErrReport(returnVal.myErrReport);
+    }
+
     const imgFileChange = async (event, outputId) => {
         if(event.target.files[0] === undefined){
             document.getElementById(outputId).src=image;
@@ -172,9 +177,15 @@ const ServiceCenter = ({myNickName})=>{
       const myErrList = myErrReport.map((errMap, idx) => {
         let errType = "1:1 문의"
         if(errMap.errType === 1){
-            errType = "문제 오류 신고"
+            errType = "문제 오류"
         }else if(errMap.errType === 2){
-            errType = "컨텐츠 오류 신고"
+            errType = "컨텐츠 오류"
+        }else if(errMap.errType === 3){
+            errType = "학습지 오류"
+        }else if(errMap.errType === 4){
+            errType = "수식편집기 오류"
+        }else if(errMap.errType === 5){
+            errType = "파일변환 오류"
         }
 
         let reportStts = "접수"
@@ -237,8 +248,8 @@ return (
                             <div id="oneToOneQustionBtn" className='errRegisterBtn marginTenAuto' onClick={()=>{registerError()}}>접수하기</div>
                         </div>
                    </div>
-                   <div id="myQnA" className='serviceCenterMenuCon hide'>
-                        <div id="myQnAList">
+                   <div id="myQnA" className='serviceCenterMenuCon myQnaMenu hide'>
+                        <div id="myQnAList" className='myQnAList'>
                             <table className='myQnATb'>
                                 <tbody>
                                     <tr>
@@ -250,6 +261,7 @@ return (
                                     {myErrList}
                                 </tbody>
                             </table>
+                            <span className='refresh' onClick={(event)=>{serviceCenterRefresh()}}></span>
                         </div>
                         <div id="detailedMyQna" className='detailedMyQna hide'>
                             <div className='backBtn' onClick={()=>{document.getElementById("detailedMyQna").classList.add("hide");document.getElementById("myQnAList").classList.remove("hide");document.getElementById("replyContentsDiv").classList.add("hide");}}>&#60; 뒤로가기</div>

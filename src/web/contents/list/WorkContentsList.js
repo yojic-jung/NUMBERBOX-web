@@ -187,6 +187,11 @@ const WorkContentsList = ()=>{
                 searchWorkListByContentsNo(param2, false);
             }
         }
+
+        if(param === "" && param2 === ""){
+            setContentsLen(0);
+        }
+        
         if(!fExecuteWidth){
             asyncUseEffect();
             document.body.addEventListener('click',nb_fCustomSelClose);
