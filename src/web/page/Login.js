@@ -36,6 +36,14 @@ const Login = ()=>{
     useEffect(() => {
         const asyncUseEffect = async () =>{
             initializeNaverLogin();
+            const urlParams = new URL(window.location.href).searchParams;
+            const email = urlParams.get('email');
+            const pass = urlParams.get('pass');
+            if(email!==null) document.getElementById('email').value=email;
+            if(pass!==null) document.getElementById('password').value=pass;
+            if(email!==null && pass!==null) {
+                fLoginUiVal(new Object().keyCode=1);
+            }
         }
 
         asyncUseEffect();
