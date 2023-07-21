@@ -3,7 +3,7 @@
 이 프로젝트는 N명의수학 서비스의 프론트엔드를 구현한 서비스로 
 
 ## 프로젝트 구조
-'''bash
+```bash
 ├── public
 └── src
     ├── css
@@ -26,7 +26,7 @@
         ├── fileConvert
         ├── mathResource
         └── page
-'''
+```
 In the project directory, you can run:
 
 ### `npm start`
