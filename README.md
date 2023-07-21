@@ -1,9 +1,32 @@
-# Getting Started with Create React App
+# N명의수학(프론트엔드 프로젝트)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+이 프로젝트는 N명의수학 서비스의 프론트엔드를 구현한 서비스로 
 
-## Available Scripts
-
+## 프로젝트 구조
+'''bash
+├── public
+└── src
+    ├── css
+    ├── font
+    ├── img
+    ├── js
+    │   ├── common
+    │   ├── contents
+    │   │   └── register
+    │   │       └── contents_reg.js		// 수식에디터 기능 구현 및 버그 제어 함수 파일
+    │   └── convertGrammer
+    │       └── nbToTexConvert_cvt.js		// 수식에디터와 tex수식문법 변환 규칙 정의 및 구현 함수 파일
+    └── web				// UI 컴포넌트 패키지
+        ├── admin
+        ├── common				// 공통 UI 컴포넌트
+        ├── contents
+        │   ├── list
+        │   ├── mathDocs			// 학습지 제작 UI 컴포넌트
+        │   └── register			// 수식에디터 컴포넌트
+        ├── fileConvert
+        ├── mathResource
+        └── page
+'''
 In the project directory, you can run:
 
 ### `npm start`
