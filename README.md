@@ -1,6 +1,6 @@
 # NUMBERBOX-web
 <div align="center">
-<img src="https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/9b32deda-0e8f-43ed-8f9a-10977abca07e">
+<img src="https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/9b32deda-0e8f-43ed-8f9a-10977abca07e" width="300">
 </div>
 
 ## 프로젝트 소개
