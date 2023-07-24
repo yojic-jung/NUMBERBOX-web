@@ -1,54 +1,65 @@
 # NUMBERBOX-web
-<div align="center">
-<img src="https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/9b32deda-0e8f-43ed-8f9a-10977abca07e" width="200">
-</div>
+> 위 프로젝트는 N명의수학 서비스의 프론트엔드 프로젝트입니다.  
+> N명의수학은 초중고 수학교육과정에 맞춤화된 수학컨텐츠 제작 및 공유 플랫폼입니다.
 
-## 프로젝트 소개
-N명의수학은 초중고 수학교육과정에 맞춤화된 수학컨텐츠 제작 및 공유 플랫폼입니다.  
-초창기 프로젝트의 방향은 수학문제 공유 서비스였습니다. 사용자에게 제공할 수학문제 제작을 위해 기존의 수식에디터 라이브러리들은 사용해보았으나 수식문법을 사용한다거나 수식과 텍스트가 분리되는 등 제약조건이 있었습니다. 이로인해 제약조건을 해결할 프로토타입을 1달간 제작하여 대학후배들과 테스트 해본 결과 생산성이 향상되고 기존방식의 방식에서 제공하지 못하는 기능들을 제공할 수 있기에 프로젝트의 비중을 문제 제작 및 관리 서비스에 더욱 높여 현재는 수학문제 제작 툴, 학습지 자동제작, 한글문서 변환, 문제 공유 등의 기능을 제공하고 있습니다.
+<br/><br/>
 
 ## 개발기간
-> **22.02 ~ 22.11(개발) : 8개월 간 웹서비스 구축 및 수학컨텐츠 제작**<br/> **22.11 ~ 23.06(운영) : 유지보수 및 기능 업데이트**
-  
-## 프로젝트 전체 구조
+> **22.02 ~ 22.11(개발) : 8개월 간 웹서비스 구축 및 수학컨텐츠 제작**<br/> **22.11 ~ 23.07(운영) : 유지보수 및 기능 업데이트**
+<br/>
 
+## 시스템 구성(인프라)
+<img src="https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/433aabf9-1a2d-43df-a45a-9c203fcb2852" width="500" >
+<br/><br/><br/>
 
-## 프로젝트 실행
+## 실행가이드
+> Front-end 프로젝트
+1. Node(v16.13.1) 설치
+2. npm(v8.19.2) 설치
 
+3. 깃을 통해 프로젝트 다운
+```
+git clone https://github.com/yojic-jung/NUMBERBOX-web.git
+```
+4. 프로젝트 루트경로로 이동
+```
+cd Numberbox-web
+```
+5. 의존모듈 다운 후 실행
+```
+npm install
+npm run
+```
+<br/><br/>
 
+## Environments
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=white)<img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"><img src="https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white">  
 
-## 개발환경
-* html5/css, javascript 
-* 프레임워크 : 리액트
-* 패키지 매니지먼트 : npm  
-* 웹서버 : nginx  
+<img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"><img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white">
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+<br/><br/>
 
 ## 라이브러리
 * react-geogebra
 * react-helmet-async  
 * react-router-dom  
-* react-sortablejs  
+* react-sortablejs
+<br/><br/>
+
+## 핵심기능 구현로직
+
+* [수식에디터 기능구현](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/contents/register/contents_reg.js#L1943) : 수식에디터 keyDown이벤트에 적용된 소스로 에디터 기능 구현, 수식 편집 규칙, 버그제어 로직이 구현된 함수
   
+* [수식문법 변환](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/convertGrammer/nbToTexConvert_cvt.js) : web수식 ⇄ tex수식 양방향 변환 규칙 정의된 함수 파일(해당 로직을 통해 web ⇄ hwp문서 변환가능)
+* [수식에디터 UI 컴포넌트](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/web/contents/register/FormulaEditor.js#L810) : 아래 태그에 걸려있는 이벤트 함수들이 주요 에디터 기능을 구현하는데 사용되는 함수  
+```
+<div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
+```
 
-## 기능소개(??)
+<br/><br/>
 
-문제만들기
-![image](https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/0ad7bd8c-eb17-4d63-af4a-ae479d703a20)
-<img width="615" alt="image" src="https://github.com/yojic-jung/NUMBERBOX-web/assets/45252387/1bb544cb-03eb-48ee-b4f4-fce790a658ce">
-
-
-## 핵심기능 구현로직(??)
-
-* [수식에디터 UI 컴포넌트 - 소스보기]
-
-* [수식에디터 기능구현 함수 - 소스보기](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/contents/register/contents_reg.js#L1943)  
-  : 위 구현로직은 에디터 입력창에 keyDown이벤트에 적용된 소스로 기능 구현 및 버그제어 로직이 구현된 함수입니다.
-* [수식문법 변환 규칙 정의 및 구현 함수 - 소스보기](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/convertGrammer/nbToTexConvert_cvt.js)  
-  : 위 구현 로직은 수식에디터에 표현된 수식을 hwp로 바꾸고, hwp로 제작된 컨텐츠를 web수식에디터로 변환하는 규칙과 함수들이 정의되어있습니다. 
-
-
-  
-## 패지지 구조
+## 패키지 구조
 ```bash
 .
 ├── package-lock.json
