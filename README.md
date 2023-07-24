@@ -2,7 +2,7 @@
 > 위 프로젝트는 N명의수학 서비스의 프론트엔드 프로젝트입니다.  
 > N명의수학은 초중고 수학교육과정에 맞춤화된 수학컨텐츠 제작 및 공유 플랫폼입니다.
 
-<br/><br/>
+<br/>
 
 ## 개발기간
 > **22.02 ~ 22.11(개발) : 8개월 간 웹서비스 구축 및 수학컨텐츠 제작**<br/> **22.11 ~ 23.07(운영) : 유지보수 및 기능 업데이트**
@@ -44,7 +44,8 @@ npm run
 * react-geogebra
 * react-helmet-async  
 * react-router-dom  
-* react-sortablejs
+* react-sortablejs  
+
 <br/><br/>
 
 ## 핵심기능 구현로직
