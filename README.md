@@ -28,7 +28,7 @@ cd Numberbox-web
 5. 의존모듈 다운 후 실행
 ```
 npm install
-npm run
+npm run start
 ```
 <br/><br/>
 
