@@ -5,7 +5,7 @@
 <br/>
 
 ## 개발기간
-> **22.02 ~ 22.11(개발) : 8개월 간 웹서비스 구축 및 수학컨텐츠 제작**<br/> **22.11 ~ 23.07(운영) : 유지보수 및 기능 업데이트**
+> **22.02 ~ 22.11(개발) : 8개월 간 웹서비스 구축 및 수학컨텐츠 제작**<br/> **22.11 ~ 23.05(운영) : 유지보수 및 기능 업데이트**
 <br/>
 
 ## 시스템 구성(인프라)
@@ -54,10 +54,7 @@ npm run start
 * [수식에디터 기능구현](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/contents/register/contents_reg.js#L1943) : 수식에디터 keyDown이벤트에 적용된 소스로 에디터 기능 구현, 수식 편집 규칙, 버그제어 로직이 구현된 함수
   
 * [수식문법 변환](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/js/convertGrammer/nbToTexConvert_cvt.js) : web수식 ⇄ tex수식 양방향 변환 규칙 정의된 함수 파일(해당 로직을 통해 web ⇄ hwp문서 변환가능)
-* [수식에디터 UI 컴포넌트](https://github.com/yojic-jung/NUMBERBOX-web/blob/master/src/web/contents/register/FormulaEditor.js#L810) : 아래 태그에 걸려있는 이벤트 함수들이 주요 에디터 기능을 구현하는데 사용되는 함수  
-```
-<div id="contentsFormulaEditor" className="contentsFormulaEditor contentEditClass onlyEdit" contentEditable="true"  spellCheck={false} placeholder="문제를 입력해주세요..." onKeyDown={(event) => {reg_preventKeyEvent(event, isMyContents);copyPreventEv(event)}} onKeyUp={(event) => {formulaConvert(event, shortCutKeyList);reg_dressSelectionBackColor();reg_tbCellKeyUp(event);reg_nbComplie(event);nb_base64ImgRegisterToS3(event);reg_convertFigureTagRemove("contentsFormulaEditor");}} onClick={()=>{reg_dressYellowBox()}} onMouseDown={()=>{reg_selectCheck()}} onPaste={(event)=>{reg_tbPasteInPastePrevent(event)}} onCopy={(event)=>{reg_imageCopy(event, true)}} onCut={(event)=>{reg_imageCopy(event, false)}}></div>
-```
+
 
 <br/><br/>
 
