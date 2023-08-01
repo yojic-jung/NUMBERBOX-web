@@ -397,24 +397,17 @@ export const upDownKeyRule = async (isShift, userKeyCode) => {
 		let focusParDom = document.getSelection().getRangeAt(0).startContainer;
 		if(focusParDom.classList === undefined) focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement;
 		if(focusParDom!==undefined){
-			for(let i=0; i<noApplyUpKeyList.length;i++){
-				if(focusParDom.closest("."+noApplyUpKeyList[i]) !== null){return true;}
-			}
+			for(let i=0; i<noApplyUpKeyList.length;i++) if(focusParDom.closest("."+noApplyUpKeyList[i]) !== null) return true;
 		}
-		return false;
 	}else if(!isShift && userKeyCode===40 ){
 		let focusParDom = document.getSelection().getRangeAt(0).startContainer
 		if(focusParDom.classList === undefined) focusParDom = document.getSelection().getRangeAt(0).startContainer.parentElement
 		if(focusParDom!==undefined){
-			for(let i=0; i<noApplyDownKeyList.length;i++){
-				if(focusParDom.closest("."+noApplyDownKeyList[i])){return true;}
-			}
+			for(let i=0; i<noApplyDownKeyList.length;i++) if(focusParDom.closest("."+noApplyDownKeyList[i])) return true;
 		}
-		return false;
-	}else{
-		return false;
 	}
 	
+	return false;
 }
 
 /*
@@ -1948,15 +1941,15 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 	 }
 
 	 await reg_delVacantDiv();
+	
 
-	let activeEle = document.activeElement;
-	let activeId = activeEle.id;
+	let activeId = document.activeElement.id;
 	let userKeyCode = event.keyCode;
 	previouseKeyCode.push(userKeyCode);
 
-	if(activeEle.childNodes.length===0 || (activeEle.childNodes.length===1 && activeEle.childNodes[0].tagName==="BR")){
-		activeEle.innerHTML = "<div><br></div>";
-		window.getSelection().setBaseAndExtent(activeEle.children[0], 0, activeEle.children[0], 0)
+	if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
+		document.activeElement.innerHTML = "<div><br></div>";
+		window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
 	}
 
 	//비어있는 DIV태그는 버그 유발
@@ -2010,9 +2003,7 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 	}else if(!(event.altKey && event.shiftKey) && event.ctrlKey && userKeyCode === 90){
 		event.preventDefault();		//브라우저 자체 ctrl+z undo 기능 deprecate
 		//undoArr데이터 있는 경우 ctrl+y 스택 메모리에 저장
-		if(undoArr.length >0){
-			await reg_makeUndoRedoByCtrlKey("ctrlZ");
-		}
+		if(undoArr.length >0) await reg_makeUndoRedoByCtrlKey("ctrlZ");
 	}
 
 	//ctrl+y구현
@@ -2115,24 +2106,15 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 		let parentTable = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.editInnerTable');
 		let targetCell= document.getSelection().getRangeAt(0).endContainer;
 		//수식 요소인 경우
-		if(targetCell.tagName !== undefined){
-			targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
-		}else{
-			targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
-		}
+		if(targetCell.tagName !== undefined) targetCell = document.getSelection().getRangeAt(0).endContainer.closest('.innerTbTd');
+		else targetCell = document.getSelection().getRangeAt(0).endContainer.parentElement.closest('.innerTbTd');
 
-		if(parentTable===null) {
-			if(event.shiftKey){
-			}
-			return;
-		}
+		if(parentTable===null) return;
 		
 		let trDom ;
-		if(parentTable.childNodes[0].tagName==="TBODY"){
-			trDom =parentTable.childNodes[0].childNodes;
-		}else{
-			trDom = parentTable.childNodes;
-		}
+		if(parentTable.childNodes[0].tagName==="TBODY") trDom =parentTable.childNodes[0].childNodes;
+		else trDom = parentTable.childNodes;
+		
 		let rowLength = trDom.length;
 		let colLength = trDom[0].childNodes.length;
 		let targetRowIdx = -1;
@@ -2236,11 +2218,8 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 	//여기에서 셀렉트 없애줘야 아래 로직에서 셀렉트 된 상태에서도 키보드 위아래 이동 가능
 	//셀렉트 됬을 때, 커서 라인 이동 버그 해결
 	if((userKeyCode===38 || userKeyCode===40) && !event.ctrlKey && !event.shiftKey && !window.getSelection().isCollapsed){
-		if(userKeyCode===38){
-			window.getSelection().collapseToStart();
-		}else{
-			window.getSelection().collapseToEnd();
-		}
+		if(userKeyCode===38) window.getSelection().collapseToStart();
+		else window.getSelection().collapseToEnd();
 	}
 	//키보드 상하 화살표 누른 경우(커서 라인 이동)
 	if( (userKeyCode===38 || userKeyCode===40) && window.getSelection().isCollapsed && !event.altKey ){
@@ -4756,7 +4735,7 @@ export const reg_undoStackByClick = async (activeId) => {
 */
 export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
-		if(!isShift && userKeyCode !== 229 && !(userKeyCode===90 && isCtrlKey) && window.getSelection().isCollapsed){
+		if(!isShift && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && isCtrlKey) ){
 			let isExcuted = false;
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockPositionDetect";
@@ -4774,17 +4753,18 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 					activeChildren[i].after(newDiv);
 					newDiv = document.createElement("div");
 				}
-				else if(activeChildren[i].nodeName !== "DIV"){
-					//DIV와 텍스트 길이가 0 아닌 경우 새로운 newDiv에 추가
-					if(!(activeChildren[i].nodeName === "#text" && activeChildren[i].length === 0))	newDiv.appendChild(activeChildren[i].cloneNode(true));
-					else{
-						if(newDiv.childNodes.length !== 0){ //div인 경우에는 newDiv에 요소 남아 있으면 추가
-							isExcuted =true;
-							activeChildren[i].before(newDiv);
-							newDiv = document.createElement("div");
-						}
-					}
+				//DIV와 텍스트 길이가 0 아닌 경우 새로운 newDiv에 추가
+				else if(activeChildren[i].nodeName !== "DIV" && !(activeChildren[i].nodeName === "#text" && activeChildren[i].length === 0)){
+					newDiv.appendChild(activeChildren[i].cloneNode(true));
 				} 
+				//div인 경우에는 newDiv에 요소 남아 있으면 추가
+				else if(activeChildren[i].nodeName === "DIV"){
+					if(newDiv.childNodes.length !== 0){
+						isExcuted =true;
+						activeChildren[i].before(newDiv);
+						newDiv = document.createElement("div");
+					}
+				}
 				
 				//마지막 idx에서 newDiv에 요소 남아 있으면 추가
 				if(i===activeChildren.length-1){
