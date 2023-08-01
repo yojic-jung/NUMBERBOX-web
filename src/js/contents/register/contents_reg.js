@@ -1763,34 +1763,29 @@ export const reg_makeUndoRedoByCtrlKey = async (evType) =>{
 
 
 /*
-*	정의 : 빈 div 제거
-*	설명 : 포커스가 존재하는 div와 수식이 첫번째에 존재하는 아랫줄 div 사이에 존재하면 del 누를시 아랫줄이 윗 줄로 올라오지 않음, 
-*		   빈 div 모두 제거하여 버그 해결
-* 		   뿐만 아니라 빈 div는 여러 버그를 생성해 키 입력시 제거되는게 좋음
+*	정의 : 비어있는 div 제거
+*	설명 : 현재 커서가 div 라인의 마지막에 위치하고 밑에 줄 div에 수식이 첫번째 노드이면 del 누를시 아랫줄이 윗 줄로 올라오지 않음. 
+*		   사이에 비어있는 div태그들이 존재해서 정상적이지 않음.
+* 		   비어있는 div는 여러 버그를 생성해 키 입력시 제거
 */
 export const reg_delVacantDiv = async () =>{
-	//
 	let div = document.activeElement.querySelectorAll("DIV");
 	for(let i=0; i<div.length; i++){
-		if(div[i].childNodes.length === 0){
-			div[i].remove();
-		}else {
+		if(div[i].childNodes.length === 0)	div[i].remove();
+		else {
 			let divChild = div[i].childNodes;
 			let isVacantDiv = true;
 			for(let j=0; j<divChild.length; j++){
 				if(divChild[j].nodeName !== "#text"){
 					isVacantDiv = false;
 					break;
-				}else{
-					if(divChild[j].nodeValue !== ""){
-						isVacantDiv = false;
-						break;
-					}
+				}
+				if(divChild[j].nodeValue !== ""){
+					isVacantDiv = false;
+					break;
 				}
 			}
-			if(isVacantDiv){
-				div[i].remove();
-			}
+			if(isVacantDiv)	div[i].remove();
 		}
 	}
 } 
@@ -1941,49 +1936,35 @@ let previouseKeyCode = [];	//이전에 눌렀던 키값이 space 또는 enter인
 //redo 변수
 let redoArr = [];
 export const reg_preventKeyEvent = async (event, isMyContents) => {
-	if(!isMyContents){
-		if(!window.getSelection().isCollapsed){
-			if(!document.getSelection().isCollapsed && event.ctrlKey && (event.keyCode === 67 || event.keyCode === 88) && !event.altKey) {
-				//event.preventDefault();
-				//return;
-			}
-		}
-	}
-
 	//이미지 사이즈 변경 틀 제거
 	if(window.getSelection().anchorNode.classList !== undefined && window.getSelection().anchorNode.classList.contains("imgWidthHeightDiv") ){
 		if(event.keyCode === 13){
 			event.preventDefault();
 			document.activeElement.closest(".imgWidthHeightDiv").querySelector(".imgWidthHeightSetBtn").click();
-			return;
-		}else{
-			return;
 		}
-		
+		return;
 	}else{
-		if(!event.ctrlKey){
-			reg_removeResizeFrame(false);	
-		}
+		if(!event.ctrlKey) reg_removeResizeFrame(false);	
 	 }
 
 	 await reg_delVacantDiv();
-	
 
-	let activeId = document.activeElement.id;
+	let activeEle = document.activeElement;
+	let activeId = activeEle.id;
 	let userKeyCode = event.keyCode;
 	previouseKeyCode.push(userKeyCode);
 
-	if(document.activeElement.childNodes.length===0 || (document.activeElement.childNodes.length===1 && document.activeElement.childNodes[0].tagName==="BR")){
-		document.activeElement.innerHTML = "<div><br></div>";
-		window.getSelection().setBaseAndExtent(document.activeElement.children[0], 0, document.activeElement.children[0], 0)
+	if(activeEle.childNodes.length===0 || (activeEle.childNodes.length===1 && activeEle.childNodes[0].tagName==="BR")){
+		activeEle.innerHTML = "<div><br></div>";
+		window.getSelection().setBaseAndExtent(activeEle.children[0], 0, activeEle.children[0], 0)
 	}
 
-	//DIV 태그 안 들어간 요소 있는 경우 수식 입력시 아랫줄이 윗줄로 딸려오는 버그 해결
+	//비어있는 DIV태그는 버그 유발
 	//한줄은 무조건 div로 구분
 	/*
 	* div 깨지는 경우
-	* 1. 윗줄에서 수식이 마지막이고 아래줄에 텍스트 입력하고 backspace로 텍스트 다 지우고 윗줄까지 올려오면 div가 깨짐)
-	* 2. div 안에서 텍스트 입력한 다음 수식 입력하고 수식 안에 글자 입력하고 지웠다 다시 키 입력하면 div 깨짐
+	* 1. 윗줄 수식 마지막, 아래줄 텍스트 입력 후 backspace로 텍스트 지우며 윗줄까지 올라오면 div 깨짐)
+	* 2. div 안에서 텍스트 입력 -> 수식 입력 -> 수식 안 글자 입력 -> 지웠다 다시 키 입력 => div 깨짐
 	*/
 	await reg_oneLineOneDiv(event.shiftKey, event.ctrlKey, userKeyCode);
 	
@@ -2008,8 +1989,6 @@ export const reg_preventKeyEvent = async (event, isMyContents) => {
 			nbSelectionTbTd[i].classList.remove("nbSelectionTbTd");
 		}
 	}
-
-
 
 	//키 다운시 수식 셀렉트 배경색 삭제 안하면 수식 셀렉트 된 상태에서 글자 입력하면 수식 배경색이 글자에 적용됨
 	if(!document.getSelection().isCollapsed && (userKeyCode !== 37 && userKeyCode !== 38 && userKeyCode !== 39 && userKeyCode !== 40)){
@@ -4777,7 +4756,7 @@ export const reg_undoStackByClick = async (activeId) => {
 */
 export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 		//셀렉트 되어있는 경우와 ctrl+z 제외하고 이벤트 적용
-		if(!isShift && userKeyCode !== 229 && window.getSelection().isCollapsed && !(userKeyCode===90 && isCtrlKey) ){
+		if(!isShift && userKeyCode !== 229 && !(userKeyCode===90 && isCtrlKey) && window.getSelection().isCollapsed){
 			let isExcuted = false;
 			let tmpNode= document.createElement('span');
 			tmpNode.className = "tmpFormBlockPositionDetect";
@@ -4795,18 +4774,17 @@ export const reg_oneLineOneDiv = (isShift, isCtrlKey, userKeyCode) => {
 					activeChildren[i].after(newDiv);
 					newDiv = document.createElement("div");
 				}
-				//DIV와 텍스트 길이가 0 아닌 경우 새로운 newDiv에 추가
-				else if(activeChildren[i].nodeName !== "DIV" && !(activeChildren[i].nodeName === "#text" && activeChildren[i].length === 0)){
-					newDiv.appendChild(activeChildren[i].cloneNode(true));
-				} 
-				//div인 경우에는 newDiv에 요소 남아 있으면 추가
-				else if(activeChildren[i].nodeName === "DIV"){
-					if(newDiv.childNodes.length !== 0){
-						isExcuted =true;
-						activeChildren[i].before(newDiv);
-						newDiv = document.createElement("div");
+				else if(activeChildren[i].nodeName !== "DIV"){
+					//DIV와 텍스트 길이가 0 아닌 경우 새로운 newDiv에 추가
+					if(!(activeChildren[i].nodeName === "#text" && activeChildren[i].length === 0))	newDiv.appendChild(activeChildren[i].cloneNode(true));
+					else{
+						if(newDiv.childNodes.length !== 0){ //div인 경우에는 newDiv에 요소 남아 있으면 추가
+							isExcuted =true;
+							activeChildren[i].before(newDiv);
+							newDiv = document.createElement("div");
+						}
 					}
-				}
+				} 
 				
 				//마지막 idx에서 newDiv에 요소 남아 있으면 추가
 				if(i===activeChildren.length-1){
@@ -4857,13 +4835,10 @@ export const reg_addBrInLastPosition = () => {
 			let divChildNodes = divdNodes[i].childNodes;
 			let lastChild = null;
 			for(let i=divChildNodes.length-1; i>=0; i--){
-				if(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0){
-				}else{
+				if(!(divChildNodes[i].nodeName === "#text" && divChildNodes[i].length ===0)){
 					lastChild = divChildNodes[i];
 					//div요소의 마지막 요소가 수식인지 파악
-					if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox")){
-						lastChild.after(document.createElement('br'));
-					}
+					if(lastChild.classList !== undefined && lastChild.classList.contains("nbBox"))	lastChild.after(document.createElement('br'));
 					break;	//현재 div의 lastChild가 수식 아니면 for문 빠져나감
 				}
 			}
@@ -4964,8 +4939,8 @@ export const reg_convertFigureTagRemove = (targetId) => {
 
 
 /*
-*       정의 : 수식 및 div 태그 style 속성 없애기
-*  적용 대상 : 키다운, 문제등록
+*   정의 : 수식 및 div 태그 style 속성 없애기
+*   적용 대상 : 키다운, 문제등록
 */
 export const reg_removeStyleAttribute = (targetId) => {
 	//수식 및 div 요소 style 속성 없애기

@@ -92,6 +92,10 @@
     float: right;
 }
 
+.fontFourteen{
+    font-size: 23px;
+}
+
 .uploadBtn{
     cursor: pointer;
     color:white;
@@ -1614,8 +1618,9 @@
 }
 
 .myQnATbContents{
-    width:260px;
+    width:290px;
     overflow:hidden;
+    display: inline-block;
     white-space:nowrap;
     text-overflow:ellipsis;
 }

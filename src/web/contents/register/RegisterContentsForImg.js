@@ -318,7 +318,7 @@ const RegisterContentsForImg = ({contentsNo})=>{
 					<Link className='linkNoneCss' to="/makeContentsForImg">
 						<div className="relative">
 							<div className="makeContentsForImgBtn active"></div>
-							<div className="makeContentsForImgBtnDesc">이미지로 등록하기</div>
+							<div className="makeContentsForImgBtnDesc">문제 멀티 등록</div>
 						</div>
 					</Link>
 			</div>

@@ -826,7 +826,7 @@ const FormulaEditorMulti = ({contentsClassify}) => {
 				
 				{formulaEditorList}
 				<div className="addContentsBtn" onClick={(event)=>{addRegisterContents(event)}}>
-					문제 추가하기
+					항목추가
 					<button id="initContentsCntBtn" className="initContentsCntBtn" type="button" onClick={(event)=>{setRegisterContentsCnt(event)}}>문항 수 설정</button>	
 				</div>
 			</div>

@@ -99,7 +99,7 @@ return (
             </div>
             <div className='mainImgDesc first'>편리한 문제제작 툴</div>
             <div className='mainImgDesc second'>문제 공유와 손쉬운 학습지 제작</div>
-            <div className='mainTitle'>N명의 사용자와 만들어가는,<br/>수학문제 공유 플랫폼</div>
+            <div className='mainTitle'><span className='fontFourteen'>수학문제, 아직도 문서파일로 관리하시나요?</span><br/>이제 N명의수학에서 관리해보세요!</div>
         </div>
         
         <div className='relative'>
