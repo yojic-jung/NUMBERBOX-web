@@ -30,40 +30,45 @@ const NaverLoginSuccess = ()=>{
                     if (status) {
                         /* (5) 필수적으로 받아야하는 프로필 정보가 있다면 callback처리 시점에 체크 */
                         let email = naverLogin.user.getEmail();
+                        
+                        /*
                         let name = naverLogin.user.getName();
                         let mobile = naverLogin.user.getMobile();
                         let birthyear = naverLogin.user.getBirthyear();
                         let birthday = naverLogin.user.getBirthday();
+                        */
+
                         if( email === undefined || email === null) {
                             alert("이메일은 필수정보입니다. 정보제공을 동의해주세요.");
                             /* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
                             naverLogin.reprompt();
                             return;
                         }
+
+                        /*
                         if( name === undefined || name === null) {
                             alert("이름은 필수정보입니다. 정보제공을 동의해주세요.");
-                            /* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
-                            naverLogin.reprompt();
+                           
+                            naverLogin.reprompt(); //(5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함
                             return;
                         }
                         if( mobile === undefined || mobile === null) {
                             alert("휴대폰번호는 필수정보입니다. 정보제공을 동의해주세요.");
-                            /* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
+                           
                             naverLogin.reprompt();
                             return;
                         }
                         if( birthyear === undefined || birthyear === null) {
                             alert("출생연도는 필수정보입니다. 정보제공을 동의해주세요.");
-                            /* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
                             naverLogin.reprompt();
                             return;
                         }
                         if( birthday === undefined || birthday === null) {
                             alert("생일은 필수정보입니다. 정보제공을 동의해주세요.");
-                            /* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
                             naverLogin.reprompt();
                             return;
                         }
+                        */
 
                         let param = "";
                         if(window.localStorage.getItem("loginState") === "keep"){
@@ -74,9 +79,11 @@ const NaverLoginSuccess = ()=>{
 
                         let formData = new FormData();
                         formData.append("email", email);
+                        /*
                         formData.append("userName", name);
                         formData.append("phoneNumber", mobile.replaceAll("-", ""));
                         formData.append("birth", birthyear.slice(2)+birthday.replaceAll("-", ""));
+                        */
                         let returObj = await nb_formJsonFetch("/naverLogin"+param, formData, true);
                         if(returObj.isSuccess !== undefined){
                             if(returObj.isSuccess === "signUpSuccess"){
