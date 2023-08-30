@@ -215,6 +215,8 @@ const SignUp = ()=>{
     * 회원가입 유효성 검사
     */
     const sigupRequest = async () => {
+        alert("N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.");
+        return;
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
         let passwordChk = document.getElementById("passwordChk").value;
@@ -299,12 +301,14 @@ const SignUp = ()=>{
     }
 
     const signupFinalReq = async (event) => {
+        return;
             //이메일 인증코드 입력하기
             //인증코드 검증
            if(event.target.classList.contains("disable")) return;
 
             let formData = new FormData(document.getElementById("signup-form"));
             formData.append("emailIdCode", document.getElementById("emailIdCode").value);
+            
             let returnObj = await nb_formDataFetch("/signup",formData, true);
             if(returnObj.isSuccess === "success"){
                 window.location.href = "/?succeedSignUp=1";

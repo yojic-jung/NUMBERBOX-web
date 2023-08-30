@@ -135,7 +135,7 @@ return (<>
                         <div><label><span id='checkCircle' className='active'></span><input onChange={()=>{fKeepLoginStateBtn()}} type="checkbox" id="emailSave" className='hide' defaultChecked/>로그인 상태 유지하기</label></div>
                         <div id="emailPassFind"><Link className="linkNoneCss" to="/emailPassFind">비밀번호 찾기</Link></div>
                     </div>
-                    <div className="signUpDiv">N명의수학 계정이 없으신가요? <a className="signUpLink" href="/signup">회원가입</a></div><br/>
+                    <div className="signUpDiv">N명의수학 계정이 없으신가요? <span className="signUpLink" onClick={()=>{alert("N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.");}} >회원가입</span></div><br/>
                 </form>
             </div>
         </div>

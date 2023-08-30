@@ -96,6 +96,9 @@ const NaverLoginSuccess = ()=>{
                             }else if(returObj.isSuccess === "dropAccount"){
                                 alert("탈퇴한 회원입니다. 새로운 계정으로 회원가입해 주시기 바랍니다. ");
                                 window.history.back();
+                            }else if(returObj.isSuccess === "EndService"){
+                                alert("N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.");
+                                window.history.back();
                             }else{
                                 alert("에러 ["+returObj.error+"]");
                                 window.history.back();
