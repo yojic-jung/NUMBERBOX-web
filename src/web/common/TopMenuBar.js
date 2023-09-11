@@ -48,8 +48,9 @@ const TopMenuBar = (isMain)=>{
     }
 
     const logoutFunction = async () => {
-        document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-        window.localStorage.setItem("access-token", null);
+        await nb_dataFetch("/delRefreshToken", false);  //서버에서 refresh쿠키 및 db정보 삭제
+        window.localStorage.removeItem("access-token");
+        window.localStorage.removeItem("role");
         window.location.href="/";
     }
 

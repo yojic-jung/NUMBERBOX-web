@@ -84,8 +84,8 @@ const MyAccountDrop = () => {
         let returnVal = await nb_formDataFetch("/myAccountDrop", formData, true);
         if(returnVal.isSuccess){
             alert("탈퇴 요청이 정상 처리되었습니다. 14~15일 이후 정상적으로 탈퇴 처리됩니다.\n탈퇴를 취소하고 싶은 경우 재 로그인하면 자동 취소 됩니다.");
-            document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-            window.localStorage.setItem("access-token", null);
+            window.localStorage.removeItem("access-token");
+            window.localStorage.removeItem("role");
             window.location.href="/";
         }
     }

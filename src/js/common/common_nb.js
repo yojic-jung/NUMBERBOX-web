@@ -1,13 +1,13 @@
 import imageCompression from 'browser-image-compression';
 
 export const nb_isLogin =  () => {
-  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isLogin = window.localStorage.getItem("access-token") !== null;
   return isLogin;
 }
 
 //매니저 권한 임시 구현
 export const nb_isManger = () => {
-  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isLogin = window.localStorage.getItem("access-token") !== null;
   let isManger =false;
   if(isLogin){
     isManger = window.localStorage.getItem("role") === "MANAGER" || window.localStorage.getItem("role") === "TOP_TESTER"  || window.localStorage.getItem("role") === "ADMIN" ;
@@ -16,7 +16,7 @@ export const nb_isManger = () => {
 }
 
 export const nb_isAdmin = () => {
-  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isLogin = window.localStorage.getItem("access-token") !== null;
   let isAdmin =false;
   if(isLogin){
     isAdmin = window.localStorage.getItem("role") === "ADMIN";
@@ -26,7 +26,7 @@ export const nb_isAdmin = () => {
 
 
 export const nb_isTopTester = () => {
-  let isLogin = (window.localStorage.getItem("access-token") !== "null") && document.cookie.indexOf("refresh-token") > -1;
+  let isLogin = window.localStorage.getItem("access-token") !== null;
   let isTopTester =false;
   if(isLogin){
     isTopTester = window.localStorage.getItem("role") === "TOP_TESTER";
@@ -59,10 +59,9 @@ export const nb_dataFetch = async (url, transitEffect) => {
       window.localStorage.setItem("role", response.headers.get("role"));
     }else if(response.headers.get("tokenExpired") !== null) {
       alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
-      window.localStorage.setItem("access-token", null);
+      window.localStorage.removeItem("access-token");
       //매니저 권한 임시 구현
-      window.localStorage.setItem("role", null);
-      document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      window.localStorage.removeItem("role");
       window.location.href = "/";
     }
     return response.text();} )
@@ -108,10 +107,9 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
         window.localStorage.setItem("role", response.headers.get("role"));
       }else if(response.headers.get("tokenExpired") !== null) {
         alert("로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.")
-        window.localStorage.setItem("access-token", null);
+        window.localStorage.removeItem("access-token");
         //매니저 권한 임시 구현
-        window.localStorage.setItem("role", null);
-        document.cookie = "refresh-token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        window.localStorage.removeItem("role");
         window.location.href = "/";
       }
       return response.text();} )
