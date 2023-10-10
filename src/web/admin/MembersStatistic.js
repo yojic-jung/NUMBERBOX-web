@@ -159,7 +159,7 @@ const MembersStatistic = () => {
                     </div>
                     <div className='statisticGrpDiv'>
                         <div className='statisticGrpTitle'>&lt;문제 제작 분포 통계&gt;</div>
-                        <StatisticTable title="사용자 제작 문제 수" statisticArr={mathContentsCntByMonthly} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
+                        {isAdmin && <StatisticTable title="사용자 제작 문제 수" statisticArr={mathContentsCntByMonthly} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>}
                         <StatisticTable title="프로필별 사용자 제작 문제 수" statisticArr={mathContentsCntByProfile} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
                         <StatisticTable title="요일별 사용자 제작 문제 수" statisticArr={mathContentsCntByWeekday} hasRowName={false} unit='개' totalOpt={true} ratioOpt={true}></StatisticTable>
                         <StatisticTable title="전체 문제 구분" statisticArr={mathContentsCntByShareStts} hasRowName={false} unit='' totalOpt={false} ratioOpt={false}></StatisticTable>
