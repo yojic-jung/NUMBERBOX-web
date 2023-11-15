@@ -588,6 +588,7 @@ const FormulaEditor = ({contentsNo, contentsClassify}) => {
 			document.getElementById("fifNoFormulaEditor").innerHTML = "";
 		}
 
+		alert("11월 28일 부로 서비스는 종료됩니다. \n11월 28일 이후 사용자 제작문제를 다운 받으실 수 없습니다.\n계속 진행하시겠습니까?")
 
 		document.getElementById("formulaEditBlindBox").classList.remove("hide");
 		document.getElementById("contentsInfo").classList.remove("hide");
