@@ -96,7 +96,7 @@ return (
                             <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
                             <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
                             <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1&pageNum=1">컨텐츠</Link></td>
-                            <td><span className='pointer' onClick={()=>{alert("N명의수학 서비스는 폐업으로 인하여 종료되었습니다.")}}>파일변환</span></td>
+                            <td><span className='pointer' onClick={()=>{window.open("/fileConvert")}}>파일변환</span></td>
                             <td><Link className='linkNoneCss signLoginBtn' to="/login">로그인/회원가입</Link></td>
                         </tr>}
                         {isLogin && <tr>
@@ -104,7 +104,7 @@ return (
                             <td><Link className='linkNoneCss' to="/contentsList">문제검색</Link></td>
                             <td><Link className='linkNoneCss' to="/makeContents">문제만들기</Link></td>
                             <td><Link className='linkNoneCss' to="/shareResource?mainCateNo=1&pageNum=1">컨텐츠</Link></td>
-                            <td><span className='pointer' onClick={()=>{alert("N명의수학 서비스는 폐업으로 인하여 종료되었습니다.")}}>파일변환</span></td>
+                            <td><span className='pointer' onClick={()=>{window.open("/fileConvert")}}>파일변환</span></td>
                             <td id="myService-wrap" className='myService-wrap' onClick={()=>{activeMyServiceTap()}}>
                                 {imgPath === null ?
                                     <img id="topMenuProfileImg" alt="." src={defaultProfileImg} className="topMenuProfileImg"/> 
