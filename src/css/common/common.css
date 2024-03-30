@@ -1422,7 +1422,7 @@
     background-size: 17px;
 }
 
-.errorReportRootDiv, .serviceCenterRootDiv, .notifyPopup{
+.errorReportRootDiv, .serviceCenterRootDiv{
     display: inline-block;
     width: 400px;
     min-height: 250px;
@@ -1441,24 +1441,6 @@
 .serviceCenterRootDiv{
     width: 600px;
     text-align: left;
-}
-
-.notifyPopup{
-    padding: 20px;
-    width: 400px;
-    text-align: left;
-}
-
-.notifyPopupTitle{
-    padding: 4px;
-    background-color: rgb(239, 238, 238);
-    font-size: 13px;
-    word-break: keep-all;
-}
-
-.notifyPopupContents{
-    font-size: 13px;
-    word-break: keep-all;
 }
 
 .serviceCenterTabMenu{

@@ -14,7 +14,6 @@ import hwpConverImg1 from 'img/hwpConverImg1.png';
 import hwpConverImg2 from 'img/hwpConverImg2.PNG';
 import mainSubDocsMake from 'img/mainSubDocsMake.PNG';
 import mainResourceMake from 'img/mainResourceMake.PNG';
-import NotifyPopUp from 'web/common/NotifyPopUp'
 
 const Main = ()=>{
 
@@ -91,8 +90,6 @@ return (
         <meta property="og:description" content="N명의 사용자와 함께 만들어가는 수학플랫폼" />
     </Helmet>
     <BrowserView>
-        <NotifyPopUp/>
-
         <div className='mainDiv'>
             <div className='mainImgBox first'><img className='mainImgUI' src={main1} alt=""/></div>
             <div className='mainImgBox second'><img className='mainImgUI' src={main2} alt=""/></div>
