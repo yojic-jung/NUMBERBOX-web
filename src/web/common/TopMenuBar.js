@@ -6,7 +6,6 @@ import defaultProfileImg from 'img/defaultProfile.png';
 import warningImg from 'img/warning.png';
 import { Outlet } from "react-router";
 import ServiceCenter from 'web/common/ServiceCenter';
-import NotifyPopUp from 'web/common/NotifyPopUp'
 
 const TopMenuBar = (isMain)=>{
     const [imgPath, setImgPath] = useState(null);
@@ -77,7 +76,6 @@ const TopMenuBar = (isMain)=>{
 return (
     <>
     <BrowserView>
-    <NotifyPopUp/>
     {notApplyBrowser && <div className='browserWarningDiv'>
         <img src={warningImg} className="browserWarningImg" alt="warningImg" />
         <div className='browserWarningDesc'>
