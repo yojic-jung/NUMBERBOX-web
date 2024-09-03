@@ -1,37 +1,44 @@
 import imageCompression from 'browser-image-compression';
+import {
+  ACCESS_TOKEN_KEY,
+  ROLE_KEY,
+  ROLE_ADMIN,
+  ROLE_MANAGER,
+  ROLE_TOP_TESTER,
+} from 'constant/com_const.js';
 
 export const nb_isLogin = () => {
-  let isLogin = window.localStorage.getItem('access-token') !== null;
+  let isLogin = window.localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
   return isLogin;
 };
 
 //매니저 권한 임시 구현
 export const nb_isManger = () => {
-  let isLogin = window.localStorage.getItem('access-token') !== null;
+  let isLogin = window.localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
   let isManger = false;
   if (isLogin) {
     isManger =
-      window.localStorage.getItem('role') === 'MANAGER' ||
-      window.localStorage.getItem('role') === 'TOP_TESTER' ||
-      window.localStorage.getItem('role') === 'ADMIN';
+      window.localStorage.getItem(ROLE_KEY) === ROLE_MANAGER ||
+      window.localStorage.getItem(ROLE_KEY) === ROLE_TOP_TESTER ||
+      window.localStorage.getItem(ROLE_KEY) === ROLE_ADMIN;
   }
   return isManger;
 };
 
 export const nb_isAdmin = () => {
-  let isLogin = window.localStorage.getItem('access-token') !== null;
+  let isLogin = window.localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
   let isAdmin = false;
   if (isLogin) {
-    isAdmin = window.localStorage.getItem('role') === 'ADMIN';
+    isAdmin = window.localStorage.getItem(ROLE_KEY) === ROLE_ADMIN;
   }
   return isAdmin;
 };
 
 export const nb_isTopTester = () => {
-  let isLogin = window.localStorage.getItem('access-token') !== null;
+  let isLogin = window.localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
   let isTopTester = false;
   if (isLogin) {
-    isTopTester = window.localStorage.getItem('role') === 'TOP_TESTER';
+    isTopTester = window.localStorage.getItem(ROLE_KEY) === ROLE_TOP_TESTER;
   }
   return isTopTester;
 };
@@ -51,22 +58,22 @@ export const nb_dataFetch = async (url, transitEffect) => {
     method: 'get', // 방식은 get
     credentials: 'include',
     headers: {
-      'access-token': window.localStorage.getItem('access-token'),
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   })
     .then(async (response) => {
-      if (response.headers.get('access-token') !== null) {
+      if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
         window.localStorage.setItem(
-          'access-token',
-          response.headers.get('access-token')
+          ACCESS_TOKEN_KEY,
+          response.headers.get(ACCESS_TOKEN_KEY)
         );
         //매니저 권한 임시 구현
-        window.localStorage.setItem('role', response.headers.get('role'));
+        window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       } else if (response.headers.get('tokenExpired') !== null) {
         alert('로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.');
-        window.localStorage.removeItem('access-token');
+        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
         //매니저 권한 임시 구현
-        window.localStorage.removeItem('role');
+        window.localStorage.removeItem(ROLE_KEY);
         window.location.href = '/';
       }
       return response.text();
@@ -104,23 +111,23 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
     method: 'post', // 방식은 post
     credentials: 'include',
     headers: {
-      'access-token': window.localStorage.getItem('access-token'),
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
     body: formData, // body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
   })
     .then(async (response) => {
-      if (response.headers.get('access-token') !== null) {
+      if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
         window.localStorage.setItem(
-          'access-token',
-          response.headers.get('access-token')
+          ACCESS_TOKEN_KEY,
+          response.headers.get(ACCESS_TOKEN_KEY)
         );
         //매니저 권한 임시 구현
-        window.localStorage.setItem('role', response.headers.get('role'));
+        window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       } else if (response.headers.get('tokenExpired') !== null) {
         alert('로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.');
-        window.localStorage.removeItem('access-token');
+        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
         //매니저 권한 임시 구현
-        window.localStorage.removeItem('role');
+        window.localStorage.removeItem(ROLE_KEY);
         window.location.href = '/';
       }
       return response.text();
@@ -153,7 +160,7 @@ export const nb_formDataFileFetch = async (url, formData, fileName) => {
     method: 'post', // 방식은 post
     credentials: 'include',
     headers: {
-      'access-token': window.localStorage.getItem('access-token'),
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
     body: formData, // body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
   })
@@ -183,7 +190,7 @@ export const nb_dataFileFetch = async (url, fileName) => {
     method: 'get', // 방식은 get
     credentials: 'include',
     headers: {
-      'access-token': window.localStorage.getItem('access-token'),
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   })
     .then((res) => {
@@ -204,6 +211,71 @@ export const nb_dataFileFetch = async (url, fileName) => {
     .catch((err) => {
       console.error('err: ', err);
     });
+};
+
+/**
+ * http 요청
+ */
+export const nb_request = async (url, httpOption, transitEffect) => {
+  let returnVal = null; // 결과값
+
+  // 로딩바 생성
+  if (transitEffect) {
+    document.getElementById('page-transit').classList.remove('hide');
+    document.getElementById('page-transit-img').classList.remove('hide');
+  }
+
+  // 요청
+  const serverUrl = process.env.REACT_APP_DB_HOST + url;
+  await fetch(serverUrl, httpOption)
+    .then(async (response) => {
+      console.log(response.headers.get(ACCESS_TOKEN_KEY));
+      // 헤더에 Authorization 추가(서버에서 내려준 경우에만)
+      if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
+        window.localStorage.setItem(
+          ACCESS_TOKEN_KEY,
+          response.headers.get(ACCESS_TOKEN_KEY)
+        );
+        // 권한 추가
+        window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
+      }
+
+      return response.text();
+    })
+    .then(async (data) => {
+      // 로딩바 제거
+      if (transitEffect) {
+        document.getElementById('page-transit').classList.add('hide');
+        document.getElementById('page-transit-img').classList.add('hide');
+      }
+      // json형태로 파싱
+      returnVal = JSON.parse(data);
+    });
+  return returnVal;
+};
+
+/**
+ * post, json 요청
+ */
+export const nb_postJsonRequest = async (url, formData, transitEffect) => {
+  // form to json
+  const jsonData = {};
+  formData.forEach((value, key) => {
+    jsonData[key] = value;
+  });
+
+  // 요청 전문 생성
+  const httpOption = {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  httpOption.body = JSON.stringify(jsonData);
+
+  // 요청
+  return await nb_request(url, httpOption, jsonData, transitEffect);
 };
 
 /*
@@ -233,13 +305,13 @@ export const nb_formJsonFetch = async (url, formData, transitEffect) => {
     body: JSON.stringify(jsonData), // body에 json 데이터를 전송할 때에는 문자열로 변경해서 보내야한다.
   })
     .then(async (response) => {
-      if (response.headers.get('access-token') !== null) {
+      if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
         window.localStorage.setItem(
-          'access-token',
-          response.headers.get('access-token')
+          ACCESS_TOKEN_KEY,
+          response.headers.get(ACCESS_TOKEN_KEY)
         );
         //매니저 권한 임시 구현
-        window.localStorage.setItem('role', response.headers.get('role'));
+        window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       }
       return response.text();
     })

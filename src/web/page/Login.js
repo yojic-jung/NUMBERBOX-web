@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import { Link } from 'react-router-dom';
 import {
-  nb_formJsonFetch,
+  nb_postJsonRequest,
   nb_getParameterByName,
 } from 'js/common/common_nb.js';
 import 'css/main/main.css';
@@ -72,30 +72,40 @@ const Login = () => {
     }
   };
 
+  /**
+   * 로그인 요청
+   */
   const fLoginBtnUiVal = async (event) => {
+    // 이메일 및 비밀번호 형식 제대로 입력 안한 경우 버튼 비활성화로 요청 불가
     if (
       document.getElementById(event.target.id).classList.contains('disabled')
     ) {
       event.preventDefault();
       return;
-    } else {
-      let formData = new FormData(document.getElementById('login-form'));
-      let param = '';
-      if (document.getElementById('emailSave').checked) {
-        param = '?loginState=keep';
-      }
+    }
 
-      let returnObj = await nb_formJsonFetch(
-        '/loginProcess' + param,
-        formData,
-        true
-      );
-      if (returnObj.code == '200') {
-        window.location.href = '/';
-      } else {
-        document.getElementById('loginErrMsg').classList.remove('hide');
-        document.getElementById('loginErrMsg').innerText = returnObj.message;
-      }
+    // 로그인 상태 유지 파라미터 추가
+    let param = '';
+    if (document.getElementById('emailSave').checked) {
+      param = '?loginState=keep';
+    }
+
+    // 요청
+    let formData = new FormData(document.getElementById('login-form'));
+    let returnObj = await nb_postJsonRequest(
+      '/loginProcess' + param,
+      formData,
+      true
+    );
+
+    // 성공시 메인 페이지로 이동
+    if (returnObj.code == 200) {
+      window.location.href = '/';
+    }
+    // 실패시 에러 메시지 출력
+    else {
+      document.getElementById('loginErrMsg').classList.remove('hide');
+      document.getElementById('loginErrMsg').innerText = returnObj.message;
     }
   };
 
@@ -139,14 +149,15 @@ const Login = () => {
           </Link>
         </div>
         <div className='login-menu-back'>
-          <span
-            className='pointer'
+          <button
+            type='button'
+            className='pointer none-btn'
             onClick={() => {
               goBack();
             }}
           >
             &lt;뒤로가기
-          </span>
+          </button>
         </div>
         <div className='login-signup-desc'>N명의수학에 접속 하세요!</div>
         <div className='login-div'>
@@ -175,18 +186,20 @@ const Login = () => {
             </div>
             <div id='passChkValDesc' className='loginValDesc'></div>
             <div id='loginErrMsg' className='loginErrMsg hide'></div>
-            <div
+            <button
               id='login-btn'
-              className='login-btn disabled'
+              type='button'
+              className='none-btn login-btn disabled'
               onClick={(event) => {
                 fLoginBtnUiVal(event);
               }}
             >
               로그인
-            </div>
+            </button>
             <div className='grid-naver hide' id='naverIdLogin'></div>
-            <div
-              className='naver-customize'
+            <button
+              type='button'
+              className='naver-customize none-btn'
               onClick={() => {
                 if (document.getElementById('emailSave').checked) {
                   window.localStorage.setItem('loginState', 'keep');
@@ -198,7 +211,7 @@ const Login = () => {
               }}
             >
               네이버 아이디로 로그인
-            </div>
+            </button>
             <div className='login-etc-info'>
               <div>
                 <label>
@@ -223,8 +236,9 @@ const Login = () => {
             </div>
             <div className='signUpDiv'>
               N명의수학 계정이 없으신가요?{' '}
-              <span
-                className='signUpLink'
+              <button
+                type='button'
+                className='signUpLink none-btn'
                 onClick={() => {
                   alert(
                     'N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.'
@@ -232,7 +246,7 @@ const Login = () => {
                 }}
               >
                 회원가입
-              </span>
+              </button>
             </div>
             <br />
           </form>

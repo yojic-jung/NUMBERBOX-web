@@ -255,10 +255,6 @@
     display: inline-block;
 }
 
-.pointer{
-    cursor: pointer;
-}
-
 .maginLTwoZero{
     margin-left: 20px;
 }
@@ -665,6 +661,11 @@
 
 .pointer{
     cursor: pointer;
+}
+
+.none-btn{
+    all: unset;
+    display: block;
 }
 
 .alignCenter{
