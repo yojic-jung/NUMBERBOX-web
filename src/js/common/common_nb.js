@@ -229,7 +229,6 @@ export const nb_request = async (url, httpOption, transitEffect) => {
   const serverUrl = process.env.REACT_APP_DB_HOST + url;
   await fetch(serverUrl, httpOption)
     .then(async (response) => {
-      console.log(response.headers.get(ACCESS_TOKEN_KEY));
       // 헤더에 Authorization 추가(서버에서 내려준 경우에만)
       if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
         window.localStorage.setItem(
