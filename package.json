@@ -29,12 +29,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "proxy": "http://localhost:8080",
   "browserslist": {
     "production": [
@@ -50,10 +44,6 @@
   },
   "devDependencies": {
     "@types/sortablejs": "^1.13.0",
-    "eslint": "^9.9.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.35.0",
     "prettier": "^3.3.3"
   }
 }

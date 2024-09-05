@@ -103,6 +103,7 @@
     margin:30px auto 10px auto;
 }
 .login-btn{
+    display: block;
     cursor: pointer;
     text-align: center;
     width: 90%;
@@ -298,6 +299,7 @@
 }   
 
 .naver-customize{
+    display: block;
     text-align: center;
     background-image: url('img/naverbackground.png');
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';

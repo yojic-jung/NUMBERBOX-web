@@ -236,16 +236,10 @@ const Login = () => {
             </div>
             <div className='signUpDiv'>
               N명의수학 계정이 없으신가요?{' '}
-              <button
-                type='button'
-                className='signUpLink none-btn'
-                onClick={() => {
-                  alert(
-                    'N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.'
-                  );
-                }}
-              >
-                회원가입
+              <button type='button' className='signUpLink none-btn'>
+                <Link className='linkNoneCss' to='/signup'>
+                  회원가입
+                </Link>
               </button>
             </div>
             <br />
