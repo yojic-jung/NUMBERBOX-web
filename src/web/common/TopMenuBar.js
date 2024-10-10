@@ -5,6 +5,7 @@ import {
   nb_isLogin,
   nb_isManger,
   nb_isAdmin,
+  nb_getRequest,
   nb_dataFetch,
 } from 'js/common/common_nb.js';
 import { ACCESS_TOKEN_KEY, ROLE_KEY } from 'constant/com_const.js';
@@ -35,17 +36,20 @@ const TopMenuBar = (isMain) => {
     window.addEventListener('click', closeMyServiceTap);
     if (isLogin) {
       const asyncUseEffect = async function () {
-        let jsonObj = await nb_dataFetch('/takeProfile', true);
-        if (jsonObj.isSuccess) {
-          setMyNickName(jsonObj.profile.nickname);
+        let jsonObj = await nb_getRequest('/member/profile', true);
+        if (jsonObj.status == 200) {
+          let data = jsonObj.data;
+          setMyNickName(data.myProfile.nickname);
           if (
-            jsonObj.profile.profileImgPath !== null &&
-            jsonObj.profile.profileImgName !== null
+            data.myProfile.profileImgPath !== null &&
+            data.myProfile.profileImgName !== null
           ) {
             setImgPath(
-              process.env.REACT_APP_SERVER_STATIC_HOST +
-                jsonObj.profile.profileImgPath +
-                jsonObj.profile.profileImgName
+              process.env.REACT_APP_S3_PATH +
+                '/' +
+                data.myProfile.profileImgPath +
+                '/' +
+                data.myProfile.profileImgName
             );
           }
         }

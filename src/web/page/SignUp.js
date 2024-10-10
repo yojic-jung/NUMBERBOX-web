@@ -4,15 +4,19 @@ import ServicePolicy from 'web/page/ServicePolicy';
 import PrivacyPolicy from 'web/page/PrivacyPolicy';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
-import { nb_formDataFetch, nb_dataFetch } from 'js/common/common_nb.js';
+import {
+  nb_postFormRequest,
+  nb_dataFetch,
+  nb_postRequest,
+} from 'js/common/common_nb.js';
 import 'css/main/main.css';
 import 'css/page/etcPage.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
 
-  const [merchantUid, setMerchantUid] = useState(0);
-  const [merchantIdCode, setMerchantIdCode] = useState(0);
+  // const [merchantUid, setMerchantUid] = useState(0);
+  // const [merchantIdCode, setMerchantIdCode] = useState(0);
   const [isPhoneIdentified, setIsPhoneIdentified] = useState(false);
   const [isEmailIdentified, setIsEmailIdentified] = useState(false);
   const [name, setName] = useState('');
@@ -45,28 +49,28 @@ const SignUp = () => {
   useEffect(() => {
     const asyncUseEffect = async () => {
       initializeNaverLogin();
-      let returnObj = await nb_dataFetch('/takeMerchantUid', true);
-      setMerchantUid(returnObj.merchantUid);
-      setMerchantIdCode(returnObj.merchantIdCode);
+      // let returnObj = await nb_dataFetch('/takeMerchantUid', true);
+      // setMerchantUid(returnObj.merchantUid);
+      // setMerchantIdCode(returnObj.merchantIdCode);
     };
 
     asyncUseEffect();
   }, []);
 
-  function onClickCertification() {
-    /* 1. 가맹점 식별하기 */
-    const { IMP } = window;
-    IMP.init(merchantIdCode);
+  // function onClickCertification() {
+  //   /* 1. 가맹점 식별하기 */
+  //   const { IMP } = window;
+  //   IMP.init(merchantIdCode);
 
-    /* 2. 본인인증 데이터 정의하기 */
-    const data = {
-      merchant_uid: merchantUid + new Date(),
-      popup: false,
-    };
+  //   /* 2. 본인인증 데이터 정의하기 */
+  //   const data = {
+  //     merchant_uid: merchantUid + new Date(),
+  //     popup: false,
+  //   };
 
-    /* 4. 본인인증 창 호출하기 */
-    IMP.certification(data, callback);
-  }
+  //   /* 4. 본인인증 창 호출하기 */
+  //   IMP.certification(data, callback);
+  // }
 
   /* 3. 콜백 함수 정의하기 */
   async function callback(response) {
@@ -100,7 +104,7 @@ const SignUp = () => {
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
   const passRegex =
     /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; //패스워드 문자 숫자 특수문자 8-15자
-  const emailIdentifyRegex = /^[0-9]{6}$/;
+  const emailIdentifyRegex = /^.{36}$/;
 
   const fagreeStateBtn = () => {
     let isChecked = document.getElementById('agreeChk').checked;
@@ -226,10 +230,6 @@ const SignUp = () => {
    * 회원가입 유효성 검사
    */
   const sigupRequest = async () => {
-    alert(
-      'N명의수학은 폐업으로 인하여 서비스 종료 예정입니다. 부득이하게 더이상의 신규회원모집은 진행하지 않게되었습니다. 많은 양해부탁드립니다.'
-    );
-    return;
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
     let passwordChk = document.getElementById('passwordChk').value;
@@ -304,43 +304,38 @@ const SignUp = () => {
 
     //이메일 인증코드 생성 메일 날리기
     let email = document.getElementById('email').value;
-    let returnVal = await nb_dataFetch(
-      '/createEmailIdCode?email=' + email,
+    let jsonData = new Object();
+    jsonData.email = email;
+    jsonData.codeType = 'SignUp';
+    let returnVal = await nb_postRequest(
+      '/public/member/signup/verifyCode',
+      jsonData,
       true
     );
-    if (returnVal.isSuccess) {
+    if (returnVal.status == 200) {
       document.getElementById('userInpEmail').innerText = email;
       document.getElementById('emailCertify').classList.remove('hide');
-    } else {
-      alert(
-        '이메일 인증 코드 발송에 실패하였습니다. 다시 시도해주시기 바랍니다.'
-      );
     }
   };
 
   const signupFinalReq = async (event) => {
-    return;
     //이메일 인증코드 입력하기
     //인증코드 검증
     if (event.target.classList.contains('disable')) return;
 
     let formData = new FormData(document.getElementById('signup-form'));
     formData.append(
-      'emailIdCode',
+      'emailVerifyCode',
       document.getElementById('emailIdCode').value
     );
 
-    let returnObj = await nb_formDataFetch('/signup', formData, true);
-    if (returnObj.isSuccess === 'success') {
+    let returnObj = await nb_postFormRequest(
+      '/public/member/signup',
+      formData,
+      true
+    );
+    if (returnObj.status == 200) {
       window.location.href = '/?succeedSignUp=1';
-    } else if (returnObj.isSuccess === 'existsEmail') {
-      alert('이미 존재하는 이메일입니다.');
-    } else if (returnObj.isSuccess === 'emailIdCodeMissMatch') {
-      alert('이메일 인증코드가 일치하지 않습니다.');
-    } else if (returnObj.isSuccess === 'emailIdCodeExpired') {
-      alert('이메일 인증코드의 유효기간이 지났습니다.');
-    } else if (returnObj.isSuccess === undefined) {
-      alert('에러 [' + returnObj.error + ']');
     }
   };
 
@@ -400,6 +395,7 @@ const SignUp = () => {
                 id='emailIdCode'
                 className='login-input emailCertifyInp'
                 type='text'
+                name='emailVerifyCode'
                 placeholder='인증코드 입력...'
                 onFocus={() => {
                   removeLoginValDescUI();
@@ -472,7 +468,7 @@ const SignUp = () => {
               <br />
               <input
                 id='passwordChk'
-                name='passwordChk'
+                name='confirmPassword'
                 className='login-input'
                 type='password'
                 placeholder='비밀번호를 다시 입력해주세요'
@@ -491,9 +487,9 @@ const SignUp = () => {
                 <div
                   id='phoneCertifyBtn'
                   className='phoneCertifyBtn'
-                  onClick={() => {
-                    onClickCertification();
-                  }}
+                  // onClick={() => {
+                  //   onClickCertification();
+                  // }}
                 >
                   휴대폰 본인인증
                 </div>

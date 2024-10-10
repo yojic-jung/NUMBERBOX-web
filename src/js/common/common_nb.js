@@ -217,7 +217,7 @@ export const nb_dataFileFetch = async (url, fileName) => {
  * http 요청
  */
 export const nb_request = async (url, httpOption, transitEffect) => {
-  let returnVal = null; // 결과값
+  let jsonData = null; // 결과값
 
   // 로딩바 생성
   if (transitEffect) {
@@ -238,7 +238,6 @@ export const nb_request = async (url, httpOption, transitEffect) => {
         // 권한 추가
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       }
-
       return response.text();
     })
     .then(async (data) => {
@@ -248,33 +247,110 @@ export const nb_request = async (url, httpOption, transitEffect) => {
         document.getElementById('page-transit-img').classList.add('hide');
       }
       // json형태로 파싱
-      returnVal = JSON.parse(data);
+      jsonData = JSON.parse(data);
+
+      // 성공 응답 아닌 경우
+      if (jsonData.status >= 400 && jsonData.status < 500) {
+        if (jsonData.showMsg) {
+          alert(jsonData.message);
+        }
+      } else if (jsonData.status >= 500) {
+        alert('서버가 정상적이지 않습니다.\n잠시 후 다시 시도해주세요.');
+      }
     });
-  return returnVal;
+  return jsonData;
 };
 
 /**
- * post, json 요청
+ * get 요청
  */
-export const nb_postJsonRequest = async (url, formData, transitEffect) => {
+export const nb_getRequest = async (url, transitEffect) => {
+  // 요청 전문 생성
+  const httpOption = {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    },
+  };
+
+  // 요청
+  return await nb_request(url, httpOption, transitEffect);
+};
+
+/**
+ * post 요청
+ */
+export const nb_postForm = async (url, formData, transitEffect) => {
+  const httpOption = {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    },
+  };
+  httpOption.body = formData;
+  // 요청
+  return await nb_request(url, httpOption, transitEffect);
+};
+
+export const nb_postFormRequest = async (url, formData, transitEffect) => {
   // form to json
   const jsonData = {};
   formData.forEach((value, key) => {
     jsonData[key] = value;
   });
 
+  // 요청
+  return await nb_postRequest(url, jsonData, transitEffect);
+};
+
+export const nb_postRequest = async (url, jsonData, transitEffect) => {
   // 요청 전문 생성
   const httpOption = {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   };
   httpOption.body = JSON.stringify(jsonData);
 
   // 요청
-  return await nb_request(url, httpOption, jsonData, transitEffect);
+  return await nb_request(url, httpOption, transitEffect);
+};
+
+/**
+ * post, json 요청
+ */
+
+export const nb_putFormRequest = async (url, formData, transitEffect) => {
+  // form to json
+  const jsonData = {};
+  formData.forEach((value, key) => {
+    jsonData[key] = value;
+  });
+
+  // 요청
+  return await nb_putRequest(url, jsonData, transitEffect);
+};
+
+export const nb_putRequest = async (url, jsonData, transitEffect) => {
+  // 요청 전문 생성
+  const httpOption = {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    },
+  };
+  httpOption.body = JSON.stringify(jsonData);
+
+  // 요청
+  return await nb_request(url, httpOption, transitEffect);
 };
 
 /*

@@ -9,7 +9,7 @@ const MyContentsSearchFilter = ({makeContentsShow, descMsg})=>{
     useEffect(()=>{
         window.addEventListener('click', hideSearchFilter);
         const asyncUseEffect = async () =>{
-            let jsonObj = await nb_dataFetch('/mathInfo/unitInfo', true);
+            let jsonObj = await nb_dataFetch('/math/menu/unit', true);
             setSubjectList(jsonObj["mathSubjectInfo"]);
             setSecUnitList(jsonObj["mathSecUnitInfo"]);
         }

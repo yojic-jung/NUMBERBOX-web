@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import { Link } from 'react-router-dom';
 import {
-  nb_postJsonRequest,
+  nb_postFormRequest,
   nb_getParameterByName,
 } from 'js/common/common_nb.js';
 import 'css/main/main.css';
@@ -92,14 +92,14 @@ const Login = () => {
 
     // 요청
     let formData = new FormData(document.getElementById('login-form'));
-    let returnObj = await nb_postJsonRequest(
-      '/loginProcess' + param,
+    let returnObj = await nb_postFormRequest(
+      '/login/general' + param,
       formData,
       true
     );
 
     // 성공시 메인 페이지로 이동
-    if (returnObj.code == 200) {
+    if (returnObj.status == 200) {
       window.location.href = '/';
     }
     // 실패시 에러 메시지 출력
