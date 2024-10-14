@@ -95,19 +95,12 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 
   let targetDomWidth = 800;
   const topMenuWidth = () => {
-    document.getElementById('topShortkeyDiv').style.width =
-      targetDomWidth + 'px';
+    document.getElementById('topShortkeyDiv').style.width = targetDomWidth + 'px';
     document.getElementById('topShortkeyDiv').style.marginLeft = 'auto';
   };
 
   const topMenuFixed = () => {
-    nb_topMenuFixed(
-      'topShortkeyDiv',
-      targetDomWidth,
-      null,
-      'formulEditMultiDiv',
-      false
-    );
+    nb_topMenuFixed('topShortkeyDiv', targetDomWidth, null, 'formulEditMultiDiv', false);
   };
 
   //이미지 파일 및 각종 파일 붙여넣기 금지
@@ -127,13 +120,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       if (file !== null) {
         let fileName = file.name.split('.');
         let fileExtension = fileName[fileName.length - 1].toUpperCase();
-        if (
-          fileExtension === 'PNG' ||
-          fileExtension === 'JPG' ||
-          fileExtension === 'JPEG' ||
-          fileExtension === 'GIF' ||
-          fileExtension === 'BMP'
-        ) {
+        if (fileExtension === 'PNG' || fileExtension === 'JPG' || fileExtension === 'JPEG' || fileExtension === 'GIF' || fileExtension === 'BMP') {
           alert('정답 입력창에는 이미지 첨부가 불가합니다.');
           event.preventDefault();
           return;
@@ -151,8 +138,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
   const errReportBy = () => {
     window.errType = 4; //수학 문제 만들기 errType;
     document.getElementById('serviceCenter').classList.remove('hide');
-    document.getElementById('serviceCenterQnADesc').innerHTML =
-      '기호 추가, 오류, 제안사항이 있으시면 적어주세요.<br/>빠르게 개선하여 더 좋은 서비스를 제공해 드리겠습니다.';
+    document.getElementById('serviceCenterQnADesc').innerHTML = '기호 추가, 오류, 제안사항이 있으시면 적어주세요.<br/>빠르게 개선하여 더 좋은 서비스를 제공해 드리겠습니다.';
     document.getElementById('serviceQuestionTab').click();
     document.getElementById('serviceQuestion').scrollTo(0, 0);
   };
@@ -209,8 +195,8 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       if (contentsClassify !== 1) {
         document.getElementById('makeContentsLinkDiv').classList.add('hide');
       }
-      let jsonObj = await nb_dataFetch('/mathInfo/takeShortCutKey', true);
-      setShortCutKey(jsonObj);
+      let jsonObj = await nb_dataFetch('/math/menu/shortCutKey', true);
+      setShortCutKey(jsonObj.data);
       setIsFetchShotCutKey(true);
       shortCutKeyList = jsonObj['shortCutKey'];
       window.shortCutKeyList = shortCutKeyList;
@@ -241,7 +227,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 
       await reg_undoRedoInitialize();
       let returnObj = await nb_dataFetch('/math/menu/unit', true);
-      setMathUnitInfo(returnObj);
+      setMathUnitInfo(returnObj.data);
       setFormulaEditorArr(formulaEditor);
 
       //이미지 수정 이벤트 등록
@@ -252,9 +238,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
         }
       }
       //이미지 및 파일 복붙 금지
-      let answerFormulaEditor = document.querySelectorAll(
-        '.answerFormulaEditor'
-      );
+      let answerFormulaEditor = document.querySelectorAll('.answerFormulaEditor');
       for (let i = 0; i < answerFormulaEditor.length; i++) {
         answerFormulaEditor[i].addEventListener('paste', pastePreventFile);
       }
@@ -281,9 +265,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       }
     }
 
-    let contentsRootPaddingDiv = document.getElementsByClassName(
-      'contentsRootPaddingDiv'
-    );
+    let contentsRootPaddingDiv = document.getElementsByClassName('contentsRootPaddingDiv');
     for (let i = 0; i < contentsRootPaddingDiv.length; i++) {
       if (i < numCnt - 1) {
         contentsRootPaddingDiv[i].classList.remove('hide');
@@ -310,9 +292,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       alert('문제는 최대 30개까지 등록 가능합니다.');
       return;
     }
-    let contentsRootPaddingDiv = document.getElementsByClassName(
-      'contentsRootPaddingDiv'
-    );
+    let contentsRootPaddingDiv = document.getElementsByClassName('contentsRootPaddingDiv');
     contentsRootPaddingDiv[nextDivIdx - 1].classList.remove('hide');
     contentsRootDiv[nextDivIdx].classList.remove('hide');
   };
@@ -325,13 +305,8 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 
     let contentsRootDiv = document.getElementsByClassName('contentsRootDiv');
     for (let i = 0; i < contentsRootDiv.length; i++) {
-      if (
-        contentsRootDiv[i].classList.contains('disabled') ||
-        contentsRootDiv[i].classList.contains('hide')
-      ) {
-        let formEle = contentsRootDiv[i].querySelectorAll(
-          'input, textarea, select'
-        );
+      if (contentsRootDiv[i].classList.contains('disabled') || contentsRootDiv[i].classList.contains('hide')) {
+        let formEle = contentsRootDiv[i].querySelectorAll('input, textarea, select');
         for (let i = 0; i < formEle.length; i++) {
           formEle[i].disabled = true;
         }
@@ -339,8 +314,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       }
 
       let currentContentsDiv = contentsRootDiv[i];
-      let contentEditClass =
-        contentsRootDiv[i].querySelectorAll('.contentEditClass');
+      let contentEditClass = contentsRootDiv[i].querySelectorAll('.contentEditClass');
       let isFirNoExist = false,
         isSecNoExist = false,
         isThrNoExist = false,
@@ -362,124 +336,61 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
               return false;
             }
           }
-        } else if (
-          contentEditClass[j].classList.contains('solutionFormulaEditor') ||
-          contentEditClass[j].classList.contains('answerFormulaEditor')
-        ) {
+        } else if (contentEditClass[j].classList.contains('solutionFormulaEditor') || contentEditClass[j].classList.contains('answerFormulaEditor')) {
         } else {
           let childNodes = contentEditClass[j].childNodes;
           for (let k = 0; k < childNodes.length; k++) {
-            if (
-              childNodes[k].nodeName === '#text' &&
-              childNodes[k].length === 0
-            ) {
+            if (childNodes[k].nodeName === '#text' && childNodes[k].length === 0) {
               childNodes[k].remove();
             }
           }
-          if (
-            contentEditClass[j].childNodes.length === 1 &&
-            contentEditClass[j].childNodes[0].nodeName === 'BR'
-          ) {
+          if (contentEditClass[j].childNodes.length === 1 && contentEditClass[j].childNodes[0].nodeName === 'BR') {
             contentEditClass[j].childNodes[0].remove();
             if (contentEditClass[j].id.indexOf('firNoFormulaEditor') > -1) {
-              currentContentsDiv.querySelector('#firNo').innerHTML =
-                contentEditClass[j].innerHTML;
-            } else if (
-              contentEditClass[j].id.indexOf('secNoFormulaEditor') > -1
-            ) {
-              currentContentsDiv.querySelector('#secNo').innerHTML =
-                contentEditClass[j].innerHTML;
-            } else if (
-              contentEditClass[j].id.indexOf('thrNoFormulaEditor') > -1
-            ) {
-              currentContentsDiv.querySelector('#thrNo').innerHTML =
-                contentEditClass[j].innerHTML;
-            } else if (
-              contentEditClass[j].id.indexOf('fourNoFormulaEditor') > -1
-            ) {
-              currentContentsDiv.querySelector('#fourNo').innerHTML =
-                contentEditClass[j].innerHTML;
-            } else if (
-              contentEditClass[j].id.indexOf('fifNoFormulaEditor') > -1
-            ) {
-              currentContentsDiv.querySelector('#fifNo').innerHTML =
-                contentEditClass[j].innerHTML;
+              currentContentsDiv.querySelector('#firNo').innerHTML = contentEditClass[j].innerHTML;
+            } else if (contentEditClass[j].id.indexOf('secNoFormulaEditor') > -1) {
+              currentContentsDiv.querySelector('#secNo').innerHTML = contentEditClass[j].innerHTML;
+            } else if (contentEditClass[j].id.indexOf('thrNoFormulaEditor') > -1) {
+              currentContentsDiv.querySelector('#thrNo').innerHTML = contentEditClass[j].innerHTML;
+            } else if (contentEditClass[j].id.indexOf('fourNoFormulaEditor') > -1) {
+              currentContentsDiv.querySelector('#fourNo').innerHTML = contentEditClass[j].innerHTML;
+            } else if (contentEditClass[j].id.indexOf('fifNoFormulaEditor') > -1) {
+              currentContentsDiv.querySelector('#fifNo').innerHTML = contentEditClass[j].innerHTML;
             }
           }
 
           if (contentEditClass[j].id.indexOf('firNoFormulaEditor') > -1) {
             isFirNoExist =
-              (!(
-                contentEditClass[j].innerText.length === 1 &&
-                contentEditClass[j].innerText === '\n'
-              ) &&
-                contentEditClass[j].innerText.length > 0) ||
+              (!(contentEditClass[j].innerText.length === 1 && contentEditClass[j].innerText === '\n') && contentEditClass[j].innerText.length > 0) ||
               contentEditClass[j].querySelector('img') !== null;
-          } else if (
-            contentEditClass[j].id.indexOf('secNoFormulaEditor') > -1
-          ) {
+          } else if (contentEditClass[j].id.indexOf('secNoFormulaEditor') > -1) {
             isSecNoExist =
-              (!(
-                contentEditClass[j].innerText.length === 1 &&
-                contentEditClass[j].innerText === '\n'
-              ) &&
-                contentEditClass[j].innerText.length > 0) ||
+              (!(contentEditClass[j].innerText.length === 1 && contentEditClass[j].innerText === '\n') && contentEditClass[j].innerText.length > 0) ||
               contentEditClass[j].querySelector('img') !== null;
-          } else if (
-            contentEditClass[j].id.indexOf('thrNoFormulaEditor') > -1
-          ) {
+          } else if (contentEditClass[j].id.indexOf('thrNoFormulaEditor') > -1) {
             isThrNoExist =
-              (!(
-                contentEditClass[j].innerText.length === 1 &&
-                contentEditClass[j].innerText === '\n'
-              ) &&
-                contentEditClass[j].innerText.length > 0) ||
+              (!(contentEditClass[j].innerText.length === 1 && contentEditClass[j].innerText === '\n') && contentEditClass[j].innerText.length > 0) ||
               contentEditClass[j].querySelector('img') !== null;
-          } else if (
-            contentEditClass[j].id.indexOf('fourNoFormulaEditor') > -1
-          ) {
+          } else if (contentEditClass[j].id.indexOf('fourNoFormulaEditor') > -1) {
             isFourNoExist =
-              (!(
-                contentEditClass[j].innerText.length === 1 &&
-                contentEditClass[j].innerText === '\n'
-              ) &&
-                contentEditClass[j].innerText.length > 0) ||
+              (!(contentEditClass[j].innerText.length === 1 && contentEditClass[j].innerText === '\n') && contentEditClass[j].innerText.length > 0) ||
               contentEditClass[j].querySelector('img') !== null;
-          } else if (
-            contentEditClass[j].id.indexOf('fifNoFormulaEditor') > -1
-          ) {
+          } else if (contentEditClass[j].id.indexOf('fifNoFormulaEditor') > -1) {
             isFifNoExist =
-              (!(
-                contentEditClass[j].innerText.length === 1 &&
-                contentEditClass[j].innerText === '\n'
-              ) &&
-                contentEditClass[j].innerText.length > 0) ||
+              (!(contentEditClass[j].innerText.length === 1 && contentEditClass[j].innerText === '\n') && contentEditClass[j].innerText.length > 0) ||
               contentEditClass[j].querySelector('img') !== null;
           }
         }
       }
 
       //객관식 하나라도 입력되어 있는지 체크
-      let multiChoiceOrCheck =
-        isFirNoExist ||
-        isSecNoExist ||
-        isThrNoExist ||
-        isFourNoExist ||
-        isFifNoExist;
+      let multiChoiceOrCheck = isFirNoExist || isSecNoExist || isThrNoExist || isFourNoExist || isFifNoExist;
       //객관식 전부 다 입력되어 있는지 체크
-      let multiChoiceAllCheck =
-        isFirNoExist &&
-        isSecNoExist &&
-        isThrNoExist &&
-        isFourNoExist &&
-        isFifNoExist;
+      let multiChoiceAllCheck = isFirNoExist && isSecNoExist && isThrNoExist && isFourNoExist && isFifNoExist;
       //객관식이 하나라도 입력되어있는데 전부 다 입력되지 않은 경우
       if (multiChoiceOrCheck && !multiChoiceAllCheck) {
-        alert(
-          '객관식 문제인 경우 객관식 보기를 모두 입력해주세요.\n객관식 문제가 아닌 경우 객관식 보기를 모두 지워주세요.'
-        );
-        let multiChoiceView =
-          currentContentsDiv.querySelectorAll('.multiChoiceView');
+        alert('객관식 문제인 경우 객관식 보기를 모두 입력해주세요.\n객관식 문제가 아닌 경우 객관식 보기를 모두 지워주세요.');
+        let multiChoiceView = currentContentsDiv.querySelectorAll('.multiChoiceView');
         for (let k = 0; k < multiChoiceView.length; k++) {
           multiChoiceView[k].classList.add('redBoxValid2');
         }
@@ -490,128 +401,80 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       }
       //문제 validation [end]
 
-      let multiChoiceView =
-        currentContentsDiv.querySelectorAll('.multiChoiceView');
+      let multiChoiceView = currentContentsDiv.querySelectorAll('.multiChoiceView');
       for (let k = 0; k < multiChoiceView.length; k++) {
-        if (
-          !isFirNoExist &&
-          multiChoiceView[k].id.indexOf('firNoFormulaEditor') > -1
-        ) {
+        if (!isFirNoExist && multiChoiceView[k].id.indexOf('firNoFormulaEditor') > -1) {
           multiChoiceView[k].innerHTML = '';
         }
-        if (
-          !isSecNoExist &&
-          multiChoiceView[k].id.indexOf('secNoFormulaEditor') > -1
-        ) {
+        if (!isSecNoExist && multiChoiceView[k].id.indexOf('secNoFormulaEditor') > -1) {
           multiChoiceView[k].innerHTML = '';
         }
-        if (
-          !isThrNoExist &&
-          multiChoiceView[k].id.indexOf('thrNoFormulaEditor') > -1
-        ) {
+        if (!isThrNoExist && multiChoiceView[k].id.indexOf('thrNoFormulaEditor') > -1) {
           multiChoiceView[k].innerHTML = '';
         }
-        if (
-          !isFourNoExist &&
-          multiChoiceView[k].id.indexOf('fourNoFormulaEditor') > -1
-        ) {
+        if (!isFourNoExist && multiChoiceView[k].id.indexOf('fourNoFormulaEditor') > -1) {
           multiChoiceView[k].innerHTML = '';
         }
-        if (
-          !isFifNoExist &&
-          multiChoiceView[k].id.indexOf('fifNoFormulaEditor') > -1
-        ) {
+        if (!isFifNoExist && multiChoiceView[k].id.indexOf('fifNoFormulaEditor') > -1) {
           multiChoiceView[k].innerHTML = '';
         }
       }
 
       if (Number(currentContentsDiv.querySelector('#subject').value) === 0) {
         alert('과목 정보를 선택 해주세요.');
-        currentContentsDiv
-          .querySelector('#subject')
-          .scrollIntoView({ block: 'center' });
+        currentContentsDiv.querySelector('#subject').scrollIntoView({ block: 'center' });
         currentContentsDiv.querySelector('#subject').focus();
-        currentContentsDiv
-          .querySelector('#subject')
-          .classList.add('redBoxValid2');
+        currentContentsDiv.querySelector('#subject').classList.add('redBoxValid2');
         return false;
       }
 
       if (Number(currentContentsDiv.querySelector('#secUnit').value) === 0) {
         alert('대단원 정보를 선택 해주세요.');
-        currentContentsDiv
-          .querySelector('#secUnit')
-          .scrollIntoView({ block: 'center' });
+        currentContentsDiv.querySelector('#secUnit').scrollIntoView({ block: 'center' });
         currentContentsDiv.querySelector('#secUnit').focus();
-        currentContentsDiv
-          .querySelector('#secUnit')
-          .classList.add('redBoxValid2');
+        currentContentsDiv.querySelector('#secUnit').classList.add('redBoxValid2');
         return false;
       }
 
       if (Number(currentContentsDiv.querySelector('#thrUnit').value) === 0) {
         alert('중단원 정보를 선택 해주세요.');
-        currentContentsDiv
-          .querySelector('#thrUnit')
-          .scrollIntoView({ block: 'center' });
+        currentContentsDiv.querySelector('#thrUnit').scrollIntoView({ block: 'center' });
         currentContentsDiv.querySelector('#thrUnit').focus();
-        currentContentsDiv
-          .querySelector('#thrUnit')
-          .classList.add('redBoxValid2');
+        currentContentsDiv.querySelector('#thrUnit').classList.add('redBoxValid2');
         return false;
       }
 
       if (Number(currentContentsDiv.querySelector('#quesType').value) === 0) {
         alert('유형 정보를 선택 해주세요.');
-        currentContentsDiv
-          .querySelector('#quesType')
-          .scrollIntoView({ block: 'center' });
+        currentContentsDiv.querySelector('#quesType').scrollIntoView({ block: 'center' });
         currentContentsDiv.querySelector('#quesType').focus();
-        currentContentsDiv
-          .querySelector('#quesType')
-          .classList.add('redBoxValid2');
+        currentContentsDiv.querySelector('#quesType').classList.add('redBoxValid2');
         return false;
       }
 
       //수능 입시 문제 출처 validation
       if (contentsClassify === 4) {
-        if (
-          Number(currentContentsDiv.querySelector('#manageIns').value) === 0
-        ) {
+        if (Number(currentContentsDiv.querySelector('#manageIns').value) === 0) {
           alert('출제기관을 선택 해주세요.');
-          currentContentsDiv
-            .querySelector('#manageIns')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#manageIns').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#manageIns').focus();
-          currentContentsDiv
-            .querySelector('#manageIns')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#manageIns').classList.add('redBoxValid2');
           return false;
         }
 
-        if (
-          Number(currentContentsDiv.querySelector('#paperType').value) === 0
-        ) {
+        if (Number(currentContentsDiv.querySelector('#paperType').value) === 0) {
           alert('가/나형 구분을 선택 해주세요.');
-          currentContentsDiv
-            .querySelector('#paperType')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#paperType').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#paperType').focus();
-          currentContentsDiv
-            .querySelector('#paperType')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#paperType').classList.add('redBoxValid2');
           return false;
         }
 
         if (currentContentsDiv.querySelector('#impYear').value.length !== 4) {
           alert('시행연도 4자리를 입력해주세요.');
-          currentContentsDiv
-            .querySelector('#impYear')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#impYear').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#impYear').focus();
-          currentContentsDiv
-            .querySelector('#impYear')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#impYear').classList.add('redBoxValid2');
           return false;
         }
 
@@ -621,28 +484,17 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           currentContentsDiv.querySelector('#impMonth').value > 12
         ) {
           alert('시행월을 입력해주세요.');
-          currentContentsDiv
-            .querySelector('#impMonth')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#impMonth').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#impMonth').focus();
-          currentContentsDiv
-            .querySelector('#impMonth')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#impMonth').classList.add('redBoxValid2');
           return false;
         }
 
-        if (
-          currentContentsDiv.querySelector('#oddQuesNum').value.length === 0 ||
-          currentContentsDiv.querySelector('#oddQuesNum').value.length > 2
-        ) {
+        if (currentContentsDiv.querySelector('#oddQuesNum').value.length === 0 || currentContentsDiv.querySelector('#oddQuesNum').value.length > 2) {
           alert('홀수형 번호를 입력해주세요.');
-          currentContentsDiv
-            .querySelector('#oddQuesNum')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#oddQuesNum').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#oddQuesNum').focus();
-          currentContentsDiv
-            .querySelector('#oddQuesNum')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#oddQuesNum').classList.add('redBoxValid2');
           return false;
         }
 
@@ -656,46 +508,27 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 				}
 				*/
 
-        if (
-          Number(currentContentsDiv.querySelector('#quesLevel').value) === 0
-        ) {
+        if (Number(currentContentsDiv.querySelector('#quesLevel').value) === 0) {
           alert('배점 정보를 선택 해주세요.');
-          currentContentsDiv
-            .querySelector('#quesLevel')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#quesLevel').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#quesLevel').focus();
-          currentContentsDiv
-            .querySelector('#quesLevel')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#quesLevel').classList.add('redBoxValid2');
           return false;
         }
 
-        if (
-          currentContentsDiv.querySelector('#wrongRatio').value.length === 0 ||
-          currentContentsDiv.querySelector('#wrongRatio').value.length > 2
-        ) {
+        if (currentContentsDiv.querySelector('#wrongRatio').value.length === 0 || currentContentsDiv.querySelector('#wrongRatio').value.length > 2) {
           alert('오답률을 입력해주세요.(정수로만 입력)');
-          currentContentsDiv
-            .querySelector('#wrongRatio')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#wrongRatio').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#wrongRatio').focus();
-          currentContentsDiv
-            .querySelector('#wrongRatio')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#wrongRatio').classList.add('redBoxValid2');
           return false;
         }
       } else if (contentsClassify === 1) {
-        if (
-          Number(currentContentsDiv.querySelector('#quesLevel').value) === 0
-        ) {
+        if (Number(currentContentsDiv.querySelector('#quesLevel').value) === 0) {
           alert('문제난이도를 선택 해주세요.');
-          currentContentsDiv
-            .querySelector('#quesLevel')
-            .scrollIntoView({ block: 'center' });
+          currentContentsDiv.querySelector('#quesLevel').scrollIntoView({ block: 'center' });
           currentContentsDiv.querySelector('#quesLevel').focus();
-          currentContentsDiv
-            .querySelector('#quesLevel')
-            .classList.add('redBoxValid2');
+          currentContentsDiv.querySelector('#quesLevel').classList.add('redBoxValid2');
           return false;
         }
       }
@@ -707,8 +540,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 
   // 문제 및 해설, 객관식, 주관식 정답 마지막 공백 제거(줄바꿈), 이미지 base64로 남아있는 것 한번 더 체크해서 변경
   const trimRegisterContents = async function (contentsRootDiv) {
-    let contentEditClass =
-      contentsRootDiv.querySelectorAll('.contentEditClass');
+    let contentEditClass = contentsRootDiv.querySelectorAll('.contentEditClass');
     for (let i = 0; i < contentEditClass.length; i++) {
       let whileIdx = 0;
       while (contentEditClass[i].innerText.substr(-2) === '\n\n') {
@@ -724,62 +556,22 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           if (brTag.length !== 0) {
             if (brTag[brTag.length - 1].closest('.nbBox') === null) {
               brTag[brTag.length - 1].remove();
-              if (
-                contentEditClass[i].id.indexOf('contentsFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#contents').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('solutionFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#solution').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('firNoFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#firNo').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('secNoFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#secNo').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('thrNoFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#thrNo').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('fourNoFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#fourNo').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('fifNoFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#fifNo').innerText =
-                  contentEditClass[i].innerHTML;
-              } else if (
-                contentEditClass[i].id.indexOf('answerFormulaEditor') > -1
-              ) {
-                contentEditClass[i]
-                  .closest('.contentsRootDiv')
-                  .querySelector('#answer').innerText =
-                  contentEditClass[i].innerHTML;
+              if (contentEditClass[i].id.indexOf('contentsFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#contents').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('solutionFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#solution').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('firNoFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#firNo').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('secNoFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#secNo').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('thrNoFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#thrNo').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('fourNoFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#fourNo').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('fifNoFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#fifNo').innerText = contentEditClass[i].innerHTML;
+              } else if (contentEditClass[i].id.indexOf('answerFormulaEditor') > -1) {
+                contentEditClass[i].closest('.contentsRootDiv').querySelector('#answer').innerText = contentEditClass[i].innerHTML;
               }
             } else {
               break;
@@ -797,37 +589,21 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       await reg_removeStyleAttribute(contentEditClass[i].id);
 
       if (contentEditClass[i].id.indexOf('contentsFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#contents').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#contents').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('solutionFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#solution').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#solution').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('firNoFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#firNo').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#firNo').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('secNoFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#secNo').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#secNo').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('thrNoFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#thrNo').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#thrNo').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('fourNoFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#fourNo').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#fourNo').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('fifNoFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#fifNo').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#fifNo').innerText = contentEditClass[i].innerHTML;
       } else if (contentEditClass[i].id.indexOf('answerFormulaEditor') > -1) {
-        contentEditClass[i]
-          .closest('.contentsRootDiv')
-          .querySelector('#answer').innerText = contentEditClass[i].innerHTML;
+        contentEditClass[i].closest('.contentsRootDiv').querySelector('#answer').innerText = contentEditClass[i].innerHTML;
       }
     }
   };
@@ -835,29 +611,18 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
   const contentsFinalValidation = async function () {
     let contentsRootDiv = document.getElementsByClassName('contentsRootDiv');
     for (let i = 0; i < contentsRootDiv.length; i++) {
-      if (
-        contentsRootDiv[i].classList.contains('disabled') ||
-        contentsRootDiv[i].classList.contains('hide')
-      )
-        continue;
-      let contentEditClass =
-        contentsRootDiv[i].querySelectorAll('.contentEditClass');
+      if (contentsRootDiv[i].classList.contains('disabled') || contentsRootDiv[i].classList.contains('hide')) continue;
+      let contentEditClass = contentsRootDiv[i].querySelectorAll('.contentEditClass');
       let totalFileSize = 0;
       for (let j = 0; j < contentEditClass.length; j++) {
         //이미지 base64 to s3 sever upload
         await nb_base64ImgRegisterToS3ByTargetId(contentEditClass[j].id);
-        totalFileSize += nb_getByteLengthOfString(
-          contentEditClass[j].innerHTML
-        );
+        totalFileSize += nb_getByteLengthOfString(contentEditClass[j].innerHTML);
       }
       if (totalFileSize / 1000 > 60) {
         contentsRootDiv[i].scrollIntoView({ block: 'center' });
-        let contentsOrdinalNum =
-          contentsRootDiv[i].querySelector('.contentsInfo-idx').innerText;
-        alert(
-          contentsOrdinalNum +
-            ' 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트는 최대 60KB까지 등록가능합니다.'
-        );
+        let contentsOrdinalNum = contentsRootDiv[i].querySelector('.contentsInfo-idx').innerText;
+        alert(contentsOrdinalNum + ' 문제의 용량이 너무 큽니다.\n문제 및 해설, 객관식, 정답 입력란의 텍스트는 최대 60KB까지 등록가능합니다.');
         return false;
       }
 
@@ -872,30 +637,19 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 
     let formData = new FormData(document.getElementById('contentsForm'));
     for (let i = 0; i < contentsRootDiv.length; i++) {
-      if (
-        contentsRootDiv[i].classList.contains('disabled') ||
-        contentsRootDiv[i].classList.contains('hide')
-      )
-        continue;
+      if (contentsRootDiv[i].classList.contains('disabled') || contentsRootDiv[i].classList.contains('hide')) continue;
 
-      formData.append(
-        'mathContents[' + i + '].contentsClassify',
-        contentsClassify
-      );
+      formData.append('mathContents[' + i + '].contentsClassify', contentsClassify);
 
       //문법 변환 로직 시작 및 S3 이미지 태그 등록
       let contentGrammer = document.createElement('div');
       let tmpDocument = document.createElement('div');
-      let contentEditClass =
-        contentsRootDiv[i].querySelectorAll('.contentEditClass');
+      let contentEditClass = contentsRootDiv[i].querySelectorAll('.contentEditClass');
       for (let j = 0; j < contentEditClass.length; j++) {
         //S3이미지 태그 등록
         let allImgDom = contentEditClass[j].querySelectorAll('img');
         for (let k = 0; k < allImgDom.length; k++) {
-          formData.append(
-            'mathContents[' + i + '].imgTagSrc',
-            allImgDom[k].src
-          );
+          formData.append('mathContents[' + i + '].imgTagSrc', allImgDom[k].src);
         }
         //문법 변환 요소 등록
         tmpDocument.innerHTML += contentEditClass[j].innerHTML + '&nbsp;';
@@ -926,31 +680,17 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
         allDom[0].outerHTML = allDom[0].innerText;
         allDom = contentsDiv.querySelectorAll('*');
       }
-      formData.append(
-        'mathContents[' + i + '].contentsGram',
-        contentsDiv.innerText
-      );
+      formData.append('mathContents[' + i + '].contentsGram', contentsDiv.innerText);
       //문법 변환 로직 종료
     }
 
     //undo 초기화
     await reg_undoRedoInitialize();
 
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/registerContentsMulti',
-      formData,
-      true
-    );
+    let returnObj = await nb_formDataFetch('/mathInfo/registerContentsMulti', formData, true);
 
     if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n메시지 : ' + returnObj.message);
     }
     if (returnObj['saveSuccess']) {
       /*
@@ -1057,9 +797,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
         }
       }
       //이미지 및 파일 복붙 금지
-      let answerFormulaEditor = document.querySelectorAll(
-        '.answerFormulaEditor'
-      );
+      let answerFormulaEditor = document.querySelectorAll('.answerFormulaEditor');
       for (let i = 0; i < answerFormulaEditor.length; i++) {
         answerFormulaEditor[i].addEventListener('paste', pastePreventFile);
       }
@@ -1118,8 +856,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           className='nabyBox fixed'
           onClick={() => {
             contentsValidation();
-          }}
-        >
+          }}>
           저장하기
         </div>
       </div>
@@ -1130,17 +867,13 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
             <Link className='linkNoneCss' to='/makeContents'>
               <div className='relative'>
                 <div className='makeContentsBtn'></div>
-                <div className='makeContentsForImgBtnDesc'>
-                  문제 직접 만들기
-                </div>
+                <div className='makeContentsForImgBtnDesc'>문제 직접 만들기</div>
               </div>
             </Link>
             <Link className='linkNoneCss' to='/makeContentsForImg'>
               <div className='relative'>
                 <div className='makeContentsForImgBtn active'></div>
-                <div className='makeContentsForImgBtnDesc'>
-                  이미지로 등록하기
-                </div>
+                <div className='makeContentsForImgBtnDesc'>이미지로 등록하기</div>
               </div>
             </Link>
           </div>
@@ -1149,46 +882,13 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
               onClick={() => {
                 errReportBy('makeContents');
               }}
-              className='errBtn makeContents'
-            ></div>
+              className='errBtn makeContents'></div>
             <div id='topShortkeyDiv' className='topShortkeyDiv'>
-              <TabButton
-                className='formulaTabButton'
-                tabList={formulaTabList}
-                clickEv={formularTabSelect}
-              ></TabButton>
-              {isFetchShotCutKey && (
-                <FormulaShortCutKey
-                  compId='shortKeyBoard'
-                  keyName='shortCutKey'
-                  parentShortCutKey={shortCutKey}
-                  parentMethod={() => {}}
-                />
-              )}
-              {isFetchShotCutKey && (
-                <FormulaShortCutKey
-                  compId='shortKeyBoardHigh'
-                  keyName='shortCutKeyHigh1'
-                  parentShortCutKey={shortCutKey}
-                  parentMethod={() => {}}
-                />
-              )}
-              {isFetchShotCutKey && (
-                <FormulaShortCutKey
-                  compId='shortKeyBoardEtc'
-                  keyName='shortCutKeyEtc'
-                  parentShortCutKey={shortCutKey}
-                  parentMethod={() => {}}
-                />
-              )}
-              {isFetchShotCutKey && (
-                <FormulaShortCutKey
-                  compId='shortKeyBoardEtc2'
-                  keyName='shortCutKeyEtc2'
-                  parentShortCutKey={shortCutKey}
-                  parentMethod={() => {}}
-                />
-              )}
+              <TabButton className='formulaTabButton' tabList={formulaTabList} clickEv={formularTabSelect}></TabButton>
+              {isFetchShotCutKey && <FormulaShortCutKey compId='shortKeyBoard' keyName='Main' parentShortCutKey={shortCutKey} parentMethod={() => {}} />}
+              {isFetchShotCutKey && <FormulaShortCutKey compId='shortKeyBoardHigh' keyName='High1' parentShortCutKey={shortCutKey} parentMethod={() => {}} />}
+              {isFetchShotCutKey && <FormulaShortCutKey compId='shortKeyBoardEtc' keyName='Etc' parentShortCutKey={shortCutKey} parentMethod={() => {}} />}
+              {isFetchShotCutKey && <FormulaShortCutKey compId='shortKeyBoardEtc2' keyName='Etc2' parentShortCutKey={shortCutKey} parentMethod={() => {}} />}
             </div>
 
             {formulaEditorList}
@@ -1196,8 +896,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
               className='addContentsBtn'
               onClick={(event) => {
                 addRegisterContents(event);
-              }}
-            >
+              }}>
               항목추가
               <button
                 id='initContentsCntBtn'
@@ -1205,8 +904,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
                 type='button'
                 onClick={(event) => {
                   setRegisterContentsCnt(event);
-                }}
-              >
+                }}>
                 문항 수 설정
               </button>
             </div>
@@ -1221,8 +919,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           tooltip='맨 위로'
           onClick={() => {
             nb_moveToScroll(true);
-          }}
-        ></div>
+          }}></div>
         <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
         <div
           id='conListScrollToBottom'
@@ -1230,8 +927,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           tooltip='맨 아래로'
           onClick={() => {
             nb_moveToScroll(false);
-          }}
-        ></div>
+          }}></div>
       </div>
     </>
   );

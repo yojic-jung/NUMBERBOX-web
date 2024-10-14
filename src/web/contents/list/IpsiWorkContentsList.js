@@ -1,984 +1,1224 @@
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import FormulaEditor from 'web/contents/register/FormulaEditor'
+import FormulaEditor from 'web/contents/register/FormulaEditor';
 import EmptyList from 'web/common/EmptyList';
-import {nb_dataFetch} from 'js/common/common_nb.js';
-import {nb_isAdmin, nb_fCustomSelClose, nb_formDataFetch, nb_formDataFileFetch,  nb_dateFormat, 
-    nb_confirmBox, nb_fadeInOut, nb_fadeInOutA, nb_promptBox, nb_detectScrollPosition, nb_moveToScroll, nb_getParameterByName,
-    nb_closeBtn, nb_modalScrollStrt, nb_modalScrollEnd, nb_multiChoiceGridSet, nb_topMenuFixed2} from 'js/common/common_nb.js';
-import {reg_eraseEditTbUI} from 'js/contents/register/contents_reg.js';
-import "css/common/nbScreen.css";
-import {cvt_htmlToTexAll, cvt_textNodeConvert, cvt_initWidthHeight, cvt_initOrgWidthHeight, cvt_convertHtmlToTex, cvt_makeJsonArrForHwp, cvt_combineFormul} from 'js/convertGrammer/nbToTexConvert_cvt.js';
+import { nb_dataFetch } from 'js/common/common_nb.js';
+import {
+  nb_isAdmin,
+  nb_fCustomSelClose,
+  nb_formDataFetch,
+  nb_formDataFileFetch,
+  nb_dateFormat,
+  nb_confirmBox,
+  nb_fadeInOut,
+  nb_fadeInOutA,
+  nb_promptBox,
+  nb_detectScrollPosition,
+  nb_moveToScroll,
+  nb_getParameterByName,
+  nb_closeBtn,
+  nb_modalScrollStrt,
+  nb_modalScrollEnd,
+  nb_multiChoiceGridSet,
+  nb_topMenuFixed2,
+} from 'js/common/common_nb.js';
+import { reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
+import 'css/common/nbScreen.css';
+import {
+  cvt_htmlToTexAll,
+  cvt_textNodeConvert,
+  cvt_initWidthHeight,
+  cvt_initOrgWidthHeight,
+  cvt_convertHtmlToTex,
+  cvt_makeJsonArrForHwp,
+  cvt_combineFormul,
+} from 'js/convertGrammer/nbToTexConvert_cvt.js';
 import hwpDownImg from 'img/hwpDownImg.png';
 import hourglass from 'img/hourglass.gif';
 
-let fExecuteWidth = false;  //객관식 너비 변경 함수 실행여부 결정 변수
-let scrollY = 0;            //모달 팝업시 부모창 스크롤 위치
+let fExecuteWidth = false; //객관식 너비 변경 함수 실행여부 결정 변수
+let scrollY = 0; //모달 팝업시 부모창 스크롤 위치
 let yearVal;
 let monthVal;
 let curPageNum = 0;
 let pageVolume = 100;
-const IpsiWorkContentsListy = ()=>{
-    let location = useLocation();
+const IpsiWorkContentsListy = () => {
+  let location = useLocation();
 
-    const [contentsList, setContentsList] = useState(new Array());
-    const [impYearList, setImpYearList] = useState(new Array());
-    const [impMonthList, setImpMonthList] = useState(new Array());
-    //const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
-    const [contentsLen, setContentsLen] = useState(0);
-    const [contentsNo, setContentsNo] = useState("");
-    const [modalState, setModalState] = useState(false);        //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
-    const [workListChanged, setWorkListChanged] = useState(true); 
-    const [emptyListMsg, setEmptyListMsg] = useState("수능/모의고사의 시행연월을 선택하여 원하는 문제를 찾아보세요.");
-    const [compDelTr, setCompDelTr] = useState(""); 
+  const [contentsList, setContentsList] = useState(new Array());
+  const [impYearList, setImpYearList] = useState(new Array());
+  const [impMonthList, setImpMonthList] = useState(new Array());
+  //const [firUnitSelBox, setfirUnitSelBox] = useState(new Array());
+  const [contentsLen, setContentsLen] = useState(0);
+  const [contentsNo, setContentsNo] = useState('');
+  const [modalState, setModalState] = useState(false); //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
+  const [workListChanged, setWorkListChanged] = useState(true);
+  const [emptyListMsg, setEmptyListMsg] = useState('수능/모의고사의 시행연월을 선택하여 원하는 문제를 찾아보세요.');
+  const [compDelTr, setCompDelTr] = useState('');
 
-    const removeAddedEvent = () => {
-        window.removeEventListener('scroll', nb_detectScrollPosition);
-        window.removeEventListener('scroll', topMenuFixed);
+  const removeAddedEvent = () => {
+    window.removeEventListener('scroll', nb_detectScrollPosition);
+    window.removeEventListener('scroll', topMenuFixed);
+  };
+
+  //테스트필요
+  const modalPopupOpen = async (event) => {
+    yearVal = document.getElementById('impYearSelBox').value;
+    monthVal = document.getElementById('impMonthSelBox').value;
+    scrollY = nb_modalScrollStrt();
+
+    document.getElementById('outerFormulaEditor').classList.remove('hide');
+    await setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
+    setModalState(true);
+  };
+
+  const topMenuFixed = () => {
+    nb_topMenuFixed2('workListUnitTypeRoot');
+  };
+
+  //테스트필요
+  const modalPopupClose = async (event, isSearch) => {
+    window.removeEventListener('click', reg_eraseEditTbUI);
+    await nb_closeBtn('outerFormulaEditor');
+    await setModalState(false);
+
+    document.getElementById('impYearSelBox').value = yearVal;
+    document.getElementById('impMonthSelBox').value = monthVal;
+
+    //모달창에서 저장하기 버튼을 누른 경우에만 검색
+    //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
+    if (!event.isTrusted) {
+      //사용자가 문제 등록 한 경우
+      let mathContents = window.mathContents;
+      let objIdx = null;
+      contentsList.forEach(function (element, idx) {
+        if (element.contentsNo === mathContents.contentsNo) {
+          objIdx = idx;
+          return false;
+        }
+      });
+      contentsList[objIdx] = mathContents;
+      window.mathContents = null; //윈도우 전역변수 객체 초기화
+      setWorkListChanged(false);
+      setWorkListChanged(true);
+      document.getElementById('imgUpdt').value = 'N';
+    } else if (event.isTrusted && document.getElementById('imgUpdt').value === 'Y') {
+      //사용자 액션(모달창 닫기 버튼 직접 클릭 한 경우)
+      let mathContents = window.mathContents;
+      let objIdx = null;
+      contentsList.forEach(function (element, idx) {
+        if (element.contentsNo === mathContents.contentsNo) {
+          objIdx = idx;
+          return false;
+        }
+      });
+      contentsList[objIdx] = mathContents;
+      window.mathContents = null; //윈도우 전역변수 객체 초기화
+      setWorkListChanged(false);
+      setWorkListChanged(true);
+      document.getElementById('imgUpdt').value = 'N';
+    }
+    await nb_multiChoiceGridSet('quesConMultiShow');
+    nb_modalScrollEnd(scrollY);
+  };
+
+  const svcSttsChange = async function (event) {
+    let chngStts = event.target.dataset.value;
+    let contentsNo = event.target.dataset.contentsNo;
+    const jsonObj = await nb_dataFetch('/mathInfo/conSvcSttsChng?contentsNo=' + contentsNo + '&svcStts=' + chngStts, true);
+    if (jsonObj.isSuccess === 1) {
+      let svcSttsBtn = event.target.parentElement.querySelectorAll('.svcSttsBtn');
+      for (let i = 0; i < svcSttsBtn.length; i++) {
+        svcSttsBtn[i].classList.remove('active');
+        svcSttsBtn[i].classList.add('inactive');
+      }
+      event.target.classList.add('active');
+      event.target.classList.remove('inactive');
+      contentsList.forEach(function (element) {
+        if (element.contentsNo === Number(contentsNo)) {
+          element.svcPosbStts = Number(chngStts);
+          return false;
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    let param = nb_getParameterByName('impYear');
+    let param2 = nb_getParameterByName('impMonth');
+    let param3 = nb_getParameterByName('contentsNo');
+
+    const asyncUseEffect = async function () {
+      let returnObj = await nb_dataFetch('/mathInfo/takeIpsiYear', true);
+      setImpYearList(returnObj.impYearList);
+      if (param !== '') {
+        //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
+        historyBackSearchCondSetting(param, param2);
+      }
+      if (param3 !== '') {
+        searchWorkListByContentsNo(param3, false);
+      }
+
+      if (param === '' && param2 === '' && param3 === '') {
+        fExecuteWidth = true;
+
+        setContentsList([]);
+        setWorkListChanged(false);
+        setWorkListChanged(true);
+        setContentsLen(0);
+        nb_multiChoiceGridSet('quesConMultiShow');
+        document.getElementById('impYearSelBox').value = 0;
+        document.getElementById('impMonthSelBox').value = 0;
+      }
+    };
+    if (!fExecuteWidth) {
+      asyncUseEffect();
+      document.body.addEventListener('click', nb_fCustomSelClose);
+    } else {
+      if (contentsList.length !== 0) {
+        nb_multiChoiceGridSet('quesConMultiShow');
+      }
+      fExecuteWidth = false;
+    }
+    window.addEventListener('scroll', nb_detectScrollPosition);
+    window.addEventListener('scroll', topMenuFixed);
+    return () => removeAddedEvent();
+  }, [contentsList, location]);
+
+  const historyBackSearchCondSetting = async (param, param2) => {
+    curPageNum = 0;
+    if (param2 === '') param2 = 0;
+    let ipsiContents = await nb_dataFetch(
+      '/mathInfo/takeIpsiContentsByYear?impYear=' + param + '&impMonth=' + param2 + '&curPageNum=' + curPageNum + '&pageVolume=' + pageVolume,
+      true
+    );
+    fExecuteWidth = true;
+    let ipsiMonth = await nb_dataFetch('/mathInfo/takeIpsiMonth?impYear=' + param, true);
+    setImpMonthList(ipsiMonth.impMonthList);
+
+    setContentsList(ipsiContents.mathContentsList);
+    setWorkListChanged(false);
+    setWorkListChanged(true);
+    setContentsLen(ipsiContents.mathContentsList.length);
+    nb_multiChoiceGridSet('quesConMultiShow');
+    document.getElementById('impYearSelBox').value = param;
+    document.getElementById('impMonthSelBox').value = param2;
+
+    if (curPageNum !== ipsiContents.totalPageCnt - 1) {
+      document.getElementById('showMoreContents').classList.remove('hide');
+      document.getElementById('showMoreContentsBtn').classList.remove('hide');
+    } else {
+      document.getElementById('showMoreContents').classList.add('hide');
+      document.getElementById('showMoreContentsBtn').classList.add('hide');
+    }
+  };
+
+  const searchWorkListByContentsNo = async function (contentsNoParam, hasNotiPhrases) {
+    let returnObj = await nb_dataFetch('/mathInfo/takeIpsiContentsByContentsNo?contentsNo=' + contentsNoParam, true);
+    window.history.pushState('', '수능문제검색', '/admin/ipsiWorkContentsList?contentsNo=' + contentsNoParam);
+    if (returnObj.error != undefined) {
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     }
 
-    //테스트필요
-    const modalPopupOpen = async (event)  =>{
-        yearVal = document.getElementById("impYearSelBox").value;
-        monthVal = document.getElementById("impMonthSelBox").value;
-        scrollY=nb_modalScrollStrt();
-        
-        document.getElementById("outerFormulaEditor").classList.remove("hide")
-        await setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
-        setModalState(true);
+    if (returnObj['isSuccess']) {
+      fExecuteWidth = true;
+      if (returnObj['mathContentsList'].length === 0) {
+        setContentsList(returnObj['mathContentsList']);
+        await nb_fadeInOut('해당하는 문제가 없습니다.', 2000);
+        setEmptyListMsg('검색 결과가 없습니다. 해당 문제가 없습니다.', 2000);
+      } else {
+        window.history.pushState('', '문제검색', '/admin/ipsiWorkContentsList?unitId=0&contentsNo=' + contentsNoParam);
+
+        setContentsList(returnObj['mathContentsList']);
+        if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
+        else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
+
+        if (contentsNoParam === 'allUserContents') {
+          let allBtn = document.querySelectorAll('.userSearchBtn, .updateBtn, .errBtn');
+          for (let i = 0; i < allBtn.length; i++) {}
+        } else {
+          let allBtn = document.querySelectorAll('.userSearchBtn, .updateBtn, .errBtn');
+          for (let i = 0; i < allBtn.length; i++) {}
+        }
+      }
+    }
+  };
+
+  //테스트필요
+  //관리자만 다운 가능
+  const convertHtmlToTex = async (event) => {
+    if (!(await nb_isAdmin())) {
+      hwpDownPopUpClose();
+      alert('관리자만 사용가능한 기능입니다.');
+      return;
     }
 
-    const topMenuFixed = () => {
-        nb_topMenuFixed2("workListUnitTypeRoot")
+    let contentsNo = event.target.dataset.contentsNo;
+
+    if (contentsNo === 'all') {
+      cvt_htmlToTexAll('contents-show', '.workContentsDiv', '수능 및 모의고사', '', false);
+      hwpDownPopUpClose();
+      return;
     }
 
-    //테스트필요
-    const modalPopupClose = async (event, isSearch) =>{
-        window.removeEventListener('click', reg_eraseEditTbUI);
-        await nb_closeBtn("outerFormulaEditor"); 
-        await setModalState(false);
+    let contentsDiv = document.getElementsByClassName('workContentsDiv');
+    let rootTb;
 
-        document.getElementById("impYearSelBox").value = yearVal;
-        document.getElementById("impMonthSelBox").value = monthVal;
-        
-        //모달창에서 저장하기 버튼을 누른 경우에만 검색
-        //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
-        if(!event.isTrusted) {  //사용자가 문제 등록 한 경우
-            let mathContents = window.mathContents;
-            let objIdx = null;
-            contentsList.forEach(function(element, idx){
-                if(element.contentsNo ===  mathContents.contentsNo){
-                    objIdx = idx;
-                    return false;
+    for (let i = 0; i < contentsDiv.length; i++) {
+      if (Number(contentsDiv[i].dataset.contentsNo) === Number(contentsNo)) {
+        rootTb = contentsDiv[i];
+        break;
+      }
+    }
+
+    let contentsArr = [
+      { className: 'quesContents', title: '[문제]' },
+      { id: 'workMultiShow', className: 'multiDivContents' },
+      { className: 'ansContents', title: '[정답]' },
+      { className: 'solContents', title: '[해설]' },
+    ];
+    let hwpJsonArrForPython = new Array();
+    for (let i = 0; i < contentsArr.length; i++) {
+      if (contentsArr[i].className === 'multiDivContents') {
+        //객관식 문제 아니면 건너뛰기
+        if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('hide')) {
+          let breakObj = new Object();
+          breakObj.contentsType = 'BreakPara';
+          hwpJsonArrForPython.push(breakObj);
+          continue;
+        }
+
+        let tableObj = new Object();
+        tableObj.contentsType = 'table';
+        tableObj.contentsDetailType = 'table';
+        tableObj.borderStyle = 'allNone';
+        if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('twoDivGrid')) {
+          tableObj.rowCnt = 3;
+          tableObj.colCnt = 2;
+          tableObj.colWidthList = [1, 1];
+        } else if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('threeDivGrid')) {
+          tableObj.rowCnt = 2;
+          tableObj.colCnt = 3;
+          tableObj.colWidthList = [1, 1, 1];
+        } else {
+          tableObj.rowCnt = 5;
+          tableObj.colCnt = 1;
+          tableObj.colWidthList = [1];
+        }
+        tableObj.contents = new Array();
+        let multiChoiceContents = [
+          { className: 'firDivContents' },
+          { className: 'secDivContents' },
+          { className: 'thrDivContents' },
+          { className: 'fourDivContents' },
+          { className: 'fifDivContents' },
+        ];
+        for (let j = 0; j < multiChoiceContents.length; j++) {
+          await cvt_initWidthHeight(rootTb.querySelector('.' + multiChoiceContents[j].className));
+          let quesContents = rootTb.querySelector('.' + multiChoiceContents[j].className).cloneNode(true);
+          await cvt_textNodeConvert(quesContents);
+          let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+          let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+          let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+
+          let tableCellContents = new Array();
+          let num = '';
+          if (j === 0) num = '① ';
+          else if (j === 1) num = '② ';
+          else if (j === 2) num = '③ ';
+          else if (j === 3) num = '④ ';
+          else if (j === 4) num = '⑤ ';
+          let tmpNumInnerObj = new Object();
+          tmpNumInnerObj.contentsType = 'text';
+          tmpNumInnerObj.contents = num;
+          let tmpNumObj = new Object();
+          tmpNumObj.contents = tmpNumInnerObj;
+          tmpNumObj.align = 'alignLeft';
+          tableCellContents.push(tmpNumObj);
+
+          for (let k = 0; k < newHwpJsonArr.length; k++) {
+            //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
+            //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
+            if (k === newHwpJsonArr.length - 1 && newHwpJsonArr[k].contentsType === 'BreakPara') {
+              break;
+            }
+            let tmpObj = new Object();
+            tmpObj.contents = newHwpJsonArr[k];
+            tableCellContents.push(tmpObj);
+          }
+          tableObj.contents.push(tableCellContents);
+          await cvt_initOrgWidthHeight(rootTb.querySelector('.' + multiChoiceContents[j].className));
+        }
+        hwpJsonArrForPython.push(tableObj);
+
+        let breakObj = new Object();
+        breakObj.contentsType = 'BreakPara';
+        hwpJsonArrForPython.push(breakObj);
+      } else {
+        await cvt_initWidthHeight(rootTb.querySelector('.' + contentsArr[i].className));
+        let quesContents = rootTb.querySelector('.' + contentsArr[i].className).cloneNode(true);
+        if (contentsArr[i].className === 'ansContents') {
+          if (quesContents.querySelector('.multiAnswerSheet').innerText.length !== 0) {
+            quesContents.querySelector('.multiAnswerSheet').innerText = quesContents.querySelector('.multiAnswerSheet').innerText + ' ';
+          }
+          quesContents.querySelector('.answerSheet').prepend(quesContents.querySelector('.multiAnswerSheet'));
+          quesContents = quesContents.querySelector('.answerSheet');
+        }
+        await cvt_textNodeConvert(quesContents);
+        let contentsDiv = await cvt_convertHtmlToTex(quesContents);
+        let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
+        await cvt_initOrgWidthHeight(rootTb.querySelector('.' + contentsArr[i].className));
+        let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
+        let titleArr = new Array();
+        let boldObj = new Object();
+        boldObj.contentsType = 'CharShapeBold';
+        titleArr.push(boldObj);
+        let titleObj = new Object();
+        titleObj.contentsType = 'text';
+        titleObj.contents = contentsArr[i].title;
+        titleArr.push(titleObj);
+        titleArr.push(boldObj);
+
+        let breakObj = new Object();
+        breakObj.contentsType = 'BreakPara';
+        newHwpJsonArr.unshift(breakObj);
+
+        if (contentsArr[i].className !== 'quesContents') {
+          newHwpJsonArr.push(breakObj); //문제 줄바꿈은 객관식 끝나고
+        }
+        newHwpJsonArr.unshift(...titleArr);
+        hwpJsonArrForPython.push(...newHwpJsonArr);
+      }
+    }
+
+    hwpDownPopUpClose();
+
+    let form = new FormData();
+    form.append('jsonString', JSON.stringify(hwpJsonArrForPython));
+    document.getElementById('resDetailedTimeDesc').classList.remove('hide');
+    document.getElementById('hourGlassDesc').innerText = '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
+    let nowDate = await nb_dateFormat('_');
+    let fileName = '[N명의수학]나의제작문제_' + nowDate + '.hwp';
+    await nb_formDataFileFetch('/takeHwpFile', form, fileName);
+    document.getElementById('resDetailedTimeDesc').classList.add('hide');
+  };
+
+  const hwpDownPopUpClose = async () => {
+    document.getElementById('confirmBoxScreen').classList.add('hide');
+  };
+
+  const initImpMonth = async (event) => {
+    if (event.target.value === 0) return;
+    let ipsiMonth = await nb_dataFetch('/mathInfo/takeIpsiMonth?impYear=' + event.target.value, true);
+    setImpMonthList(ipsiMonth.impMonthList);
+  };
+
+  const takeIpsiContents = async () => {
+    curPageNum = 0;
+    fExecuteWidth = true;
+    let impYearSelVal = document.getElementById('impYearSelBox').value;
+    let impMonthSelVal = document.getElementById('impMonthSelBox').value;
+    if (Number(impYearSelVal) === 0) {
+      alert('시행연도를 선택해주세요.');
+      return;
+    }
+    let ipsiContents = await nb_dataFetch(
+      '/mathInfo/takeIpsiContentsByYear?impYear=' + impYearSelVal + '&impMonth=' + impMonthSelVal + '&curPageNum=' + curPageNum + '&pageVolume=' + pageVolume,
+      true
+    );
+    window.history.pushState('', '수능문제검색', '/admin/ipsiWorkContentsList?impYear=' + impYearSelVal + '&impMonth=' + impMonthSelVal);
+    setContentsList(ipsiContents.mathContentsList);
+    setWorkListChanged(false);
+    setWorkListChanged(true);
+    setContentsLen(ipsiContents.mathContentsList.length);
+    nb_multiChoiceGridSet('quesConMultiShow');
+
+    if (curPageNum !== ipsiContents.totalPageCnt - 1) {
+      document.getElementById('showMoreContents').classList.remove('hide');
+      document.getElementById('showMoreContentsBtn').classList.remove('hide');
+    } else {
+      document.getElementById('showMoreContents').classList.add('hide');
+      document.getElementById('showMoreContentsBtn').classList.add('hide');
+    }
+  };
+
+  const makeManageIns = async function () {
+    return '<option value="0">출제기관</option><option value="1">평가원</option><option value="2">교육청</option>';
+  };
+
+  const makePaperType = async function () {
+    return '<option value="0">가/나형 구분</option><option value="1">통합</option><option value="2">가형</option><option value="3">나형</option>';
+  };
+
+  const compDelPrompt = async function () {
+    let inputVal = document.getElementById('promptInput').value;
+    if (inputVal !== '삭제') {
+      document.getElementById('promptInput').classList.add('shake');
+      setTimeout(function () {
+        document.getElementById('promptInput').classList.remove('shake');
+      }, 500);
+      return;
+    }
+    document.getElementById('promptBoxClose').click();
+
+    let ipsiSeqNo = compDelTr.querySelector('.ipsiSeqNo');
+    let ipsiContentsNo = compDelTr.querySelector('.ipsiContentsNo');
+    let returnObj = await nb_dataFetch('/mathInfo/delIpsiContents?seqNo=' + ipsiSeqNo.value + '&contentsNo=' + ipsiContentsNo.value, true);
+    if (returnObj.isSuccess) {
+      compDelTr.remove();
+      //성공한 객체로 바꾸기
+      contentsList.forEach(function (element) {
+        if (element.contentsNo === Number(returnObj.successObj[0].contentsNo)) {
+          element.mathContentsComp = returnObj.successObj;
+          return false;
+        }
+      });
+      //comp 모달 상태변화로 유사문제 등록갯수 초기화
+      setWorkListChanged(false);
+      setWorkListChanged(true);
+      await nb_multiChoiceGridSet('quesConMultiShow');
+      await nb_fadeInOut('정상적으로 삭제 되었습니다.', 2000);
+    } else if (returnObj.isSuccess === false) {
+      await nb_fadeInOutA('삭제가 취소되었습니다.\n문제정보는 최소 1개 이상 등록 되어있어야 합니다.', 2000);
+    }
+  };
+
+  const compContentsDel = async function (event) {
+    let targetTr = event.target.closest('tr');
+    setCompDelTr(targetTr);
+    let ipsiSeqNo = targetTr.querySelector('.ipsiSeqNo');
+    if (ipsiSeqNo === null) {
+      targetTr.remove();
+    } else {
+      await nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", '삭제 라고 입력해주세요.');
+    }
+  };
+
+  const compAddRow = async function () {
+    let compTbTbody = document.getElementsByClassName('compTbTbody')[0];
+    let rowIdx = Number(compTbTbody.lastElementChild.dataset.rowIdx) + 1;
+    let tr = document.createElement('tr');
+    tr.dataset.rowIdx = rowIdx;
+    let td1 = document.createElement('td');
+    td1.className = 'seqNoAndRefTd';
+    let refOptBox = await makeManageIns();
+    let sel1 = document.createElement('select');
+    sel1.name = 'mathContentsIpsi[' + rowIdx + '].manageIns';
+    sel1.innerHTML = refOptBox;
+    sel1.className = 'manageIns';
+    let contentsNo = document.getElementById('compPopUp').dataset.contentsNo;
+    let input0 = document.createElement('input');
+    input0.type = 'number';
+    input0.className = 'ipsiContentsNo hide';
+    input0.name = 'mathContentsIpsi[' + rowIdx + '].contentsNo';
+    input0.value = contentsNo;
+    td1.append(sel1);
+    td1.append(input0);
+
+    let td2 = document.createElement('td');
+    let sel2 = document.createElement('select');
+    sel2.className = 'paperType';
+    let mathTypeClassifyOpt = await makePaperType();
+    sel2.name = 'mathContentsIpsi[' + rowIdx + '].paperType';
+    sel2.innerHTML = mathTypeClassifyOpt;
+    td2.append(sel2);
+
+    let td3 = document.createElement('td');
+    let input3 = document.createElement('input');
+    input3.type = 'number';
+    input3.className = 'impYear grayBack';
+    input3.name = 'mathContentsIpsi[' + rowIdx + '].impYear';
+    input3.value = compTbTbody.querySelector('tr').querySelector('.impYear').value;
+    input3.readOnly = true;
+    td3.append(input3);
+
+    let td4 = document.createElement('td');
+    let input4 = document.createElement('input');
+    input4.type = 'number';
+    input4.className = 'impMonth grayBack';
+    input4.name = 'mathContentsIpsi[' + rowIdx + '].impMonth';
+    input4.value = compTbTbody.querySelector('tr').querySelector('.impMonth').value;
+    input4.readOnly = true;
+    td4.append(input4);
+
+    let td5 = document.createElement('td');
+    let input5 = document.createElement('input');
+    input5.type = 'number';
+    input5.className = 'oddQuesNum';
+    input5.name = 'mathContentsIpsi[' + rowIdx + '].oddQuesNum';
+    td5.append(input5);
+
+    let td6 = document.createElement('td');
+    let input6 = document.createElement('input');
+    input6.type = 'number';
+    input6.className = 'wrongRatio';
+    input6.name = 'mathContentsIpsi[' + rowIdx + '].wrongRatio';
+    td6.append(input6);
+
+    let td7 = document.createElement('td');
+    let span = document.createElement('span');
+    span.className = 'compDelBtn';
+    span.addEventListener('click', compContentsDel);
+    span.innerText = '삭제';
+    td7.append(span);
+
+    tr.append(td1);
+    tr.append(td2);
+    tr.append(td3);
+    tr.append(td4);
+    tr.append(td5);
+    tr.append(td6);
+    tr.append(td7);
+    compTbTbody.append(tr);
+  };
+
+  const compContentsReg = async function () {
+    let compTbBody = document.getElementById('compTbTbody');
+    let compTbTr = compTbBody.querySelectorAll('tr');
+    for (let i = 0; i < compTbTr.length; i++) {
+      let manageIns = compTbTr[i].querySelector('.manageIns');
+      let paperType = compTbTr[i].querySelector('.paperType');
+      let impYear = compTbTr[i].querySelector('.impYear');
+      let impMonth = compTbTr[i].querySelector('.impMonth');
+      let oddQuesNum = compTbTr[i].querySelector('.oddQuesNum');
+      let wrongRatio = compTbTr[i].querySelector('.wrongRatio');
+      if (Number(manageIns.value) === 0) {
+        alert(i + 1 + '번째 행의 출제기관 선택해주세요.');
+        return false;
+      }
+      if (Number(paperType.value) === 0) {
+        alert(i + 1 + '번째 행의 가/나형 구분을 선택해주세요.');
+        return false;
+      }
+
+      if (impYear.value.length !== 4 || impYear.value < 0) {
+        alert(i + 1 + '번째 행의 시행연도를 바르게 입력해주세요.');
+        return false;
+      }
+
+      if (impMonth.value > 12 || impMonth.value < 1) {
+        alert(i + 1 + '번째 행의 시행월을 바르게 입력해주세요.');
+        return false;
+      }
+
+      if (oddQuesNum.value > 30 || oddQuesNum.value < 1) {
+        alert(i + 1 + '번째 행의 홀수형 번호를 바르게 입력해주세요.');
+        return false;
+      }
+
+      if (wrongRatio.value > 100 || wrongRatio.value < 0) {
+        alert(i + 1 + '번째 행의 오답률을 바르게 입력해주세요.');
+        return false;
+      }
+    }
+
+    let formData = new FormData(document.getElementById('ipsiContentsForm'));
+    let returnObj = await nb_formDataFetch('/mathInfo/registerIpsiContents', formData, true);
+    if (returnObj.error !== undefined) {
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
+    } else if (returnObj.isSuccess) {
+      //성공한 객체로 바꾸기
+      contentsList.forEach(function (element) {
+        if (element.contentsNo === Number(returnObj.successObj[0].contentsNo)) {
+          element.mathContentsIpsi = returnObj.successObj;
+          return false;
+        }
+      });
+      //comp 모달 상태변화로 유사문제 등록갯수 초기화
+      setWorkListChanged(false);
+      setWorkListChanged(true);
+
+      await compContentsPopUpClose();
+      await nb_multiChoiceGridSet('quesConMultiShow');
+      await nb_fadeInOut('문제정보가 정상적으로 수정 되었습니다.', 2000);
+    }
+  };
+
+  const compContentsPopUpClose = async function () {
+    document.getElementById('compPopUpScreen').classList.add('hide');
+    document.getElementById('compTbTbody').innerText = '';
+  };
+
+  const compContentsPopUp = async function (event) {
+    let contentsNo = event.target.dataset.contentsNo;
+    document.getElementById('compPopUp').dataset.contentsNo = contentsNo;
+    document.getElementById('compPopUpScreen').classList.remove('hide');
+    let compContentsList = contentsList.filter((element) => {
+      return element.contentsNo === Number(contentsNo);
+    });
+    let compTbTbody = document.getElementById('compTbTbody');
+    for (let i = 0; i < compContentsList[0].mathContentsIpsi.length; i++) {
+      let tr = document.createElement('tr');
+      tr.dataset.rowIdx = i;
+      let td1 = document.createElement('td');
+      td1.className = 'seqNoAndRefTd';
+      let input = document.createElement('input');
+      input.type = 'number';
+      input.name = 'mathContentsIpsi[' + i + '].contentsNo';
+      input.className = 'ipsiContentsNo hide';
+      input.value = compContentsList[0].mathContentsIpsi[i].contentsNo;
+      let input0 = document.createElement('input');
+      input0.type = 'number';
+      input0.name = 'mathContentsIpsi[' + i + '].seqNo';
+      input0.className = 'ipsiSeqNo hide';
+      input0.value = compContentsList[0].mathContentsIpsi[i].seqNo;
+      let sel1 = document.createElement('select');
+      let refOptBox = await makeManageIns();
+      sel1.name = 'mathContentsIpsi[' + i + '].manageIns';
+      sel1.innerHTML = refOptBox;
+      sel1.className = 'manageIns';
+      td1.append(input);
+      td1.append(input0);
+      td1.append(sel1);
+      sel1.value = compContentsList[0].mathContentsIpsi[i].manageIns;
+
+      let td2 = document.createElement('td');
+      let sel2 = document.createElement('select');
+      let mathTypeClassifyOpt = await makePaperType();
+      sel2.name = 'mathContentsIpsi[' + i + '].paperType';
+      sel2.innerHTML = mathTypeClassifyOpt;
+      sel2.className = 'paperType';
+      td2.append(sel2);
+      sel2.value = compContentsList[0].mathContentsIpsi[i].paperType;
+
+      let td3 = document.createElement('td');
+      let input3 = document.createElement('input');
+      input3.type = 'number';
+      input3.name = 'mathContentsIpsi[' + i + '].impYear';
+      input3.className = 'impYear grayBack';
+      input3.value = compContentsList[0].mathContentsIpsi[i].impYear;
+      input3.readOnly = true;
+      td3.append(input3);
+
+      let td4 = document.createElement('td');
+      let input4 = document.createElement('input');
+      input4.type = 'number';
+      input4.name = 'mathContentsIpsi[' + i + '].impMonth';
+      input4.className = 'impMonth grayBack';
+      input4.readOnly = true;
+      input4.value = compContentsList[0].mathContentsIpsi[i].impMonth;
+      td4.append(input4);
+
+      let td5 = document.createElement('td');
+      let input5 = document.createElement('input');
+      input5.type = 'number';
+      input5.name = 'mathContentsIpsi[' + i + '].oddQuesNum';
+      input5.className = 'oddQuesNum';
+      input5.value = compContentsList[0].mathContentsIpsi[i].oddQuesNum;
+      td5.append(input5);
+
+      let td6 = document.createElement('td');
+      let input6 = document.createElement('input');
+      input6.type = 'number';
+      input6.name = 'mathContentsIpsi[' + i + '].wrongRatio';
+      input6.className = 'wrongRatio';
+      input6.value = compContentsList[0].mathContentsIpsi[i].wrongRatio;
+      td6.append(input6);
+
+      let td7 = document.createElement('td');
+      let span = document.createElement('span');
+      span.className = 'compDelBtn';
+      span.addEventListener('click', compContentsDel);
+      span.innerText = '삭제';
+      td7.append(span);
+
+      tr.append(td1);
+      tr.append(td2);
+      tr.append(td3);
+      tr.append(td4);
+      tr.append(td5);
+      tr.append(td6);
+      tr.append(td7);
+      compTbTbody.append(tr);
+    }
+  };
+
+  const impYearOptList = impYearList.map((contentsMap, idx) => {
+    return (
+      <option key={idx} value={contentsMap}>
+        {contentsMap}
+      </option>
+    );
+  });
+
+  const impMonthOptList = impMonthList.map((contentsMap, idx) => {
+    return (
+      <option key={idx} value={contentsMap}>
+        {contentsMap}
+      </option>
+    );
+  });
+
+  const workContentsList = contentsList.map((contentsMap, idx) => {
+    let quesNumber;
+    if (idx < 9) {
+      quesNumber = '0' + (idx + 1);
+    } else {
+      quesNumber = idx + 1;
+    }
+
+    let isMultiHide = 'hide';
+    if (contentsMap.firNo !== '') {
+      isMultiHide = '';
+    }
+    let isConImgHide = 'hide';
+    if (contentsMap.contentsImg !== null) {
+      isConImgHide = '';
+    }
+    let isSolImgHide = 'hide';
+    if (contentsMap.solutionImg !== null) {
+      isSolImgHide = '';
+    }
+
+    let quesLevel = '';
+    if (contentsMap.quesLevel === 1) quesLevel = '오류';
+    else if (contentsMap.quesLevel === 2) quesLevel = '오류';
+    else if (contentsMap.quesLevel === 3) quesLevel = '2점';
+    else if (contentsMap.quesLevel === 4) quesLevel = '3점';
+    else if (contentsMap.quesLevel === 5) quesLevel = '4점';
+
+    let paperType = '';
+    if (contentsMap.mathContentsIpsi[0].paperType === 1) paperType = '통합';
+    else if (contentsMap.mathContentsIpsi[0].paperType === 2) paperType = '가형';
+    else if (contentsMap.mathContentsIpsi[0].paperType === 3) paperType = '나형';
+
+    let isBlank = '';
+    if (contentsMap.choiceAnswer === null) isBlank = 'hide';
+
+    let updateBtnId = 'updateContenstBtn' + idx;
+
+    let manageIns = '';
+    if (contentsMap.mathContentsIpsi[0].manageIns === 1) {
+      manageIns = '평가원';
+    } else if (contentsMap.mathContentsIpsi[0].manageIns === 2) {
+      manageIns = '교육청';
+    }
+
+    let conImgPath;
+    if (contentsMap.contentsImg === null) conImgPath = '';
+    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
+    let solImgPath;
+    if (contentsMap.solutionImg === null) solImgPath = '';
+    else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.solutionImgPath + contentsMap.solutionImg;
+
+    return (
+      <div id='workContentsDiv' className='workContentsDiv' key={idx} data-contents-no={contentsMap.contentsNo}>
+        <table className='workListTable'>
+          <thead>
+            <tr className='workListTBHead2'>
+              <td>
+                <div className='twoFlexLayout'>
+                  <div>
+                    <span
+                      className='hwpDownImgWrap'
+                      onClick={() => {
+                        nb_confirmBox('해당 문제를 한글파일로 다운받으시겠습니까?');
+                        document.getElementById('confirmBoxBtn').dataset.contentsNo = contentsMap.contentsNo;
+                      }}>
+                      <img className='hwpDownImg' src={hwpDownImg} alt='' />
+                      <div className='hwpDownDesc'>한글 파일로 다운 받기</div>
+                    </span>
+                    <button
+                      id={updateBtnId}
+                      type='button'
+                      data-contents-no={contentsMap.contentsNo}
+                      className='updateBtn'
+                      onClick={(event) => {
+                        modalPopupOpen(event);
+                      }}>
+                      수정하기
+                    </button>
+                  </div>
+                  <div>
+                    {contentsMap.mathContentsIpsi[0].impYear}년 {contentsMap.mathContentsIpsi[0].impMonth}월&nbsp;
+                    {manageIns} [{paperType}]<br />
+                    홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 배점 : {quesLevel}, 오답률 : {contentsMap.mathContentsIpsi[0].wrongRatio}%<br />[
+                    <span dangerouslySetInnerHTML={{ __html: contentsMap.mathUnitInfo.subject }}></span>]&nbsp;
+                    <span dangerouslySetInnerHTML={{ __html: contentsMap.mathUnitInfo.secUnit }}></span> /
+                    <span dangerouslySetInnerHTML={{ __html: contentsMap.mathUnitInfo.thrUnit }}></span>
+                    <br />
+                    유형 : <span dangerouslySetInnerHTML={{ __html: contentsMap.mathTypeInfo.quesType }}></span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                정답 및 해설
+                <div
+                  className='compContentsBtn relative'
+                  data-contents-no={contentsMap.contentsNo}
+                  onClick={(event) => {
+                    compContentsPopUp(event);
+                  }}>
+                  문제정보
+                </div>
+              </td>
+              <td>서비스 여부</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className='td1'>
+                <div id='workQuesShow' className='workQuesShow quesRootDiv'>
+                  <div className='quesDiv'>
+                    <div className='quesNumber'>{quesNumber}</div>
+                    <div className='quesContents' dangerouslySetInnerHTML={{ __html: contentsMap.contents }}></div>
+                    <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
+                      <img src={conImgPath} id='contentsImgOutput' alt='' />
+                    </div>
+                    <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
+                      <div className='firDiv'>
+                        <span className='multiChoiceNo'>&#9312;</span>
+                        <span className='firDivContents' dangerouslySetInnerHTML={{ __html: contentsMap.firNo }}></span>
+                      </div>
+                      <div className='secDiv'>
+                        <span className='multiChoiceNo'>&#9313;</span>
+                        <span className='secDivContents' dangerouslySetInnerHTML={{ __html: contentsMap.secNo }}></span>
+                      </div>
+                      <div className='thrDiv'>
+                        <span className='multiChoiceNo'>&#9314;</span>
+                        <span className='thrDivContents' dangerouslySetInnerHTML={{ __html: contentsMap.thrNo }}></span>
+                      </div>
+                      <div className='fourDiv'>
+                        <span className='multiChoiceNo'>&#9315;</span>
+                        <span className='fourDivContents' dangerouslySetInnerHTML={{ __html: contentsMap.fourNo }}></span>
+                      </div>
+                      <div className='fifDiv'>
+                        <span className='multiChoiceNo'>&#9316;</span>
+                        <span className='fifDivContents' dangerouslySetInnerHTML={{ __html: contentsMap.fifNo }}></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td className='td2'>
+                <div className='solRootDiv'>
+                  <div className='ansSolDiv'>
+                    <div id='workAnsShow' className='ansShow'>
+                      <div>
+                        <div className='ansContents'>
+                          <span className='mini-title6'>{quesNumber}. 답</span>&nbsp;&nbsp;
+                          <span className='multiAnswerSheet' dangerouslySetInnerHTML={{ __html: contentsMap.choiceAnswer }}></span>
+                          <span className={'marginRFive ' + isBlank}></span>
+                          <span className='answerSheet' dangerouslySetInnerHTML={{ __html: contentsMap.answer }}></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div id='workSolShow' className='solShow'>
+                      <span className='mini-title6'>해설</span>
+                      <div id='solImg-show' className={'solImg-show ' + isSolImgHide}>
+                        <img src={solImgPath} id='solutionImgOutput' alt='' />
+                      </div>
+                      <div className='solContents' dangerouslySetInnerHTML={{ __html: contentsMap.solution }}></div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td className='td3'>
+                <div
+                  className={contentsMap.svcPosbStts === 0 ? 'svcSttsBtn svcImPosbBtn active' : 'svcSttsBtn svcImPosbBtn inactive'}
+                  data-value='0'
+                  data-contents-no={contentsMap.contentsNo}
+                  onClick={(event) => {
+                    svcSttsChange(event);
+                  }}>
+                  미출시
+                </div>
+                <div
+                  className={contentsMap.svcPosbStts === 2 ? 'svcSttsBtn svcInspectBtn active' : 'svcSttsBtn svcInspectBtn inactive'}
+                  data-value='2'
+                  data-contents-no={contentsMap.contentsNo}
+                  onClick={(event) => {
+                    svcSttsChange(event);
+                  }}>
+                  검수완료
+                </div>
+                <div
+                  className={contentsMap.svcPosbStts === 3 ? 'svcSttsBtn svcErrBtn active' : 'svcSttsBtn svcErrBtn inactive'}
+                  data-value='3'
+                  data-contents-no={contentsMap.contentsNo}
+                  onClick={(event) => {
+                    svcSttsChange(event);
+                  }}>
+                  오류
+                </div>
+                <div
+                  className={contentsMap.svcPosbStts === 1 ? 'svcSttsBtn svcPosbBtn active' : 'svcSttsBtn svcPosbBtn inactive'}
+                  data-value='1'
+                  data-contents-no={contentsMap.contentsNo}
+                  onClick={(event) => {
+                    svcSttsChange(event);
+                  }}>
+                  출시
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  });
+
+  const showMoreContents = async function () {
+    curPageNum++;
+    fExecuteWidth = true;
+    let impYearSelVal = document.getElementById('impYearSelBox').value;
+    let impMonthSelVal = document.getElementById('impMonthSelBox').value;
+    let ipsiContents = await nb_dataFetch(
+      '/mathInfo/takeIpsiContentsByYear?impYear=' + impYearSelVal + '&impMonth=' + impMonthSelVal + '&curPageNum=' + curPageNum + '&pageVolume=' + pageVolume,
+      true
+    );
+    setContentsList([...contentsList, ...ipsiContents.mathContentsList]);
+    setWorkListChanged(false);
+    setWorkListChanged(true);
+    setContentsLen(contentsLen + ipsiContents.mathContentsList.length);
+    nb_multiChoiceGridSet('quesConMultiShow');
+
+    if (curPageNum !== ipsiContents.totalPageCnt - 1) {
+      document.getElementById('showMoreContents').classList.remove('hide');
+      document.getElementById('showMoreContentsBtn').classList.remove('hide');
+    } else {
+      document.getElementById('showMoreContents').classList.add('hide');
+      document.getElementById('showMoreContentsBtn').classList.add('hide');
+    }
+  };
+
+  return (
+    <>
+      <div id='scrollMoveBtn' className='scrollMoveBtn hide'>
+        <div
+          id='conListScrollToTop'
+          className='conListScrollToTop'
+          tooltip='맨 위로'
+          onClick={() => {
+            nb_moveToScroll(true);
+          }}></div>
+        <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
+        <div
+          id='conListScrollToBottom'
+          className='conListScrollToBottom'
+          tooltip='맨 아래로'
+          onClick={() => {
+            nb_moveToScroll(false);
+          }}></div>
+      </div>
+      <div id='promptBoxScreen' className='promptBoxScreen hide'>
+        <div id='promptBox' className='promptBox'>
+          <div className='promptBoxTop'>
+            <span
+              id='promptBoxClose'
+              className='promptBoxClose'
+              onClick={() => {
+                document.getElementById('promptBoxScreen').classList.add('hide');
+                document.getElementById('promptInput').value = '';
+              }}>
+              X
+            </span>
+          </div>
+          <div id='promptMsg' className='promptMsg'></div>
+          <div className='promptInputDiv'>
+            <input
+              id='promptInput'
+              className='promptInput'
+              type='text'
+              onKeyDown={(event) => {
+                if (event.keyCode === 13) {
+                  compDelPrompt();
                 }
-            });
-            contentsList[objIdx] = mathContents;
-            window.mathContents = null;         //윈도우 전역변수 객체 초기화
-            setWorkListChanged(false);
-            setWorkListChanged(true);
-            document.getElementById("imgUpdt").value = "N";
-        }
-        else if(event.isTrusted && document.getElementById("imgUpdt").value === "Y"){  //사용자 액션(모달창 닫기 버튼 직접 클릭 한 경우)
-            let mathContents = window.mathContents;
-            let objIdx = null;
-            contentsList.forEach(function(element, idx){
-                if(element.contentsNo ===  mathContents.contentsNo){
-                    objIdx = idx;
-                    return false;
-                }
-            });
-            contentsList[objIdx] = mathContents;
-            window.mathContents = null;         //윈도우 전역변수 객체 초기화
-            setWorkListChanged(false);
-            setWorkListChanged(true);
-            document.getElementById("imgUpdt").value = "N";
-        } 
-        await nb_multiChoiceGridSet("quesConMultiShow");
-        nb_modalScrollEnd(scrollY)
-    }
-    
-    const svcSttsChange = async function(event){
-        let chngStts = event.target.dataset.value;
-        let contentsNo = event.target.dataset.contentsNo;
-        const jsonObj = await nb_dataFetch('/mathInfo/conSvcSttsChng?contentsNo='+contentsNo+"&svcStts="+chngStts, true);
-        if(jsonObj.isSuccess ===1){
-            let svcSttsBtn =  event.target.parentElement.querySelectorAll(".svcSttsBtn");
-            for(let i=0; i<svcSttsBtn.length; i++){
-                svcSttsBtn[i].classList.remove("active");
-                svcSttsBtn[i].classList.add("inactive");
-            }
-            event.target.classList.add("active");
-            event.target.classList.remove("inactive");
-            contentsList.forEach(function(element){
-                if(element.contentsNo ===  Number(contentsNo)){
-                    element.svcPosbStts = Number(chngStts);
-                    return false;
-                }
-            });
-        }
-    }
+              }}
+            />
+          </div>
+          <div className='alignCenter'>
+            <span
+              id='promptBoxBtn'
+              className='promptBoxBtn'
+              onClick={() => {
+                compDelPrompt();
+              }}>
+              확인
+            </span>
+          </div>
+        </div>
+      </div>
+      <div>
+        {!modalState && (
+          <div id='workListUnitTypeRoot' className='workListUnitTypeRoot'>
+            <form method='post' id='workSearchForm'>
+              <div id='workListUnitType' className='workListUnitType'>
+                <div className='mini-title5'>&nbsp; N명의수학에서 원하는 문제를 찾아보세요.</div>
+                <select
+                  id='impYearSelBox'
+                  className='impYearSelBox'
+                  onChange={(event) => {
+                    initImpMonth(event);
+                  }}>
+                  <option value='0'>시행연도 선택</option>
+                  {impYearOptList}
+                </select>
+                <select id='impMonthSelBox' className='impMonthSelBox'>
+                  <option value='0'>전체</option>
+                  {impMonthOptList}
+                </select>
+                <button
+                  type='button'
+                  className='orangeBtn'
+                  onClick={() => {
+                    takeIpsiContents();
+                  }}>
+                  검색
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
-    useEffect(()=>{
-        let param = nb_getParameterByName("impYear")
-        let param2 = nb_getParameterByName("impMonth")
-        let param3 = nb_getParameterByName("contentsNo");
+        {contentsLen !== 0 && (
+          <div className='contentsCntWrap'>
+            <div id='con' className='contentsDiv custom2 mini-title2'>
+              <span>
+                변형 작업 문제 갯수 : {contentsLen}
+                <span
+                  id='showMoreContentsBtn'
+                  className='showMoreContentsBtn hide'
+                  onClick={() => {
+                    showMoreContents();
+                  }}>
+                  +
+                </span>
+              </span>
+              <span
+                className='hwpAllDownBtn floatRight'
+                onClick={() => {
+                  nb_confirmBox('나의 제작문제를 한글파일로 다운받으시겠습니까?');
+                  document.getElementById('confirmBoxBtn').dataset.contentsNo = 'all';
+                }}>
+                나의 제작문제 일괄 다운
+              </span>
+            </div>
+          </div>
+        )}
 
-        const asyncUseEffect = async function(){
-            let returnObj = await nb_dataFetch("/mathInfo/takeIpsiYear", true);
-            setImpYearList(returnObj.impYearList);
-            if(param !== ""){
-                //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
-                historyBackSearchCondSetting(param, param2)
-            }
-            if(param3 !== ""){
-                searchWorkListByContentsNo(param3, false)
-            }
+        {!modalState && (
+          <div className='workList custom'>
+            {workListChanged && workContentsList.length !== 0 ? (
+              <div className='contents-show' id='contents-show'>
+                {workContentsList}
+              </div>
+            ) : (
+              <EmptyList msg={emptyListMsg} imgName='searchList' addImgClass='' />
+            )}
+          </div>
+        )}
+      </div>
 
-            if(param === "" && param2 === "" && param3 === ""){
-                fExecuteWidth = true;
-            
-                setContentsList([]);
-                setWorkListChanged(false);
-                setWorkListChanged(true);
-                setContentsLen(0);
-                nb_multiChoiceGridSet("quesConMultiShow");
-                document.getElementById("impYearSelBox").value = 0;
-                document.getElementById("impMonthSelBox").value = 0;
-            }
-            
-        }
-        if(!fExecuteWidth){
-            asyncUseEffect();
-            document.body.addEventListener('click',nb_fCustomSelClose);
-        }else{
-            if(contentsList.length!==0){
-                nb_multiChoiceGridSet("quesConMultiShow");
-            }
-            fExecuteWidth = false;
-        }
-        window.addEventListener('scroll', nb_detectScrollPosition);
-        window.addEventListener('scroll', topMenuFixed);
-        return () => removeAddedEvent();
-        }, [contentsList, location]);
+      <div
+        id='showMoreContents'
+        className='showMoreContents hide'
+        onClick={() => {
+          showMoreContents();
+        }}>
+        검색정보 더보기
+      </div>
+      <div className='paddingFiveZero'></div>
 
-        const historyBackSearchCondSetting = async (param, param2)=> {
-            curPageNum=0
-            if(param2 === "") param2 =0;
-            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+param+"&impMonth="+param2+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
-            fExecuteWidth = true;
-            let ipsiMonth = await nb_dataFetch("/mathInfo/takeIpsiMonth?impYear="+param, true);
-            setImpMonthList(ipsiMonth.impMonthList);
-
-            setContentsList(ipsiContents.mathContentsList);
-            setWorkListChanged(false);
-            setWorkListChanged(true);
-            setContentsLen(ipsiContents.mathContentsList.length);
-            nb_multiChoiceGridSet("quesConMultiShow");
-            document.getElementById("impYearSelBox").value = param;
-            document.getElementById("impMonthSelBox").value = param2;
-
-            if(curPageNum !== ipsiContents.totalPageCnt-1){
-                document.getElementById("showMoreContents").classList.remove("hide");
-                document.getElementById("showMoreContentsBtn").classList.remove("hide");
-            }else{
-                document.getElementById("showMoreContents").classList.add("hide");
-                document.getElementById("showMoreContentsBtn").classList.add("hide");
-            }
-        }
-
-        const searchWorkListByContentsNo = async function(contentsNoParam, hasNotiPhrases){
-            let returnObj = await nb_dataFetch("/mathInfo/takeIpsiContentsByContentsNo?contentsNo="+contentsNoParam, true);
-            window.history.pushState("", "수능문제검색", "/admin/ipsiWorkContentsList?contentsNo="+contentsNoParam);
-            if(returnObj.error!=undefined){
-                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
-            }
-
-            if(returnObj["isSuccess"]){
-                fExecuteWidth = true;
-                if(returnObj["mathContentsList"].length===0){
-                    setContentsList(returnObj["mathContentsList"]);
-                    await nb_fadeInOut("해당하는 문제가 없습니다.", 2000);
-                    setEmptyListMsg("검색 결과가 없습니다. 해당 문제가 없습니다.", 2000);
-                }else{
-                    window.history.pushState("", "문제검색", '/admin/ipsiWorkContentsList?unitUniqId=0&contentsNo='+contentsNoParam);
-                    
-                    setContentsList(returnObj["mathContentsList"]);
-                    if(hasNotiPhrases)  await nb_fadeInOut("정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.", 2000);
-                    else  await nb_fadeInOut("문제 내역이 정상적으로 조회되었습니다.", 2000);
-
-                    if(contentsNoParam === "allUserContents"){
-                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
-                        for(let i=0; i<allBtn.length; i++){
-                        }
-                    }else{
-                        let allBtn = document.querySelectorAll(".userSearchBtn, .updateBtn, .errBtn");
-                        for(let i=0; i<allBtn.length; i++){
-                        }
-                    }
-                }
-                
-            }
-        }
-
-        //테스트필요
-        //관리자만 다운 가능
-        const convertHtmlToTex = async (event) => {
-            if(!await nb_isAdmin()) {
+      <div id='outerFormulaEditor' className='fixedBox popupBox hide'>
+        <div
+          id='modalFormulCloseBtn'
+          className='closeBtn'
+          onClick={(event) => {
+            modalPopupClose(event);
+          }}>
+          &#88;
+        </div>
+        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={4} />}
+      </div>
+      <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
+      <div id='compPopUpScreen' className='compPopUpScreen hide'>
+        <div id='compPopUp' className='compPopUp'>
+          <div
+            id='compPopUpClose'
+            className='compPopUpClose'
+            onClick={(event) => {
+              compContentsPopUpClose(event);
+            }}>
+            X
+          </div>
+          <form id='ipsiContentsForm' method='post'>
+            <span
+              className='compAddRow'
+              onClick={() => {
+                compAddRow();
+              }}>
+              행 추가
+            </span>
+            <table className='compRegisterTb'>
+              <thead className='compRegisterTbHead'>
+                <tr>
+                  <td>출제기관</td>
+                  <td>가/나형 구분</td>
+                  <td>시행연도</td>
+                  <td>시행월</td>
+                  <td>홀수형 번호</td>
+                  <td>오답률</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody id='compTbTbody' className='compTbTbody'></tbody>
+            </table>
+            <div className='alignCenter'>
+              <span
+                className='compRegBtn'
+                onClick={() => {
+                  compContentsReg();
+                }}>
+                등록하기
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id='confirmBoxScreen' className='confirmBoxScreen hide'>
+        <div id='confirmBox' className='confirmBox'>
+          <div className='confirmBoxTop'>
+            <span
+              id='confirmBoxClose'
+              className='confirmBoxClose'
+              onClick={() => {
                 hwpDownPopUpClose();
-                alert("관리자만 사용가능한 기능입니다.");
-                return;
-            }
-
-            let contentsNo = event.target.dataset.contentsNo;
-
-            if(contentsNo === "all"){
-                cvt_htmlToTexAll("contents-show", ".workContentsDiv", "수능 및 모의고사", "", false)
+              }}>
+              X
+            </span>
+          </div>
+          <div id='confirmMsg' className='confirmMsg alignCenter'></div>
+          <div className='alignCenter'>
+            <span
+              id='confirmBoxCnclBtn'
+              className='confirmBoxCnclBtn'
+              onClick={() => {
                 hwpDownPopUpClose();
-                return;
-            }
-
-            let contentsDiv  = document.getElementsByClassName("workContentsDiv");
-            let rootTb;
-
-            for(let i=0; i<contentsDiv.length; i++){
-                if(Number(contentsDiv[i].dataset.contentsNo) === Number(contentsNo)){
-                    rootTb =  contentsDiv[i];
-                    break;
-                }
-            }
-
-            let contentsArr = [{className:"quesContents", title:"[문제]"}, {id:"workMultiShow", className:"multiDivContents"}, {className:"ansContents", title:"[정답]"}, {className:"solContents", title:"[해설]"}];
-            let hwpJsonArrForPython = new Array();
-            for(let i=0; i<contentsArr.length; i++){
-                if(contentsArr[i].className === "multiDivContents"){
-                    //객관식 문제 아니면 건너뛰기
-                    if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("hide")){
-                        let breakObj = new Object();
-                        breakObj.contentsType = "BreakPara";
-                        hwpJsonArrForPython.push(breakObj);
-                        continue;
-                    }
-                    
-                    let tableObj = new Object();
-                    tableObj.contentsType = "table";
-                    tableObj.contentsDetailType = "table";
-                    tableObj.borderStyle = "allNone";
-                    if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("twoDivGrid")){
-                        tableObj.rowCnt = 3;
-                        tableObj.colCnt = 2;
-                        tableObj.colWidthList = [1, 1]
-                    }else if(rootTb.querySelector("#"+contentsArr[i].id).classList.contains("threeDivGrid")){
-                        tableObj.rowCnt = 2;
-                        tableObj.colCnt = 3;
-                        tableObj.colWidthList = [1, 1, 1]
-                    }else{
-                        tableObj.rowCnt = 5;
-                        tableObj.colCnt = 1;
-                        tableObj.colWidthList = [1]
-                    }
-                    tableObj.contents = new Array();
-                    let multiChoiceContents = [{className:"firDivContents"}, {className:"secDivContents"}, {className:"thrDivContents"}, {className:"fourDivContents"}, {className:"fifDivContents"}]; 
-                    for(let j=0; j<multiChoiceContents.length; j++){
-                        await cvt_initWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
-                        let quesContents = rootTb.querySelector("."+multiChoiceContents[j].className).cloneNode(true);
-                        await cvt_textNodeConvert(quesContents);
-                        let contentsDiv = await cvt_convertHtmlToTex(quesContents);
-                        let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
-                        let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
-
-                        let tableCellContents = new Array();
-                        let num = "";
-                        if(j===0) num = "① ";
-                        else if(j===1) num = "② ";
-                        else if(j===2) num = "③ ";
-                        else if(j===3) num = "④ ";
-                        else if(j===4) num = "⑤ ";
-                        let tmpNumInnerObj = new Object();
-                        tmpNumInnerObj.contentsType = "text";
-                        tmpNumInnerObj.contents = num;
-                        let tmpNumObj = new Object();
-                        tmpNumObj.contents = tmpNumInnerObj;
-                        tmpNumObj.align = "alignLeft";
-                        tableCellContents.push(tmpNumObj);
-
-                        for(let k=0; k<newHwpJsonArr.length; k++){
-                            //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
-                            //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
-                            if(k===newHwpJsonArr.length-1 && newHwpJsonArr[k].contentsType==="BreakPara"){
-                                break;
-                            }
-                            let tmpObj = new Object();
-                            tmpObj.contents = newHwpJsonArr[k];
-                            tableCellContents.push(tmpObj);
-
-                        }
-                        tableObj.contents.push(tableCellContents);
-                        await cvt_initOrgWidthHeight(rootTb.querySelector("."+multiChoiceContents[j].className));
-                    }
-                    hwpJsonArrForPython.push(tableObj);
-
-                    let breakObj = new Object();
-                    breakObj.contentsType = "BreakPara";
-                    hwpJsonArrForPython.push(breakObj);
-                }else{
-                    await cvt_initWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
-                    let quesContents = rootTb.querySelector("."+contentsArr[i].className).cloneNode(true);
-                    if(contentsArr[i].className === "ansContents") {
-                        if(quesContents.querySelector(".multiAnswerSheet").innerText.length !== 0){
-                            quesContents.querySelector(".multiAnswerSheet").innerText = quesContents.querySelector(".multiAnswerSheet").innerText+" ";
-                        }
-                        quesContents.querySelector(".answerSheet").prepend(quesContents.querySelector(".multiAnswerSheet"))
-                        quesContents = quesContents.querySelector(".answerSheet");
-                    }
-                    await cvt_textNodeConvert(quesContents);
-                    let contentsDiv = await cvt_convertHtmlToTex(quesContents);
-                    let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
-                    await cvt_initOrgWidthHeight(rootTb.querySelector("."+contentsArr[i].className));
-                    let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
-                    let titleArr = new Array();
-                    let boldObj = new Object();
-                    boldObj.contentsType = "CharShapeBold";
-                    titleArr.push(boldObj);
-                    let titleObj = new Object();
-                    titleObj.contentsType = "text";
-                    titleObj.contents = contentsArr[i].title;
-                    titleArr.push(titleObj);
-                    titleArr.push(boldObj);
-
-                    let breakObj = new Object();
-                    breakObj.contentsType = "BreakPara";
-                    newHwpJsonArr.unshift(breakObj);
-                   
-                    if(contentsArr[i].className!=="quesContents"){
-                        newHwpJsonArr.push(breakObj);   //문제 줄바꿈은 객관식 끝나고
-                    }
-                    newHwpJsonArr.unshift(...titleArr);
-                    hwpJsonArrForPython.push(...newHwpJsonArr);
-                }
-            }
-       
-            hwpDownPopUpClose();
-
-            let form = new FormData();
-            form.append("jsonString", JSON.stringify(hwpJsonArrForPython));
-            document.getElementById("resDetailedTimeDesc").classList.remove("hide");
-            document.getElementById("hourGlassDesc").innerText = "한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...";
-            let nowDate = await nb_dateFormat("_");
-            let fileName = "[N명의수학]나의제작문제_"+nowDate+".hwp";
-            await nb_formDataFileFetch("/takeHwpFile", form, fileName);
-            document.getElementById("resDetailedTimeDesc").classList.add("hide");
-            
-        }
-        
-        const hwpDownPopUpClose = async () => {
-            document.getElementById("confirmBoxScreen").classList.add("hide");
-        }
-        
-        const initImpMonth = async (event) => {
-            if(event.target.value === 0) return;
-            let ipsiMonth = await nb_dataFetch("/mathInfo/takeIpsiMonth?impYear="+event.target.value, true);
-            setImpMonthList(ipsiMonth.impMonthList);
-        }
-
-        const takeIpsiContents = async () => {
-            curPageNum=0;
-            fExecuteWidth = true;
-            let impYearSelVal = document.getElementById("impYearSelBox").value;
-            let impMonthSelVal = document.getElementById("impMonthSelBox").value;
-            if(Number(impYearSelVal) === 0) {
-                alert("시행연도를 선택해주세요.");
-                return;
-            }
-            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
-            window.history.pushState("", "수능문제검색", "/admin/ipsiWorkContentsList?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal);
-            setContentsList(ipsiContents.mathContentsList);
-            setWorkListChanged(false);
-            setWorkListChanged(true);
-            setContentsLen(ipsiContents.mathContentsList.length);
-            nb_multiChoiceGridSet("quesConMultiShow");
-
-            if(curPageNum !== ipsiContents.totalPageCnt-1){
-                document.getElementById("showMoreContents").classList.remove("hide");
-                document.getElementById("showMoreContentsBtn").classList.remove("hide");
-            }else{
-                document.getElementById("showMoreContents").classList.add("hide");
-                document.getElementById("showMoreContentsBtn").classList.add("hide");
-            }
-        }
-        
-        const makeManageIns = async function() {
-            return '<option value="0">출제기관</option><option value="1">평가원</option><option value="2">교육청</option>'
-        }
-
-        const makePaperType = async function() {
-            return '<option value="0">가/나형 구분</option><option value="1">통합</option><option value="2">가형</option><option value="3">나형</option>';
-        }
-        
-        const compDelPrompt = async function(){
-            let inputVal = document.getElementById("promptInput").value;
-            if(inputVal !== "삭제"){
-                document.getElementById("promptInput").classList.add("shake")
-                setTimeout(function(){
-                    document.getElementById("promptInput").classList.remove("shake")
-                }, 500);
-                return;
-            }
-            document.getElementById("promptBoxClose").click();
-
-            let ipsiSeqNo = compDelTr.querySelector(".ipsiSeqNo");
-            let ipsiContentsNo = compDelTr.querySelector(".ipsiContentsNo");
-            let returnObj = await nb_dataFetch("/mathInfo/delIpsiContents?seqNo="+ipsiSeqNo.value+"&contentsNo="+ipsiContentsNo.value, true);
-            if(returnObj.isSuccess) {
-                compDelTr.remove();
-                //성공한 객체로 바꾸기
-                contentsList.forEach(function(element){
-                if(element.contentsNo ===  Number(returnObj.successObj[0].contentsNo)){
-                    element.mathContentsComp = returnObj.successObj;
-                    return false;
-                    }
-                });
-                //comp 모달 상태변화로 유사문제 등록갯수 초기화
-                setWorkListChanged(false);
-                setWorkListChanged(true);
-                await nb_multiChoiceGridSet("quesConMultiShow");
-                await nb_fadeInOut("정상적으로 삭제 되었습니다.", 2000);
-            }else if(returnObj.isSuccess === false){
-                await nb_fadeInOutA("삭제가 취소되었습니다.\n문제정보는 최소 1개 이상 등록 되어있어야 합니다.", 2000);
-            }
-        }
-
-        const compContentsDel = async function(event){
-            let targetTr = event.target.closest("tr");
-            setCompDelTr(targetTr);
-            let ipsiSeqNo = targetTr.querySelector(".ipsiSeqNo");
-            if(ipsiSeqNo === null){
-                targetTr.remove();
-            }else{
-                await nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", "삭제 라고 입력해주세요.");
-            }
-        }
-
-        const compAddRow = async function(){
-            let compTbTbody = document.getElementsByClassName("compTbTbody")[0];
-            let rowIdx =  Number(compTbTbody.lastElementChild.dataset.rowIdx)+1;
-            let tr = document.createElement("tr");
-            tr.dataset.rowIdx = rowIdx
-            let td1 = document.createElement("td");
-            td1.className="seqNoAndRefTd"
-            let refOptBox = await makeManageIns();
-            let sel1 = document.createElement("select");
-            sel1.name="mathContentsIpsi["+rowIdx+"].manageIns"
-            sel1.innerHTML = refOptBox;
-            sel1.className = "manageIns";
-            let contentsNo = document.getElementById("compPopUp").dataset.contentsNo
-            let input0 = document.createElement("input");
-            input0.type= "number";
-            input0.className = "ipsiContentsNo hide"
-            input0.name="mathContentsIpsi["+rowIdx+"].contentsNo"
-            input0.value = contentsNo;
-            td1.append(sel1); 
-            td1.append(input0);
-
-            let td2 = document.createElement("td");
-            let sel2 = document.createElement("select");
-            sel2.className = "paperType";
-            let mathTypeClassifyOpt = await makePaperType();
-            sel2.name="mathContentsIpsi["+rowIdx+"].paperType"
-            sel2.innerHTML = mathTypeClassifyOpt;
-            td2.append(sel2); 
-            
-            let td3 = document.createElement("td");
-            let input3 = document.createElement("input");
-            input3.type= "number";
-            input3.className = "impYear grayBack";
-            input3.name="mathContentsIpsi["+rowIdx+"].impYear"
-            input3.value = compTbTbody.querySelector("tr").querySelector(".impYear").value;
-            input3.readOnly = true;
-            td3.append(input3); 
-
-            let td4 = document.createElement("td");
-            let input4 = document.createElement("input");
-            input4.type= "number";
-            input4.className = "impMonth grayBack";
-            input4.name="mathContentsIpsi["+rowIdx+"].impMonth"
-            input4.value = compTbTbody.querySelector("tr").querySelector(".impMonth").value;
-            input4.readOnly = true;
-            td4.append(input4); 
-
-            let td5 = document.createElement("td");
-            let input5 = document.createElement("input");
-            input5.type= "number";
-            input5.className = "oddQuesNum";
-            input5.name="mathContentsIpsi["+rowIdx+"].oddQuesNum"
-            td5.append(input5); 
-
-            let td6 = document.createElement("td");
-            let input6 = document.createElement("input");
-            input6.type= "number";
-            input6.className = "wrongRatio";
-            input6.name="mathContentsIpsi["+rowIdx+"].wrongRatio"
-            td6.append(input6); 
-
-            let td7 = document.createElement("td");
-            let span = document.createElement("span");
-            span.className = "compDelBtn"
-            span.addEventListener("click", compContentsDel);
-            span.innerText = "삭제";
-            td7.append(span); 
-
-            tr.append(td1);
-            tr.append(td2);
-            tr.append(td3);
-            tr.append(td4);
-            tr.append(td5);
-            tr.append(td6);
-            tr.append(td7);
-            compTbTbody.append(tr);
-        }
-
-        const compContentsReg = async function(){
-            let compTbBody = document.getElementById("compTbTbody");
-            let compTbTr = compTbBody.querySelectorAll("tr")
-            for(let i=0; i<compTbTr.length; i++){
-                let manageIns = compTbTr[i].querySelector(".manageIns");
-                let paperType = compTbTr[i].querySelector(".paperType");
-                let impYear = compTbTr[i].querySelector(".impYear");
-                let impMonth = compTbTr[i].querySelector(".impMonth");
-                let oddQuesNum = compTbTr[i].querySelector(".oddQuesNum");
-                let wrongRatio = compTbTr[i].querySelector(".wrongRatio");
-                if(Number(manageIns.value) === 0){
-                    alert((i+1)+"번째 행의 출제기관 선택해주세요.");
-                    return false;
-                }
-                if(Number(paperType.value) === 0 ){
-                    alert((i+1)+"번째 행의 가/나형 구분을 선택해주세요.");
-                    return false;
-                }
-        
-                if(impYear.value.length !== 4 || impYear.value<0){
-                    alert((i+1)+"번째 행의 시행연도를 바르게 입력해주세요.");
-                    return false;
-                }
-
-                if(impMonth.value > 12 || impMonth.value<1){
-                    alert((i+1)+"번째 행의 시행월을 바르게 입력해주세요.");
-                    return false;
-                }
-
-                if(oddQuesNum.value > 30 || oddQuesNum.value<1){
-                    alert((i+1)+"번째 행의 홀수형 번호를 바르게 입력해주세요.");
-                    return false;
-                }
-
-                if(wrongRatio.value > 100 || wrongRatio.value<0){
-                    alert((i+1)+"번째 행의 오답률을 바르게 입력해주세요.");
-                    return false;
-                }
-            }
-
-            let formData = new FormData(document.getElementById("ipsiContentsForm"));
-            let returnObj = await nb_formDataFetch("/mathInfo/registerIpsiContents",formData, true);
-            if(returnObj.error!==undefined){
-                alert("["+returnObj.status+" "+returnObj.error+"]\n에러 메시지 : "+returnObj.message);
-            }else if(returnObj.isSuccess){
-                //성공한 객체로 바꾸기
-                contentsList.forEach(function(element){
-                    if(element.contentsNo ===  Number(returnObj.successObj[0].contentsNo)){
-                        element.mathContentsIpsi = returnObj.successObj;
-                        return false;
-                    }
-                });
-                //comp 모달 상태변화로 유사문제 등록갯수 초기화
-                setWorkListChanged(false);
-                setWorkListChanged(true);
-
-                await compContentsPopUpClose();
-                await nb_multiChoiceGridSet("quesConMultiShow");
-                await nb_fadeInOut("문제정보가 정상적으로 수정 되었습니다.", 2000);
-
-            }
-        }
-
-        const compContentsPopUpClose = async function(){
-            document.getElementById("compPopUpScreen").classList.add("hide");
-            document.getElementById("compTbTbody").innerText = "";
-        }
-
-        const compContentsPopUp = async function(event){
-            let contentsNo = event.target.dataset.contentsNo;
-            document.getElementById("compPopUp").dataset.contentsNo = contentsNo;
-            document.getElementById("compPopUpScreen").classList.remove("hide");
-            let compContentsList = contentsList.filter((element)=>{
-                return element.contentsNo === Number(contentsNo);
-            })
-            let compTbTbody = document.getElementById("compTbTbody");
-            for(let i=0; i<compContentsList[0].mathContentsIpsi.length; i++){
-                let tr = document.createElement("tr");
-                tr.dataset.rowIdx = i;
-                let td1 = document.createElement("td");
-                td1.className="seqNoAndRefTd"
-                let input = document.createElement("input");
-                input.type= "number";
-                input.name="mathContentsIpsi["+i+"].contentsNo"
-                input.className="ipsiContentsNo hide"
-                input.value = compContentsList[0].mathContentsIpsi[i].contentsNo;
-                let input0 = document.createElement("input");
-                input0.type= "number";
-                input0.name="mathContentsIpsi["+i+"].seqNo"
-                input0.className="ipsiSeqNo hide"
-                input0.value = compContentsList[0].mathContentsIpsi[i].seqNo;
-                let sel1 = document.createElement("select");
-                let refOptBox = await makeManageIns();
-                sel1.name="mathContentsIpsi["+i+"].manageIns"
-                sel1.innerHTML = refOptBox;
-                sel1.className = "manageIns";
-                td1.append(input);
-                td1.append(input0);
-                td1.append(sel1); 
-                sel1.value = compContentsList[0].mathContentsIpsi[i].manageIns;
-
-                let td2 = document.createElement("td");
-                let sel2 = document.createElement("select");
-                let mathTypeClassifyOpt = await makePaperType();
-                sel2.name="mathContentsIpsi["+i+"].paperType"
-                sel2.innerHTML = mathTypeClassifyOpt;
-                sel2.className="paperType";
-                td2.append(sel2); 
-                sel2.value = compContentsList[0].mathContentsIpsi[i].paperType;
-
-                let td3 = document.createElement("td");
-                let input3 = document.createElement("input");
-                input3.type= "number";
-                input3.name="mathContentsIpsi["+i+"].impYear";
-                input3.className="impYear grayBack";
-                input3.value = compContentsList[0].mathContentsIpsi[i].impYear;
-                input3.readOnly = true;
-                td3.append(input3); 
-
-                let td4 = document.createElement("td");
-                let input4 = document.createElement("input");
-                input4.type= "number";
-                input4.name="mathContentsIpsi["+i+"].impMonth"
-                input4.className="impMonth grayBack";
-                input4.readOnly = true;
-                input4.value = compContentsList[0].mathContentsIpsi[i].impMonth;
-                td4.append(input4); 
-                
-                let td5 = document.createElement("td");
-                let input5 = document.createElement("input");
-                input5.type= "number";
-                input5.name="mathContentsIpsi["+i+"].oddQuesNum"
-                input5.className="oddQuesNum"
-                input5.value = compContentsList[0].mathContentsIpsi[i].oddQuesNum;
-                td5.append(input5); 
-
-                let td6 = document.createElement("td");
-                let input6 = document.createElement("input");
-                input6.type= "number";
-                input6.name="mathContentsIpsi["+i+"].wrongRatio"
-                input6.className="wrongRatio"
-                input6.value = compContentsList[0].mathContentsIpsi[i].wrongRatio;
-                td6.append(input6); 
-
-                let td7 = document.createElement("td");
-                let span = document.createElement("span");
-                span.className = "compDelBtn"
-                span.addEventListener("click", compContentsDel);
-                span.innerText = "삭제";
-                td7.append(span); 
-
-                tr.append(td1);
-                tr.append(td2);
-                tr.append(td3);
-                tr.append(td4);
-                tr.append(td5);
-                tr.append(td6);
-                tr.append(td7);
-                compTbTbody.append(tr);
-            }
-        }
-
-        const impYearOptList = impYearList.map( (contentsMap, idx) => {
-            return (<option key={idx} value={contentsMap}>{contentsMap}</option>)
-        });
-
-        const impMonthOptList = impMonthList.map( (contentsMap, idx) => {
-            return (<option key={idx} value={contentsMap}>{contentsMap}</option>)
-        });
-
-        const workContentsList = contentsList.map( (contentsMap, idx) => {
-                let quesNumber;
-                if(idx<9){
-                    quesNumber = "0"+(idx+1);
-                }else{
-                    quesNumber = idx+1;
-                }
-
-                let isMultiHide= "hide"
-                if(contentsMap.firNo!==""){
-                    isMultiHide=""
-                }
-                let isConImgHide= "hide"
-                if(contentsMap.contentsImg !== null){
-                    isConImgHide="";
-                }
-                let isSolImgHide= "hide"
-                if(contentsMap.solutionImg !== null){
-                    isSolImgHide="";
-                }
-
-                let quesLevel = "";
-                if(contentsMap.quesLevel===1)quesLevel="오류";
-                else if(contentsMap.quesLevel===2)quesLevel="오류";
-                else if(contentsMap.quesLevel===3)quesLevel="2점";
-                else if(contentsMap.quesLevel===4)quesLevel="3점";
-                else if(contentsMap.quesLevel===5)quesLevel="4점";
-
-                let paperType = "";
-                if(contentsMap.mathContentsIpsi[0].paperType===1) paperType="통합";
-                else if(contentsMap.mathContentsIpsi[0].paperType===2) paperType="가형";
-                else if(contentsMap.mathContentsIpsi[0].paperType===3) paperType="나형";
-
-                let isBlank="";
-                if(contentsMap.choiceAnswer===null)isBlank="hide";
-
-                let updateBtnId = "updateContenstBtn"+idx;
-
-                let manageIns = "";
-                if(contentsMap.mathContentsIpsi[0].manageIns === 1){
-                    manageIns = "평가원";
-                }else if(contentsMap.mathContentsIpsi[0].manageIns === 2){
-                    manageIns = "교육청";
-                }
-
-                let conImgPath;
-                if(contentsMap.contentsImg===null) conImgPath = "";
-                else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.imgPath+contentsMap.contentsImg;
-                let solImgPath;
-                if(contentsMap.solutionImg===null) solImgPath = "";
-                else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST+contentsMap.solutionImgPath+contentsMap.solutionImg;
-                
-                return  <div id="workContentsDiv" className="workContentsDiv" key={idx} data-contents-no={contentsMap.contentsNo} > 
-                                <table className='workListTable'>
-                                    <thead>
-                                        <tr className='workListTBHead2'>
-                                            <td>
-                                                <div className='twoFlexLayout'>
-                                                    <div>
-                                                        <span className='hwpDownImgWrap' onClick={()=>{nb_confirmBox("해당 문제를 한글파일로 다운받으시겠습니까?"); document.getElementById("confirmBoxBtn").dataset.contentsNo = contentsMap.contentsNo}}>
-                                                            <img className="hwpDownImg" src={hwpDownImg} alt=""/>
-                                                            <div className="hwpDownDesc">한글 파일로 다운 받기</div>
-                                                        </span>
-                                                        <button id={updateBtnId} type="button" data-contents-no={contentsMap.contentsNo} className='updateBtn' onClick={(event) => {modalPopupOpen(event)}}>수정하기</button>
-                                                    </div>
-                                                    <div>
-                                                        {contentsMap.mathContentsIpsi[0].impYear}년 {contentsMap.mathContentsIpsi[0].impMonth}월&nbsp;
-                                                        {manageIns} [{paperType}]<br/>
-                                                        홀수형 번호 : {contentsMap.mathContentsIpsi[0].oddQuesNum}, 배점 : {quesLevel}, 오답률 : {contentsMap.mathContentsIpsi[0].wrongRatio}%<br/>
-                                                        [<span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.subject}}></span>]&nbsp;
-                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.secUnit}}></span> /
-                                                        <span dangerouslySetInnerHTML={{__html:contentsMap.mathUnitInfo.thrUnit}}></span>
-                                                        <br/>
-                                                        유형 : <span dangerouslySetInnerHTML={{__html:contentsMap.mathTypeInfo.quesType}}></span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>정답 및 해설
-                                                <div className="compContentsBtn relative" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{compContentsPopUp(event)}}>
-                                                    문제정보
-                                                </div>
-                                            </td>
-                                            <td>서비스 여부</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className='td1'>
-                                                <div id="workQuesShow" className='workQuesShow quesRootDiv'>
-                                                    <div className='quesDiv'>
-                                                        <div className='quesNumber'>{quesNumber}</div>
-                                                        <div className='quesContents' dangerouslySetInnerHTML={{__html:contentsMap.contents}}></div> 
-                                                        <div id="quesImg-show" className={"quesImg-show "+isConImgHide}>
-                                                            <img src={conImgPath} id="contentsImgOutput" alt="" />
-                                                        </div>
-                                                        <div id="workMultiShow" className={"quesConMultiShow "+isMultiHide}>
-                                                            <div className="firDiv"><span className='multiChoiceNo'>&#9312;</span><span className="firDivContents" dangerouslySetInnerHTML={{__html:contentsMap.firNo}}></span></div>
-                                                            <div className="secDiv"><span className='multiChoiceNo'>&#9313;</span><span className="secDivContents" dangerouslySetInnerHTML={{__html:contentsMap.secNo}}></span></div>
-                                                            <div className="thrDiv"><span className='multiChoiceNo'>&#9314;</span><span className="thrDivContents" dangerouslySetInnerHTML={{__html:contentsMap.thrNo}}></span></div>
-                                                            <div className="fourDiv"><span className='multiChoiceNo'>&#9315;</span><span className="fourDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fourNo}}></span></div>
-                                                            <div className="fifDiv"><span className='multiChoiceNo'>&#9316;</span><span className="fifDivContents" dangerouslySetInnerHTML={{__html:contentsMap.fifNo}}></span></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className='td2'>
-                                                <div className='solRootDiv'>
-                                                    <div className='ansSolDiv'>
-                                                    
-                                                        <div id="workAnsShow" className='ansShow'>
-                                                            <div>
-                                                                
-                                                                <div className='ansContents'>
-                                                                    <span className='mini-title6'>{quesNumber}. 답</span>&nbsp;&nbsp;
-                                                                    <span className='multiAnswerSheet' dangerouslySetInnerHTML={{__html:contentsMap.choiceAnswer}}></span>
-                                                                    <span className={"marginRFive "+isBlank}></span>
-                                                                    <span className='answerSheet' dangerouslySetInnerHTML={{__html:contentsMap.answer}}></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div id="workSolShow" className='solShow'>
-                                                            <span className='mini-title6'>해설</span>
-                                                            <div id="solImg-show" className={"solImg-show "+isSolImgHide}>
-                                                                <img src={solImgPath} id="solutionImgOutput" alt="" />
-                                                            </div>
-                                                            <div className='solContents' dangerouslySetInnerHTML={{__html:contentsMap.solution}}></div> 
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className='td3'>
-                                               
-                                                <div className={contentsMap.svcPosbStts === 0 ? "svcSttsBtn svcImPosbBtn active" : "svcSttsBtn svcImPosbBtn inactive"} data-value="0" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{svcSttsChange(event)}}>미출시</div>
-                                                <div className={contentsMap.svcPosbStts === 2 ? "svcSttsBtn svcInspectBtn active" : "svcSttsBtn svcInspectBtn inactive"} data-value="2" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{svcSttsChange(event)}}>검수완료</div>
-                                                <div className={contentsMap.svcPosbStts === 3 ? "svcSttsBtn svcErrBtn active" : "svcSttsBtn svcErrBtn inactive"} data-value="3" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{svcSttsChange(event)}}>오류</div>
-                                                <div className={contentsMap.svcPosbStts === 1 ? "svcSttsBtn svcPosbBtn active" : "svcSttsBtn svcPosbBtn inactive"} data-value="1" data-contents-no={contentsMap.contentsNo} onClick={(event)=>{svcSttsChange(event)}}>출시</div> 
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-        });
-
-
-        const showMoreContents = async function(){
-            curPageNum++;
-            fExecuteWidth = true;
-            let impYearSelVal = document.getElementById("impYearSelBox").value;
-            let impMonthSelVal = document.getElementById("impMonthSelBox").value;
-            let ipsiContents = await nb_dataFetch("/mathInfo/takeIpsiContentsByYear?impYear="+impYearSelVal+"&impMonth="+impMonthSelVal+"&curPageNum="+curPageNum+"&pageVolume="+pageVolume, true);
-            setContentsList([...contentsList, ...ipsiContents.mathContentsList]);
-            setWorkListChanged(false);
-            setWorkListChanged(true);
-            setContentsLen(contentsLen+ipsiContents.mathContentsList.length);
-            nb_multiChoiceGridSet("quesConMultiShow");
-
-            if(curPageNum !== ipsiContents.totalPageCnt-1){
-                document.getElementById("showMoreContents").classList.remove("hide");
-                document.getElementById("showMoreContentsBtn").classList.remove("hide");
-            }else{
-                document.getElementById("showMoreContents").classList.add("hide");
-                document.getElementById("showMoreContentsBtn").classList.add("hide");
-            }
-        }
-
-  return ( <>
-            <div id ="scrollMoveBtn" className='scrollMoveBtn hide'>
-                <div id='conListScrollToTop' className='conListScrollToTop' tooltip="맨 위로" onClick={()=>{nb_moveToScroll(true);}}></div>
-                <div id="conScrollCenterCircle" className='conScrollCenterCircle'></div>
-                <div id='conListScrollToBottom' className='conListScrollToBottom' tooltip="맨 아래로" onClick={()=>{nb_moveToScroll(false);}}></div>
-            </div>
-            <div id="promptBoxScreen" className='promptBoxScreen hide'>
-                <div id="promptBox" className='promptBox'>
-                    <div className='promptBoxTop'><span id="promptBoxClose" className="promptBoxClose" onClick={()=>{document.getElementById("promptBoxScreen").classList.add('hide'); document.getElementById("promptInput").value="";}}>X</span></div>
-                    <div id="promptMsg" className="promptMsg"></div>
-                    <div className='promptInputDiv'>
-                        <input id="promptInput" className='promptInput' type="text" onKeyDown={(event)=>{if(event.keyCode===13){compDelPrompt()} }}/>
-                    </div>
-                    <div className='alignCenter'>
-                        <span id="promptBoxBtn" className='promptBoxBtn' onClick={()=>{compDelPrompt()}}>확인</span>
-                    </div>
-                </div>
-            </div>
-            <div>
-                { !modalState &&
-                    <div id="workListUnitTypeRoot" className='workListUnitTypeRoot'>
-                        <form method="post" id="workSearchForm">
-                            <div id="workListUnitType" className='workListUnitType'>
-                                <div className='mini-title5'>
-                                    &nbsp; N명의수학에서 원하는 문제를 찾아보세요.
-                                </div>
-                                <select id="impYearSelBox" className='impYearSelBox' onChange={(event)=>{initImpMonth(event)}}>
-                                    <option value="0">시행연도 선택</option>
-                                    {impYearOptList}
-                                </select>
-                                <select id="impMonthSelBox" className='impMonthSelBox'>
-                                    <option value="0">전체</option>
-                                    {impMonthOptList}
-                                </select>
-                                <button type="button" className='orangeBtn' onClick={()=>{takeIpsiContents()}}>검색</button>
-                            </div>
-                        </form>
-                    </div>
-                }
-
-                {contentsLen !== 0 && 
-                <div className='contentsCntWrap'>
-                    <div id="con" className='contentsDiv custom2 mini-title2'>
-                        <span>변형 작업 문제 갯수 : {contentsLen}<span id="showMoreContentsBtn" className='showMoreContentsBtn hide' onClick={()=>{showMoreContents()}} >+</span></span>
-                        <span className='hwpAllDownBtn floatRight' onClick={()=>{nb_confirmBox("나의 제작문제를 한글파일로 다운받으시겠습니까?"); document.getElementById("confirmBoxBtn").dataset.contentsNo = "all"}}>나의 제작문제 일괄 다운</span>
-                    </div>
-                </div>
-                }
-
-                 { !modalState &&
-                    <div className='workList custom'>
-                        {workListChanged && workContentsList.length !==0 ? 
-                            <div className="contents-show" id="contents-show">
-                                {workContentsList}
-                            </div>
-                            : <EmptyList msg={emptyListMsg} imgName="searchList"  addImgClass="" /> 
-                        }
-                    </div>
-            }
-            </div>
-
-            <div id="showMoreContents" className='showMoreContents hide' onClick={()=>{showMoreContents()}}>검색정보 더보기</div>
-            <div className='paddingFiveZero'></div>
-
-            <div id="outerFormulaEditor" className='fixedBox popupBox hide'>
-                <div id="modalFormulCloseBtn" className="closeBtn" onClick={ (event) => {modalPopupClose(event);}}>&#88;</div>
-                { modalState  && <FormulaEditor contentsNo={contentsNo} contentsClassify={4}/>}
-            </div>
-            <input id="imgUpdt" className="hide" type="text" defaultValue="N" />
-            <div id="compPopUpScreen" className='compPopUpScreen hide'>
-                <div id="compPopUp" className='compPopUp'>
-                    <div id="compPopUpClose" className="compPopUpClose" onClick={ (event) => {compContentsPopUpClose(event);}}>X</div>
-                    <form id="ipsiContentsForm" method="post">
-                        <span className='compAddRow' onClick={()=>{compAddRow()}}>행 추가</span>
-                        <table className='compRegisterTb'>
-                            <thead className='compRegisterTbHead'>
-                                <tr>
-                                <td>출제기관</td><td>가/나형 구분</td><td>시행연도</td><td>시행월</td><td>홀수형 번호</td><td>오답률</td><td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="compTbTbody" className='compTbTbody'>
-                            </tbody>
-                        </table>
-                        <div className='alignCenter'><span className='compRegBtn' onClick={()=>{compContentsReg()}}>등록하기</span></div>
-                    </form>
-                </div>
-            </div>
-            <div id="confirmBoxScreen" className='confirmBoxScreen hide'>
-                <div id="confirmBox" className='confirmBox'>
-                    <div className='confirmBoxTop'><span id="confirmBoxClose" className="confirmBoxClose" onClick={()=>{hwpDownPopUpClose();}}>X</span></div>
-                    <div id="confirmMsg" className="confirmMsg alignCenter"></div>
-                    <div className='alignCenter'>
-                        <span id="confirmBoxCnclBtn" className='confirmBoxCnclBtn' onClick={()=>{hwpDownPopUpClose();}}>아니오</span>
-                        <span id="confirmBoxBtn" className='confirmBoxBtn' onClick={(event)=>{convertHtmlToTex(event);}}>네</span>
-                    </div>
-                </div>
-            </div>
-            <div id="resDetailedTimeDesc" className='blindBox hide'>
-                <div id="hourGlassBox" className='resDetailedTimeDesc'>
-                    <div>
-                        <img className="hourglass" src={hourglass} alt=""/>
-                    </div>
-                    <div id="hourGlassDesc"></div>
-                </div>
-            </div>
-            </>
-
+              }}>
+              아니오
+            </span>
+            <span
+              id='confirmBoxBtn'
+              className='confirmBoxBtn'
+              onClick={(event) => {
+                convertHtmlToTex(event);
+              }}>
+              네
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id='resDetailedTimeDesc' className='blindBox hide'>
+        <div id='hourGlassBox' className='resDetailedTimeDesc'>
+          <div>
+            <img className='hourglass' src={hourglass} alt='' />
+          </div>
+          <div id='hourGlassDesc'></div>
+        </div>
+      </div>
+    </>
   );
-}
+};
 
 export default IpsiWorkContentsListy;

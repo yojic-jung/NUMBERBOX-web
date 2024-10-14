@@ -83,12 +83,8 @@ const MathDocsMaker = () => {
     const asyncUseEffect = async function () {
       window.addEventListener('popstate', gotoPreviousStep);
       let jsonObj = await nb_dataFetch('/math/menu/unit', true);
-      setSubjectList(jsonObj['mathSubjectInfo']);
-      unitListSetFunction(
-        jsonObj['mathSubjectInfo'],
-        jsonObj['mathSecUnitInfo'],
-        jsonObj['mathThrUnitInfo']
-      );
+      setSubjectList(jsonObj.data['subjectList']);
+      unitListSetFunction(jsonObj.data['subjectList'], jsonObj.data['firUnitList'], jsonObj.data['secUnitList']);
 
       let returnObj = await nb_dataFetch('/mathInfo/takeIpsiYear', true);
       let impYearMin = 0;
@@ -125,20 +121,14 @@ const MathDocsMaker = () => {
 
   const showMathDocsByMyMathDocsPage = async (mathDocsNo) => {
     document.getElementById('mathDocsFirstStep').classList.add('hide');
-    let jsonObj = await nb_dataFetch(
-      '/mathDocs/mathDocsByMyMathDocsPage?docsNo=' + mathDocsNo,
-      true
-    );
+    let jsonObj = await nb_dataFetch('/mathDocs/mathDocsByMyMathDocsPage?docsNo=' + mathDocsNo, true);
     let mathContentsList = jsonObj['mathContentsList'];
     let mathDocsPaper = jsonObj['mathDocsPaper'];
 
     if (jsonObj.mathDocsPaper.docsErrStts === 3) {
       setShowFinalPopup(false);
       document.getElementById('topMenuBar').classList.add('hide');
-      if (document.getElementsByClassName('manager-menu')[0] != null)
-        document
-          .getElementsByClassName('manager-menu')[0]
-          .classList.add('hide');
+      if (document.getElementsByClassName('manager-menu')[0] != null) document.getElementsByClassName('manager-menu')[0].classList.add('hide');
     }
 
     let barArr = [];
@@ -170,30 +160,17 @@ const MathDocsMaker = () => {
         if (mathContentsList[i].contentsClassify === 4) {
           if (mathContentsList[i].wrongRatio < 60) {
             lv1Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 60 &&
-            mathContentsList[i].wrongRatio < 70
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70) {
             lv2Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 70 &&
-            mathContentsList[i].wrongRatio < 80
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80) {
             lv3Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 80 &&
-            mathContentsList[i].wrongRatio < 90
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90) {
             lv4Len += 1;
           } else if (mathContentsList[i].wrongRatio >= 90) {
             lv5Len += 1;
           }
         } else {
-          if (
-            mathContentsList[i].quesLevel === 1 ||
-            mathContentsList[i].quesLevel === 2 ||
-            mathContentsList[i].quesLevel === 3
-          ) {
+          if (mathContentsList[i].quesLevel === 1 || mathContentsList[i].quesLevel === 2 || mathContentsList[i].quesLevel === 3) {
             lv1Len += 1;
           } else if (mathContentsList[i].quesLevel === 4) {
             lv2Len += 1;
@@ -290,8 +267,7 @@ const MathDocsMaker = () => {
     ];
     setConArrByMultiOnPie(pieArr);
     setShowChart(true);
-    document.getElementById('mathDocsDesc').innerHTML =
-      '문제를 교체하거나 추가할 수 있습니다.';
+    document.getElementById('mathDocsDesc').innerHTML = '문제를 교체하거나 추가할 수 있습니다.';
 
     await nb_multiChoiceGridSet('quesConMultiShow');
     window.scrollTo(0, 0);
@@ -304,8 +280,7 @@ const MathDocsMaker = () => {
     document.getElementById('mathDocsOwner').value = mathDocsPaper.docsOwner;
 
     document.getElementById('docsPreviousBtn').classList.add('hide');
-    if (document.getElementById('docsPreviousPage') !== null)
-      document.getElementById('docsPreviousPage').classList.remove('hide');
+    if (document.getElementById('docsPreviousPage') !== null) document.getElementById('docsPreviousPage').classList.remove('hide');
     document.getElementById('page-transit').classList.add('hide');
     document.getElementById('page-transit-img').classList.add('hide');
 
@@ -381,8 +356,7 @@ const MathDocsMaker = () => {
     setIsSearchedMyCon(false);
     setIsSearchedMyRepo(false);
     document.getElementById('mathDocsFirstStep').classList.add('hide');
-    document.getElementById('mathDocsDesc').innerHTML =
-      '나의 제작문제 및 저장소 문제를 추가하여 학습지를 만들어 보세요.';
+    document.getElementById('mathDocsDesc').innerHTML = '나의 제작문제 및 저장소 문제를 추가하여 학습지를 만들어 보세요.';
     window.history.pushState('', '학습지 만들기 2단계', '/makeMathDocsTwoStep');
   };
 
@@ -412,11 +386,9 @@ const MathDocsMaker = () => {
     for (let i = 0; i < typeBtn.length; i++) {
       if (!typeBtn[i].classList.contains('active')) continue;
       if (unitUniqNoAndTypeNo === '') {
-        unitUniqNoAndTypeNo +=
-          typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitUniqNoAndTypeNo += typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
       } else {
-        unitUniqNoAndTypeNo +=
-          '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitUniqNoAndTypeNo += '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
       }
     }
 
@@ -474,20 +446,11 @@ const MathDocsMaker = () => {
       }
       if (mathContentsList[i].wrongRatio < 60) {
         lv1Len += 1;
-      } else if (
-        mathContentsList[i].wrongRatio >= 60 &&
-        mathContentsList[i].wrongRatio < 70
-      ) {
+      } else if (mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70) {
         lv2Len += 1;
-      } else if (
-        mathContentsList[i].wrongRatio >= 70 &&
-        mathContentsList[i].wrongRatio < 80
-      ) {
+      } else if (mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80) {
         lv3Len += 1;
-      } else if (
-        mathContentsList[i].wrongRatio >= 80 &&
-        mathContentsList[i].wrongRatio < 90
-      ) {
+      } else if (mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90) {
         lv4Len += 1;
       } else if (mathContentsList[i].wrongRatio >= 90) {
         lv5Len += 1;
@@ -541,8 +504,7 @@ const MathDocsMaker = () => {
     ];
     setConArrByMultiOnPie(pieArr);
     setShowChart(true);
-    document.getElementById('mathDocsDesc').innerHTML =
-      '문제를 교체하거나 추가하여 학습지를 완성해 보세요.';
+    document.getElementById('mathDocsDesc').innerHTML = '문제를 교체하거나 추가하여 학습지를 완성해 보세요.';
     document.getElementById('mathDocsFirstStep').classList.add('hide');
     await nb_multiChoiceGridSet('quesConMultiShow');
     window.scrollTo(0, 0);
@@ -593,11 +555,9 @@ const MathDocsMaker = () => {
     for (let i = 0; i < typeBtn.length; i++) {
       if (!typeBtn[i].classList.contains('active')) continue;
       if (unitUniqNoAndTypeNo === '') {
-        unitUniqNoAndTypeNo +=
-          typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitUniqNoAndTypeNo += typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
       } else {
-        unitUniqNoAndTypeNo +=
-          '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitUniqNoAndTypeNo += '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
       }
     }
 
@@ -638,15 +598,7 @@ const MathDocsMaker = () => {
       return;
     }
 
-    let jsonObj = await nb_dataFetch(
-      '/mathDocs/mathDocs?unitUniqNoAndTypeNoList=' +
-        unitUniqNoAndTypeNo +
-        '&quesLevel=' +
-        quesLevel +
-        '&conCnt=' +
-        conCntInput,
-      true
-    );
+    let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitUniqNoAndTypeNoList=' + unitUniqNoAndTypeNo + '&quesLevel=' + quesLevel + '&conCnt=' + conCntInput, true);
     let mathContentsList = jsonObj['mathContentsList'];
     let lv1Len = 0;
     let lv2Len = 0;
@@ -714,8 +666,7 @@ const MathDocsMaker = () => {
     ];
     setConArrByMultiOnPie(pieArr);
     setShowChart(true);
-    document.getElementById('mathDocsDesc').innerHTML =
-      '문제를 교체하거나 추가하여 학습지를 완성해 보세요.';
+    document.getElementById('mathDocsDesc').innerHTML = '문제를 교체하거나 추가하여 학습지를 완성해 보세요.';
     document.getElementById('mathDocsFirstStep').classList.add('hide');
     await nb_multiChoiceGridSet('quesConMultiShow');
     window.scrollTo(0, 0);
@@ -723,23 +674,11 @@ const MathDocsMaker = () => {
     setIsSearchedMyRepo(false);
 
     let grade = '';
-    if (
-      document
-        .getElementsByClassName('mathDocsUnitBtn active')[0]
-        .dataset.subjectInfo.includes('중등 1')
-    ) {
+    if (document.getElementsByClassName('mathDocsUnitBtn active')[0].dataset.subjectInfo.includes('중등 1')) {
       grade = '중1';
-    } else if (
-      document
-        .getElementsByClassName('mathDocsUnitBtn active')[0]
-        .dataset.subjectInfo.includes('중등 2')
-    ) {
+    } else if (document.getElementsByClassName('mathDocsUnitBtn active')[0].dataset.subjectInfo.includes('중등 2')) {
       grade = '중2';
-    } else if (
-      document
-        .getElementsByClassName('mathDocsUnitBtn active')[0]
-        .dataset.subjectInfo.includes('중등 3')
-    ) {
+    } else if (document.getElementsByClassName('mathDocsUnitBtn active')[0].dataset.subjectInfo.includes('중등 3')) {
       grade = '중3';
     }
 
@@ -749,54 +688,28 @@ const MathDocsMaker = () => {
         subTitle =
           document.getElementsByClassName('typeBtn active')[0].innerHTML +
           ' ~ ' +
-          document.getElementsByClassName('typeBtn active')[
-            document.getElementsByClassName('typeBtn active').length - 1
-          ].innerHTML;
-        if (document.getElementsByClassName('typeBtn active').length === 1)
-          subTitle =
-            document.getElementsByClassName('typeBtn active')[0].innerHTML;
+          document.getElementsByClassName('typeBtn active')[document.getElementsByClassName('typeBtn active').length - 1].innerHTML;
+        if (document.getElementsByClassName('typeBtn active').length === 1) subTitle = document.getElementsByClassName('typeBtn active')[0].innerHTML;
 
         //수식 요소가 포함된 경우
-        if (
-          document
-            .getElementsByClassName('typeBtn active')[0]
-            .querySelectorAll('*').length !== 0
-        ) {
+        if (document.getElementsByClassName('typeBtn active')[0].querySelectorAll('*').length !== 0) {
           subTitle = '';
         }
-        if (
-          document.getElementsByClassName('typeBtn active').length !== 1 &&
-          document
-            .getElementsByClassName('typeBtn active')[1]
-            .querySelectorAll('*').length !== 0
-        ) {
+        if (document.getElementsByClassName('typeBtn active').length !== 1 && document.getElementsByClassName('typeBtn active')[1].querySelectorAll('*').length !== 0) {
           subTitle = '';
         }
       } else {
         subTitle =
           document.getElementsByClassName('thrUnitBtn active')[0].innerHTML +
           ' ~ ' +
-          document.getElementsByClassName('thrUnitBtn active')[
-            document.getElementsByClassName('thrUnitBtn active').length - 1
-          ].innerHTML;
-        if (document.getElementsByClassName('thrUnitBtn active').length === 1)
-          subTitle =
-            document.getElementsByClassName('thrUnitBtn active')[0].innerHTML;
+          document.getElementsByClassName('thrUnitBtn active')[document.getElementsByClassName('thrUnitBtn active').length - 1].innerHTML;
+        if (document.getElementsByClassName('thrUnitBtn active').length === 1) subTitle = document.getElementsByClassName('thrUnitBtn active')[0].innerHTML;
 
         //수식 요소가 포함된 경우
-        if (
-          document
-            .getElementsByClassName('thrUnitBtn active')[0]
-            .querySelectorAll('*').length !== 0
-        ) {
+        if (document.getElementsByClassName('thrUnitBtn active')[0].querySelectorAll('*').length !== 0) {
           subTitle = '';
         }
-        if (
-          document.getElementsByClassName('thrUnitBtn active').length !== 1 &&
-          document
-            .getElementsByClassName('thrUnitBtn active')[1]
-            .querySelectorAll('*').length !== 0
-        ) {
+        if (document.getElementsByClassName('thrUnitBtn active').length !== 1 && document.getElementsByClassName('thrUnitBtn active')[1].querySelectorAll('*').length !== 0) {
           subTitle = '';
         }
       }
@@ -804,18 +717,12 @@ const MathDocsMaker = () => {
       subTitle =
         document.getElementsByClassName('secUnitBtn active')[0].innerHTML +
         ' ~ ' +
-        document.getElementsByClassName('secUnitBtn active')[
-          document.getElementsByClassName('secUnitBtn active').length - 1
-        ].innerHTML;
-      if (document.getElementsByClassName('secUnitBtn active').length === 1)
-        subTitle =
-          document.getElementsByClassName('secUnitBtn active')[0].innerHTML;
+        document.getElementsByClassName('secUnitBtn active')[document.getElementsByClassName('secUnitBtn active').length - 1].innerHTML;
+      if (document.getElementsByClassName('secUnitBtn active').length === 1) subTitle = document.getElementsByClassName('secUnitBtn active')[0].innerHTML;
     }
 
     document.getElementById('docsGrade').value = grade;
-    document.getElementById('docsTitle').value =
-      document.getElementsByClassName('mathDocsUnitBtn active')[0].dataset
-        .subjectInfo + ' 학습지';
+    document.getElementById('docsTitle').value = document.getElementsByClassName('mathDocsUnitBtn active')[0].dataset.subjectInfo + ' 학습지';
     document.getElementById('docsSubTitle').value = subTitle;
     window.history.pushState('', '학습지 만들기 2단계', '/makeMathDocsTwoStep');
 
@@ -823,8 +730,7 @@ const MathDocsMaker = () => {
   };
 
   const gotoPreviousStep = () => {
-    document.getElementById('mathDocsDesc').innerHTML =
-      '원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)';
+    document.getElementById('mathDocsDesc').innerHTML = '원하는 단원을 선택하여 학습지를 만들어보세요.<br/>(학습지 생성 문제는 N명의수학 제작 문제만 포함됩니다.)';
     setShowChart(false);
     document.getElementById('mathDocsFirstStep').classList.remove('hide');
     window.scrollTo(0, 0);
@@ -841,10 +747,7 @@ const MathDocsMaker = () => {
     //수능 모의고사 문제는 다른 문제와 같이 사용될 수 없음
     let mathDocsUnitBtn = document.getElementsByClassName('mathDocsUnitBtn');
     for (let i = 0; i < mathDocsUnitBtn.length; i++) {
-      if (
-        mathDocsUnitBtn[i].classList.contains('active') &&
-        event.target !== mathDocsUnitBtn[i]
-      ) {
+      if (mathDocsUnitBtn[i].classList.contains('active') && event.target !== mathDocsUnitBtn[i]) {
         mathDocsUnitBtn[i].click();
       }
     }
@@ -852,10 +755,7 @@ const MathDocsMaker = () => {
     let subjectBtnWrap = document.getElementsByClassName('subjectBtnWrap');
     for (let i = 0; i < subjectBtnWrap.length; i++) {
       if (!event.target.classList.contains('active')) {
-        if (
-          subjectBtnWrap[i].dataset.subjectInfo.indexOf('중등') > -1 ||
-          subjectBtnWrap[i].dataset.subjectInfo.indexOf('고등') > -1
-        ) {
+        if (subjectBtnWrap[i].dataset.subjectInfo.indexOf('중등') > -1 || subjectBtnWrap[i].dataset.subjectInfo.indexOf('고등') > -1) {
           continue;
         }
         subjectBtnWrap[i].classList.remove('hide');
@@ -870,28 +770,19 @@ const MathDocsMaker = () => {
               unitUniqNoList += ',' + thrUnitBtn[j].dataset.unitUniqNo;
             }
           }
-          let jsonObj = await nb_dataFetch(
-            '/mathInfo/typeInfoList?unitUniqNoList=' + unitUniqNoList,
-            true
-          );
-          let thrUnitBtnWrap =
-            subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
-          let mathTypeInfoList = jsonObj['mathTypeInfoList'];
+          let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitUniqNoList, true);
+          let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
+          let mathTypeInfoList = jsonObj.data['mathTypeList'];
           for (let j = 0; j < thrUnitBtnWrap.length; j++) {
             for (let k = 0; k < mathTypeInfoList.length; k++) {
-              if (
-                thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset
-                  .unitUniqNo === mathTypeInfoList[k].mathTypeDomain.unitUniqNo
-              ) {
+              if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitUniqNo === mathTypeInfoList[k].unitId) {
                 let tmpDiv = document.createElement('div');
                 tmpDiv.className = 'typeBtnWrap hide';
                 let tmpSpan = document.createElement('span');
                 tmpSpan.innerHTML = mathTypeInfoList[k].quesType;
                 tmpSpan.className = 'typeBtn';
-                tmpSpan.dataset.unitUniqNo =
-                  mathTypeInfoList[k].mathTypeDomain.unitUniqNo;
-                tmpSpan.dataset.typeNo =
-                  mathTypeInfoList[k].mathTypeDomain.typeNo;
+                tmpSpan.dataset.unitUniqNo = mathTypeInfoList[k].unitId;
+                tmpSpan.dataset.typeNo = mathTypeInfoList[k].typeNo;
                 tmpSpan.addEventListener('click', typeClickFunction);
                 tmpDiv.append(tmpSpan);
                 thrUnitBtnWrap[j].append(tmpDiv);
@@ -901,24 +792,14 @@ const MathDocsMaker = () => {
         }
 
         //폴드 다 접기
-        if (
-          subjectBtnWrap[i]
-            .querySelector('.subjectFoldBtn')
-            .classList.contains('active')
-        ) {
+        if (subjectBtnWrap[i].querySelector('.subjectFoldBtn').classList.contains('active')) {
           subjectBtnWrap[i].querySelector('.subjectFoldBtn').click();
         }
       } else {
         subjectBtnWrap[i].classList.add('hide');
         let activeBtn = subjectBtnWrap[i].querySelectorAll('.active');
         for (let i = 0; i < activeBtn.length; i++) {
-          if (
-            !(
-              activeBtn[i].classList.contains('subjectFoldBtn') ||
-              activeBtn[i].classList.contains('secUnitFoldBtn') ||
-              activeBtn[i].classList.contains('thrUnitFoldBtn')
-            )
-          ) {
+          if (!(activeBtn[i].classList.contains('subjectFoldBtn') || activeBtn[i].classList.contains('secUnitFoldBtn') || activeBtn[i].classList.contains('thrUnitFoldBtn'))) {
             activeBtn[i].classList.remove('active');
           }
         }
@@ -943,21 +824,14 @@ const MathDocsMaker = () => {
 
   const unitSelect = async (event) => {
     //일반 문제는 수능 모의고사 문제와 같이 사용될 수 없음
-    if (
-      document
-        .querySelector('.mathDocsUnitBtn.ipsi')
-        .classList.contains('active')
-    ) {
+    if (document.querySelector('.mathDocsUnitBtn.ipsi').classList.contains('active')) {
       document.querySelector('.mathDocsUnitBtn.ipsi').click();
     }
 
     let subjectBtnWrap = document.getElementsByClassName('subjectBtnWrap');
     for (let i = 0; i < subjectBtnWrap.length; i++) {
       if (!event.target.classList.contains('active')) {
-        if (
-          event.target.dataset.subjectInfo ===
-          subjectBtnWrap[i].dataset.subjectInfo
-        ) {
+        if (event.target.dataset.subjectInfo === subjectBtnWrap[i].dataset.subjectInfo) {
           subjectBtnWrap[i].classList.remove('hide');
           if (event.target.dataset.typeExist === 'false') {
             let unitUniqNoList = '';
@@ -969,29 +843,19 @@ const MathDocsMaker = () => {
                 unitUniqNoList += ',' + thrUnitBtn[j].dataset.unitUniqNo;
               }
             }
-            let jsonObj = await nb_dataFetch(
-              '/mathInfo/typeInfoList?unitUniqNoList=' + unitUniqNoList,
-              true
-            );
-            let thrUnitBtnWrap =
-              subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
-            let mathTypeInfoList = jsonObj['mathTypeInfoList'];
+            let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitUniqNoList, true);
+            let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
+            let mathTypeInfoList = jsonObj.data['mathTypeList'];
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {
               for (let k = 0; k < mathTypeInfoList.length; k++) {
-                if (
-                  thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset
-                    .unitUniqNo ===
-                  mathTypeInfoList[k].mathTypeDomain.unitUniqNo
-                ) {
+                if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitUniqNo === mathTypeInfoList[k].unitId) {
                   let tmpDiv = document.createElement('div');
                   tmpDiv.className = 'typeBtnWrap hide';
                   let tmpSpan = document.createElement('span');
                   tmpSpan.innerHTML = mathTypeInfoList[k].quesType;
                   tmpSpan.className = 'typeBtn';
-                  tmpSpan.dataset.unitUniqNo =
-                    mathTypeInfoList[k].mathTypeDomain.unitUniqNo;
-                  tmpSpan.dataset.typeNo =
-                    mathTypeInfoList[k].mathTypeDomain.typeNo;
+                  tmpSpan.dataset.unitUniqNo = mathTypeInfoList[k].unitId;
+                  tmpSpan.dataset.typeNo = mathTypeInfoList[k].typeNo;
                   tmpSpan.addEventListener('click', typeClickFunction);
                   tmpDiv.append(tmpSpan);
                   thrUnitBtnWrap[j].append(tmpDiv);
@@ -1002,20 +866,11 @@ const MathDocsMaker = () => {
           }
         }
       } else {
-        if (
-          event.target.dataset.subjectInfo ===
-          subjectBtnWrap[i].dataset.subjectInfo
-        ) {
+        if (event.target.dataset.subjectInfo === subjectBtnWrap[i].dataset.subjectInfo) {
           subjectBtnWrap[i].classList.add('hide');
           let activeBtn = subjectBtnWrap[i].querySelectorAll('.active');
           for (let i = 0; i < activeBtn.length; i++) {
-            if (
-              !(
-                activeBtn[i].classList.contains('subjectFoldBtn') ||
-                activeBtn[i].classList.contains('secUnitFoldBtn') ||
-                activeBtn[i].classList.contains('thrUnitFoldBtn')
-              )
-            ) {
+            if (!(activeBtn[i].classList.contains('subjectFoldBtn') || activeBtn[i].classList.contains('secUnitFoldBtn') || activeBtn[i].classList.contains('thrUnitFoldBtn'))) {
               activeBtn[i].classList.remove('active');
             }
           }
@@ -1086,10 +941,7 @@ const MathDocsMaker = () => {
     let typeBtn = event.target.parentElement.querySelectorAll('.typeBtn');
     if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
-      event.target
-        .closest('.subjectBtnWrap')
-        .querySelector('.subjectBtn')
-        .classList.remove('active');
+      event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.remove('active');
       for (let i = 0; i < thrUnitBtn.length; i++) {
         thrUnitBtn[i].classList.remove('active');
       }
@@ -1106,9 +958,7 @@ const MathDocsMaker = () => {
       }
 
       let isSecAllChecked = true;
-      let secUnitBtn = event.target
-        .closest('.subjectBtnWrap')
-        .querySelectorAll('.secUnitBtn');
+      let secUnitBtn = event.target.closest('.subjectBtnWrap').querySelectorAll('.secUnitBtn');
       for (let i = 0; i < secUnitBtn.length; i++) {
         if (!secUnitBtn[i].classList.contains('active')) {
           isSecAllChecked = false;
@@ -1117,10 +967,7 @@ const MathDocsMaker = () => {
       }
 
       if (isSecAllChecked) {
-        event.target
-          .closest('.subjectBtnWrap')
-          .querySelector('.subjectBtn')
-          .classList.add('active');
+        event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.add('active');
       }
     }
   };
@@ -1129,14 +976,8 @@ const MathDocsMaker = () => {
     let typeBtn = event.target.parentElement.querySelectorAll('.typeBtn');
     if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
-      event.target
-        .closest('.secUnitBtnWrap')
-        .querySelector('.secUnitBtn')
-        .classList.remove('active');
-      event.target
-        .closest('.subjectBtnWrap')
-        .querySelector('.subjectBtn')
-        .classList.remove('active');
+      event.target.closest('.secUnitBtnWrap').querySelector('.secUnitBtn').classList.remove('active');
+      event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.remove('active');
       for (let i = 0; i < typeBtn.length; i++) {
         typeBtn[i].classList.remove('active');
       }
@@ -1148,9 +989,7 @@ const MathDocsMaker = () => {
 
       //중단원이 전부 체크 되어있으면 대단원 체크해주기
       let isThrAllChecked = true;
-      let thrUnitBtn = event.target
-        .closest('.secUnitBtnWrap')
-        .querySelectorAll('.thrUnitBtn');
+      let thrUnitBtn = event.target.closest('.secUnitBtnWrap').querySelectorAll('.thrUnitBtn');
       for (let i = 0; i < thrUnitBtn.length; i++) {
         if (!thrUnitBtn[i].classList.contains('active')) {
           isThrAllChecked = false;
@@ -1159,16 +998,11 @@ const MathDocsMaker = () => {
       }
 
       if (isThrAllChecked) {
-        event.target
-          .closest('.secUnitBtnWrap')
-          .querySelector('.secUnitBtn')
-          .classList.add('active');
+        event.target.closest('.secUnitBtnWrap').querySelector('.secUnitBtn').classList.add('active');
       }
 
       let isSecAllChecked = true;
-      let secUnitBtn = event.target
-        .closest('.subjectBtnWrap')
-        .querySelectorAll('.secUnitBtn');
+      let secUnitBtn = event.target.closest('.subjectBtnWrap').querySelectorAll('.secUnitBtn');
       for (let i = 0; i < secUnitBtn.length; i++) {
         if (!secUnitBtn[i].classList.contains('active')) {
           isSecAllChecked = false;
@@ -1177,10 +1011,7 @@ const MathDocsMaker = () => {
       }
 
       if (isSecAllChecked) {
-        event.target
-          .closest('.subjectBtnWrap')
-          .querySelector('.subjectBtn')
-          .classList.add('active');
+        event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.add('active');
       }
     }
   };
@@ -1188,26 +1019,15 @@ const MathDocsMaker = () => {
   const typeClickFunction = (event) => {
     if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
-      event.target
-        .closest('.thrUnitBtnWrap')
-        .querySelector('.thrUnitBtn')
-        .classList.remove('active');
-      event.target
-        .closest('.secUnitBtnWrap')
-        .querySelector('.secUnitBtn')
-        .classList.remove('active');
-      event.target
-        .closest('.subjectBtnWrap')
-        .querySelector('.subjectBtn')
-        .classList.remove('active');
+      event.target.closest('.thrUnitBtnWrap').querySelector('.thrUnitBtn').classList.remove('active');
+      event.target.closest('.secUnitBtnWrap').querySelector('.secUnitBtn').classList.remove('active');
+      event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.remove('active');
     } else {
       event.target.classList.add('active');
 
       //유형이 전부 체크 되어있으면 중단원 체크해주기
       let isTypeAllChecked = true;
-      let typeBtn = event.target
-        .closest('.thrUnitBtnWrap')
-        .querySelectorAll('.typeBtn');
+      let typeBtn = event.target.closest('.thrUnitBtnWrap').querySelectorAll('.typeBtn');
       for (let i = 0; i < typeBtn.length; i++) {
         if (!typeBtn[i].classList.contains('active')) {
           isTypeAllChecked = false;
@@ -1216,17 +1036,12 @@ const MathDocsMaker = () => {
       }
 
       if (isTypeAllChecked) {
-        event.target
-          .closest('.thrUnitBtnWrap')
-          .querySelector('.thrUnitBtn')
-          .classList.add('active');
+        event.target.closest('.thrUnitBtnWrap').querySelector('.thrUnitBtn').classList.add('active');
       }
 
       //중단원이 전부 체크 되어있으면 대단원 체크해주기
       let isThrAllChecked = true;
-      let thrUnitBtn = event.target
-        .closest('.secUnitBtnWrap')
-        .querySelectorAll('.thrUnitBtn');
+      let thrUnitBtn = event.target.closest('.secUnitBtnWrap').querySelectorAll('.thrUnitBtn');
       for (let i = 0; i < thrUnitBtn.length; i++) {
         if (!thrUnitBtn[i].classList.contains('active')) {
           isThrAllChecked = false;
@@ -1235,16 +1050,11 @@ const MathDocsMaker = () => {
       }
 
       if (isThrAllChecked) {
-        event.target
-          .closest('.secUnitBtnWrap')
-          .querySelector('.secUnitBtn')
-          .classList.add('active');
+        event.target.closest('.secUnitBtnWrap').querySelector('.secUnitBtn').classList.add('active');
       }
 
       let isSecAllChecked = true;
-      let secUnitBtn = event.target
-        .closest('.subjectBtnWrap')
-        .querySelectorAll('.secUnitBtn');
+      let secUnitBtn = event.target.closest('.subjectBtnWrap').querySelectorAll('.secUnitBtn');
       for (let i = 0; i < secUnitBtn.length; i++) {
         if (!secUnitBtn[i].classList.contains('active')) {
           isSecAllChecked = false;
@@ -1253,10 +1063,7 @@ const MathDocsMaker = () => {
       }
 
       if (isSecAllChecked) {
-        event.target
-          .closest('.subjectBtnWrap')
-          .querySelector('.subjectBtn')
-          .classList.add('active');
+        event.target.closest('.subjectBtnWrap').querySelector('.subjectBtn').classList.add('active');
       }
     }
   };
@@ -1269,35 +1076,27 @@ const MathDocsMaker = () => {
       let tmpSpanFoldBtn = document.createElement('span');
       tmpSpanFoldBtn.innerHTML = '&#10095;';
       tmpSpanFoldBtn.className = 'subjectFoldBtn active';
-      tmpSpanFoldBtn.addEventListener('click', (event) =>
-        foldClickFunction(event, '.secUnitBtnWrap')
-      );
+      tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.secUnitBtnWrap'));
       tmpDiv.append(tmpSpanFoldBtn);
       let tmpSpan = document.createElement('span');
       tmpSpan.innerHTML = subjectList[i].mainVal;
       tmpSpan.className = 'subjectBtn';
       tmpSpan.addEventListener('click', subjectClickFunction);
       tmpDiv.append(tmpSpan);
-      document
-        .getElementsByClassName('mathDocsSubjectListDiv')[0]
-        .append(tmpDiv);
+      document.getElementsByClassName('mathDocsSubjectListDiv')[0].append(tmpDiv);
     }
 
     let subjectBtnList = document.getElementsByClassName('subjectBtnWrap');
     for (let i = 0; i < subjectBtnList.length; i++) {
       for (let j = 0; j < secUnitList.length; j++) {
-        if (
-          subjectBtnList[i].dataset.subjectInfo === secUnitList[j].parentVal
-        ) {
+        if (subjectBtnList[i].dataset.subjectInfo === secUnitList[j].parentVal) {
           let tmpDiv = document.createElement('div');
           tmpDiv.dataset.secUnitInfo = secUnitList[j].mainVal;
           tmpDiv.className = 'secUnitBtnWrap';
           let tmpSpanFoldBtn = document.createElement('span');
           tmpSpanFoldBtn.innerHTML = '&#10095;';
           tmpSpanFoldBtn.className = 'secUnitFoldBtn';
-          tmpSpanFoldBtn.addEventListener('click', (event) =>
-            foldClickFunction(event, '.thrUnitBtnWrap')
-          );
+          tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.thrUnitBtnWrap'));
           tmpDiv.append(tmpSpanFoldBtn);
           let tmpSpan = document.createElement('span');
           tmpSpan.innerHTML = secUnitList[j].mainVal;
@@ -1312,18 +1111,14 @@ const MathDocsMaker = () => {
     let secUnitBtnList = document.getElementsByClassName('secUnitBtnWrap');
     for (let i = 0; i < secUnitBtnList.length; i++) {
       for (let j = 0; j < thrUnitList.length; j++) {
-        if (
-          secUnitBtnList[i].dataset.secUnitInfo === thrUnitList[j].parentVal
-        ) {
+        if (secUnitBtnList[i].dataset.secUnitInfo === thrUnitList[j].parentVal) {
           let tmpDiv = document.createElement('div');
           tmpDiv.dataset.thrUnitInfo = thrUnitList[j].mainVal;
           tmpDiv.className = 'thrUnitBtnWrap hide';
           let tmpSpanFoldBtn = document.createElement('span');
           tmpSpanFoldBtn.innerHTML = '&#10095;';
           tmpSpanFoldBtn.className = 'thrUnitFoldBtn';
-          tmpSpanFoldBtn.addEventListener('click', (event) =>
-            foldClickFunction(event, '.typeBtnWrap')
-          );
+          tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.typeBtnWrap'));
           tmpDiv.append(tmpSpanFoldBtn);
           let tmpSpan = document.createElement('span');
           tmpSpan.innerHTML = thrUnitList[j].mainVal;
@@ -1351,9 +1146,7 @@ const MathDocsMaker = () => {
   const moveToContents = (event) => {
     let contentsDiv = document.getElementsByClassName('contentsDiv');
     for (let i = 0; i < contentsDiv.length; i++) {
-      if (
-        contentsDiv[i].dataset.contentsNo === event.target.dataset.contentsNo
-      ) {
+      if (contentsDiv[i].dataset.contentsNo === event.target.dataset.contentsNo) {
         contentsDiv[i].scrollIntoView({
           behavior: 'smooth',
         });
@@ -1373,19 +1166,12 @@ const MathDocsMaker = () => {
       return;
     }
     curPageNumByRepo = 0;
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/takeMyRepo?curPageNum=' +
-        curPageNumByRepo +
-        '&pageVolume=' +
-        pageVolume,
-      true
-    );
+    let returnObj = await nb_dataFetch('/mathInfo/takeMyRepo?curPageNum=' + curPageNumByRepo + '&pageVolume=' + pageVolume, true);
 
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo)
-          isSame = false;
+        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
       }
       return isSame;
     });
@@ -1396,22 +1182,15 @@ const MathDocsMaker = () => {
     });
 
     if (contentsNodeList.length === 0) {
-      document.getElementById('mathDocsMyRepoDesc').innerHTML =
-        '저장소에 문제가 존재하지 않거나<br/>학습지에 이미 추가되었습니다.';
-      document
-        .getElementById('mathDocsMyRepoDesc')
-        .classList.add('marginTopSevenZero');
+      document.getElementById('mathDocsMyRepoDesc').innerHTML = '저장소에 문제가 존재하지 않거나<br/>학습지에 이미 추가되었습니다.';
+      document.getElementById('mathDocsMyRepoDesc').classList.add('marginTopSevenZero');
     } else {
       document.getElementById('mathDocsMyRepoDesc').innerHTML = '';
-      document
-        .getElementById('mathDocsMyRepoDesc')
-        .classList.remove('marginTopSevenZero');
+      document.getElementById('mathDocsMyRepoDesc').classList.remove('marginTopSevenZero');
     }
 
     if (returnObj.totalPageCnt > 1) {
-      document
-        .getElementById('showMoreContentsByRepo')
-        .classList.remove('hide');
+      document.getElementById('showMoreContentsByRepo').classList.remove('hide');
     } else {
       document.getElementById('showMoreContentsByRepo').classList.add('hide');
     }
@@ -1436,41 +1215,25 @@ const MathDocsMaker = () => {
       return;
     }
     curPageNumByProd = 0;
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/takeMyContentsList?curPageNum=' +
-        curPageNumByProd +
-        '&pageVolume=' +
-        pageVolume,
-      true
-    );
-    let contentsNodeList = returnObj.myContentsList.filter(
-      (contentsMap, idx) => {
-        let isSame = true;
-        for (let i = 0; i < mathContentsList.length; i++) {
-          if (contentsMap.contentsNo === mathContentsList[i].contentsNo)
-            isSame = false;
-        }
-        return isSame;
+    let returnObj = await nb_dataFetch('/mathInfo/takeMyContentsList?curPageNum=' + curPageNumByProd + '&pageVolume=' + pageVolume, true);
+    let contentsNodeList = returnObj.myContentsList.filter((contentsMap, idx) => {
+      let isSame = true;
+      for (let i = 0; i < mathContentsList.length; i++) {
+        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
       }
-    );
+      return isSame;
+    });
 
     if (contentsNodeList.length === 0) {
-      document.getElementById('mathDocsMyProdDesc').innerHTML =
-        '나의 제작문제가 존재하지 않습니다.';
-      document
-        .getElementById('mathDocsMyProdDesc')
-        .classList.add('marginTopSevenZero');
+      document.getElementById('mathDocsMyProdDesc').innerHTML = '나의 제작문제가 존재하지 않습니다.';
+      document.getElementById('mathDocsMyProdDesc').classList.add('marginTopSevenZero');
     } else {
       document.getElementById('mathDocsMyProdDesc').innerHTML = '';
-      document
-        .getElementById('mathDocsMyProdDesc')
-        .classList.remove('marginTopSevenZero');
+      document.getElementById('mathDocsMyProdDesc').classList.remove('marginTopSevenZero');
     }
 
     if (returnObj.totalPageCnt > 1) {
-      document
-        .getElementById('showMoreContentsByProd')
-        .classList.remove('hide');
+      document.getElementById('showMoreContentsByProd').classList.remove('hide');
     } else {
       document.getElementById('showMoreContentsByProd').classList.add('hide');
     }
@@ -1521,20 +1284,12 @@ const MathDocsMaker = () => {
     });
 
     if (addType === 'myRepo') {
-      let jsonObj = await nb_dataFetch(
-        '/mathInfo/mathTypeInfo?unitUniqNo=' +
-          addContents[0].unitUniqNo +
-          '+&typeNo=' +
-          addContents[0].typeNo,
-        true
-      );
+      let jsonObj = await nb_dataFetch('/mathInfo/mathTypeInfo?unitUniqNo=' + addContents[0].unitUniqNo + '+&typeNo=' + addContents[0].typeNo, true);
       addContents[0].mathTypeInfo = jsonObj['mathTypeInfo'];
     }
 
     if (addType === 'conChng') {
-      let conNo = Number(
-        document.getElementById('mathDocsSimConAdd').dataset.contentsNo
-      );
+      let conNo = Number(document.getElementById('mathDocsSimConAdd').dataset.contentsNo);
       let conIdx;
       mathContentsList.forEach((contents, idx) => {
         if (contents.contentsNo === conNo) {
@@ -1597,30 +1352,17 @@ const MathDocsMaker = () => {
         if (mathContentsList[i].contentsClassify === 4) {
           if (mathContentsList[i].wrongRatio < 60) {
             lv1Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 60 &&
-            mathContentsList[i].wrongRatio < 70
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70) {
             lv2Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 70 &&
-            mathContentsList[i].wrongRatio < 80
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 70 && mathContentsList[i].wrongRatio < 80) {
             lv3Len += 1;
-          } else if (
-            mathContentsList[i].wrongRatio >= 80 &&
-            mathContentsList[i].wrongRatio < 90
-          ) {
+          } else if (mathContentsList[i].wrongRatio >= 80 && mathContentsList[i].wrongRatio < 90) {
             lv4Len += 1;
           } else if (mathContentsList[i].wrongRatio >= 90) {
             lv5Len += 1;
           }
         } else {
-          if (
-            mathContentsList[i].quesLevel === 1 ||
-            mathContentsList[i].quesLevel === 2 ||
-            mathContentsList[i].quesLevel === 3
-          ) {
+          if (mathContentsList[i].quesLevel === 1 || mathContentsList[i].quesLevel === 2 || mathContentsList[i].quesLevel === 3) {
             lv1Len += 1;
           } else if (mathContentsList[i].quesLevel === 4) {
             lv2Len += 1;
@@ -1754,38 +1496,20 @@ const MathDocsMaker = () => {
     nb_multiChoiceGridSet('quesConMultiShow');
   };
 
-  const takeSimilarContents = async (
-    unitUniqNo,
-    typeNo,
-    contentsNo,
-    contentsClassify
-  ) => {
+  const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo, contentsClassify) => {
     document.getElementById('mathDocsSimConAdd').classList.remove('hide');
-    document.getElementById('mathDocsSimConAdd').dataset.contentsNo =
-      contentsNo;
+    document.getElementById('mathDocsSimConAdd').dataset.contentsNo = contentsNo;
     if (contentsClassify === 1) contentsClassify = 0; //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
-    let jsonObj = await nb_dataFetch(
-      '/mathDocs/similarContents?unitUniqNo=' +
-        unitUniqNo +
-        '&typeNo=' +
-        typeNo +
-        '&contentsClassify=' +
-        contentsClassify,
-      true
-    );
-    let newContentsList = jsonObj['mathSimilarConList'].filter(
-      (contentsMap, idx) => {
-        let isSame = true;
-        for (let i = 0; i < mathContentsList.length; i++) {
-          if (contentsMap.contentsNo === mathContentsList[i].contentsNo)
-            isSame = false;
-        }
-        return isSame;
+    let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo=' + unitUniqNo + '&typeNo=' + typeNo + '&contentsClassify=' + contentsClassify, true);
+    let newContentsList = jsonObj['mathSimilarConList'].filter((contentsMap, idx) => {
+      let isSame = true;
+      for (let i = 0; i < mathContentsList.length; i++) {
+        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
       }
-    );
+      return isSame;
+    });
     if (newContentsList.length === 0) {
-      document.getElementById('mathDocsSimConDesc').innerHTML =
-        '해당 유형의 문제가 모두 추가되어 있습니다. ';
+      document.getElementById('mathDocsSimConDesc').innerHTML = '해당 유형의 문제가 모두 추가되어 있습니다. ';
     } else {
       document.getElementById('mathDocsSimConDesc').innerHTML = '';
     }
@@ -1864,18 +1588,14 @@ const MathDocsMaker = () => {
     setConArrByMultiOnPie(pieArr);
     await nb_multiChoiceGridSet('quesConMultiShow');
 
-    let mathDocsMyProd = document
-      .getElementById('mathDocsMyProd')
-      .querySelectorAll('.contentsDiv');
+    let mathDocsMyProd = document.getElementById('mathDocsMyProd').querySelectorAll('.contentsDiv');
     for (let i = 0; i < mathDocsMyProd.length; i++) {
       if (Number(mathDocsMyProd[i].dataset.contentsNo) === contentsNo) {
         mathDocsMyProd[i].classList.remove('customHide');
       }
     }
 
-    let mathDocsMyRepo = document
-      .getElementById('mathDocsMyRepo')
-      .querySelectorAll('.contentsDiv');
+    let mathDocsMyRepo = document.getElementById('mathDocsMyRepo').querySelectorAll('.contentsDiv');
     for (let i = 0; i < mathDocsMyRepo.length; i++) {
       if (Number(mathDocsMyRepo[i].dataset.contentsNo) === contentsNo) {
         mathDocsMyRepo[i].classList.remove('customHide');
@@ -1897,29 +1617,16 @@ const MathDocsMaker = () => {
     }
     formData.append('docsGrade', document.getElementById('docsGrade').value);
     formData.append('docsTitle', document.getElementById('docsTitle').value);
-    formData.append(
-      'docsSubTitle',
-      document.getElementById('docsSubTitle').value
-    );
-    formData.append(
-      'docsOwner',
-      document.getElementById('mathDocsOwner').value
-    );
+    formData.append('docsSubTitle', document.getElementById('docsSubTitle').value);
+    formData.append('docsOwner', document.getElementById('mathDocsOwner').value);
     formData.append('docsErrStts', 2);
     formData.append('contentsNoList', contentsNoList);
-    let jsonObj = await nb_formDataFetch(
-      '/mathDocs/registerMathDocsPaper',
-      formData,
-      false
-    );
+    let jsonObj = await nb_formDataFetch('/mathDocs/registerMathDocsPaper', formData, false);
     if (jsonObj.isSuccess) {
       let formData = new FormData();
       formData.append('errType', 3);
       formData.append('contentsNo', jsonObj.docsNo);
-      formData.append(
-        'reportContents',
-        document.getElementById('reportContents').value
-      );
+      formData.append('reportContents', document.getElementById('reportContents').value);
       let userAgent = navigator.userAgent.toLowerCase();
       if (userAgent.indexOf('windows') > -1) {
         formData.append('osInfo', 'windows');
@@ -1946,15 +1653,9 @@ const MathDocsMaker = () => {
           formData.append('browser', 'whale');
         } else if (userAgent.indexOf('firefox') > -1) {
           formData.append('browser', 'firefox');
-        } else if (
-          !(userAgent.indexOf('chrome') > -1) &&
-          userAgent.indexOf('safari') > -1
-        ) {
+        } else if (!(userAgent.indexOf('chrome') > -1) && userAgent.indexOf('safari') > -1) {
           formData.append('browser', 'safari');
-        } else if (
-          userAgent.indexOf('chrome') > -1 &&
-          userAgent.indexOf('safari') > -1
-        ) {
+        } else if (userAgent.indexOf('chrome') > -1 && userAgent.indexOf('safari') > -1) {
           formData.append('browser', 'chrome');
         } else {
           formData.append('browser', 'etc');
@@ -1964,16 +1665,9 @@ const MathDocsMaker = () => {
         formData.append('browser', 'etc');
       }
 
-      let returnVal = await nb_formDataFetch(
-        '/serviceCenter/registerError',
-        formData,
-        true
-      );
+      let returnVal = await nb_formDataFetch('/serviceCenter/registerError', formData, true);
       if (returnVal.isSuccess === true) {
-        await nb_fadeInOutA(
-          '오류 신고가 정상적으로 등록되었습니다.\n학습지를 재생성하여 다시 시도해주시기 바랍니다.',
-          1500
-        );
+        await nb_fadeInOutA('오류 신고가 정상적으로 등록되었습니다.\n학습지를 재생성하여 다시 시도해주시기 바랍니다.', 1500);
         await mathDocsInit();
       }
     }
@@ -2021,16 +1715,12 @@ const MathDocsMaker = () => {
     }
 
     //프린트 전 프린트시 달라지는 수식 속성 입히기
-    document
-      .getElementById('mathContents')
-      .classList.add('mathDocsTmpDivForHeightBugFix');
+    document.getElementById('mathContents').classList.add('mathDocsTmpDivForHeightBugFix');
 
     setMathDocsGrade(document.getElementById('docsGrade').value);
     setMathDocsTitle(document.getElementById('docsTitle').value);
     await reg_removeStyleAttribute('mathContents');
-    setMathDocsPerPageCnt(
-      Number(document.getElementById('pagePerConCntInp').value)
-    );
+    setMathDocsPerPageCnt(Number(document.getElementById('pagePerConCntInp').value));
     setMathDocsSubTitle(document.getElementById('docsSubTitle').value);
     setMathDocsOwner(document.getElementById('mathDocsOwner').value);
     setRerenderVal(rerenderVal + 1);
@@ -2043,18 +1733,14 @@ const MathDocsMaker = () => {
       return;
     }
     if (isInnerPage) {
-      nb_confirmBox(
-        '학습지를 수정하신 경우\n수정한 내용으로 저장됩니다. 저장하시겠습니까?'
-      );
+      nb_confirmBox('학습지를 수정하신 경우\n수정한 내용으로 저장됩니다. 저장하시겠습니까?');
     } else {
       nb_confirmBox('학습지를 [나의 학습지] 페이지에 저장하시겠습니까?');
     }
   };
 
   const mathDocsInit = async () => {
-    let mathDocsUnitBtn = document.getElementsByClassName(
-      'mathDocsUnitBtn active'
-    );
+    let mathDocsUnitBtn = document.getElementsByClassName('mathDocsUnitBtn active');
     while (mathDocsUnitBtn.length > 0) {
       mathDocsUnitBtn[0].click();
     }
@@ -2098,28 +1784,15 @@ const MathDocsMaker = () => {
 
     formData.append('docsGrade', document.getElementById('docsGrade').value);
     formData.append('docsTitle', document.getElementById('docsTitle').value);
-    formData.append(
-      'docsSubTitle',
-      document.getElementById('docsSubTitle').value
-    );
-    formData.append(
-      'docsOwner',
-      document.getElementById('mathDocsOwner').value
-    );
+    formData.append('docsSubTitle', document.getElementById('docsSubTitle').value);
+    formData.append('docsOwner', document.getElementById('mathDocsOwner').value);
     formData.append('docsErrStts', 0);
     formData.append('contentsNoList', contentsNoList);
-    let jsonObj = await nb_formDataFetch(
-      '/mathDocs/registerMathDocsPaper',
-      formData,
-      true
-    );
+    let jsonObj = await nb_formDataFetch('/mathDocs/registerMathDocsPaper', formData, true);
     if (jsonObj.isSuccess) {
       if (!isInnerPage) {
         await mathDocsInit();
-        nb_fadeInOutA(
-          '[나의 학습지] 페이지에 정상적으로 저장 되었습니다.',
-          2000
-        );
+        nb_fadeInOutA('[나의 학습지] 페이지에 정상적으로 저장 되었습니다.', 2000);
       } else {
         window.history.back();
       }
@@ -2148,14 +1821,8 @@ const MathDocsMaker = () => {
 
     formData.append('docsGrade', document.getElementById('docsGrade').value);
     formData.append('docsTitle', document.getElementById('docsTitle').value);
-    formData.append(
-      'docsSubTitle',
-      document.getElementById('docsSubTitle').value
-    );
-    formData.append(
-      'docsOwner',
-      document.getElementById('mathDocsOwner').value
-    );
+    formData.append('docsSubTitle', document.getElementById('docsSubTitle').value);
+    formData.append('docsOwner', document.getElementById('mathDocsOwner').value);
     formData.append('contentsNoList', contentsNoList);
     nb_formDataFetch('/mathDocs/registerMathDocsUsage', formData, true);
   };
@@ -2164,9 +1831,7 @@ const MathDocsMaker = () => {
     document.getElementById('confirmBoxScreen').classList.add('hide');
     document.title = 'N명의수학';
     //프린트 후 프린트시 입혀진 속성 다시 제거하기
-    document
-      .getElementById('mathContents')
-      .classList.remove('mathDocsTmpDivForHeightBugFix');
+    document.getElementById('mathContents').classList.remove('mathDocsTmpDivForHeightBugFix');
   };
 
   const initImpRangeSlider = async (minVal, maxVal) => {
@@ -2185,53 +1850,33 @@ const MathDocsMaker = () => {
     if (!isValid) {
       return;
     }
-    let returnObj = await nb_dataFetch(
-      '/myContentsCheckForHwpDown?contentsNo=all',
-      true
-    );
+    let returnObj = await nb_dataFetch('/myContentsCheckForHwpDown?contentsNo=all', true);
 
     if (returnObj.contentsNo === -1) {
       return;
     }
 
     document.getElementById('mathDocsThrStep').classList.add('hide');
-    await cvt_htmlToTexAll(
-      'mathContents',
-      '.contentsDiv',
-      document.getElementById('docsTitle').value,
-      document.getElementById('mathDocsOwner').value,
-      true
-    );
+    await cvt_htmlToTexAll('mathContents', '.contentsDiv', document.getElementById('docsTitle').value, document.getElementById('mathDocsOwner').value, true);
     saveMathDocsPaper();
     registerMathDocsUsage();
   };
 
   const showMoreContentsByProd = async function () {
     //필터 풀기
-    if (
-      document.getElementById('mySubFilterOff') !== null &&
-      document.getElementById('mySubFilterOff') !== undefined
-    ) {
+    if (document.getElementById('mySubFilterOff') !== null && document.getElementById('mySubFilterOff') !== undefined) {
       document.getElementById('mySubFilterOff').click();
     }
     curPageNumByProd++;
     let returnObj;
-    returnObj = await nb_dataFetch(
-      '/mathInfo/takeMyContentsList?curPageNum=' +
-        curPageNumByProd +
-        '&pageVolume=' +
-        pageVolume,
-      true
-    );
+    returnObj = await nb_dataFetch('/mathInfo/takeMyContentsList?curPageNum=' + curPageNumByProd + '&pageVolume=' + pageVolume, true);
     setMyProdContents([...myProdContents, ...returnObj.myContentsList]);
     document.getElementById('mathDocsMyProd').classList.remove('hide');
     await nb_multiChoiceGridSet('quesConMultiShow');
     document.getElementById('subjectFilterList').childNodes[0].click();
     document.getElementById('productFilterList').childNodes[0].click();
     if (curPageNumByProd !== returnObj.totalPageCnt - 1) {
-      document
-        .getElementById('showMoreContentsByProd')
-        .classList.remove('hide');
+      document.getElementById('showMoreContentsByProd').classList.remove('hide');
     } else {
       document.getElementById('showMoreContentsByProd').classList.add('hide');
     }
@@ -2239,26 +1884,16 @@ const MathDocsMaker = () => {
 
   const showMoreContentsByRepo = async function () {
     //필터 풀기
-    if (
-      document.getElementById('mySubFilterOff') !== null &&
-      document.getElementById('mySubFilterOff') !== undefined
-    ) {
+    if (document.getElementById('mySubFilterOff') !== null && document.getElementById('mySubFilterOff') !== undefined) {
       document.getElementById('mySubFilterOff').click();
     }
     curPageNumByRepo++;
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/takeMyRepo?curPageNum=' +
-        curPageNumByRepo +
-        '&pageVolume=' +
-        pageVolume,
-      true
-    );
+    let returnObj = await nb_dataFetch('/mathInfo/takeMyRepo?curPageNum=' + curPageNumByRepo + '&pageVolume=' + pageVolume, true);
 
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo)
-          isSame = false;
+        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
       }
       return isSame;
     });
@@ -2269,9 +1904,7 @@ const MathDocsMaker = () => {
     });
 
     if (returnObj.totalPageCnt > 1) {
-      document
-        .getElementById('showMoreContentsByRepo')
-        .classList.remove('hide');
+      document.getElementById('showMoreContentsByRepo').classList.remove('hide');
     } else {
       document.getElementById('showMoreContentsByRepo').classList.add('hide');
     }
@@ -2283,9 +1916,7 @@ const MathDocsMaker = () => {
     document.getElementById('productFilterList').childNodes[0].click();
 
     if (curPageNumByRepo !== returnObj.totalPageCnt - 1) {
-      document
-        .getElementById('showMoreContentsByRepo')
-        .classList.remove('hide');
+      document.getElementById('showMoreContentsByRepo').classList.remove('hide');
     } else {
       document.getElementById('showMoreContentsByRepo').classList.add('hide');
     }
@@ -2304,18 +1935,13 @@ const MathDocsMaker = () => {
               data-type-exist='false'
               onClick={(event) => {
                 unitSelect(event);
-              }}
-            >
+              }}>
               {subjectInfo.mainVal.replace('중등 ', '')}
             </span>
           </span>
         );
       }
-      if (
-        subjectInfo.mainVal.includes('1-2') ||
-        subjectInfo.mainVal.includes('2-2') ||
-        subjectInfo.mainVal.includes('3-2')
-      ) {
+      if (subjectInfo.mainVal.includes('1-2') || subjectInfo.mainVal.includes('2-2') || subjectInfo.mainVal.includes('3-2')) {
         return <span key={subjectInfo.unitUniqNo}></span>;
       }
       if (subjectInfo.mainVal.includes('3-2')) {
@@ -2327,8 +1953,7 @@ const MathDocsMaker = () => {
               data-type-exist='false'
               onClick={(event) => {
                 unitSelect(event);
-              }}
-            >
+              }}>
               {subjectInfo.mainVal.replace('중등 ', '')}
             </span>
             <br />
@@ -2343,8 +1968,7 @@ const MathDocsMaker = () => {
           data-type-exist='false'
           onClick={(event) => {
             unitSelect(event);
-          }}
-        >
+          }}>
           {subjectInfo.mainVal.replace('중등 ', '')}
         </span>
       );
@@ -2365,11 +1989,7 @@ const MathDocsMaker = () => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else
-      conImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.imgPath +
-        contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
 
     let sysCreateDate = contentsMap.sysCreateDate;
     let sysDateStr = '';
@@ -2384,8 +2004,7 @@ const MathDocsMaker = () => {
         data-contents-no={contentsMap.contentsNo}
         data-subject={contentsMap.mathUnitInfo.subject}
         data-sec-unit={contentsMap.mathUnitInfo.secUnit}
-        data-sys-create-date={sysDateStr}
-      >
+        data-sys-create-date={sysDateStr}>
         <table className='workListTable'>
           <thead>
             <tr className='workListTBHead2'>
@@ -2397,14 +2016,12 @@ const MathDocsMaker = () => {
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.subject,
-                        }}
-                      ></span>
+                        }}></span>
                       ]&nbsp;
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.secUnit,
-                        }}
-                      ></span>
+                        }}></span>
                     </div>
                   </div>
                   <div>
@@ -2413,8 +2030,7 @@ const MathDocsMaker = () => {
                       data-contents-no={contentsMap.contentsNo}
                       onClick={(event) => {
                         myProdConOrRepoConOrSimConAdd(event, 'myProd');
-                      }}
-                    >
+                      }}>
                       추가
                     </span>
                   </div>
@@ -2427,28 +2043,18 @@ const MathDocsMaker = () => {
               <td className='td1'>
                 <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                   <div className='quesDiv'>
-                    <div
-                      className='quesContents'
-                      dangerouslySetInnerHTML={{ __html: contentsMap.contents }}
-                    ></div>
-                    <div
-                      id='quesImg-show'
-                      className={'quesImg-show ' + isConImgHide}
-                    >
+                    <div className='quesContents' dangerouslySetInnerHTML={{ __html: contentsMap.contents }}></div>
+                    <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
                       <img src={conImgPath} id='contentsImgOutput' alt='' />
                     </div>
-                    <div
-                      id='workMultiShow'
-                      className={'quesConMultiShow ' + isMultiHide}
-                    >
+                    <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                       <div className='firDiv'>
                         <span className='multiChoiceNo'>&#9312;</span>
                         <span
                           className='firDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.firNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='secDiv'>
                         <span className='multiChoiceNo'>&#9313;</span>
@@ -2456,8 +2062,7 @@ const MathDocsMaker = () => {
                           className='secDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.secNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='thrDiv'>
                         <span className='multiChoiceNo'>&#9314;</span>
@@ -2465,8 +2070,7 @@ const MathDocsMaker = () => {
                           className='thrDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.thrNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fourDiv'>
                         <span className='multiChoiceNo'>&#9315;</span>
@@ -2474,8 +2078,7 @@ const MathDocsMaker = () => {
                           className='fourDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fourNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fifDiv'>
                         <span className='multiChoiceNo'>&#9316;</span>
@@ -2483,8 +2086,7 @@ const MathDocsMaker = () => {
                           className='fifDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fifNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                     </div>
                     <div className='mathDocsMinPadding'></div>
@@ -2510,11 +2112,7 @@ const MathDocsMaker = () => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else
-      conImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.imgPath +
-        contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
 
     let sysCreateDate = contentsMap.sysCreateDate;
     let sysDateStr = '';
@@ -2529,8 +2127,7 @@ const MathDocsMaker = () => {
         data-contents-no={contentsMap.contentsNo}
         data-subject={contentsMap.mathUnitInfo.subject}
         data-sec-unit={contentsMap.mathUnitInfo.secUnit}
-        data-sys-create-date={sysDateStr}
-      >
+        data-sys-create-date={sysDateStr}>
         <table className='workListTable'>
           <thead>
             <tr className='workListTBHead2'>
@@ -2542,14 +2139,12 @@ const MathDocsMaker = () => {
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.subject,
-                        }}
-                      ></span>
+                        }}></span>
                       ]&nbsp;
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.secUnit,
-                        }}
-                      ></span>
+                        }}></span>
                     </div>
                   </div>
                   <div>
@@ -2558,8 +2153,7 @@ const MathDocsMaker = () => {
                       data-contents-no={contentsMap.contentsNo}
                       onClick={(event) => {
                         myProdConOrRepoConOrSimConAdd(event, 'myRepo');
-                      }}
-                    >
+                      }}>
                       추가
                     </span>
                   </div>
@@ -2572,28 +2166,18 @@ const MathDocsMaker = () => {
               <td className='td1'>
                 <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                   <div className='quesDiv'>
-                    <div
-                      className='quesContents'
-                      dangerouslySetInnerHTML={{ __html: contentsMap.contents }}
-                    ></div>
-                    <div
-                      id='quesImg-show'
-                      className={'quesImg-show ' + isConImgHide}
-                    >
+                    <div className='quesContents' dangerouslySetInnerHTML={{ __html: contentsMap.contents }}></div>
+                    <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
                       <img src={conImgPath} id='contentsImgOutput' alt='' />
                     </div>
-                    <div
-                      id='workMultiShow'
-                      className={'quesConMultiShow ' + isMultiHide}
-                    >
+                    <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                       <div className='firDiv'>
                         <span className='multiChoiceNo'>&#9312;</span>
                         <span
                           className='firDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.firNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='secDiv'>
                         <span className='multiChoiceNo'>&#9313;</span>
@@ -2601,8 +2185,7 @@ const MathDocsMaker = () => {
                           className='secDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.secNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='thrDiv'>
                         <span className='multiChoiceNo'>&#9314;</span>
@@ -2610,8 +2193,7 @@ const MathDocsMaker = () => {
                           className='thrDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.thrNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fourDiv'>
                         <span className='multiChoiceNo'>&#9315;</span>
@@ -2619,8 +2201,7 @@ const MathDocsMaker = () => {
                           className='fourDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fourNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fifDiv'>
                         <span className='multiChoiceNo'>&#9316;</span>
@@ -2628,8 +2209,7 @@ const MathDocsMaker = () => {
                           className='fifDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fifNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                     </div>
                     <div className='mathDocsMinPadding'></div>
@@ -2655,11 +2235,7 @@ const MathDocsMaker = () => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else
-      conImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.imgPath +
-        contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
 
     let sysCreateDate = contentsMap.sysCreateDate;
     let sysDateStr = '';
@@ -2668,12 +2244,7 @@ const MathDocsMaker = () => {
     }
 
     return (
-      <div
-        className='contentsDiv simConRootDiv'
-        key={idx}
-        data-contents-no={contentsMap.contentsNo}
-        data-sys-create-date={sysDateStr}
-      >
+      <div className='contentsDiv simConRootDiv' key={idx} data-contents-no={contentsMap.contentsNo} data-sys-create-date={sysDateStr}>
         <table className='workListTable'>
           <thead>
             <tr className='workListTBHead2'>
@@ -2685,14 +2256,12 @@ const MathDocsMaker = () => {
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.subject,
-                        }}
-                      ></span>
+                        }}></span>
                       ]&nbsp;
                       <span
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.mathUnitInfo.secUnit,
-                        }}
-                      ></span>
+                        }}></span>
                     </div>
                   </div>
                   <div className='alignRight'>
@@ -2701,8 +2270,7 @@ const MathDocsMaker = () => {
                       data-contents-no={contentsMap.contentsNo}
                       onClick={(event) => {
                         myProdConOrRepoConOrSimConAdd(event, 'simCon');
-                      }}
-                    >
+                      }}>
                       추가{' '}
                     </span>
                     <span
@@ -2710,8 +2278,7 @@ const MathDocsMaker = () => {
                       data-contents-no={contentsMap.contentsNo}
                       onClick={(event) => {
                         myProdConOrRepoConOrSimConAdd(event, 'conChng');
-                      }}
-                    >
+                      }}>
                       교체{' '}
                     </span>
                   </div>
@@ -2724,28 +2291,18 @@ const MathDocsMaker = () => {
               <td className='td1'>
                 <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                   <div className='quesDiv'>
-                    <div
-                      className='quesContents'
-                      dangerouslySetInnerHTML={{ __html: contentsMap.contents }}
-                    ></div>
-                    <div
-                      id='quesImg-show'
-                      className={'quesImg-show ' + isConImgHide}
-                    >
+                    <div className='quesContents' dangerouslySetInnerHTML={{ __html: contentsMap.contents }}></div>
+                    <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
                       <img src={conImgPath} id='contentsImgOutput' alt='' />
                     </div>
-                    <div
-                      id='workMultiShow'
-                      className={'quesConMultiShow ' + isMultiHide}
-                    >
+                    <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                       <div className='firDiv'>
                         <span className='multiChoiceNo'>&#9312;</span>
                         <span
                           className='firDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.firNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='secDiv'>
                         <span className='multiChoiceNo'>&#9313;</span>
@@ -2753,8 +2310,7 @@ const MathDocsMaker = () => {
                           className='secDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.secNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='thrDiv'>
                         <span className='multiChoiceNo'>&#9314;</span>
@@ -2762,8 +2318,7 @@ const MathDocsMaker = () => {
                           className='thrDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.thrNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fourDiv'>
                         <span className='multiChoiceNo'>&#9315;</span>
@@ -2771,8 +2326,7 @@ const MathDocsMaker = () => {
                           className='fourDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fourNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fifDiv'>
                         <span className='multiChoiceNo'>&#9316;</span>
@@ -2780,8 +2334,7 @@ const MathDocsMaker = () => {
                           className='fifDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fifNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                     </div>
                     <div className='mathDocsMinPadding'></div>
@@ -2813,11 +2366,7 @@ const MathDocsMaker = () => {
 
     let solImgPath;
     if (contentsMap.solutionImg === null) solImgPath = '';
-    else
-      solImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.solutionImgPath +
-        contentsMap.solutionImg;
+    else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.solutionImgPath + contentsMap.solutionImg;
 
     let lvScore = '';
     if (contentsMap.contentsClassify === 4) {
@@ -2846,15 +2395,13 @@ const MathDocsMaker = () => {
                           <span
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.choiceAnswer,
-                            }}
-                          ></span>
+                            }}></span>
                           <span className={'marginRFive ' + isBlank}></span>
                           <span
                             className='answerSheet'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.answer,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                       </div>
                     </div>
@@ -2864,14 +2411,8 @@ const MathDocsMaker = () => {
                           <div>
                             <span className='mini-title6'>출처</span>
                             &nbsp;&nbsp;
-                            {contentsMap.impYear + 1}학년도{' '}
-                            {contentsMap.impMonth === 11
-                              ? '수능'
-                              : contentsMap.impMonth + '월 모의고사'}{' '}
-                            {contentsMap.paperType === 2 && '가형'}{' '}
-                            {contentsMap.paperType === 3 && '나형'}{' '}
-                            {contentsMap.oddQuesNum + '번'} (시행{' '}
-                            {contentsMap.impYear}/{contentsMap.impMonth})
+                            {contentsMap.impYear + 1}학년도 {contentsMap.impMonth === 11 ? '수능' : contentsMap.impMonth + '월 모의고사'} {contentsMap.paperType === 2 && '가형'}{' '}
+                            {contentsMap.paperType === 3 && '나형'} {contentsMap.oddQuesNum + '번'} (시행 {contentsMap.impYear}/{contentsMap.impMonth})
                           </div>
                           <div>
                             <span className='mini-title6'>배점</span>
@@ -2886,34 +2427,27 @@ const MathDocsMaker = () => {
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: contentsMap.mathUnitInfo.subject,
-                              }}
-                            ></span>{' '}
+                              }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: contentsMap.mathUnitInfo.secUnit,
-                              }}
-                            ></span>{' '}
+                              }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: contentsMap.mathUnitInfo.thrUnit,
-                              }}
-                            ></span>{' '}
+                              }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: contentsMap.mathTypeInfo.quesType,
-                              }}
-                            ></span>
+                              }}></span>
                           </div>
                         </div>
                       )}
                       <span className='mini-title6'>해설</span>
-                      <div
-                        id='solImg-show'
-                        className={'solImg-show ' + isSolImgHide}
-                      >
+                      <div id='solImg-show' className={'solImg-show ' + isSolImgHide}>
                         <img src={solImgPath} id='solutionImgOutput' alt='' />
                       </div>
 
@@ -2921,8 +2455,7 @@ const MathDocsMaker = () => {
                         className='solContents'
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.solution,
-                        }}
-                      ></div>
+                        }}></div>
                     </div>
                   </div>
                 </div>
@@ -2940,10 +2473,7 @@ const MathDocsMaker = () => {
         <meta name='description' content='학습지를 만들어 출력해보세요!' />
         <link rel='canonical' href='https://nsoohak.com/makeMathDocs' />
         <meta property='og:title' content='학습지 만들기' />
-        <meta
-          property='og:description'
-          content='학습지를 만들어 출력해보세요!'
-        />
+        <meta property='og:description' content='학습지를 만들어 출력해보세요!' />
       </Helmet>
       <Outlet />
       <BrowserView className='mathDocsBrowserView'>
@@ -2958,14 +2488,10 @@ const MathDocsMaker = () => {
               className='onlyMyProdOrRepoConBtn hide'
               onClick={() => {
                 onlyMyProdOrRepoContents();
-              }}
-            >
+              }}>
               나의 제작문제로 학습지 만들기
             </div>
-            <div className='mini-title3'>
-              &#8251; N명의수학은 현재 중등 1학기 수학 문제들만 제공 중입니다.
-              주기적인 업데이트로 새로운 문제들을 추가 제공 예정입니다.
-            </div>
+            <div className='mini-title3'>&#8251; N명의수학은 현재 중등 1학기 수학 문제들만 제공 중입니다. 주기적인 업데이트로 새로운 문제들을 추가 제공 예정입니다.</div>
             <div className='mathDocsSubjectInfoDiv'>
               {subjectInfoList}
               <div className=''>
@@ -2976,8 +2502,7 @@ const MathDocsMaker = () => {
                   data-type-exist='false'
                   onClick={(event) => {
                     ipsiContentsSelect(event);
-                  }}
-                >
+                  }}>
                   수능모의고사
                 </span>
               </div>
@@ -2993,38 +2518,17 @@ const MathDocsMaker = () => {
                           <td>배점</td>
                           <td className='levelSelTd paddingNone'>
                             <label className='levelSelLabel' htmlFor='level1'>
-                              <input
-                                type='checkbox'
-                                id='level1'
-                                name='level'
-                                value='3'
-                                className='hide'
-                              />{' '}
-                              2점
+                              <input type='checkbox' id='level1' name='level' value='3' className='hide' /> 2점
                             </label>
                           </td>
                           <td className='levelSelTd paddingNone'>
                             <label className='levelSelLabel' htmlFor='level3'>
-                              <input
-                                type='checkbox'
-                                id='level3'
-                                name='level'
-                                value='4'
-                                className='hide'
-                              />{' '}
-                              3점
+                              <input type='checkbox' id='level3' name='level' value='4' className='hide' /> 3점
                             </label>
                           </td>
                           <td className='levelSelTd paddingNone'>
                             <label className='levelSelLabel' htmlFor='level5'>
-                              <input
-                                type='checkbox'
-                                id='level5'
-                                name='level'
-                                value='5'
-                                className='hide'
-                              />{' '}
-                              4점
+                              <input type='checkbox' id='level5' name='level' value='5' className='hide' /> 4점
                             </label>
                           </td>
                         </tr>
@@ -3039,51 +2543,27 @@ const MathDocsMaker = () => {
                             className='levelSelTd'
                             onClick={(event) => {
                               levelSelect(event);
-                            }}
-                          >
+                            }}>
                             <label htmlFor='level1'>
-                              <input
-                                type='radio'
-                                id='level1'
-                                name='level'
-                                value='1'
-                                className='hide'
-                              />{' '}
-                              하
+                              <input type='radio' id='level1' name='level' value='1' className='hide' /> 하
                             </label>
                           </td>
                           <td
                             className='levelSelTd'
                             onClick={(event) => {
                               levelSelect(event);
-                            }}
-                          >
+                            }}>
                             <label htmlFor='level3'>
-                              <input
-                                type='radio'
-                                id='level3'
-                                name='level'
-                                value='3'
-                                className='hide'
-                              />{' '}
-                              중
+                              <input type='radio' id='level3' name='level' value='3' className='hide' /> 중
                             </label>
                           </td>
                           <td
                             className='levelSelTd'
                             onClick={(event) => {
                               levelSelect(event);
-                            }}
-                          >
+                            }}>
                             <label htmlFor='level5'>
-                              <input
-                                type='radio'
-                                id='level5'
-                                name='level'
-                                value='5'
-                                className='hide'
-                              />{' '}
-                              상
+                              <input type='radio' id='level5' name='level' value='5' className='hide' /> 상
                             </label>
                           </td>
                         </tr>
@@ -3100,64 +2580,56 @@ const MathDocsMaker = () => {
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           5
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           10
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           15
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           20
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           25
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           30
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           50
                         </td>
                         <td
                           className='conCntSelTd'
                           onClick={(event) => {
                             conCntSelect(event);
-                          }}
-                        >
+                          }}>
                           100
                         </td>
                         <td>
@@ -3178,8 +2650,7 @@ const MathDocsMaker = () => {
                   className='inBlock orangeBtn nextStep'
                   onClick={(event) => {
                     firstStepCheck();
-                  }}
-                >
+                  }}>
                   다음단계
                 </div>
               </div>
@@ -3190,11 +2661,8 @@ const MathDocsMaker = () => {
                 <div
                   className='closeBtn2'
                   onClick={() => {
-                    document
-                      .getElementById('ipsiContentsSelWrap')
-                      .classList.add('hide');
-                  }}
-                >
+                    document.getElementById('ipsiContentsSelWrap').classList.add('hide');
+                  }}>
                   X
                 </div>
                 <div className='mathDocsIpsiTitle'>
@@ -3204,51 +2672,22 @@ const MathDocsMaker = () => {
                   </span>
                 </div>
                 <div className='mathDocsIpsiDiv year'>
-                  {impYearRender && (
-                    <MultiRangeSlider
-                      name='ipsiYear'
-                      min={impMinYear}
-                      max={impMaxYear}
-                      onChange={() => {}}
-                      parentMethod={initImpRangeSlider}
-                    />
-                  )}
+                  {impYearRender && <MultiRangeSlider name='ipsiYear' min={impMinYear} max={impMaxYear} onChange={() => {}} parentMethod={initImpRangeSlider} />}
                 </div>
                 <div className='mathDocsIpsiDiv month'>
                   <span className='mathDocIpsiConBtn'>
                     <label className='levelSelLabel' htmlFor='ipsiMonth'>
-                      <input
-                        type='checkbox'
-                        id='ipsiMonth'
-                        name='ipsiMonth'
-                        value='11'
-                        className='hide'
-                      />{' '}
-                      11월(수능)
+                      <input type='checkbox' id='ipsiMonth' name='ipsiMonth' value='11' className='hide' /> 11월(수능)
                     </label>
                   </span>
                   <span className='mathDocIpsiConBtn'>
                     <label className='levelSelLabel' htmlFor='ipsiMonth2'>
-                      <input
-                        type='checkbox'
-                        id='ipsiMonth2'
-                        name='ipsiMonth'
-                        value='9'
-                        className='hide'
-                      />{' '}
-                      9월
+                      <input type='checkbox' id='ipsiMonth2' name='ipsiMonth' value='9' className='hide' /> 9월
                     </label>
                   </span>
                   <span className='mathDocIpsiConBtn'>
                     <label className='levelSelLabel' htmlFor='ipsiMonth3'>
-                      <input
-                        type='checkbox'
-                        id='ipsiMonth3'
-                        name='ipsiMonth'
-                        value='6'
-                        className='hide'
-                      />{' '}
-                      6월
+                      <input type='checkbox' id='ipsiMonth3' name='ipsiMonth' value='6' className='hide' /> 6월
                     </label>
                   </span>
                 </div>
@@ -3258,21 +2697,14 @@ const MathDocsMaker = () => {
                     {minVal}% ~ {maxVal}%
                   </span>
                 </div>
-                <MultiRangeSlider
-                  name='wrongRatio'
-                  min={0}
-                  max={100}
-                  onChange={() => {}}
-                  parentMethod={initWrongRatioRangeSlider}
-                />
+                <MultiRangeSlider name='wrongRatio' min={0} max={100} onChange={() => {}} parentMethod={initWrongRatioRangeSlider} />
                 <div className='paddingTen'></div>
                 <div className='alignCenter marginTen'>
                   <div
                     className='inBlock orangeBtn alignCenter'
                     onClick={(event) => {
                       ipsiConFirstStepCheck();
-                    }}
-                  >
+                    }}>
                     다음단계
                   </div>
                 </div>
@@ -3285,9 +2717,7 @@ const MathDocsMaker = () => {
               <div>
                 <div className='mathDocsStatistics'>
                   <div id='chartWrap' className='chartWrap'>
-                    <div className='conTotalCnt'>
-                      총 문항 수 : {conTotalCnt}문항
-                    </div>
+                    <div className='conTotalCnt'>총 문항 수 : {conTotalCnt}문항</div>
                     <div className='chartTitleWrap'>
                       <span id='barChartTitle' className='barChartTitle'>
                         난이도별 문항 수
@@ -3303,14 +2733,10 @@ const MathDocsMaker = () => {
                     <span
                       className='errBtnWrap mathDocs'
                       onClick={() => {
-                        document.getElementById('mathDocsErrTitle').innerHTML =
-                          '학습지 오류 내용을 적어주세요.';
+                        document.getElementById('mathDocsErrTitle').innerHTML = '학습지 오류 내용을 적어주세요.';
                         document.getElementById('reportContents').value = '';
-                        document
-                          .getElementById('mathDocsErrReportBox')
-                          .classList.remove('hide');
-                      }}
-                    >
+                        document.getElementById('mathDocsErrReportBox').classList.remove('hide');
+                      }}>
                       <div className='errBtn mathDocs'></div>학습지 오류 신고
                     </span>
                   </div>
@@ -3322,11 +2748,8 @@ const MathDocsMaker = () => {
                             <span
                               className='mathDocsInfoBtn'
                               onClick={() => {
-                                document
-                                  .getElementById('mathDocsInfoShow')
-                                  .classList.remove('hide');
-                              }}
-                            >
+                                document.getElementById('mathDocsInfoShow').classList.remove('hide');
+                              }}>
                               문제 간략 요약 보기
                             </span>
                           </td>
@@ -3337,8 +2760,7 @@ const MathDocsMaker = () => {
                               className='mathDocsMyCon'
                               onClick={() => {
                                 takeMyProdContents();
-                              }}
-                            >
+                              }}>
                               나의 제작 문제 추가
                             </span>
                           </td>
@@ -3349,8 +2771,7 @@ const MathDocsMaker = () => {
                               className='mathDocsMyRepo'
                               onClick={() => {
                                 takeMyRepoContents();
-                              }}
-                            >
+                              }}>
                               나의 저장소 문제 추가
                             </span>
                           </td>
@@ -3363,17 +2784,12 @@ const MathDocsMaker = () => {
                 <div id='mathDocsInfoShow' className='blindBox hide'>
                   <div className='mathDocsInfoRootDiv'>
                     <div className='mathDocsInfoTitle'>문제 간략 요약 보기</div>
-                    <div className='mini-title8'>
-                      드래그하여 문제 순서를 변경할 수 있습니다.
-                    </div>
+                    <div className='mini-title8'>드래그하여 문제 순서를 변경할 수 있습니다.</div>
                     <div
                       className='mathDocsInfoClose'
                       onClick={() => {
-                        document
-                          .getElementById('mathDocsInfoShow')
-                          .classList.add('hide');
-                      }}
-                    >
+                        document.getElementById('mathDocsInfoShow').classList.add('hide');
+                      }}>
                       X
                     </div>
                     <div className='mathDocsInfo'>
@@ -3384,11 +2800,7 @@ const MathDocsMaker = () => {
                         <span className='mathDocsInfoLv'>난이도</span>
                         <span className='mathDocsInfoDrag title'>순서변경</span>
                       </div>
-                      <ReactSortable
-                        list={mathContentsList}
-                        animation={200}
-                        setList={setMathContentsList}
-                      >
+                      <ReactSortable list={mathContentsList} animation={200} setList={setMathContentsList}>
                         {mathContentsList.map((contents, idx) => {
                           let quesNumber;
                           if (idx < 9) {
@@ -3415,31 +2827,22 @@ const MathDocsMaker = () => {
                             multiChoiceType = '주관식';
                           }
                           return (
-                            <div
-                              key={contents.contentsNo}
-                              className='mathDocsInfoLineDiv'
-                            >
+                            <div key={contents.contentsNo} className='mathDocsInfoLineDiv'>
                               <span
                                 className='mathDocsInfoNumber'
                                 data-contents-no={contents.contentsNo}
                                 onClick={(event) => {
                                   moveToContents(event);
-                                }}
-                              >
+                                }}>
                                 {quesNumber}
                               </span>
                               <span
                                 className='mathDocsInfoQuesType'
                                 dangerouslySetInnerHTML={{
                                   __html: contents.mathTypeInfo.quesType,
-                                }}
-                              ></span>
-                              <span className='mathDocsInfoMultiType'>
-                                {multiChoiceType}
-                              </span>
-                              <span className='mathDocsInfoLv'>
-                                {quesLevel}
-                              </span>
+                                }}></span>
+                              <span className='mathDocsInfoMultiType'>{multiChoiceType}</span>
+                              <span className='mathDocsInfoLv'>{quesLevel}</span>
                               <span className='mathDocsInfoDrag'></span>
                             </div>
                           );
@@ -3456,55 +2859,37 @@ const MathDocsMaker = () => {
                     <div
                       className='mathDocsInfoClose'
                       onClick={() => {
-                        document
-                          .getElementById('mathDocsConAdd')
-                          .classList.add('hide');
-                      }}
-                    >
+                        document.getElementById('mathDocsConAdd').classList.add('hide');
+                      }}>
                       X
                     </div>
-                    <MyContentsSearchFilter
-                      makeContentsShow={false}
-                      descMsg=''
-                    />
+                    <MyContentsSearchFilter makeContentsShow={false} descMsg='' />
                     <hr />
                     <div id='mathDocsMyProd' className='mathDocsMyProdDiv'>
                       <div className='workList myContentsList'>
-                        <div className='contents-show filterContents'>
-                          {workContentsList}
-                        </div>
-                        <div
-                          id='mathDocsMyProdDesc'
-                          className='mathDocsSimConDesc'
-                        ></div>
+                        <div className='contents-show filterContents'>{workContentsList}</div>
+                        <div id='mathDocsMyProdDesc' className='mathDocsSimConDesc'></div>
                       </div>
                       <div
                         id='showMoreContentsByProd'
                         className='showMoreContents hide'
                         onClick={() => {
                           showMoreContentsByProd();
-                        }}
-                      >
+                        }}>
                         검색정보 더보기
                       </div>
                       <div className='paddingFiveZero'></div>
                     </div>
                     <div id='mathDocsMyRepo' className='mathDocsMyRepoDiv'>
                       <div className='workList myContentsList'>
-                        <div className='contents-show filterContents'>
-                          {myRepoContentsList}
-                        </div>
-                        <div
-                          id='mathDocsMyRepoDesc'
-                          className='mathDocsSimConDesc'
-                        ></div>
+                        <div className='contents-show filterContents'>{myRepoContentsList}</div>
+                        <div id='mathDocsMyRepoDesc' className='mathDocsSimConDesc'></div>
                         <div
                           id='showMoreContentsByRepo'
                           className='showMoreContents hide'
                           onClick={() => {
                             showMoreContentsByRepo();
-                          }}
-                        >
+                          }}>
                           검색정보 더보기
                         </div>
                         <div className='paddingFiveZero'></div>
@@ -3526,23 +2911,15 @@ const MathDocsMaker = () => {
                     <div
                       className='mathDocsInfoClose'
                       onClick={() => {
-                        document
-                          .getElementById('mathDocsSimConAdd')
-                          .classList.add('hide');
-                      }}
-                    >
+                        document.getElementById('mathDocsSimConAdd').classList.add('hide');
+                      }}>
                       X
                     </div>
                     <hr />
                     <div id='mathDocsSimCon' className='mathDocsMyRepoDiv'>
                       <div className='workList'>
-                        <div className='contents-show'>
-                          {similarContentsList}
-                        </div>
-                        <div
-                          id='mathDocsSimConDesc'
-                          className='mathDocsSimConDesc'
-                        ></div>
+                        <div className='contents-show'>{similarContentsList}</div>
+                        <div id='mathDocsSimConDesc' className='mathDocsSimConDesc'></div>
                       </div>
                     </div>
                   </div>
@@ -3550,16 +2927,8 @@ const MathDocsMaker = () => {
               </div>
               <div>
                 <div className='workList mathDocsContents'>
-                  <div className='mini-title8'>
-                    드래그하여 문제 순서를 변경할 수 있습니다.
-                  </div>
-                  <ReactSortable
-                    list={mathContentsList}
-                    animation={200}
-                    setList={setMathContentsList}
-                    id='mathContents'
-                    className='contents-show userSearchPage grab'
-                  >
+                  <div className='mini-title8'>드래그하여 문제 순서를 변경할 수 있습니다.</div>
+                  <ReactSortable list={mathContentsList} animation={200} setList={setMathContentsList} id='mathContents' className='contents-show userSearchPage grab'>
                     {mathContentsList.map((contentsMap, idx) => {
                       let quesNumber;
                       if (idx < 9) {
@@ -3589,44 +2958,25 @@ const MathDocsMaker = () => {
 
                       let conImgPath;
                       if (contentsMap.contentsImg === null) conImgPath = '';
-                      else
-                        conImgPath =
-                          process.env.REACT_APP_SERVER_STATIC_HOST +
-                          contentsMap.imgPath +
-                          contentsMap.contentsImg;
+                      else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
 
-                      let contentsId =
-                        'workContentsDiv' + contentsMap.contentsNo;
+                      let contentsId = 'workContentsDiv' + contentsMap.contentsNo;
                       return (
-                        <div
-                          id={contentsId}
-                          className='contentsDiv userSearchPage'
-                          key={contentsMap.contentsNo}
-                          data-contents-no={contentsMap.contentsNo}
-                        >
+                        <div id={contentsId} className='contentsDiv userSearchPage' key={contentsMap.contentsNo} data-contents-no={contentsMap.contentsNo}>
                           <table className='workListTable userSearchPage'>
                             <thead>
                               <tr>
                                 <td>
                                   <div className='bi-jutify-align backLightGray'>
                                     <div>
-                                      <span className='quesNumber paddingLTen'>
-                                        {quesNumber}
-                                      </span>
+                                      <span className='quesNumber paddingLTen'>{quesNumber}</span>
                                     </div>
                                     <div className='alignRight'>
                                       <div
                                         className='mathDocsConChngBtn'
                                         onClick={() => {
-                                          takeSimilarContents(
-                                            contentsMap.unitUniqNo,
-                                            contentsMap.mathTypeInfo
-                                              .mathTypeDomain.typeNo,
-                                            contentsMap.contentsNo,
-                                            contentsMap.contentsClassify
-                                          );
-                                        }}
-                                      >
+                                          takeSimilarContents(contentsMap.unitId, contentsMap.mathTypeInfo.typeNo, contentsMap.contentsNo, contentsMap.contentsClassify);
+                                        }}>
                                         문항 교체
                                       </div>
                                     </div>
@@ -3638,89 +2988,56 @@ const MathDocsMaker = () => {
                               <tr>
                                 <td className='td1 userSearchPage backHover'>
                                   <div className='userSearchCon'>
-                                    <div
-                                      id='workQuesShow'
-                                      className='workQuesShow quesRootDiv'
-                                    >
+                                    <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                                       <div className='quesDiv'>
                                         <div
                                           className='quesContents'
                                           dangerouslySetInnerHTML={{
                                             __html: contentsMap.contents,
-                                          }}
-                                        ></div>
-                                        <div
-                                          id='quesImg-show'
-                                          className={
-                                            'quesImg-show ' + isConImgHide
-                                          }
-                                        >
-                                          <img
-                                            src={conImgPath}
-                                            id='contentsImgOutput'
-                                            alt=''
-                                          />
+                                          }}></div>
+                                        <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
+                                          <img src={conImgPath} id='contentsImgOutput' alt='' />
                                         </div>
-                                        <div
-                                          id='workMultiShow'
-                                          className={
-                                            'quesConMultiShow ' + isMultiHide
-                                          }
-                                        >
+                                        <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                                           <div className='firDiv'>
-                                            <span className='multiChoiceNo'>
-                                              &#9312;
-                                            </span>
+                                            <span className='multiChoiceNo'>&#9312;</span>
                                             <span
                                               className='firDivContents'
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.firNo,
-                                              }}
-                                            ></span>
+                                              }}></span>
                                           </div>
                                           <div className='secDiv'>
-                                            <span className='multiChoiceNo'>
-                                              &#9313;
-                                            </span>
+                                            <span className='multiChoiceNo'>&#9313;</span>
                                             <span
                                               className='secDivContents'
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.secNo,
-                                              }}
-                                            ></span>
+                                              }}></span>
                                           </div>
                                           <div className='thrDiv'>
-                                            <span className='multiChoiceNo'>
-                                              &#9314;
-                                            </span>
+                                            <span className='multiChoiceNo'>&#9314;</span>
                                             <span
                                               className='thrDivContents'
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.thrNo,
-                                              }}
-                                            ></span>
+                                              }}></span>
                                           </div>
                                           <div className='fourDiv'>
-                                            <span className='multiChoiceNo'>
-                                              &#9315;
-                                            </span>
+                                            <span className='multiChoiceNo'>&#9315;</span>
                                             <span
                                               className='fourDivContents'
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.fourNo,
-                                              }}
-                                            ></span>
+                                              }}></span>
                                           </div>
                                           <div className='fifDiv'>
-                                            <span className='multiChoiceNo'>
-                                              &#9316;
-                                            </span>
+                                            <span className='multiChoiceNo'>&#9316;</span>
                                             <span
                                               className='fifDivContents'
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.fifNo,
-                                              }}
-                                            ></span>
+                                              }}></span>
                                           </div>
                                         </div>
                                         <div className='mathDocsMinPadding'></div>
@@ -3730,85 +3047,53 @@ const MathDocsMaker = () => {
                                   <div
                                     className='errBtn'
                                     onClick={() => {
-                                      errorReportOpen(
-                                        contentsMap.contentsNo,
-                                        '문제 오류 신고',
-                                        1
-                                      );
-                                    }}
-                                  ></div>
+                                      errorReportOpen(contentsMap.contentsNo, '문제 오류 신고', 1);
+                                    }}></div>
                                   <div
                                     className='delBtn'
                                     onClick={() => {
                                       contentsDel(contentsMap.contentsNo);
-                                    }}
-                                  ></div>
+                                    }}></div>
                                 </td>
                                 {isHangeulDown && (
                                   <td className='td2 hide'>
                                     <div className='solRootDiv'>
                                       <div className='ansSolDiv'>
-                                        <div
-                                          id='workAnsShow'
-                                          className='ansShow'
-                                        >
+                                        <div id='workAnsShow' className='ansShow'>
                                           <div>
                                             <div className='ansContents'>
-                                              <span className='ansDesc mini-title6'>
-                                                답 &nbsp;&nbsp;
-                                              </span>
+                                              <span className='ansDesc mini-title6'>답 &nbsp;&nbsp;</span>
                                               <span
                                                 className='multiAnswerSheet'
                                                 dangerouslySetInnerHTML={{
-                                                  __html:
-                                                    contentsMap.choiceAnswer,
-                                                }}
-                                              ></span>
+                                                  __html: contentsMap.choiceAnswer,
+                                                }}></span>
                                               <span
                                                 className='answerSheet'
                                                 dangerouslySetInnerHTML={{
                                                   __html: contentsMap.answer,
-                                                }}
-                                              ></span>
+                                                }}></span>
                                             </div>
                                           </div>
                                         </div>
 
-                                        <div
-                                          id='workSolShow'
-                                          className='solShow'
-                                        >
+                                        <div id='workSolShow' className='solShow'>
                                           <div className='solContents'>
-                                            {contentsMap.contentsClassify ===
-                                              4 && (
+                                            {contentsMap.contentsClassify === 4 && (
                                               <div>
                                                 <div>
                                                   {contentsMap.impYear + 1}
-                                                  학년도{' '}
-                                                  {contentsMap.impMonth === 11
-                                                    ? '수능'
-                                                    : contentsMap.impMonth +
-                                                      '월 모의고사'}{' '}
-                                                  {contentsMap.paperType ===
-                                                    2 && '가형'}{' '}
-                                                  {contentsMap.paperType ===
-                                                    3 && '나형'}{' '}
-                                                  {contentsMap.oddQuesNum +
-                                                    '번'}{' '}
-                                                  [{lvScore}] &nbsp;
-                                                  <span className='mini-title6'>
-                                                    오답률
-                                                  </span>
-                                                  &nbsp;{contentsMap.wrongRatio}
-                                                  %
+                                                  학년도 {contentsMap.impMonth === 11 ? '수능' : contentsMap.impMonth + '월 모의고사'} {contentsMap.paperType === 2 && '가형'}{' '}
+                                                  {contentsMap.paperType === 3 && '나형'} {contentsMap.oddQuesNum + '번'} [{lvScore}] &nbsp;
+                                                  <span className='mini-title6'>오답률</span>
+                                                  &nbsp;{contentsMap.wrongRatio}%
                                                 </div>
                                               </div>
                                             )}
                                             <div
                                               dangerouslySetInnerHTML={{
                                                 __html: contentsMap.solution,
-                                              }}
-                                            ></div>
+                                              }}></div>
                                           </div>
                                         </div>
                                       </div>
@@ -3830,8 +3115,7 @@ const MathDocsMaker = () => {
                       className='inBlock orangeBorderBtn previousStep'
                       onClick={() => {
                         window.history.back();
-                      }}
-                    >
+                      }}>
                       이전단계
                     </div>
                     {showFinalPopup && (
@@ -3840,8 +3124,7 @@ const MathDocsMaker = () => {
                         className='inBlock orangeBorderBtn previousStep hide'
                         onClick={() => {
                           window.history.back();
-                        }}
-                      >
+                        }}>
                         이전 페이지
                       </div>
                     )}
@@ -3850,8 +3133,7 @@ const MathDocsMaker = () => {
                       className='inBlock orangeBtn nextStep'
                       onClick={() => {
                         twoStepCheck();
-                      }}
-                    >
+                      }}>
                       학습지 만들기
                     </div>
                   </div>
@@ -3863,20 +3145,15 @@ const MathDocsMaker = () => {
                     tooltip='맨 위로'
                     onClick={() => {
                       nb_moveToScrollAllRange(true);
-                    }}
-                  ></div>
-                  <div
-                    id='conScrollCenterCircle'
-                    className='conScrollCenterCircle'
-                  ></div>
+                    }}></div>
+                  <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
                   <div
                     id='conListScrollToBottom'
                     className='conListScrollToBottom'
                     tooltip='맨 아래로'
                     onClick={() => {
                       nb_moveToScrollAllRange(false);
-                    }}
-                  ></div>
+                    }}></div>
                 </div>
               </div>
             </div>
@@ -3885,17 +3162,12 @@ const MathDocsMaker = () => {
 
         <div id='mathDocsThrStep' className='blindBox hide'>
           <div className='mathDocsThrStep'>
-            <div className='mathDocsThrStepTitle'>
-              설정을 마무리하고 학습지를 사용해보세요...!
-            </div>
+            <div className='mathDocsThrStepTitle'>설정을 마무리하고 학습지를 사용해보세요...!</div>
             <div
               className='mathDocsThrStepClose closeBtn'
               onClick={() => {
-                document
-                  .getElementById('mathDocsThrStep')
-                  .classList.add('hide');
-              }}
-            >
+                document.getElementById('mathDocsThrStep').classList.add('hide');
+              }}>
               X
             </div>
             <div className='mathDocsThrStepDesc'>
@@ -3904,41 +3176,31 @@ const MathDocsMaker = () => {
                   <tbody>
                     <tr>
                       <td>
-                        <div className='mathDocsThrStepDetailTitle'>
-                          페이지당 문제 수
-                        </div>
+                        <div className='mathDocsThrStepDetailTitle'>페이지당 문제 수</div>
                       </td>
                       <td
                         className='pagePerConCnt active'
                         onClick={(event) => {
                           pagePerConCnt(event);
-                        }}
-                      >
+                        }}>
                         4
                       </td>
                       <td
                         className='pagePerConCnt'
                         onClick={(event) => {
                           pagePerConCnt(event);
-                        }}
-                      >
+                        }}>
                         6
                       </td>
                       <td
                         className='pagePerConCnt'
                         onClick={(event) => {
                           pagePerConCnt(event);
-                        }}
-                      >
+                        }}>
                         8
                       </td>
                       <td>
-                        <input
-                          id='pagePerConCntInp'
-                          className='hide'
-                          type='number'
-                          defaultValue={4}
-                        />
+                        <input id='pagePerConCntInp' className='hide' type='number' defaultValue={4} />
                       </td>
                     </tr>
                     <tr>
@@ -3952,57 +3214,31 @@ const MathDocsMaker = () => {
                         <div className='mathDocsThrStepDetailTitle'>학년</div>
                       </td>
                       <td colSpan='3'>
-                        <input
-                          id='docsGrade'
-                          name=''
-                          className='mathDocsThrStepInput'
-                          type='text'
-                        />
+                        <input id='docsGrade' name='' className='mathDocsThrStepInput' type='text' />
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <div className='mathDocsThrStepDetailTitle'>
-                          학습지 제목
-                        </div>
+                        <div className='mathDocsThrStepDetailTitle'>학습지 제목</div>
                       </td>
                       <td colSpan='3'>
-                        <input
-                          id='docsTitle'
-                          name='docsTitle'
-                          className='mathDocsThrStepInput'
-                          type='text'
-                        />
+                        <input id='docsTitle' name='docsTitle' className='mathDocsThrStepInput' type='text' />
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <div className='mathDocsThrStepDetailTitle'>
-                          학습지 부제목
-                        </div>
+                        <div className='mathDocsThrStepDetailTitle'>학습지 부제목</div>
                       </td>
                       <td colSpan='3'>
-                        <input
-                          id='docsSubTitle'
-                          name='docsSubTitle'
-                          className='mathDocsThrStepInput'
-                          type='text'
-                        />
+                        <input id='docsSubTitle' name='docsSubTitle' className='mathDocsThrStepInput' type='text' />
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <div className='mathDocsThrStepDetailTitle'>
-                          출제자(선택)
-                        </div>
+                        <div className='mathDocsThrStepDetailTitle'>출제자(선택)</div>
                       </td>
                       <td colSpan='3'>
-                        <input
-                          id='mathDocsOwner'
-                          name=''
-                          className='mathDocsThrStepInput'
-                          type='text'
-                        />
+                        <input id='mathDocsOwner' name='' className='mathDocsThrStepInput' type='text' />
                       </td>
                     </tr>
                   </tbody>
@@ -4013,16 +3249,14 @@ const MathDocsMaker = () => {
               className='mathDocsDown'
               onClick={() => {
                 hanguelDocsDown();
-              }}
-            >
+              }}>
               학습지 한글다운
             </div>
             <div
               className='mathDocsPrint'
               onClick={() => {
                 printMathDocsPaper();
-              }}
-            >
+              }}>
               학습지 출력
             </div>
           </div>
@@ -4036,8 +3270,7 @@ const MathDocsMaker = () => {
                 className='confirmBoxClose'
                 onClick={() => {
                   registerMathDocsPaperPopClose();
-                }}
-              >
+                }}>
                 X
               </span>
             </div>
@@ -4048,8 +3281,7 @@ const MathDocsMaker = () => {
                 className='confirmBoxCnclBtn'
                 onClick={() => {
                   registerMathDocsPaperPopClose();
-                }}
-              >
+                }}>
                 아니오
               </span>
               <span
@@ -4057,8 +3289,7 @@ const MathDocsMaker = () => {
                 className='confirmBoxBtn'
                 onClick={() => {
                   registerMathDocsPaper();
-                }}
-              >
+                }}>
                 네
               </span>
             </div>
@@ -4066,14 +3297,7 @@ const MathDocsMaker = () => {
         </div>
         <div className='hide'>{workContentsList2}</div>
 
-        {errContentsNo !== 0 && (
-          <ErrorReportForMathCon
-            title={errContentsTitle}
-            errType={errType}
-            parentMethod={errorReportClose}
-            conNo={errContentsNo}
-          />
-        )}
+        {errContentsNo !== 0 && <ErrorReportForMathCon title={errContentsTitle} errType={errType} parentMethod={errorReportClose} conNo={errContentsNo} />}
 
         {showMathPaper && (
           <MathDocsPaperA
@@ -4093,11 +3317,8 @@ const MathDocsMaker = () => {
             <div
               className='closeBtn2'
               onClick={() => {
-                document
-                  .getElementById('mathDocsErrReportBox')
-                  .classList.add('hide');
-              }}
-            >
+                document.getElementById('mathDocsErrReportBox').classList.add('hide');
+              }}>
               X
             </div>
             <div id='mathDocsErrTitle' className='mathDocsErrTitle'>
@@ -4105,32 +3326,22 @@ const MathDocsMaker = () => {
             </div>
             <div>
               <div className='paddingTen'></div>
-              <textarea
-                id='reportContents'
-                name='reportContents'
-                className='errorReportContents'
-              />
+              <textarea id='reportContents' name='reportContents' className='errorReportContents' />
             </div>
             <div
               id='mathDocsErrBtn'
               className='mathDocsErrBtn'
               onClick={() => {
-                document
-                  .getElementById('mathDocsErrReportBox')
-                  .classList.add('hide');
+                document.getElementById('mathDocsErrReportBox').classList.add('hide');
                 mathDocsErrorReport();
-              }}
-            >
+              }}>
               학습지 오류 신고
             </div>
             <div
               className='mathDocsErrBtn2'
               onClick={() => {
-                document
-                  .getElementById('mathDocsErrReportBox')
-                  .classList.add('hide');
-              }}
-            >
+                document.getElementById('mathDocsErrReportBox').classList.add('hide');
+              }}>
               취소
             </div>
           </div>
@@ -4151,17 +3362,14 @@ const MathDocsMaker = () => {
         </div>
         <div className='noSelect mathDocsRootDiv mobile'>
           <div id='mathDocsFirstStep' className='mathDocsFirstStep'>
-            <div className='mathDocsSubjectInfoDiv mobile'>
-              {subjectInfoList}
-            </div>
+            <div className='mathDocsSubjectInfoDiv mobile'>{subjectInfoList}</div>
             <div className='mathDocsSubjectListDiv mobile'></div>
             <div className='bottomFixed'>
               <div
                 className='inBlock orangeBtn mobile'
                 onClick={(event) => {
                   firstStepCheck();
-                }}
-              >
+                }}>
                 다음단계
               </div>
             </div>

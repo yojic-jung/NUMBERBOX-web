@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  nb_fCustomSelDivClk,
-  nb_fCustomSelSpanClk,
-  nb_fCustomOptClk,
-} from 'js/common/common_nb.js';
+import { nb_fCustomSelDivClk, nb_fCustomSelSpanClk, nb_fCustomOptClk } from 'js/common/common_nb.js';
 import { reg_unitTypeChange } from 'js/contents/register/contents_reg.js';
 
 const config = {
@@ -15,15 +11,7 @@ const config = {
     ],
   },
 };
-const CustomUnitSelBox = ({
-  value,
-  cusSelId,
-  originSel,
-  cusChildId,
-  childId,
-  parentMethod,
-  title,
-}) => {
+const CustomUnitSelBox = ({ value, cusSelId, originSel, cusChildId, childId, parentMethod, title }) => {
   const optList = value;
   const cusSelUlTitle = cusSelId + 'Title';
   const cusSelDiv = cusSelId + 'Div';
@@ -45,19 +33,13 @@ const CustomUnitSelBox = ({
           reg_unitTypeChange(trigEv, cusChildId, childId, true);
           parentMethod(event);
         }}
-        dangerouslySetInnerHTML={{ __html: opt.mainVal }}
-      ></li>
+        dangerouslySetInnerHTML={{ __html: opt.mainVal }}></li>
     );
   });
 
   return (
     <div className='nbWrapSelBox'>
-      <div
-        id={cusSelDiv}
-        className='nbCustomSel nbCustom2'
-        data-title={title}
-        onClick={(event) => nb_fCustomSelDivClk(event)}
-      >
+      <div id={cusSelDiv} className='nbCustomSel nbCustom2' data-title={title} onClick={(event) => nb_fCustomSelDivClk(event)}>
         <span id={cusSelUlTitle} className='nbCustomSelVal'>
           {title}
         </span>

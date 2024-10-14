@@ -24,10 +24,7 @@ import {
   nb_getParameterByName,
   nb_topMenuFixed2,
 } from 'js/common/common_nb.js';
-import {
-  reg_unitTypeChange,
-  reg_eraseEditTbUI,
-} from 'js/contents/register/contents_reg.js';
+import { reg_unitTypeChange, reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
 import 'css/common/nbScreen.css';
 import {
   cvt_htmlToTexAll,
@@ -63,9 +60,7 @@ const WorkContentsList = () => {
   const [modalState, setModalState] = useState(false); //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
   const [workListChanged, setWorkListChanged] = useState(true);
   const [compDelTr, setCompDelTr] = useState('');
-  const [emptyListMsg, setEmptyListMsg] = useState(
-    '단원 정보를 선택하여 원하는 문제를 찾아보세요.'
-  );
+  const [emptyListMsg, setEmptyListMsg] = useState('단원 정보를 선택하여 원하는 문제를 찾아보세요.');
 
   const removeAddedEvent = () => {
     window.removeEventListener('scroll', nb_detectScrollPosition);
@@ -79,9 +74,7 @@ const WorkContentsList = () => {
     scrollY = nb_modalScrollStrt();
 
     document.getElementById('outerFormulaEditor').classList.remove('hide');
-    await setContentsNo(
-      document.getElementById(event.target.id).dataset.contentsNo
-    );
+    await setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
     setModalState(true);
   };
 
@@ -103,10 +96,7 @@ const WorkContentsList = () => {
     document.getElementById('subject').value = subjectVal;
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     document.getElementById('subject').value = subjectVal;
-    document.getElementById('cusSelSubTitle').innerHTML =
-      document.getElementById('subject')[
-        document.getElementById('subject').selectedIndex
-      ].innerText;
+    document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
     document.getElementById('cusSelSubDiv').classList.add('nbCustomSelected');
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     /*
@@ -122,24 +112,14 @@ const WorkContentsList = () => {
         */
 
     document.getElementById('secUnit').value = secUnitVal;
-    document.getElementById('cusSelSecUnitTitle').innerHTML =
-      document.getElementById('secUnit')[
-        document.getElementById('secUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelSecUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelSecUnitTitle').innerHTML = document.getElementById('secUnit')[document.getElementById('secUnit').selectedIndex].innerText;
+    document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
     trigEv.target.id = 'secUnit';
     await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
     document.getElementById('thrUnit').value = thrUnitVal;
-    document.getElementById('cusSelThrUnitTitle').innerHTML =
-      document.getElementById('thrUnit')[
-        document.getElementById('thrUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelThrUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelThrUnitTitle').innerHTML = document.getElementById('thrUnit')[document.getElementById('thrUnit').selectedIndex].innerText;
+    document.getElementById('cusSelThrUnitDiv').classList.add('nbCustomSelected');
 
     //모달창에서 저장하기 버튼을 누른 경우에만 검색
     //event.isTrusted 자바스크립트 내장객체로 사용자 액션으로 실행 된 경우 true, 자바스크립트 이벤트로 강제 발생시 false
@@ -158,10 +138,7 @@ const WorkContentsList = () => {
       setWorkListChanged(false);
       setWorkListChanged(true);
       document.getElementById('imgUpdt').value = 'N';
-    } else if (
-      event.isTrusted &&
-      document.getElementById('imgUpdt').value === 'Y'
-    ) {
+    } else if (event.isTrusted && document.getElementById('imgUpdt').value === 'Y') {
       //사용자 액션(모달창 닫기 버튼 직접 클릭 한 경우)
       let mathContents = window.mathContents;
       let objIdx = null;
@@ -184,16 +161,9 @@ const WorkContentsList = () => {
   const svcSttsChange = async function (event) {
     let chngStts = event.target.dataset.value;
     let contentsNo = event.target.dataset.contentsNo;
-    const jsonObj = await nb_dataFetch(
-      '/mathInfo/conSvcSttsChng?contentsNo=' +
-        contentsNo +
-        '&svcStts=' +
-        chngStts,
-      true
-    );
+    const jsonObj = await nb_dataFetch('/mathInfo/conSvcSttsChng?contentsNo=' + contentsNo + '&svcStts=' + chngStts, true);
     if (jsonObj.isSuccess === 1) {
-      let svcSttsBtn =
-        event.target.parentElement.querySelectorAll('.svcSttsBtn');
+      let svcSttsBtn = event.target.parentElement.querySelectorAll('.svcSttsBtn');
       for (let i = 0; i < svcSttsBtn.length; i++) {
         svcSttsBtn[i].classList.remove('active');
         svcSttsBtn[i].classList.add('inactive');
@@ -210,34 +180,31 @@ const WorkContentsList = () => {
   };
 
   useEffect(() => {
-    let param = nb_getParameterByName('unitUniqId');
+    let param = nb_getParameterByName('unitId');
     let param2 = nb_getParameterByName('contentsNo');
     if (currentPath === location.pathname && param === '') {
       if (contentsList.length !== 0) {
         setContentsList([]);
         document.getElementById('subject').selectedIndex = 0;
-        document.getElementById('cusSelSubTitle').innerHTML =
-          document.getElementById('subject')[0].innerText;
-        document
-          .getElementById('cusSelSubDiv')
-          .classList.remove('nbCustomSelected');
+        document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[0].innerText;
+        document.getElementById('cusSelSubDiv').classList.remove('nbCustomSelected');
       }
     }
     currentPath = location.pathname;
 
     const asyncUseEffect = async function () {
       let jsonObj = await nb_dataFetch('/math/menu/unit', true);
-      setSubjectBox(jsonObj['mathSubjectInfo']);
+      setSubjectBox(jsonObj.data['subjectList']);
       //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
-      setSecUnitSelBox(jsonObj['mathSecUnitInfo']);
-      setThrUnitSelBox(jsonObj['mathThrUnitInfo']);
+      setSecUnitSelBox(jsonObj.data['firUnitList']);
+      setThrUnitSelBox(jsonObj.data['firUnitList']);
       //초기 단원 및 유형정보 셋팅
       let trigEv = new Object();
       let sub = new Object();
       trigEv.target = sub;
       trigEv.target.id = 'subject';
       await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
-      let param = nb_getParameterByName('unitUniqId');
+      let param = nb_getParameterByName('unitId');
       //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
       if (param !== '') {
         historyBackSearchCondSetting(param);
@@ -272,20 +239,9 @@ const WorkContentsList = () => {
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);
 
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeWorkContentsList',
-      formData,
-      true
-    );
+    let returnObj = await nb_formDataFetch('/mathInfo/takeWorkContentsList', formData, true);
     if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     }
 
     if (returnObj['isSearched']) {
@@ -328,10 +284,7 @@ const WorkContentsList = () => {
     subjectVal = subject.value;
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     document.getElementById('subject').value = subjectVal;
-    document.getElementById('cusSelSubTitle').innerHTML =
-      document.getElementById('subject')[
-        document.getElementById('subject').selectedIndex
-      ].innerText;
+    document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
     document.getElementById('cusSelSubDiv').classList.add('nbCustomSelected');
 
     /*
@@ -372,13 +325,8 @@ const WorkContentsList = () => {
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
 
     document.getElementById('secUnit').value = secUnitVal;
-    document.getElementById('cusSelSecUnitTitle').innerHTML =
-      document.getElementById('secUnit')[
-        document.getElementById('secUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelSecUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelSecUnitTitle').innerHTML = document.getElementById('secUnit')[document.getElementById('secUnit').selectedIndex].innerText;
+    document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
     trigEv.target.id = 'secUnit';
     let thrUnit = document.getElementById('thrUnit');
     selectedIdx = 0;
@@ -393,13 +341,8 @@ const WorkContentsList = () => {
     await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
     document.getElementById('thrUnit').value = thrUnitVal;
-    document.getElementById('cusSelThrUnitTitle').innerHTML =
-      document.getElementById('thrUnit')[
-        document.getElementById('thrUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelThrUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelThrUnitTitle').innerHTML = document.getElementById('thrUnit')[document.getElementById('thrUnit').selectedIndex].innerText;
+    document.getElementById('cusSelThrUnitDiv').classList.add('nbCustomSelected');
   };
 
   const makeOrgSrcRef = async function () {
@@ -423,27 +366,16 @@ const WorkContentsList = () => {
         alert(i + 1 + '번째 행의 유사 교재를 선택해주세요.');
         return false;
       }
-      if (
-        orgSrcRef.value === '쎈수학' ||
-        orgSrcRef.value === 'RPM' ||
-        orgSrcRef.value === '수학의 힘(베타)' ||
-        orgSrcRef.value === '해결의법칙'
-      ) {
+      if (orgSrcRef.value === '쎈수학' || orgSrcRef.value === 'RPM' || orgSrcRef.value === '수학의 힘(베타)' || orgSrcRef.value === '해결의법칙') {
         if (orgSrcNo.value.length === 0) {
           alert(i + 1 + '번째 행의 유사 문제번호를 적어주세요.');
           return false;
         } else if (orgSrcNo.value.length > 4) {
-          alert(
-            i +
-              1 +
-              '번째 행의 유사 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.'
-          );
+          alert(i + 1 + '번째 행의 유사 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.');
           return false;
         }
         if (copyrightYear.value === '' || copyrightYear.value.length > 10) {
-          alert(
-            i + 1 + '번째 행의 발행일(출판연월)를 입력 해주세요.(10글자 미만)'
-          );
+          alert(i + 1 + '번째 행의 발행일(출판연월)를 입력 해주세요.(10글자 미만)');
           return false;
         }
         orgSrcPage.value = 0;
@@ -452,11 +384,7 @@ const WorkContentsList = () => {
           alert(i + 1 + '번째 행의 유사 문제 번호를 적어주세요.');
           return false;
         } else if (orgSrcNo.value.length > 4) {
-          alert(
-            i +
-              1 +
-              '번째 행의 유사 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.'
-          );
+          alert(i + 1 + '번째 행의 유사 문제번호는 9999번 보다 작게 입력해주시기 바랍니다.');
           return false;
         }
 
@@ -466,9 +394,7 @@ const WorkContentsList = () => {
         }
 
         if (copyrightYear.value === '' || copyrightYear.value.length > 10) {
-          alert(
-            i + 1 + '번째 행의 발행일(출판연월)를 입력 해주세요.(10글자 미만)'
-          );
+          alert(i + 1 + '번째 행의 발행일(출판연월)를 입력 해주세요.(10글자 미만)');
           return false;
         }
       } else if (orgSrcRef.value === '창작') {
@@ -484,20 +410,9 @@ const WorkContentsList = () => {
     }
 
     let formData = new FormData(document.getElementById('compContentsForm'));
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/registerCompContents',
-      formData,
-      true
-    );
+    let returnObj = await nb_formDataFetch('/mathInfo/registerCompContents', formData, true);
     if (returnObj.error !== undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     } else if (returnObj.isSuccess) {
       //성공한 객체로 바꾸기
       contentsList.forEach(function (element) {
@@ -529,13 +444,7 @@ const WorkContentsList = () => {
 
     let compSeqNo = compDelTr.querySelector('.compSeqNo');
     let compContentsNo = compDelTr.querySelector('.compContentsNo');
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/delCompContents?seqNo=' +
-        compSeqNo.value +
-        '&contentsNo=' +
-        compContentsNo.value,
-      true
-    );
+    let returnObj = await nb_dataFetch('/mathInfo/delCompContents?seqNo=' + compSeqNo.value + '&contentsNo=' + compContentsNo.value, true);
     if (returnObj.isSuccess) {
       compDelTr.remove();
       //성공한 객체로 바꾸기
@@ -551,10 +460,7 @@ const WorkContentsList = () => {
       await nb_multiChoiceGridSet('quesConMultiShow');
       await nb_fadeInOut('정상적으로 삭제 되었습니다.', 2000);
     } else if (returnObj.isSuccess === false) {
-      await nb_fadeInOutA(
-        '삭제가 취소되었습니다.\n유사문제는 최소 1개 이상 등록 되어있어야 합니다.',
-        2000
-      );
+      await nb_fadeInOutA('삭제가 취소되었습니다.\n유사문제는 최소 1개 이상 등록 되어있어야 합니다.', 2000);
     }
   };
 
@@ -565,10 +471,7 @@ const WorkContentsList = () => {
     if (compSeqNo === null) {
       targetTr.remove();
     } else {
-      await nb_promptBox(
-        "삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)",
-        '삭제 라고 입력해주세요.'
-      );
+      await nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", '삭제 라고 입력해주세요.');
     }
   };
 
@@ -745,36 +648,17 @@ const WorkContentsList = () => {
 
     curPageNum = 0;
     let formData = new FormData(document.getElementById('workSearchForm'));
-    formData.append(
-      'unitUniqNo',
-      thrUnit[thrUnit.selectedIndex].dataset.uniqNo
-    );
+    formData.append('unitUniqNo', thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);
 
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeWorkContentsList',
-      formData,
-      true
-    );
-    let param = nb_getParameterByName('unitUniqId');
+    let returnObj = await nb_formDataFetch('/mathInfo/takeWorkContentsList', formData, true);
+    let param = nb_getParameterByName('unitId');
     if (param !== thrUnit[thrUnit.selectedIndex].dataset.uniqNo) {
-      window.history.pushState(
-        '',
-        '문제검색',
-        '/admin/workContentsList?unitUniqId=' +
-          thrUnit[thrUnit.selectedIndex].dataset.uniqNo
-      );
+      window.history.pushState('', '문제검색', '/admin/workContentsList?unitId=' + thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
     }
     if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     }
 
     if (returnObj['isSearched']) {
@@ -783,63 +667,33 @@ const WorkContentsList = () => {
         setContentsLen(0);
         setContentsList(returnObj['mathContents']);
         if (hasNotiPhrases) {
-          await nb_fadeInOut(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.',
-            2000
-          );
-          setEmptyListMsg(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.'
-          );
+          await nb_fadeInOut('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.', 2000);
+          setEmptyListMsg('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.');
         } else {
           await nb_fadeInOut('해당하는 단원에 문제 내역이 없습니다.', 2000);
-          setEmptyListMsg(
-            '검색 결과가 없습니다. 해당 단원에 등록되어있는 문제가 없습니다.'
-          );
+          setEmptyListMsg('검색 결과가 없습니다. 해당 단원에 등록되어있는 문제가 없습니다.');
         }
       } else {
         setContentsLen(returnObj['mathContents'].length);
         if (curPageNum !== returnObj.totalPageCnt - 1) {
           document.getElementById('showMoreContents').classList.remove('hide');
-          document
-            .getElementById('showMoreContentsBtn')
-            .classList.remove('hide');
+          document.getElementById('showMoreContentsBtn').classList.remove('hide');
         } else {
           document.getElementById('showMoreContents').classList.add('hide');
           document.getElementById('showMoreContentsBtn').classList.add('hide');
         }
         setContentsList(returnObj['mathContents']);
-        if (hasNotiPhrases)
-          await nb_fadeInOut(
-            '정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.',
-            2000
-          );
+        if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
         else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
       }
     }
   };
 
-  const searchWorkListByContentsNo = async function (
-    contentsNo,
-    hasNotiPhrases
-  ) {
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/takeWorkContentsListByContentsNo?contentsno=' + contentsNo,
-      true
-    );
-    window.history.pushState(
-      '',
-      '문제검색',
-      '/admin/workContentsList?unitUniqId=0&contentsNo=' + contentsNo
-    );
+  const searchWorkListByContentsNo = async function (contentsNo, hasNotiPhrases) {
+    let returnObj = await nb_dataFetch('/mathInfo/takeWorkContentsListByContentsNo?contentsno=' + contentsNo, true);
+    window.history.pushState('', '문제검색', '/admin/workContentsList?unitId=0&contentsNo=' + contentsNo);
     if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     }
 
     if (returnObj['isSearched']) {
@@ -848,13 +702,8 @@ const WorkContentsList = () => {
         setContentsLen(0);
         setContentsList(returnObj['mathContents']);
         if (hasNotiPhrases) {
-          await nb_fadeInOut(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.',
-            2000
-          );
-          setEmptyListMsg(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.'
-          );
+          await nb_fadeInOut('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.', 2000);
+          setEmptyListMsg('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.');
         } else {
           await nb_fadeInOut('해당하는 문제가 없습니다.', 2000);
           setEmptyListMsg('검색 결과가 없습니다. 해당 문제가 없습니다.');
@@ -862,11 +711,7 @@ const WorkContentsList = () => {
       } else {
         setContentsLen(returnObj['mathContents'].length);
         setContentsList(returnObj['mathContents']);
-        if (hasNotiPhrases)
-          await nb_fadeInOut(
-            '정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.',
-            2000
-          );
+        if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
         else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
       }
     }
@@ -874,16 +719,12 @@ const WorkContentsList = () => {
 
   const showMoreContents = async function () {
     let formData = new FormData(document.getElementById('workSearchForm'));
-    let curSearchCond = await nb_getParameterByName('unitUniqId');
+    let curSearchCond = await nb_getParameterByName('unitId');
     formData.append('unitUniqNo', curSearchCond);
     curPageNum++;
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeWorkContentsList',
-      formData,
-      true
-    );
+    let returnObj = await nb_formDataFetch('/mathInfo/takeWorkContentsList', formData, true);
 
     fExecuteWidth = true;
     if (returnObj['mathContents'].length === 0) {
@@ -912,13 +753,7 @@ const WorkContentsList = () => {
     let contentsNo = event.target.dataset.contentsNo;
 
     if (contentsNo === 'all') {
-      cvt_htmlToTexAll(
-        'contents-show',
-        '.workContentsDiv',
-        'N명의수학 자체컨텐츠',
-        '',
-        false
-      );
+      cvt_htmlToTexAll('contents-show', '.workContentsDiv', 'N명의수학 자체컨텐츠', '', false);
       hwpDownPopUpClose();
       return;
     }
@@ -943,11 +778,7 @@ const WorkContentsList = () => {
     for (let i = 0; i < contentsArr.length; i++) {
       if (contentsArr[i].className === 'multiDivContents') {
         //객관식 문제 아니면 건너뛰기
-        if (
-          rootTb
-            .querySelector('#' + contentsArr[i].id)
-            .classList.contains('hide')
-        ) {
+        if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('hide')) {
           let breakObj = new Object();
           breakObj.contentsType = 'BreakPara';
           hwpJsonArrForPython.push(breakObj);
@@ -958,19 +789,11 @@ const WorkContentsList = () => {
         tableObj.contentsType = 'table';
         tableObj.contentsDetailType = 'table';
         tableObj.borderStyle = 'allNone';
-        if (
-          rootTb
-            .querySelector('#' + contentsArr[i].id)
-            .classList.contains('twoDivGrid')
-        ) {
+        if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('twoDivGrid')) {
           tableObj.rowCnt = 3;
           tableObj.colCnt = 2;
           tableObj.colWidthList = [1, 1];
-        } else if (
-          rootTb
-            .querySelector('#' + contentsArr[i].id)
-            .classList.contains('threeDivGrid')
-        ) {
+        } else if (rootTb.querySelector('#' + contentsArr[i].id).classList.contains('threeDivGrid')) {
           tableObj.rowCnt = 2;
           tableObj.colCnt = 3;
           tableObj.colWidthList = [1, 1, 1];
@@ -988,12 +811,8 @@ const WorkContentsList = () => {
           { className: 'fifDivContents' },
         ];
         for (let j = 0; j < multiChoiceContents.length; j++) {
-          await cvt_initWidthHeight(
-            rootTb.querySelector('.' + multiChoiceContents[j].className)
-          );
-          let quesContents = rootTb
-            .querySelector('.' + multiChoiceContents[j].className)
-            .cloneNode(true);
+          await cvt_initWidthHeight(rootTb.querySelector('.' + multiChoiceContents[j].className));
+          let quesContents = rootTb.querySelector('.' + multiChoiceContents[j].className).cloneNode(true);
           await cvt_textNodeConvert(quesContents);
           let contentsDiv = await cvt_convertHtmlToTex(quesContents);
           let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
@@ -1017,10 +836,7 @@ const WorkContentsList = () => {
           for (let k = 0; k < newHwpJsonArr.length; k++) {
             //객관식 마지막 값이 줄바꿈이면 건너뛰기(객관식 줄바꿈 오류 없애기)
             //객관식 div태그에 감싸져 있어 마지막값이 줄바꿈 됨(예전 방식은 객관식 div 태그 안 감싸져 있어 마지막 줄바꿈 안나올 수 있음)
-            if (
-              k === newHwpJsonArr.length - 1 &&
-              newHwpJsonArr[k].contentsType === 'BreakPara'
-            ) {
+            if (k === newHwpJsonArr.length - 1 && newHwpJsonArr[k].contentsType === 'BreakPara') {
               break;
             }
             let tmpObj = new Object();
@@ -1028,9 +844,7 @@ const WorkContentsList = () => {
             tableCellContents.push(tmpObj);
           }
           tableObj.contents.push(tableCellContents);
-          await cvt_initOrgWidthHeight(
-            rootTb.querySelector('.' + multiChoiceContents[j].className)
-          );
+          await cvt_initOrgWidthHeight(rootTb.querySelector('.' + multiChoiceContents[j].className));
         }
         hwpJsonArrForPython.push(tableObj);
 
@@ -1038,31 +852,19 @@ const WorkContentsList = () => {
         breakObj.contentsType = 'BreakPara';
         hwpJsonArrForPython.push(breakObj);
       } else {
-        await cvt_initWidthHeight(
-          rootTb.querySelector('.' + contentsArr[i].className)
-        );
-        let quesContents = rootTb
-          .querySelector('.' + contentsArr[i].className)
-          .cloneNode(true);
+        await cvt_initWidthHeight(rootTb.querySelector('.' + contentsArr[i].className));
+        let quesContents = rootTb.querySelector('.' + contentsArr[i].className).cloneNode(true);
         if (contentsArr[i].className === 'ansContents') {
-          if (
-            quesContents.querySelector('.multiAnswerSheet').innerText.length !==
-            0
-          ) {
-            quesContents.querySelector('.multiAnswerSheet').innerText =
-              quesContents.querySelector('.multiAnswerSheet').innerText + ' ';
+          if (quesContents.querySelector('.multiAnswerSheet').innerText.length !== 0) {
+            quesContents.querySelector('.multiAnswerSheet').innerText = quesContents.querySelector('.multiAnswerSheet').innerText + ' ';
           }
-          quesContents
-            .querySelector('.answerSheet')
-            .prepend(quesContents.querySelector('.multiAnswerSheet'));
+          quesContents.querySelector('.answerSheet').prepend(quesContents.querySelector('.multiAnswerSheet'));
           quesContents = quesContents.querySelector('.answerSheet');
         }
         await cvt_textNodeConvert(quesContents);
         let contentsDiv = await cvt_convertHtmlToTex(quesContents);
         let hwpJsonArr = await cvt_makeJsonArrForHwp(contentsDiv);
-        await cvt_initOrgWidthHeight(
-          rootTb.querySelector('.' + contentsArr[i].className)
-        );
+        await cvt_initOrgWidthHeight(rootTb.querySelector('.' + contentsArr[i].className));
         let newHwpJsonArr = await cvt_combineFormul(hwpJsonArr);
         let titleArr = new Array();
         let boldObj = new Object();
@@ -1091,8 +893,7 @@ const WorkContentsList = () => {
     let form = new FormData();
     form.append('jsonString', JSON.stringify(hwpJsonArrForPython));
     document.getElementById('resDetailedTimeDesc').classList.remove('hide');
-    document.getElementById('hourGlassDesc').innerText =
-      '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
+    document.getElementById('hourGlassDesc').innerText = '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
     let nowDate = await nb_dateFormat('_');
     let fileName = '[N명의수학]나의제작문제_' + nowDate + '.hwp';
     await nb_formDataFileFetch('/takeHwpFile', form, fileName);
@@ -1138,26 +939,13 @@ const WorkContentsList = () => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else
-      conImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.imgPath +
-        contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
     let solImgPath;
     if (contentsMap.solutionImg === null) solImgPath = '';
-    else
-      solImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.solutionImgPath +
-        contentsMap.solutionImg;
+    else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.solutionImgPath + contentsMap.solutionImg;
 
     return (
-      <div
-        id='workContentsDiv'
-        className='workContentsDiv'
-        key={idx}
-        data-contents-no={contentsMap.contentsNo}
-      >
+      <div id='workContentsDiv' className='workContentsDiv' key={idx} data-contents-no={contentsMap.contentsNo}>
         <table className='workListTable'>
           <thead>
             <tr className='workListTBHead2'>
@@ -1167,14 +955,9 @@ const WorkContentsList = () => {
                     <span
                       className='hwpDownImgWrap'
                       onClick={() => {
-                        nb_confirmBox(
-                          '해당 문제를 한글파일로 다운받으시겠습니까?'
-                        );
-                        document.getElementById(
-                          'confirmBoxBtn'
-                        ).dataset.contentsNo = contentsMap.contentsNo;
-                      }}
-                    >
+                        nb_confirmBox('해당 문제를 한글파일로 다운받으시겠습니까?');
+                        document.getElementById('confirmBoxBtn').dataset.contentsNo = contentsMap.contentsNo;
+                      }}>
                       <img className='hwpDownImg' src={hwpDownImg} alt='' />
                       <div className='hwpDownDesc'>한글 파일로 다운 받기</div>
                     </span>
@@ -1185,21 +968,18 @@ const WorkContentsList = () => {
                       className='updateBtn'
                       onClick={(event) => {
                         modalPopupOpen(event);
-                      }}
-                    >
+                      }}>
                       수정하기
                     </button>
                   </div>
                   <div>
-                    [{contentsMap.mathContentsComp[0].orgSrcRef}]{' '}
-                    {contentsMap.mathContentsComp[0].orgSrcNo}번({quesLevel},{' '}
-                    {contentsMap.mathContentsComp[0].mathTypeClassify})<br />
+                    [{contentsMap.mathContentsComp[0].orgSrcRef}] {contentsMap.mathContentsComp[0].orgSrcNo}번({quesLevel}, {contentsMap.mathContentsComp[0].mathTypeClassify})
+                    <br />
                     유형 :{' '}
                     <span
                       dangerouslySetInnerHTML={{
                         __html: contentsMap.mathTypeInfo.quesType,
-                      }}
-                    ></span>
+                      }}></span>
                   </div>
                 </div>
               </td>
@@ -1210,13 +990,9 @@ const WorkContentsList = () => {
                   data-contents-no={contentsMap.contentsNo}
                   onClick={(event) => {
                     compContentsPopUp(event);
-                  }}
-                >
+                  }}>
                   유사문제 등록{' '}
-                  <sup
-                    className='circleUI'
-                    data-contents-no={contentsMap.contentsNo}
-                  >
+                  <sup className='circleUI' data-contents-no={contentsMap.contentsNo}>
                     {contentsMap.mathContentsComp.length}
                   </sup>
                 </div>
@@ -1230,28 +1006,18 @@ const WorkContentsList = () => {
                 <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                   <div className='quesDiv'>
                     <div className='quesNumber'>{quesNumber}</div>
-                    <div
-                      className='quesContents'
-                      dangerouslySetInnerHTML={{ __html: contentsMap.contents }}
-                    ></div>
-                    <div
-                      id='quesImg-show'
-                      className={'quesImg-show ' + isConImgHide}
-                    >
+                    <div className='quesContents' dangerouslySetInnerHTML={{ __html: contentsMap.contents }}></div>
+                    <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
                       <img src={conImgPath} id='contentsImgOutput' alt='' />
                     </div>
-                    <div
-                      id='workMultiShow'
-                      className={'quesConMultiShow ' + isMultiHide}
-                    >
+                    <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                       <div className='firDiv'>
                         <span className='multiChoiceNo'>&#9312;</span>
                         <span
                           className='firDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.firNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='secDiv'>
                         <span className='multiChoiceNo'>&#9313;</span>
@@ -1259,8 +1025,7 @@ const WorkContentsList = () => {
                           className='secDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.secNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='thrDiv'>
                         <span className='multiChoiceNo'>&#9314;</span>
@@ -1268,8 +1033,7 @@ const WorkContentsList = () => {
                           className='thrDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.thrNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fourDiv'>
                         <span className='multiChoiceNo'>&#9315;</span>
@@ -1277,8 +1041,7 @@ const WorkContentsList = () => {
                           className='fourDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fourNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                       <div className='fifDiv'>
                         <span className='multiChoiceNo'>&#9316;</span>
@@ -1286,8 +1049,7 @@ const WorkContentsList = () => {
                           className='fifDivContents'
                           dangerouslySetInnerHTML={{
                             __html: contentsMap.fifNo,
-                          }}
-                        ></span>
+                          }}></span>
                       </div>
                     </div>
                   </div>
@@ -1305,91 +1067,65 @@ const WorkContentsList = () => {
                             className='multiAnswerSheet'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.choiceAnswer,
-                            }}
-                          ></span>
+                            }}></span>
                           <span className={'marginRFive ' + isBlank}></span>
                           <span
                             className='answerSheet'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.answer,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                       </div>
                     </div>
                     <div id='workSolShow' className='solShow'>
                       <span className='mini-title6'>해설</span>
-                      <div
-                        id='solImg-show'
-                        className={'solImg-show ' + isSolImgHide}
-                      >
+                      <div id='solImg-show' className={'solImg-show ' + isSolImgHide}>
                         <img src={solImgPath} id='solutionImgOutput' alt='' />
                       </div>
                       <div
                         className='solContents'
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.solution,
-                        }}
-                      ></div>
+                        }}></div>
                     </div>
                   </div>
                 </div>
               </td>
               <td className='td3'>
                 <div
-                  className={
-                    contentsMap.svcPosbStts === 0
-                      ? 'svcSttsBtn svcImPosbBtn active'
-                      : 'svcSttsBtn svcImPosbBtn inactive'
-                  }
+                  className={contentsMap.svcPosbStts === 0 ? 'svcSttsBtn svcImPosbBtn active' : 'svcSttsBtn svcImPosbBtn inactive'}
                   data-value='0'
                   data-contents-no={contentsMap.contentsNo}
                   onClick={(event) => {
                     svcSttsChange(event);
-                  }}
-                >
+                  }}>
                   미출시
                 </div>
                 <div
-                  className={
-                    contentsMap.svcPosbStts === 2
-                      ? 'svcSttsBtn svcInspectBtn active'
-                      : 'svcSttsBtn svcInspectBtn inactive'
-                  }
+                  className={contentsMap.svcPosbStts === 2 ? 'svcSttsBtn svcInspectBtn active' : 'svcSttsBtn svcInspectBtn inactive'}
                   data-value='2'
                   data-contents-no={contentsMap.contentsNo}
                   onClick={(event) => {
                     svcSttsChange(event);
-                  }}
-                >
+                  }}>
                   검수완료
                 </div>
                 <div
-                  className={
-                    contentsMap.svcPosbStts === 3
-                      ? 'svcSttsBtn svcErrBtn active'
-                      : 'svcSttsBtn svcErrBtn inactive'
-                  }
+                  className={contentsMap.svcPosbStts === 3 ? 'svcSttsBtn svcErrBtn active' : 'svcSttsBtn svcErrBtn inactive'}
                   data-value='3'
                   data-contents-no={contentsMap.contentsNo}
                   onClick={(event) => {
                     svcSttsChange(event);
-                  }}
-                >
+                  }}>
                   오류
                 </div>
                 <div
-                  className={
-                    contentsMap.svcPosbStts === 1
-                      ? 'svcSttsBtn svcPosbBtn active'
-                      : 'svcSttsBtn svcPosbBtn inactive'
-                  }
+                  className={contentsMap.svcPosbStts === 1 ? 'svcSttsBtn svcPosbBtn active' : 'svcSttsBtn svcPosbBtn inactive'}
                   data-value='1'
                   data-contents-no={contentsMap.contentsNo}
                   onClick={(event) => {
                     svcSttsChange(event);
-                  }}
-                >
+                  }}>
                   출시
                 </div>
               </td>
@@ -1409,8 +1145,7 @@ const WorkContentsList = () => {
           tooltip='맨 위로'
           onClick={() => {
             nb_moveToScroll(true);
-          }}
-        ></div>
+          }}></div>
         <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
         <div
           id='conListScrollToBottom'
@@ -1418,8 +1153,7 @@ const WorkContentsList = () => {
           tooltip='맨 아래로'
           onClick={() => {
             nb_moveToScroll(false);
-          }}
-        ></div>
+          }}></div>
       </div>
 
       <div id='promptBoxScreen' className='promptBoxScreen hide'>
@@ -1429,12 +1163,9 @@ const WorkContentsList = () => {
               id='promptBoxClose'
               className='promptBoxClose'
               onClick={() => {
-                document
-                  .getElementById('promptBoxScreen')
-                  .classList.add('hide');
+                document.getElementById('promptBoxScreen').classList.add('hide');
                 document.getElementById('promptInput').value = '';
-              }}
-            >
+              }}>
               X
             </span>
           </div>
@@ -1457,8 +1188,7 @@ const WorkContentsList = () => {
               className='promptBoxBtn'
               onClick={() => {
                 compDelPrompt();
-              }}
-            >
+              }}>
               확인
             </span>
           </div>
@@ -1469,9 +1199,7 @@ const WorkContentsList = () => {
           <div id='workListUnitTypeRoot' className='workListUnitTypeRoot'>
             <form method='post' id='workSearchForm'>
               <div id='workListUnitType' className='workListUnitType'>
-                <div className='mini-title5'>
-                  &nbsp; N명의수학에서 원하는 문제를 찾아보세요.
-                </div>
+                <div className='mini-title5'>&nbsp; N명의수학에서 원하는 문제를 찾아보세요.</div>
                 <CustomUnitSelBox
                   value={subjectBox}
                   cusSelId='cusSelSub'
@@ -1479,16 +1207,8 @@ const WorkContentsList = () => {
                   childId='secUnit'
                   originSel='subject'
                   parentMethod={() => {}}
-                  title='과목'
-                ></CustomUnitSelBox>
-                <UnitSelBox
-                  value={subjectBox}
-                  myId='subject'
-                  cusChildId='cusSelSecUnit'
-                  childId='secUnit'
-                  isUnitBubbleEv={true}
-                  parentMethod={() => {}}
-                ></UnitSelBox>
+                  title='과목'></CustomUnitSelBox>
+                <UnitSelBox value={subjectBox} myId='subject' cusChildId='cusSelSecUnit' childId='secUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
                 {/*
                                 <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
                                 <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -1500,16 +1220,8 @@ const WorkContentsList = () => {
                   childId='thrUnit'
                   originSel='secUnit'
                   parentMethod={() => {}}
-                  title='대단원'
-                ></CustomUnitSelBox>
-                <UnitSelBox
-                  value={secUnitSelBox}
-                  myId='secUnit'
-                  cusChildId='cusSelThrUnit'
-                  childId='thrUnit'
-                  isUnitBubbleEv={true}
-                  parentMethod={() => {}}
-                ></UnitSelBox>
+                  title='대단원'></CustomUnitSelBox>
+                <UnitSelBox value={secUnitSelBox} myId='secUnit' cusChildId='cusSelThrUnit' childId='thrUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
 
                 <CustomUnitSelBox
                   value={thrUnitSelBox}
@@ -1518,22 +1230,10 @@ const WorkContentsList = () => {
                   childId='quesType'
                   originSel='thrUnit'
                   parentMethod={() => {}}
-                  title='중단원'
-                ></CustomUnitSelBox>
-                <UnitSelBox
-                  value={thrUnitSelBox}
-                  myId='thrUnit'
-                  cusChildId='cusSelQuesType'
-                  childId='quesType'
-                  isUnitBubbleEv={false}
-                  parentMethod={() => {}}
-                ></UnitSelBox>
+                  title='중단원'></CustomUnitSelBox>
+                <UnitSelBox value={thrUnitSelBox} myId='thrUnit' cusChildId='cusSelQuesType' childId='quesType' isUnitBubbleEv={false} parentMethod={() => {}}></UnitSelBox>
 
-                <button
-                  type='button'
-                  className='orangeBtn'
-                  onClick={() => searchMyWorkList(false)}
-                >
+                <button type='button' className='orangeBtn' onClick={() => searchMyWorkList(false)}>
                   검색
                 </button>
               </div>
@@ -1550,8 +1250,7 @@ const WorkContentsList = () => {
                   className='showMoreContentsBtn hide'
                   onClick={() => {
                     showMoreContents();
-                  }}
-                >
+                  }}>
                   +
                 </span>
               </span>
@@ -1559,14 +1258,9 @@ const WorkContentsList = () => {
                 <span
                   className='hwpAllDownBtn floatRight'
                   onClick={() => {
-                    nb_confirmBox(
-                      '나의 제작문제를 한글파일로 다운받으시겠습니까?'
-                    );
-                    document.getElementById(
-                      'confirmBoxBtn'
-                    ).dataset.contentsNo = 'all';
-                  }}
-                >
+                    nb_confirmBox('나의 제작문제를 한글파일로 다운받으시겠습니까?');
+                    document.getElementById('confirmBoxBtn').dataset.contentsNo = 'all';
+                  }}>
                   나의 제작문제 일괄 다운
                 </span>
               )}
@@ -1581,11 +1275,7 @@ const WorkContentsList = () => {
                 {workContentsList}
               </div>
             ) : (
-              <EmptyList
-                msg={emptyListMsg}
-                imgName='searchList'
-                addImgClass=''
-              />
+              <EmptyList msg={emptyListMsg} imgName='searchList' addImgClass='' />
             )}
           </div>
         )}
@@ -1595,8 +1285,7 @@ const WorkContentsList = () => {
         className='showMoreContents hide'
         onClick={() => {
           showMoreContents();
-        }}
-      >
+        }}>
         검색정보 더보기
       </div>
       <div className='paddingFiveZero'></div>
@@ -1607,13 +1296,10 @@ const WorkContentsList = () => {
           className='closeBtn'
           onClick={(event) => {
             modalPopupClose(event);
-          }}
-        >
+          }}>
           &#88;
         </div>
-        {modalState && (
-          <FormulaEditor contentsNo={contentsNo} contentsClassify={0} />
-        )}
+        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={0} />}
       </div>
       <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
       <div id='compPopUpScreen' className='compPopUpScreen hide'>
@@ -1623,8 +1309,7 @@ const WorkContentsList = () => {
             className='compPopUpClose'
             onClick={(event) => {
               compContentsPopUpClose(event);
-            }}
-          >
+            }}>
             X
           </div>
           <form id='compContentsForm' method='post'>
@@ -1632,8 +1317,7 @@ const WorkContentsList = () => {
               className='compAddRow'
               onClick={() => {
                 compAddRow();
-              }}
-            >
+              }}>
               행 추가
             </span>
             <table className='compRegisterTb'>
@@ -1654,8 +1338,7 @@ const WorkContentsList = () => {
                 className='compRegBtn'
                 onClick={() => {
                   compContentsReg();
-                }}
-              >
+                }}>
                 등록하기
               </span>
             </div>
@@ -1670,8 +1353,7 @@ const WorkContentsList = () => {
               className='confirmBoxClose'
               onClick={() => {
                 hwpDownPopUpClose();
-              }}
-            >
+              }}>
               X
             </span>
           </div>
@@ -1682,8 +1364,7 @@ const WorkContentsList = () => {
               className='confirmBoxCnclBtn'
               onClick={() => {
                 hwpDownPopUpClose();
-              }}
-            >
+              }}>
               아니오
             </span>
             <span
@@ -1691,8 +1372,7 @@ const WorkContentsList = () => {
               className='confirmBoxBtn'
               onClick={(event) => {
                 convertHtmlToTex(event);
-              }}
-            >
+              }}>
               네
             </span>
           </div>

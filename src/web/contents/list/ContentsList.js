@@ -23,11 +23,9 @@ import {
   nb_multiChoiceGridSet,
   nb_getParameterByName,
   nb_topMenuFixed2,
+  nb_getRequest,
 } from 'js/common/common_nb.js';
-import {
-  reg_unitTypeChange,
-  reg_eraseEditTbUI,
-} from 'js/contents/register/contents_reg.js';
+import { reg_unitTypeChange, reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
 import 'css/common/nbScreen.css';
 import defaultProfile from 'img/defaultProfileWhite.png';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
@@ -52,9 +50,7 @@ const ContentsList = () => {
   const [contentsNo, setContentsNo] = useState('');
   const [modalState, setModalState] = useState(false); //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
   const [workListChanged, setWorkListChanged] = useState(true);
-  const [emptyListMsg, setEmptyListMsg] = useState(
-    '단원 정보를 선택하여 원하는 문제를 찾아보세요.'
-  );
+  const [emptyListMsg, setEmptyListMsg] = useState('단원 정보를 선택하여 원하는 문제를 찾아보세요.');
   const [conLikeInfoList, setConLikeInfoList] = useState(new Array());
   const [conRepoInfoList, setConRepoInfoList] = useState(new Array());
   const [errContentsNo, setErrContentsNo] = useState(0);
@@ -76,8 +72,7 @@ const ContentsList = () => {
     scrollY = nb_modalScrollStrt();
 
     document.getElementById('outerFormulaEditor').classList.remove('hide');
-    let contentsNo = document.getElementById(event.target.id).dataset
-      .contentsNo;
+    let contentsNo = document.getElementById(event.target.id).dataset.contentsNo;
     await setContentsNo(contentsNo);
     setModalState(true);
   };
@@ -98,10 +93,7 @@ const ContentsList = () => {
     document.getElementById('subject').value = subjectVal;
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     document.getElementById('subject').value = subjectVal;
-    document.getElementById('cusSelSubTitle').innerHTML =
-      document.getElementById('subject')[
-        document.getElementById('subject').selectedIndex
-      ].innerText;
+    document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
     document.getElementById('cusSelSubDiv').classList.add('nbCustomSelected');
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     /*
@@ -118,25 +110,15 @@ const ContentsList = () => {
 
     if (secUnitVal !== '대단원') {
       document.getElementById('secUnit').value = secUnitVal;
-      document.getElementById('cusSelSecUnitTitle').innerHTML =
-        document.getElementById('secUnit')[
-          document.getElementById('secUnit').selectedIndex
-        ].innerText;
-      document
-        .getElementById('cusSelSecUnitDiv')
-        .classList.add('nbCustomSelected');
+      document.getElementById('cusSelSecUnitTitle').innerHTML = document.getElementById('secUnit')[document.getElementById('secUnit').selectedIndex].innerText;
+      document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
       trigEv.target.id = 'secUnit';
       await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
     }
     if (thrUnitVal !== '중단원') {
       document.getElementById('thrUnit').value = thrUnitVal;
-      document.getElementById('cusSelThrUnitTitle').innerHTML =
-        document.getElementById('thrUnit')[
-          document.getElementById('thrUnit').selectedIndex
-        ].innerText;
-      document
-        .getElementById('cusSelThrUnitDiv')
-        .classList.add('nbCustomSelected');
+      document.getElementById('cusSelThrUnitTitle').innerHTML = document.getElementById('thrUnit')[document.getElementById('thrUnit').selectedIndex].innerText;
+      document.getElementById('cusSelThrUnitDiv').classList.add('nbCustomSelected');
     }
 
     //모달창에서 저장하기 버튼을 누른 경우에만 검색
@@ -162,10 +144,7 @@ const ContentsList = () => {
       }
 
       document.getElementById('imgUpdt').value = 'N';
-    } else if (
-      event.isTrusted &&
-      document.getElementById('imgUpdt').value === 'Y'
-    ) {
+    } else if (event.isTrusted && document.getElementById('imgUpdt').value === 'Y') {
       //사용자 액션(모달창 닫기 버튼 직접 클릭 한 경우)
       let mathContents = window.mathContents;
       let objIdx = null;
@@ -185,29 +164,35 @@ const ContentsList = () => {
     nb_modalScrollEnd(scrollY);
   };
 
+  const makeQueryString = () => {
+    let unitId = nb_getParameterByName('unitId');
+    let contentsNo = nb_getParameterByName('contentsNo');
+
+    let queryString = '?searchType=' + nb_getParameterByName('searchType');
+    if (unitId !== '') queryString += '&unitId=' + unitId;
+    else if (contentsNo !== '') queryString += '?contentsNo=' + contentsNo;
+    return queryString;
+  };
+
   useEffect(() => {
-    let param = nb_getParameterByName('unitUniqId');
-    let param2 = nb_getParameterByName('contentsNo');
-    if (currentPath === location.pathname && param === '') {
+    let queryString = makeQueryString();
+
+    console.log(queryString);
+
+    if (currentPath === location.pathname && queryString === '') {
       if (contentsList.length !== 0) {
         setContentsList([]);
         document.getElementById('subject').selectedIndex = 0;
-        document.getElementById('cusSelSubTitle').innerHTML =
-          document.getElementById('subject')[0].innerText;
-        document
-          .getElementById('cusSelSubDiv')
-          .classList.remove('nbCustomSelected');
+        document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[0].innerText;
+        document.getElementById('cusSelSubDiv').classList.remove('nbCustomSelected');
       }
     }
     currentPath = location.pathname;
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch(
-        '/math/menu/unit?onlyExistUnit=true',
-        true
-      );
+      let jsonObj = await nb_dataFetch('/math/menu/unit?onlyExistUnit=true', true);
       setSubjectBox(jsonObj.data['subjectList']);
-      setSecUnitSelBox(jsonObj.data['firUnitList']);
-      setThrUnitSelBox(jsonObj.data['secUnitList']);
+      setSecUnitSelBox(jsonObj.data['secUnitList']);
+      setThrUnitSelBox(jsonObj.data['thrUnitList']);
       //초기 단원 및 유형정보 셋팅
       let trigEv = new Object();
       let sub = new Object();
@@ -215,12 +200,10 @@ const ContentsList = () => {
       trigEv.target.id = 'subject';
       await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
 
-      //검색된 상태에서 다른 페이지 갔다가 뒤로가기로 돌아온경우
-      if (param !== '') {
-        historyBackSearchCondSetting(param);
-      }
-
-      if (param2 !== '') {
+      let queryString = makeQueryString();
+      if (queryString !== '' && queryString.includes('unitId')) {
+        historyBackSearchCondSetting(queryString);
+      } else if (queryString !== '' && queryString.includes('contentsId')) {
         searchWorkListByContentsNo(param2, false);
       }
     };
@@ -240,47 +223,27 @@ const ContentsList = () => {
     return () => removeAddedEvent();
   }, [contentsList, location]);
 
-  const historyBackSearchCondSetting = async (param) => {
+  const historyBackSearchCondSetting = async (queryString) => {
     curPageNum = 0;
-    let formData = new FormData(document.getElementById('workSearchForm'));
-    if (param.indexOf('-') > -1) {
-      formData.append('unitUniqNoStr', param);
-    } else {
-      formData.append('unitUniqNo', param);
-    }
-    formData.append('curPageNum', curPageNum);
-    formData.append('pageVolume', pageVolume);
+    queryString += '&pageNum=' + curPageNum;
+    queryString += '&pageVolume=' + pageVolume;
 
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeContentsList',
-      formData,
-      true
-    );
-    if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
-    }
+    let returnObj = await nb_getRequest('/math/content/list' + queryString, true);
 
-    if (returnObj['isSearched']) {
+    if (returnObj.status === 200) {
       fExecuteWidth = true;
-      if (returnObj['mathContents'].length === 0) {
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj['mathContents']);
+      if (returnObj.data.total === 0) {
+        // setConRepoInfoList(returnObj['mathconRepoInfo']);
+        // setConLikeInfoList(returnObj['mathConLikeInfo']);
+        setContentsList(returnObj.data.contents);
       } else {
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj['mathContents']);
+        // setConRepoInfoList(returnObj['mathconRepoInfo']);
+        // setConLikeInfoList(returnObj['mathConLikeInfo']);
+        setContentsList(returnObj.data.contents);
       }
     }
 
-    if (returnObj.totalPageCnt > 1) {
+    if (returnObj.data.contents.length == pageVolume) {
       document.getElementById('showMoreContents').classList.remove('hide');
     } else {
       document.getElementById('showMoreContents').classList.add('hide');
@@ -293,99 +256,65 @@ const ContentsList = () => {
     trigEv.target = sub;
     trigEv.target.id = 'subject';
 
-    param = param.split('-')[0];
-    let searchCond = await nb_getParameterByName('searchCond');
+    let searchType = await nb_getParameterByName('searchType');
 
     let subject = document.getElementById('subject');
     let selectedIdx = 0;
     let subjectOptList = subject.childNodes;
+
+    const urlParams = new URLSearchParams(queryString);
+
+    let unitId = '';
+    if (searchType === 'Subject' || searchType === 'FirUnit' || searchType === 'SecUnit' || searchType === 'ThrUnit') unitId = urlParams.get('unitId');
+
     for (let i = 0; i < subjectOptList.length; i++) {
-      if (subjectOptList[i].dataset.uniqNo > param) {
-        break;
-      } else {
-        selectedIdx = i;
-      }
+      if (subjectOptList[i].dataset.uniqNo > unitId) break;
+      else selectedIdx = i;
     }
     subject.selectedIndex = selectedIdx;
     subjectVal = subject.value;
     await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
     document.getElementById('subject').value = subjectVal;
-    document.getElementById('cusSelSubTitle').innerHTML =
-      document.getElementById('subject')[
-        document.getElementById('subject').selectedIndex
-      ].innerText;
+    document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
     document.getElementById('cusSelSubDiv').classList.add('nbCustomSelected');
-
-    /*
-            let firUnit = document.getElementById("firUnit");
-            selectedIdx = 0;
-            let firUnitOptList = firUnit.childNodes
-            for(let i=0; i<firUnitOptList.length; i++){
-                if(firUnitOptList[i].dataset.uniqNo > param){
-                    break;
-                }else{
-                    selectedIdx = i;
-                }
-            }
-            firUnit.selectedIndex = selectedIdx;
-            firUnitVal = firUnit.value;
-            //두번 실행해야함, 자식 콤보의 첫번째 인덱스를 display:none 패스 후 자식 콤보의 대단원, 중단원, 소단원 등의 콤보 제목정보가 추가되는데
-            //과목 이벤트 한번만 실행되면  대단원에는 display:none 패스 후 대단원 option태그 추가되므로 콤보제목 태그가 아닌 다른 태그가 들어오게됨
-            await reg_unitTypeChange(trigEv, "cusSelFirUnit","firUnit", true);
-
-            document.getElementById("firUnit").value = firUnitVal;
-            document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
-            document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
-            trigEv.target.id= "firUnit";
-            */
 
     let secUnit = document.getElementById('secUnit');
     selectedIdx = 0;
     let secUnitOptList = secUnit.childNodes;
     for (let i = 0; i < secUnitOptList.length; i++) {
-      if (secUnitOptList[i].dataset.uniqNo > param) {
+      if (secUnitOptList[i].dataset.uniqNo > unitId) {
         break;
       } else {
         selectedIdx = i;
       }
     }
 
-    if (searchCond === 'subject') return;
+    if (searchType === 'Subject') return;
     secUnit.selectedIndex = selectedIdx;
     secUnitVal = secUnit.value;
-    await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
+    await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
     document.getElementById('secUnit').value = secUnitVal;
-    document.getElementById('cusSelSecUnitTitle').innerHTML =
-      document.getElementById('secUnit')[
-        document.getElementById('secUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelSecUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelSecUnitTitle').innerHTML = document.getElementById('secUnit')[document.getElementById('secUnit').selectedIndex].innerText;
+    document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
     trigEv.target.id = 'secUnit';
     let thrUnit = document.getElementById('thrUnit');
     selectedIdx = 0;
     let thrUnitOptList = thrUnit.childNodes;
     for (let i = 0; i < thrUnitOptList.length; i++) {
-      if (thrUnitOptList[i].dataset.uniqNo === param) {
+      if (thrUnitOptList[i].dataset.uniqNo === unitId) {
         selectedIdx = i;
       }
     }
 
-    if (searchCond === 'secUnit') return;
+    if (searchType === 'SecUnit') return;
     thrUnit.selectedIndex = selectedIdx;
     thrUnitVal = thrUnit.value;
     await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
     document.getElementById('thrUnit').value = thrUnitVal;
-    document.getElementById('cusSelThrUnitTitle').innerHTML =
-      document.getElementById('thrUnit')[
-        document.getElementById('thrUnit').selectedIndex
-      ].innerText;
-    document
-      .getElementById('cusSelThrUnitDiv')
-      .classList.add('nbCustomSelected');
+    document.getElementById('cusSelThrUnitTitle').innerHTML = document.getElementById('thrUnit')[document.getElementById('thrUnit').selectedIndex].innerText;
+    document.getElementById('cusSelThrUnitDiv').classList.add('nbCustomSelected');
   };
 
   const errorReportOpen = async (contentsNo) => {
@@ -428,10 +357,7 @@ const ContentsList = () => {
   };
 
   const putInMyRepo = async (event, contentsno) => {
-    if (
-      event.target.classList.contains('active') ||
-      event.target.classList.contains('active2')
-    ) {
+    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
       event.target.classList.remove('active');
       event.target.classList.remove('active2');
       let list = conRepoInfoList.filter((element) => {
@@ -474,9 +400,7 @@ const ContentsList = () => {
     }
 
     conRepoInfoList.forEach(function (element) {
-      document
-        .getElementById('contentsRepo' + element.mathConRepoDomain.contentsNo)
-        .classList.add('active2');
+      document.getElementById('contentsRepo' + element.mathConRepoDomain.contentsNo).classList.add('active2');
     });
   };
 
@@ -499,10 +423,7 @@ const ContentsList = () => {
   };
 
   const likeContents = async (event, contentsno) => {
-    if (
-      event.target.classList.contains('active') ||
-      event.target.classList.contains('active2')
-    ) {
+    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
       event.target.classList.remove('active');
       event.target.classList.remove('active2');
       let list = conLikeInfoList.filter((element) => {
@@ -532,9 +453,7 @@ const ContentsList = () => {
     }
 
     conLikeInfoList.forEach(function (element) {
-      document
-        .getElementById('contentsLike' + element.mathConLikeDomain.contentsNo)
-        .classList.add('active2');
+      document.getElementById('contentsLike' + element.mathConLikeDomain.contentsNo).classList.add('active2');
     });
   };
 
@@ -544,202 +463,95 @@ const ContentsList = () => {
       else alert('PC에서 사용 가능한 서비스 입니다.');
       return;
     }
+    curPageNum = 0;
     let customSubject = document.getElementById('cusSelSubTitle');
     let subject = document.getElementById('subject');
-    //let customFirUnit = document.getElementById("cusSelFirUnitTitle");
-    //let firUnit = document.getElementById("firUnit");
-    let customSecUnit = document.getElementById('cusSelSecUnitTitle');
     let secUnit = document.getElementById('secUnit');
-    let customThrUnit = document.getElementById('cusSelThrUnitTitle');
     let thrUnit = document.getElementById('thrUnit');
 
     if (customSubject.innerText == '과목' || subject.selectedIndex == 0) {
       alert('과목을 선택해주세요.');
       return false;
     }
-    /*
-            if(customFirUnit.innerText=="대단원" || firUnit.selectedIndex==0){
-                    alert("대단원을 선택해주세요.");
-                    return false;
-            }
-            */
 
-    let searchCond = '';
-    let unitUniqNoList = '';
-    if (customSecUnit.innerText === '대단원' || secUnit.selectedIndex === 0) {
-      searchCond = 'subject';
-      let formData = new FormData();
-      formData.append('subject', subject[subject.selectedIndex].value);
-      //unitUniqNo 가져오기 21001-21013
-      let returnObj = await nb_formDataFetch(
-        '/mathInfo/takeUnitInfoList',
-        formData,
-        true
-      );
-      unitUniqNoList =
-        returnObj.mathUnitInfoList[0].unitUniqNo +
-        '-' +
-        returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length - 1]
-          .unitUniqNo;
-    } else {
-      if (customThrUnit.innerText === '중단원' || thrUnit.selectedIndex === 0) {
-        searchCond = 'secUnit';
-        //unitUniqNo 가져오기 21001-21003
-        let returnObj = await nb_dataFetch(
-          '/mathInfo/takeUnitInfoList?value=' +
-            secUnit[secUnit.selectedIndex].value,
-          true
-        );
-        unitUniqNoList =
-          returnObj.mathUnitInfoList[0].unitUniqNo +
-          '-' +
-          returnObj.mathUnitInfoList[returnObj.mathUnitInfoList.length - 1]
-            .unitUniqNo;
-      }
+    let unitId = '';
+    // 학년으로 검색한 경우
+    if (subject.selectedIndex !== 0) {
+      unitId = '?searchType=Subject&unitId=' + subject[subject.selectedIndex].dataset.uniqNo;
     }
 
-    curPageNum = 0;
-    let formData = new FormData(document.getElementById('workSearchForm'));
-    if (unitUniqNoList !== '') {
-      formData.append('unitUniqNoStr', unitUniqNoList);
-    } else {
-      formData.append(
-        'unitUniqNo',
-        thrUnit[thrUnit.selectedIndex].dataset.uniqNo
-      );
+    // 중단원으로 검색한 경우
+    if (secUnit.selectedIndex !== 0) {
+      unitId = '?searchType=SecUnit&unitId=' + secUnit[secUnit.selectedIndex].dataset.uniqNo;
     }
-    formData.append('curPageNum', curPageNum);
-    formData.append('pageVolume', pageVolume);
-    // FormData의 값 확인
-    /*
-            for (var pair of formData.entries()) {
-            }
-            */
 
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeContentsList',
-      formData,
-      true
-    );
+    // 소단원으로 검색한 경우
+    if (thrUnit.selectedIndex !== 0) {
+      unitId = '?searchType=ThrUnit&unitId=' + thrUnit[thrUnit.selectedIndex].dataset.uniqNo;
+    }
+    unitId += '&pageNum=' + curPageNum + '&pageVolume=' + pageVolume;
 
-    let param = nb_getParameterByName('unitUniqId');
+    let returnObj = await nb_getRequest('/math/content/list' + unitId, true);
+
+    let param = nb_getParameterByName('unitId');
     if (param !== thrUnit[thrUnit.selectedIndex].dataset.uniqNo) {
-      if (unitUniqNoList !== '') {
-        window.history.pushState(
-          '',
-          '문제검색',
-          '/contentsList?unitUniqId=' +
-            unitUniqNoList +
-            '&searchCond=' +
-            searchCond
-        );
+      if (unitId !== '') {
+        window.history.pushState('', '문제검색', '/contentsList' + unitId);
       } else {
-        window.history.pushState(
-          '',
-          '문제검색',
-          '/contentsList?unitUniqId=' +
-            thrUnit[thrUnit.selectedIndex].dataset.uniqNo
-        );
+        window.history.pushState('', '문제검색', '/contentsList' + thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
       }
     }
-    if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
-    }
 
-    if (returnObj['isSearched']) {
+    if (returnObj.status == 200) {
       fExecuteWidth = true;
-      if (returnObj['mathContents'].length === 0) {
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj['mathContents']);
+      if (returnObj.data.total === 0) {
+        // setConRepoInfoList(returnObj['mathconRepoInfo']);
+        // setConLikeInfoList(returnObj['mathConLikeInfo']);
+        setContentsList(returnObj.data.contents);
         if (hasNotiPhrases) {
-          await nb_fadeInOut(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.',
-            2000
-          );
-          setEmptyListMsg(
-            '단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.'
-          );
+          await nb_fadeInOut('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.', 2000);
+          setEmptyListMsg('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.');
         } else {
           await nb_fadeInOut('해당하는 단원에 문제 내역이 없습니다.', 2000);
-          setEmptyListMsg(
-            '검색 결과가 없습니다. 해당 단원에 등록되어있는 문제가 없습니다.',
-            2000
-          );
+          setEmptyListMsg('검색 결과가 없습니다. 해당 단원에 등록되어있는 문제가 없습니다.', 2000);
         }
       } else {
-        if (curPageNum !== returnObj.totalPageCnt - 1) {
+        if (returnObj.data.contents.length == pageVolume) {
           document.getElementById('showMoreContents').classList.remove('hide');
         } else {
           document.getElementById('showMoreContents').classList.add('hide');
         }
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj['mathContents']);
-        if (hasNotiPhrases)
-          await nb_fadeInOut(
-            '정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.',
-            2000
-          );
+
+        setContentsList(returnObj.data.contents);
+        if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
         else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
       }
     }
   };
 
   const showMoreContents = async function () {
-    let formData = new FormData(document.getElementById('workSearchForm'));
-    let curSearchCond = await nb_getParameterByName('unitUniqId');
+    let queryString = '?searchType=' + (await nb_getParameterByName('searchType'));
+    queryString += '&unitId=' + (await nb_getParameterByName('unitId'));
 
     curPageNum++;
-    formData.append('curPageNum', curPageNum);
-    formData.append('pageVolume', pageVolume);
-    if (curSearchCond.indexOf('-') > -1) {
-      formData.append('unitUniqNoStr', curSearchCond);
-    } else {
-      formData.append('unitUniqNo', curSearchCond);
-    }
-    let returnObj = await nb_formDataFetch(
-      '/mathInfo/takeContentsList',
-      formData,
-      true
-    );
-    if (curPageNum !== returnObj.totalPageCnt - 1) {
+    queryString += '&pageNum=' + curPageNum;
+    queryString += '&pageVolume=' + pageVolume;
+    let returnObj = await nb_getRequest('/math/content/list' + queryString, true);
+    if (returnObj.data.contents.length == pageVolume) {
       document.getElementById('showMoreContents').classList.remove('hide');
     } else {
       document.getElementById('showMoreContents').classList.add('hide');
     }
     fExecuteWidth = true;
 
-    setConRepoInfoList([...conRepoInfoList, ...returnObj['mathconRepoInfo']]);
-    setConLikeInfoList([...conLikeInfoList, ...returnObj['mathConLikeInfo']]);
-    setContentsList([...contentsList, ...returnObj['mathContents']]);
+    setContentsList([...contentsList, ...returnObj.data.contents]);
     await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
   };
 
-  const searchWorkListByContentsNo = async function (
-    contentsNoParam,
-    hasNotiPhrases
-  ) {
-    let returnObj = await nb_dataFetch(
-      '/mathInfo/takeContentsListByContentsNo?contentsno=' + contentsNoParam,
-      true
-    );
+  const searchWorkListByContentsNo = async function (contentsNoParam, hasNotiPhrases) {
+    let returnObj = await nb_dataFetch('/mathInfo/takeContentsListByContentsNo?contentsno=' + contentsNoParam, true);
     if (returnObj.error != undefined) {
-      alert(
-        '[' +
-          returnObj.status +
-          ' ' +
-          returnObj.error +
-          ']\n에러 메시지 : ' +
-          returnObj.message
-      );
+      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n에러 메시지 : ' + returnObj.message);
     }
 
     if (returnObj['isSearched']) {
@@ -751,31 +563,19 @@ const ContentsList = () => {
         await nb_fadeInOut('해당하는 문제가 없습니다.', 2000);
         setEmptyListMsg('검색 결과가 없습니다. 해당 문제가 없습니다.', 2000);
       } else {
-        window.history.pushState(
-          '',
-          '문제검색',
-          '/contentsList?unitUniqId=0&contentsno=' + contentsNoParam
-        );
+        window.history.pushState('', '문제검색', '/contentsList?unitId=0&contentsno=' + contentsNoParam);
 
         setConRepoInfoList(returnObj['mathconRepoInfo']);
         setConLikeInfoList(returnObj['mathConLikeInfo']);
         setContentsList(returnObj['mathContents']);
-        if (hasNotiPhrases)
-          await nb_fadeInOut(
-            '정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.',
-            2000
-          );
+        if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
         else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
 
         if (contentsNoParam === 'allUserContents') {
-          let allBtn = document.querySelectorAll(
-            '.userSearchBtn, .updateBtn, .errBtn'
-          );
+          let allBtn = document.querySelectorAll('.userSearchBtn, .updateBtn, .errBtn');
           for (let i = 0; i < allBtn.length; i++) {}
         } else {
-          let allBtn = document.querySelectorAll(
-            '.userSearchBtn, .updateBtn, .errBtn'
-          );
+          let allBtn = document.querySelectorAll('.userSearchBtn, .updateBtn, .errBtn');
           for (let i = 0; i < allBtn.length; i++) {}
         }
       }
@@ -784,50 +584,22 @@ const ContentsList = () => {
 
   const showDetailConInfo = async (event, contentsNo, userNo) => {
     if (event.target.classList.contains('errBtn')) return;
-    document.getElementById('detailedContentsLike').dataset.contentsNo =
-      contentsNo;
-    if (
-      document
-        .getElementById('contentsLike' + contentsNo)
-        .classList.contains('active') ||
-      document
-        .getElementById('contentsLike' + contentsNo)
-        .classList.contains('active2')
-    ) {
-      document
-        .getElementById('detailedContentsLike')
-        .classList.remove('active');
+    document.getElementById('detailedContentsLike').dataset.contentsNo = contentsNo;
+    if (document.getElementById('contentsLike' + contentsNo).classList.contains('active') || document.getElementById('contentsLike' + contentsNo).classList.contains('active2')) {
+      document.getElementById('detailedContentsLike').classList.remove('active');
       document.getElementById('detailedContentsLike').classList.add('active2');
     } else {
-      document
-        .getElementById('detailedContentsLike')
-        .classList.remove('active');
-      document
-        .getElementById('detailedContentsLike')
-        .classList.remove('active2');
+      document.getElementById('detailedContentsLike').classList.remove('active');
+      document.getElementById('detailedContentsLike').classList.remove('active2');
     }
 
-    document.getElementById('detailedContentsRepo').dataset.contentsNo =
-      contentsNo;
-    if (
-      document
-        .getElementById('contentsRepo' + contentsNo)
-        .classList.contains('active') ||
-      document
-        .getElementById('contentsRepo' + contentsNo)
-        .classList.contains('active2')
-    ) {
-      document
-        .getElementById('detailedContentsRepo')
-        .classList.remove('active');
+    document.getElementById('detailedContentsRepo').dataset.contentsNo = contentsNo;
+    if (document.getElementById('contentsRepo' + contentsNo).classList.contains('active') || document.getElementById('contentsRepo' + contentsNo).classList.contains('active2')) {
+      document.getElementById('detailedContentsRepo').classList.remove('active');
       document.getElementById('detailedContentsRepo').classList.add('active2');
     } else {
-      document
-        .getElementById('detailedContentsRepo')
-        .classList.remove('active');
-      document
-        .getElementById('detailedContentsRepo')
-        .classList.remove('active2');
+      document.getElementById('detailedContentsRepo').classList.remove('active');
+      document.getElementById('detailedContentsRepo').classList.remove('active2');
     }
 
     document.getElementById('detailedConDiv').classList.remove('hide');
@@ -839,8 +611,7 @@ const ContentsList = () => {
         return false;
       }
     });
-    document.getElementById('quesDetailedContents').innerHTML =
-      contents.contents;
+    document.getElementById('quesDetailedContents').innerHTML = contents.contents;
 
     if (contents.firNo !== '') {
       document.getElementById('workMultiDetailedShow').classList.remove('hide');
@@ -855,50 +626,34 @@ const ContentsList = () => {
 
     if (contents.contentsImg !== null && contents.contentsImg !== undefined) {
       document.getElementById('quesDetailedImg-show').classList.remove('hide');
-      document.getElementById('contentsDetailedImgOutput').src =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contents.imgPath +
-        contents.contentsImg;
+      document.getElementById('contentsDetailedImgOutput').src = process.env.REACT_APP_SERVER_STATIC_HOST + contents.imgPath + contents.contentsImg;
     } else {
       document.getElementById('quesDetailedImg-show').classList.add('hide');
     }
     if (contents.solutionImg !== null && contents.solutionImg !== undefined) {
       document.getElementById('solDetailedImg-show').classList.remove('hide');
-      document.getElementById('solutionDetailedImgOutput').src =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contents.solutionImgPath +
-        contents.solutionImg;
+      document.getElementById('solutionDetailedImgOutput').src = process.env.REACT_APP_SERVER_STATIC_HOST + contents.solutionImgPath + contents.solutionImg;
     } else {
       document.getElementById('solDetailedImg-show').classList.add('hide');
     }
 
-    document.getElementById('solDetailedContents').innerHTML =
-      contents.solution;
+    document.getElementById('solDetailedContents').innerHTML = contents.solution;
 
     if (contents.answer !== null && contents.answer !== undefined) {
-      document.getElementById('answerDetailedSheet').innerHTML =
-        contents.answer;
+      document.getElementById('answerDetailedSheet').innerHTML = contents.answer;
     }
     if (contents.choiceAnswer !== null && contents.choiceAnswer !== undefined) {
-      document.getElementById('answerDetailedSheet').innerHTML =
-        contents.choiceAnswer;
+      document.getElementById('answerDetailedSheet').innerHTML = contents.choiceAnswer;
     }
 
     if (contents.contentsClassify === 1) {
       let profileImgPath = defaultProfile;
-      if (
-        contents.membersProfile.profileImgPath !== null &&
-        contents.membersProfile.profileImgName !== null
-      ) {
-        profileImgPath =
-          process.env.REACT_APP_SERVER_STATIC_HOST +
-          contents.membersProfile.profileImgPath +
-          contents.membersProfile.profileImgName;
+      if (contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null) {
+        profileImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contents.membersProfile.profileImgPath + contents.membersProfile.profileImgName;
       }
       document.getElementById('detailedConImg').classList.remove('hide');
       document.getElementById('detailedConImg').src = profileImgPath;
-      document.getElementById('userNickname').innerHTML =
-        contents.membersProfile.nickname;
+      document.getElementById('userNickname').innerHTML = contents.membersProfile.nickname;
       document.getElementById('nicknamewrap').classList.remove('manager');
       document.getElementById('nicknamewrap').dataset.userNo = userNo;
       await nb_licenseUiCheck(contents.mathContentsLicense[0]);
@@ -926,20 +681,10 @@ const ContentsList = () => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else
-      conImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.imgPath +
-        contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_S3_PATH + contentsMap.imgPath + contentsMap.contentsImg;
     let profileImgPath = defaultProfile;
-    if (
-      contentsMap.membersProfile.profileImgPath !== null &&
-      contentsMap.membersProfile.profileImgName !== null
-    ) {
-      profileImgPath =
-        process.env.REACT_APP_SERVER_STATIC_HOST +
-        contentsMap.membersProfile.profileImgPath +
-        contentsMap.membersProfile.profileImgName;
+    if (contentsMap.profileImgPath !== null && contentsMap.profileImgName !== null) {
+      profileImgPath = process.env.REACT_APP_S3_PATH + contentsMap.profileImgPath + contentsMap.profileImgName;
     }
 
     //이미지로 등록한 문제 여부
@@ -949,11 +694,7 @@ const ContentsList = () => {
     }
 
     return (
-      <div
-        id='workContentsDiv'
-        className='contentsDiv userSearchPage'
-        key={idx}
-      >
+      <div id='workContentsDiv' className='contentsDiv userSearchPage' key={idx}>
         <table className='workListTable userSearchPage'>
           <thead>
             <tr className='workListTBHead2'>
@@ -966,11 +707,8 @@ const ContentsList = () => {
                         className='putRepoBtn'
                         onClick={(event) => {
                           putInMyRepo(event, contentsMap.contentsNo);
-                        }}
-                      ></span>
-                      <span className='putRepoToolTip'>
-                        나의 저장소에 저장되었습니다
-                      </span>
+                        }}></span>
+                      <span className='putRepoToolTip'>나의 저장소에 저장되었습니다</span>
                     </span>
                     <span className='userSearchBtn'>
                       <span
@@ -978,26 +716,14 @@ const ContentsList = () => {
                         className='likeBtn'
                         onClick={(event) => {
                           likeContents(event, contentsMap.contentsNo);
-                        }}
-                      ></span>
+                        }}></span>
                     </span>
                     {contentsMap.contentsClassify === 0 ? (
                       <span className='userSearchBtn manager'>N명의수학</span>
                     ) : (
-                      <Link
-                        className='linkNoneCss'
-                        to={
-                          '/userProfile?userNo=' +
-                          contentsMap.membersProfile.userNo
-                        }
-                      >
+                      <Link className='linkNoneCss' to={'/userProfile?userNo=' + contentsMap.profileId}>
                         <span className='userSearchBtn'>
-                          <img
-                            src={profileImgPath}
-                            alt=''
-                            className='contentsListProfile'
-                          />{' '}
-                          {contentsMap.membersProfile.nickname}
+                          <img src={profileImgPath} alt='' className='contentsListProfile' /> {contentsMap.nickname}
                         </span>
                       </Link>
                     )}
@@ -1011,14 +737,9 @@ const ContentsList = () => {
                         className='updateBtn'
                         onClick={(event) => {
                           modalPopupOpen(event);
-                        }}
-                      >
+                        }}>
                         변형문제 만들기
-                        {contentsMap.transConCnt !== 0 && (
-                          <span className='transConCntCircle hide'>
-                            {contentsMap.transConCnt}
-                          </span>
-                        )}
+                        {contentsMap.transConCnt !== 0 && <span className='transConCntCircle hide'>{contentsMap.transConCnt}</span>}
                       </button>
                     </div>
                   )}
@@ -1031,13 +752,8 @@ const ContentsList = () => {
               <td
                 className='td1 userSearchPage backHover'
                 onClick={(event) => {
-                  showDetailConInfo(
-                    event,
-                    contentsMap.contentsNo,
-                    contentsMap.membersProfile.userNo
-                  );
-                }}
-              >
+                  showDetailConInfo(event, contentsMap.contentsNo, contentsMap.profileId);
+                }}>
                 <div className='userSearchCon'>
                   <div id='workQuesShow' className='workQuesShow quesRootDiv'>
                     <div className='quesDiv'>
@@ -1045,26 +761,18 @@ const ContentsList = () => {
                         className='quesContents'
                         dangerouslySetInnerHTML={{
                           __html: contentsMap.contents,
-                        }}
-                      ></div>
-                      <div
-                        id='quesImg-show'
-                        className={'quesImg-show ' + isConImgHide}
-                      >
+                        }}></div>
+                      <div id='quesImg-show' className={'quesImg-show ' + isConImgHide}>
                         <img src={conImgPath} id='contentsImgOutput' alt='' />
                       </div>
-                      <div
-                        id='workMultiShow'
-                        className={'quesConMultiShow ' + isMultiHide}
-                      >
+                      <div id='workMultiShow' className={'quesConMultiShow ' + isMultiHide}>
                         <div className='firDiv'>
                           <span className='multiChoiceNo'>&#9312;</span>
                           <span
                             className='firDivContents'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.firNo,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                         <div className='secDiv'>
                           <span className='multiChoiceNo'>&#9313;</span>
@@ -1072,8 +780,7 @@ const ContentsList = () => {
                             className='secDivContents'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.secNo,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                         <div className='thrDiv'>
                           <span className='multiChoiceNo'>&#9314;</span>
@@ -1081,8 +788,7 @@ const ContentsList = () => {
                             className='thrDivContents'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.thrNo,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                         <div className='fourDiv'>
                           <span className='multiChoiceNo'>&#9315;</span>
@@ -1090,8 +796,7 @@ const ContentsList = () => {
                             className='fourDivContents'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.fourNo,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                         <div className='fifDiv'>
                           <span className='multiChoiceNo'>&#9316;</span>
@@ -1099,8 +804,7 @@ const ContentsList = () => {
                             className='fifDivContents'
                             dangerouslySetInnerHTML={{
                               __html: contentsMap.fifNo,
-                            }}
-                          ></span>
+                            }}></span>
                         </div>
                       </div>
                     </div>
@@ -1116,8 +820,7 @@ const ContentsList = () => {
                   }}
                   onMouseOut={(event) => {
                     event.target.closest('.td1').classList.add('backHover');
-                  }}
-                ></div>
+                  }}></div>
               </td>
             </tr>
           </tbody>
@@ -1133,10 +836,7 @@ const ContentsList = () => {
         <meta name='description' content='원하는 수학문제를 찾아보세요!' />
         <link rel='canonical' href='https://nsoohak.com/contentsList' />
         <meta property='og:title' content='수학문제 목록' />
-        <meta
-          property='og:description'
-          content='원하는 수학문제를 찾아보세요!'
-        />
+        <meta property='og:description' content='원하는 수학문제를 찾아보세요!' />
       </Helmet>
       <BrowserView>
         <div id='scrollMoveBtn' className='scrollMoveBtn hide'>
@@ -1146,20 +846,15 @@ const ContentsList = () => {
             tooltip='맨 위로'
             onClick={() => {
               nb_moveToScroll(true);
-            }}
-          ></div>
-          <div
-            id='conScrollCenterCircle'
-            className='conScrollCenterCircle'
-          ></div>
+            }}></div>
+          <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
           <div
             id='conListScrollToBottom'
             className='conListScrollToBottom'
             tooltip='맨 아래로'
             onClick={() => {
               nb_moveToScroll(false);
-            }}
-          ></div>
+            }}></div>
         </div>
 
         {!modalState && (
@@ -1167,9 +862,7 @@ const ContentsList = () => {
             <div id='workListUnitTypeRoot' className='workListUnitTypeRoot'>
               <form method='post' id='workSearchForm'>
                 <div id='workListUnitType' className='workListUnitType'>
-                  <div className='mini-title5'>
-                    &nbsp; N명의수학에서 원하는 문제를 찾아보세요.
-                  </div>
+                  <div className='mini-title5'>&nbsp; N명의수학에서 원하는 문제를 찾아보세요.</div>
                   <CustomUnitSelBox
                     value={subjectBox}
                     cusSelId='cusSelSub'
@@ -1177,16 +870,8 @@ const ContentsList = () => {
                     childId='secUnit'
                     originSel='subject'
                     parentMethod={() => {}}
-                    title='과목'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={subjectBox}
-                    myId='subject'
-                    cusChildId='cusSelSecUnit'
-                    childId='secUnit'
-                    isUnitBubbleEv={true}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='과목'></CustomUnitSelBox>
+                  <UnitSelBox value={subjectBox} myId='subject' cusChildId='cusSelSecUnit' childId='secUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
                   {/*
                                 <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
                                 <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -1198,16 +883,8 @@ const ContentsList = () => {
                     childId='thrUnit'
                     originSel='secUnit'
                     parentMethod={() => {}}
-                    title='대단원'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={secUnitSelBox}
-                    myId='secUnit'
-                    cusChildId='cusSelThrUnit'
-                    childId='thrUnit'
-                    isUnitBubbleEv={true}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='대단원'></CustomUnitSelBox>
+                  <UnitSelBox value={secUnitSelBox} myId='secUnit' cusChildId='cusSelThrUnit' childId='thrUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
 
                   <CustomUnitSelBox
                     value={thrUnitSelBox}
@@ -1216,22 +893,10 @@ const ContentsList = () => {
                     childId='quesType'
                     originSel='thrUnit'
                     parentMethod={() => {}}
-                    title='중단원'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={thrUnitSelBox}
-                    myId='thrUnit'
-                    cusChildId='cusSelQuesType'
-                    childId='quesType'
-                    isUnitBubbleEv={false}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='중단원'></CustomUnitSelBox>
+                  <UnitSelBox value={thrUnitSelBox} myId='thrUnit' cusChildId='cusSelQuesType' childId='quesType' isUnitBubbleEv={false} parentMethod={() => {}}></UnitSelBox>
 
-                  <button
-                    type='button'
-                    className='orangeBtn'
-                    onClick={() => searchMyWorkList(false)}
-                  >
+                  <button type='button' className='orangeBtn' onClick={() => searchMyWorkList(false)}>
                     검색
                   </button>
                 </div>
@@ -1239,24 +904,13 @@ const ContentsList = () => {
             </div>
             <div className='workList'>
               {workListChanged && workContentsList.length !== 0 ? (
-                <div
-                  className='contents-show userSearchPage'
-                  id='contents-show'
-                >
+                <div className='contents-show userSearchPage' id='contents-show'>
                   {workContentsList}
                 </div>
               ) : (
-                <EmptyList
-                  msg={emptyListMsg}
-                  imgName='searchList'
-                  addImgClass=''
-                />
+                <EmptyList msg={emptyListMsg} imgName='searchList' addImgClass='' />
               )}
-              <DetailedContentsWrap
-                isBasedParent={true}
-                modalRepoChange={modalBaseRepoChange}
-                modalLikeChange={modalBaseLikeChange}
-              />
+              <DetailedContentsWrap isBasedParent={true} modalRepoChange={modalBaseRepoChange} modalLikeChange={modalBaseLikeChange} />
             </div>
           </div>
         )}
@@ -1265,8 +919,7 @@ const ContentsList = () => {
           className='showMoreContents hide'
           onClick={() => {
             showMoreContents();
-          }}
-        >
+          }}>
           검색정보 더보기
         </div>
         <div className='paddingFiveZero'></div>
@@ -1277,28 +930,14 @@ const ContentsList = () => {
             className='closeBtn'
             onClick={(event) => {
               modalPopupClose(event);
-            }}
-          >
+            }}>
             &#88;
           </div>
-          {modalState && (
-            <FormulaEditor
-              contentsNo={contentsNo}
-              isUser={true}
-              contentsClassify={2}
-            />
-          )}
+          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2} />}
         </div>
         <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
 
-        {errContentsNo !== 0 && (
-          <ErrorReportForMathCon
-            parentMethod={errorReportClose}
-            conNo={errContentsNo}
-            errType={1}
-            title='문제 오류 신고'
-          />
-        )}
+        {errContentsNo !== 0 && <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} errType={1} title='문제 오류 신고' />}
       </BrowserView>
       <MobileView>
         <div id='scrollMoveBtn' className='scrollMoveBtn hide'>
@@ -1308,33 +947,23 @@ const ContentsList = () => {
             tooltip='맨 위로'
             onClick={() => {
               nb_moveToScroll(true);
-            }}
-          ></div>
-          <div
-            id='conScrollCenterCircle'
-            className='conScrollCenterCircle'
-          ></div>
+            }}></div>
+          <div id='conScrollCenterCircle' className='conScrollCenterCircle'></div>
           <div
             id='conListScrollToBottom'
             className='conListScrollToBottom'
             tooltip='맨 아래로'
             onClick={() => {
               nb_moveToScroll(false);
-            }}
-          ></div>
+            }}></div>
         </div>
 
         {!modalState && (
           <div>
-            <div
-              id='workListUnitTypeRoot'
-              className='workListUnitTypeRoot mobile'
-            >
+            <div id='workListUnitTypeRoot' className='workListUnitTypeRoot mobile'>
               <form method='post' id='workSearchForm'>
                 <div id='workListUnitType' className='workListUnitType mobile'>
-                  <div className='mini-title5'>
-                    &nbsp; PC버전으로 접속하여 원하는 문제를 찾아보세요.
-                  </div>
+                  <div className='mini-title5'>&nbsp; PC버전으로 접속하여 원하는 문제를 찾아보세요.</div>
                   <CustomUnitSelBox
                     value={subjectBox}
                     cusSelId='cusSelSub'
@@ -1342,16 +971,8 @@ const ContentsList = () => {
                     childId='secUnit'
                     originSel='subject'
                     parentMethod={() => {}}
-                    title='과목'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={subjectBox}
-                    myId='subject'
-                    cusChildId='cusSelSecUnit'
-                    childId='secUnit'
-                    isUnitBubbleEv={true}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='과목'></CustomUnitSelBox>
+                  <UnitSelBox value={subjectBox} myId='subject' cusChildId='cusSelSecUnit' childId='secUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
                   {/*
                                 <CustomUnitSelBox value={firUnitSelBox} cusSelId="cusSelFirUnit" cusChildId="cusSelSecUnit" childId="secUnit" originSel="firUnit" parentMethod={()=>{}} title="대단원"></CustomUnitSelBox>
                                 <UnitSelBox value={firUnitSelBox} myId="firUnit" cusChildId="cusSelSecUnit" childId="secUnit"  isUnitBubbleEv={true} parentMethod={()=>{}}></UnitSelBox>
@@ -1363,16 +984,8 @@ const ContentsList = () => {
                     childId='thrUnit'
                     originSel='secUnit'
                     parentMethod={() => {}}
-                    title='대단원'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={secUnitSelBox}
-                    myId='secUnit'
-                    cusChildId='cusSelThrUnit'
-                    childId='thrUnit'
-                    isUnitBubbleEv={true}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='대단원'></CustomUnitSelBox>
+                  <UnitSelBox value={secUnitSelBox} myId='secUnit' cusChildId='cusSelThrUnit' childId='thrUnit' isUnitBubbleEv={true} parentMethod={() => {}}></UnitSelBox>
 
                   <CustomUnitSelBox
                     value={thrUnitSelBox}
@@ -1381,22 +994,10 @@ const ContentsList = () => {
                     childId='quesType'
                     originSel='thrUnit'
                     parentMethod={() => {}}
-                    title='중단원'
-                  ></CustomUnitSelBox>
-                  <UnitSelBox
-                    value={thrUnitSelBox}
-                    myId='thrUnit'
-                    cusChildId='cusSelQuesType'
-                    childId='quesType'
-                    isUnitBubbleEv={false}
-                    parentMethod={() => {}}
-                  ></UnitSelBox>
+                    title='중단원'></CustomUnitSelBox>
+                  <UnitSelBox value={thrUnitSelBox} myId='thrUnit' cusChildId='cusSelQuesType' childId='quesType' isUnitBubbleEv={false} parentMethod={() => {}}></UnitSelBox>
 
-                  <button
-                    type='button'
-                    className='orangeBtn'
-                    onClick={() => searchMyWorkList(false)}
-                  >
+                  <button type='button' className='orangeBtn' onClick={() => searchMyWorkList(false)}>
                     검색
                   </button>
                 </div>
@@ -1404,20 +1005,13 @@ const ContentsList = () => {
             </div>
             <div className='workList mobile'>
               {workListChanged && workContentsList.length !== 0 ? (
-                <div
-                  className='contents-show userSearchPage'
-                  id='contents-show'
-                >
+                <div className='contents-show userSearchPage' id='contents-show'>
                   {workContentsList}
                 </div>
               ) : (
                 <EmptyList msg='' imgName='searchList' addImgClass='' />
               )}
-              <DetailedContentsWrap
-                isBasedParent={true}
-                modalRepoChange={modalBaseRepoChange}
-                modalLikeChange={modalBaseLikeChange}
-              />
+              <DetailedContentsWrap isBasedParent={true} modalRepoChange={modalBaseRepoChange} modalLikeChange={modalBaseLikeChange} />
             </div>
           </div>
         )}
@@ -1428,28 +1022,14 @@ const ContentsList = () => {
             className='closeBtn'
             onClick={(event) => {
               modalPopupClose(event);
-            }}
-          >
+            }}>
             &#88;
           </div>
-          {modalState && (
-            <FormulaEditor
-              contentsNo={contentsNo}
-              isUser={true}
-              contentsClassify={2}
-            />
-          )}
+          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2} />}
         </div>
         <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
 
-        {errContentsNo !== 0 && (
-          <ErrorReportForMathCon
-            parentMethod={errorReportClose}
-            conNo={errContentsNo}
-            errType={1}
-            title='문제 오류 신고'
-          />
-        )}
+        {errContentsNo !== 0 && <ErrorReportForMathCon parentMethod={errorReportClose} conNo={errContentsNo} errType={1} title='문제 오류 신고' />}
       </MobileView>
     </>
   );
