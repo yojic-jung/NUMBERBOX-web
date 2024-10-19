@@ -1166,7 +1166,7 @@ const MathDocsMaker = () => {
       return;
     }
     curPageNumByRepo = 0;
-    let returnObj = await nb_dataFetch('/mathInfo/takeMyRepo?curPageNum=' + curPageNumByRepo + '&pageVolume=' + pageVolume, true);
+    let returnObj = await nb_getRequest('/math/content/repo?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
 
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;
@@ -1888,7 +1888,7 @@ const MathDocsMaker = () => {
       document.getElementById('mySubFilterOff').click();
     }
     curPageNumByRepo++;
-    let returnObj = await nb_dataFetch('/mathInfo/takeMyRepo?curPageNum=' + curPageNumByRepo + '&pageVolume=' + pageVolume, true);
+    let returnObj = await nb_getRequest('/math/content/repo?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
 
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;

@@ -12,7 +12,6 @@ import {
   nb_dataFetch,
   nb_isLogin,
   nb_fCustomSelClose,
-  nb_formDataFetch,
   nb_fadeInOut,
   nb_licenseUiCheck,
   nb_closeBtn,
@@ -24,6 +23,8 @@ import {
   nb_getParameterByName,
   nb_topMenuFixed2,
   nb_getRequest,
+  nb_postRequest,
+  nb_deleteRequest,
 } from 'js/common/common_nb.js';
 import { reg_unitTypeChange, reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
 import 'css/common/nbScreen.css';
@@ -51,8 +52,6 @@ const ContentsList = () => {
   const [modalState, setModalState] = useState(false); //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
   const [workListChanged, setWorkListChanged] = useState(true);
   const [emptyListMsg, setEmptyListMsg] = useState('단원 정보를 선택하여 원하는 문제를 찾아보세요.');
-  const [conLikeInfoList, setConLikeInfoList] = useState(new Array());
-  const [conRepoInfoList, setConRepoInfoList] = useState(new Array());
   const [errContentsNo, setErrContentsNo] = useState(0);
 
   const removeAddedEvent = () => {
@@ -65,6 +64,7 @@ const ContentsList = () => {
   };
 
   const modalPopupOpen = async (event) => {
+    console.log(document.getElementById(event.target.id));
     subjectVal = document.getElementById('subject').value;
     //firUnitVal = document.getElementById("firUnit").value;
     secUnitVal = document.getElementById('secUnit').value;
@@ -72,6 +72,7 @@ const ContentsList = () => {
     scrollY = nb_modalScrollStrt();
 
     document.getElementById('outerFormulaEditor').classList.remove('hide');
+    console.log(document.getElementById(event.target.id));
     let contentsNo = document.getElementById(event.target.id).dataset.contentsNo;
     await setContentsNo(contentsNo);
     setModalState(true);
@@ -82,8 +83,6 @@ const ContentsList = () => {
     await nb_closeBtn('outerFormulaEditor');
     await setModalState(false);
 
-    setMyLikeInfo();
-    setMyRepoInfo();
     //이전 검색조건 셋팅
     let trigEv = new Object();
     let sub = new Object();
@@ -130,7 +129,7 @@ const ContentsList = () => {
       if (mathContents !== undefined) {
         //변형문제에서는 문제가 수정되는게 아니라 추가되기 때문에 수정한 컨텐츠가 없으므로 컨텐츠 가져오지 않음
         contentsList.forEach(function (element, idx) {
-          if (element.contentsNo === mathContents.contentsNo) {
+          if (element.contentsId === mathContents.contentsId) {
             objIdx = idx;
             return false;
           }
@@ -176,9 +175,6 @@ const ContentsList = () => {
 
   useEffect(() => {
     let queryString = makeQueryString();
-
-    console.log(queryString);
-
     if (currentPath === location.pathname && queryString === '') {
       if (contentsList.length !== 0) {
         setContentsList([]);
@@ -213,8 +209,6 @@ const ContentsList = () => {
     } else {
       if (contentsList.length !== 0) {
         nb_multiChoiceGridSet('quesConMultiShow');
-        setMyLikeInfo();
-        setMyRepoInfo();
       }
       fExecuteWidth = false;
     }
@@ -232,22 +226,11 @@ const ContentsList = () => {
 
     if (returnObj.status === 200) {
       fExecuteWidth = true;
-      if (returnObj.data.total === 0) {
-        // setConRepoInfoList(returnObj['mathconRepoInfo']);
-        // setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj.data.contents);
-      } else {
-        // setConRepoInfoList(returnObj['mathconRepoInfo']);
-        // setConLikeInfoList(returnObj['mathConLikeInfo']);
-        setContentsList(returnObj.data.contents);
-      }
+      setContentsList(returnObj.data.contents);
     }
 
-    if (returnObj.data.contents.length == pageVolume) {
-      document.getElementById('showMoreContents').classList.remove('hide');
-    } else {
-      document.getElementById('showMoreContents').classList.add('hide');
-    }
+    if (returnObj.data.contents.length == pageVolume) document.getElementById('showMoreContents').classList.remove('hide');
+    else document.getElementById('showMoreContents').classList.add('hide');
 
     //이전 검색조건 셋팅
     let trigEv = new Object();
@@ -265,7 +248,8 @@ const ContentsList = () => {
     const urlParams = new URLSearchParams(queryString);
 
     let unitId = '';
-    if (searchType === 'Subject' || searchType === 'FirUnit' || searchType === 'SecUnit' || searchType === 'ThrUnit') unitId = urlParams.get('unitId');
+    let searchTypeArr = ['Subject', 'FirUnit', 'SecUnit', 'ThrUnit'];
+    if (searchTypeArr.includes(searchType)) unitId = urlParams.get('unitId');
 
     for (let i = 0; i < subjectOptList.length; i++) {
       if (subjectOptList[i].dataset.uniqNo > unitId) break;
@@ -325,136 +309,44 @@ const ContentsList = () => {
     setErrContentsNo(0);
   };
 
+  const modalBaseLikeChange = async (contentsno, isDel) => {
+    if (isDel) {
+      document.getElementById('contentsLike' + contentsno).classList.remove('active');
+    } else {
+      document.getElementById('contentsLike' + contentsno).classList.add('active');
+    }
+  };
+
   const modalBaseRepoChange = async (contentsno, isDel) => {
     if (isDel) {
-      let list = conRepoInfoList.filter((element) => {
-        if (element.mathConRepoDomain.contentsNo !== Number(contentsno)) {
-          return element;
-        }
-      });
-      setConRepoInfoList(list);
+      document.getElementById('contentsRepo' + contentsno).classList.remove('active');
     } else {
-      let repoObj = new Object();
-      let mathConRepoDomain = new Object();
-      mathConRepoDomain.contentsNo = contentsno;
-      mathConRepoDomain.userUniqId = null;
-      repoObj.mathConRepoDomain = mathConRepoDomain;
-      let current_datetime = new Date();
-      repoObj.sysCreateDate =
-        current_datetime.getFullYear() +
-        '' +
-        (current_datetime.getMonth() + 1) +
-        '' +
-        current_datetime.getDate() +
-        '' +
-        current_datetime.getHours() +
-        '' +
-        current_datetime.getMinutes() +
-        '' +
-        current_datetime.getSeconds();
-      conRepoInfoList.push(repoObj);
+      document.getElementById('contentsRepo' + contentsno).classList.add('active');
     }
   };
 
   const putInMyRepo = async (event, contentsno) => {
-    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
-      event.target.classList.remove('active');
-      event.target.classList.remove('active2');
-      let list = conRepoInfoList.filter((element) => {
-        if (element.mathConRepoDomain.contentsNo !== Number(contentsno)) {
-          return element;
-        }
-      });
-      setConRepoInfoList(list);
+    let jsonReq = new Object();
+    jsonReq.contentsId = contentsno;
+    if (event.target.classList.contains('active')) {
+      let rsBody = await nb_deleteRequest('/math/repo/content', jsonReq, false);
+      if (rsBody.status == 200) event.target.classList.remove('active');
     } else {
-      event.target.classList.add('active');
-      let repoObj = new Object();
-      let mathConRepoDomain = new Object();
-      mathConRepoDomain.contentsNo = contentsno;
-      mathConRepoDomain.userUniqId = null;
-      repoObj.mathConRepoDomain = mathConRepoDomain;
-      let current_datetime = new Date();
-      repoObj.sysCreateDate =
-        current_datetime.getFullYear() +
-        '' +
-        (current_datetime.getMonth() + 1) +
-        '' +
-        current_datetime.getDate() +
-        '' +
-        current_datetime.getHours() +
-        '' +
-        current_datetime.getMinutes() +
-        '' +
-        current_datetime.getSeconds();
-      conRepoInfoList.push(repoObj);
-    }
-    nb_dataFetch('/mathInfo/putInMyRepo?contentsno=' + contentsno, false);
-  };
-
-  //검색 후 저장목록 셋팅
-  const setMyRepoInfo = async () => {
-    let putRepoBtn = document.getElementsByClassName('putRepoBtn');
-    for (let i = 0; i < putRepoBtn.length; i++) {
-      putRepoBtn[i].classList.remove('active');
-      putRepoBtn[i].classList.remove('active2');
-    }
-
-    conRepoInfoList.forEach(function (element) {
-      document.getElementById('contentsRepo' + element.mathConRepoDomain.contentsNo).classList.add('active2');
-    });
-  };
-
-  const modalBaseLikeChange = async (contentsno, isDel) => {
-    if (isDel) {
-      let list = conLikeInfoList.filter((element) => {
-        if (element.mathConLikeDomain.contentsNo !== Number(contentsno)) {
-          return element;
-        }
-      });
-      setConLikeInfoList(list);
-    } else {
-      let repoObj = new Object();
-      let mathConLikeDomain = new Object();
-      mathConLikeDomain.contentsNo = contentsno;
-      mathConLikeDomain.userUniqId = null;
-      repoObj.mathConLikeDomain = mathConLikeDomain;
-      conLikeInfoList.push(repoObj);
+      let rsBody = await nb_postRequest('/math/repo/content', jsonReq, false);
+      if (rsBody.status == 200) event.target.classList.add('active');
     }
   };
 
   const likeContents = async (event, contentsno) => {
-    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
-      event.target.classList.remove('active');
-      event.target.classList.remove('active2');
-      let list = conLikeInfoList.filter((element) => {
-        if (element.mathConLikeDomain.contentsNo !== Number(contentsno)) {
-          return element;
-        }
-      });
-      setConLikeInfoList(list);
+    let jsonReq = new Object();
+    jsonReq.contentsId = contentsno;
+    if (event.target.classList.contains('active')) {
+      let rsBody = await nb_deleteRequest('/math/like/content', jsonReq, false);
+      if (rsBody.status == 200) event.target.classList.remove('active');
     } else {
-      event.target.classList.add('active');
-      let repoObj = new Object();
-      let mathConLikeDomain = new Object();
-      mathConLikeDomain.contentsNo = contentsno;
-      mathConLikeDomain.userUniqId = null;
-      repoObj.mathConLikeDomain = mathConLikeDomain;
-      conLikeInfoList.push(repoObj);
+      let rsBody = await nb_postRequest('/math/like/content', jsonReq, false);
+      if (rsBody.status == 200) event.target.classList.add('active');
     }
-    nb_dataFetch('/mathInfo/likeContents?contentsno=' + contentsno, false);
-  };
-
-  //검색 후 좋아요목록 셋팅
-  const setMyLikeInfo = async () => {
-    let likeBtn = document.getElementsByClassName('likeBtn');
-    for (let i = 0; i < likeBtn.length; i++) {
-      likeBtn[i].classList.remove('active');
-      likeBtn[i].classList.remove('active2');
-    }
-
-    conLikeInfoList.forEach(function (element) {
-      document.getElementById('contentsLike' + element.mathConLikeDomain.contentsNo).classList.add('active2');
-    });
   };
 
   const searchMyWorkList = async function (hasNotiPhrases) {
@@ -505,8 +397,8 @@ const ContentsList = () => {
     if (returnObj.status == 200) {
       fExecuteWidth = true;
       if (returnObj.data.total === 0) {
-        // setConRepoInfoList(returnObj['mathconRepoInfo']);
-        // setConLikeInfoList(returnObj['mathConLikeInfo']);
+        // setConRepoInfoList(returnObj.data.contents);
+        // setConLikeInfoList(returnObj.data.contents);
         setContentsList(returnObj.data.contents);
         if (hasNotiPhrases) {
           await nb_fadeInOut('단원정보를 수정하신 경우 수정한 단원에서 확인이 가능합니다.', 2000);
@@ -557,16 +449,16 @@ const ContentsList = () => {
     if (returnObj['isSearched']) {
       fExecuteWidth = true;
       if (returnObj['mathContents'].length === 0) {
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
+        // setConRepoInfoList(returnObj.data.contents);
+        // setConLikeInfoList(returnObj.data.contents);
         setContentsList(returnObj['mathContents']);
         await nb_fadeInOut('해당하는 문제가 없습니다.', 2000);
         setEmptyListMsg('검색 결과가 없습니다. 해당 문제가 없습니다.', 2000);
       } else {
         window.history.pushState('', '문제검색', '/contentsList?unitId=0&contentsno=' + contentsNoParam);
 
-        setConRepoInfoList(returnObj['mathconRepoInfo']);
-        setConLikeInfoList(returnObj['mathConLikeInfo']);
+        // setConRepoInfoList(returnObj.data.contents);
+        // setConLikeInfoList(returnObj.data.contents);
         setContentsList(returnObj['mathContents']);
         if (hasNotiPhrases) await nb_fadeInOut('정상적으로 수정되었습니다. 수정된 결과를 확인해보세요.', 2000);
         else await nb_fadeInOut('문제 내역이 정상적으로 조회되었습니다.', 2000);
@@ -582,31 +474,30 @@ const ContentsList = () => {
     }
   };
 
-  const showDetailConInfo = async (event, contentsNo, userNo) => {
+  const showDetailConInfo = async (event, contentsId, userNo) => {
     if (event.target.classList.contains('errBtn')) return;
-    document.getElementById('detailedContentsLike').dataset.contentsNo = contentsNo;
-    if (document.getElementById('contentsLike' + contentsNo).classList.contains('active') || document.getElementById('contentsLike' + contentsNo).classList.contains('active2')) {
-      document.getElementById('detailedContentsLike').classList.remove('active');
-      document.getElementById('detailedContentsLike').classList.add('active2');
+    document.getElementById('detailedContentsLike').classList.remove('active');
+    document.getElementById('detailedContentsRepo').classList.remove('active');
+
+    document.getElementById('detailedContentsLike').dataset.contentsNo = contentsId;
+    if (document.getElementById('contentsLike' + contentsId).classList.contains('active')) {
+      document.getElementById('detailedContentsLike').classList.add('active');
     } else {
       document.getElementById('detailedContentsLike').classList.remove('active');
-      document.getElementById('detailedContentsLike').classList.remove('active2');
     }
 
-    document.getElementById('detailedContentsRepo').dataset.contentsNo = contentsNo;
-    if (document.getElementById('contentsRepo' + contentsNo).classList.contains('active') || document.getElementById('contentsRepo' + contentsNo).classList.contains('active2')) {
-      document.getElementById('detailedContentsRepo').classList.remove('active');
-      document.getElementById('detailedContentsRepo').classList.add('active2');
+    document.getElementById('detailedContentsRepo').dataset.contentsNo = contentsId;
+    if (document.getElementById('contentsRepo' + contentsId).classList.contains('active')) {
+      document.getElementById('detailedContentsRepo').classList.add('active');
     } else {
       document.getElementById('detailedContentsRepo').classList.remove('active');
-      document.getElementById('detailedContentsRepo').classList.remove('active2');
     }
 
     document.getElementById('detailedConDiv').classList.remove('hide');
     document.getElementById('likeRepoWrap').classList.remove('hide');
     let contents;
     contentsList.forEach(function (element, idx) {
-      if (element.contentsNo === Number(contentsNo)) {
+      if (element.contentsId === Number(contentsId)) {
         contents = element;
         return false;
       }
@@ -693,6 +584,12 @@ const ContentsList = () => {
       isImgRegContents = true;
     }
 
+    let isMyRepoContents = '';
+    if (contentsMap.isMyRepoContents) isMyRepoContents = ' active';
+
+    let isLikeContents = '';
+    if (contentsMap.isLikeContents) isLikeContents = ' active';
+
     return (
       <div id='workContentsDiv' className='contentsDiv userSearchPage' key={idx}>
         <table className='workListTable userSearchPage'>
@@ -703,19 +600,19 @@ const ContentsList = () => {
                   <div>
                     <span className='userSearchBtn'>
                       <span
-                        id={'contentsRepo' + contentsMap.contentsNo}
-                        className='putRepoBtn'
+                        id={'contentsRepo' + contentsMap.contentsId}
+                        className={'putRepoBtn' + isMyRepoContents}
                         onClick={(event) => {
-                          putInMyRepo(event, contentsMap.contentsNo);
+                          putInMyRepo(event, contentsMap.contentsId);
                         }}></span>
                       <span className='putRepoToolTip'>나의 저장소에 저장되었습니다</span>
                     </span>
                     <span className='userSearchBtn'>
                       <span
-                        id={'contentsLike' + contentsMap.contentsNo}
-                        className='likeBtn'
+                        id={'contentsLike' + contentsMap.contentsId}
+                        className={'likeBtn' + isLikeContents}
                         onClick={(event) => {
-                          likeContents(event, contentsMap.contentsNo);
+                          likeContents(event, contentsMap.contentsId);
                         }}></span>
                     </span>
                     {contentsMap.contentsClassify === 0 ? (
@@ -733,13 +630,13 @@ const ContentsList = () => {
                       <button
                         id={updateBtnId}
                         type='button'
-                        data-contents-no={contentsMap.contentsNo}
+                        data-contents-no={contentsMap.contentsId}
                         className='updateBtn'
                         onClick={(event) => {
                           modalPopupOpen(event);
                         }}>
                         변형문제 만들기
-                        {contentsMap.transConCnt !== 0 && <span className='transConCntCircle hide'>{contentsMap.transConCnt}</span>}
+                        {contentsMap.transConCnt !== 0 && <span className='transConCntCircle'>{contentsMap.transConCnt}</span>}
                       </button>
                     </div>
                   )}
@@ -752,7 +649,7 @@ const ContentsList = () => {
               <td
                 className='td1 userSearchPage backHover'
                 onClick={(event) => {
-                  showDetailConInfo(event, contentsMap.contentsNo, contentsMap.profileId);
+                  showDetailConInfo(event, contentsMap.contentsId, contentsMap.profileId);
                 }}>
                 <div className='userSearchCon'>
                   <div id='workQuesShow' className='workQuesShow quesRootDiv'>
@@ -813,7 +710,7 @@ const ContentsList = () => {
                 <div
                   className='errBtn topErrBtn'
                   onClick={() => {
-                    errorReportOpen(contentsMap.contentsNo);
+                    errorReportOpen(contentsMap.contentsId);
                   }}
                   onMouseOver={(event) => {
                     event.target.closest('.td1').classList.remove('backHover');

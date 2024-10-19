@@ -11,7 +11,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
     const asyncUseEffect = async () => {
       let jsonObj = await nb_dataFetch('/math/menu/unit', true);
       setSubjectList(jsonObj.data['subjectList']);
-      setSecUnitList(jsonObj['firUnitList']);
+      setSecUnitList(jsonObj.data['secUnitList']);
     };
     asyncUseEffect();
     return () => removeAddedEvent();
@@ -53,11 +53,17 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
       var contentsArray = [].slice.call(contentsNodeList, 0);
       if (sortBy === 'latest') {
         contentsArray.sort(function (a, b) {
-          return Number(b.dataset.sysCreateDate) - Number(a.dataset.sysCreateDate); //내림차순, 날짜 큰것 부터 작 순으로
+          const date1 = new Date(a.dataset.sysCreateDate);
+          const date2 = new Date(b.dataset.sysCreateDate);
+          const differenceInMilliseconds = date1 - date2;
+          return differenceInMilliseconds; //내림차순, 날짜 큰것 부터 작 순으로
         });
       } else if (sortBy === 'oldest') {
         contentsArray.sort(function (a, b) {
-          return Number(a.dataset.sysCreateDate) - Number(b.dataset.sysCreateDate); //오름차순, 날짜 작은것 부터 큰 순으로
+          const date1 = new Date(a.dataset.sysCreateDate);
+          const date2 = new Date(b.dataset.sysCreateDate);
+          const differenceInMilliseconds = date2 - date1;
+          return differenceInMilliseconds; //오름차순, 날짜 작은것 부터 큰 순으로
         });
       }
       for (let i = 0; i < contentsNodeList.length; i++) {

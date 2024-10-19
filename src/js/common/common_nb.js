@@ -1,11 +1,5 @@
 import imageCompression from 'browser-image-compression';
-import {
-  ACCESS_TOKEN_KEY,
-  ROLE_KEY,
-  ROLE_ADMIN,
-  ROLE_MANAGER,
-  ROLE_TOP_TESTER,
-} from 'constant/com_const.js';
+import { ACCESS_TOKEN_KEY, ROLE_KEY, ROLE_ADMIN, ROLE_MANAGER, ROLE_TOP_TESTER } from 'constant/com_const.js';
 
 export const nb_isLogin = () => {
   let isLogin = window.localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
@@ -18,9 +12,7 @@ export const nb_isManger = () => {
   let isManger = false;
   if (isLogin) {
     isManger =
-      window.localStorage.getItem(ROLE_KEY) === ROLE_MANAGER ||
-      window.localStorage.getItem(ROLE_KEY) === ROLE_TOP_TESTER ||
-      window.localStorage.getItem(ROLE_KEY) === ROLE_ADMIN;
+      window.localStorage.getItem(ROLE_KEY) === ROLE_MANAGER || window.localStorage.getItem(ROLE_KEY) === ROLE_TOP_TESTER || window.localStorage.getItem(ROLE_KEY) === ROLE_ADMIN;
   }
   return isManger;
 };
@@ -63,10 +55,7 @@ export const nb_dataFetch = async (url, transitEffect) => {
   })
     .then(async (response) => {
       if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
-        window.localStorage.setItem(
-          ACCESS_TOKEN_KEY,
-          response.headers.get(ACCESS_TOKEN_KEY)
-        );
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         //매니저 권한 임시 구현
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       } else if (response.headers.get('tokenExpired') !== null) {
@@ -87,9 +76,7 @@ export const nb_dataFetch = async (url, transitEffect) => {
         returnVal = JSON.parse(data);
         if (returnVal.existMsg) {
           if (document.getElementById('resDetailedTimeDesc') !== null) {
-            document
-              .getElementById('resDetailedTimeDesc')
-              .classList.add('hide');
+            document.getElementById('resDetailedTimeDesc').classList.add('hide');
           }
           nb_fadeInOutC(returnVal.serverMsg, 3000);
         }
@@ -117,10 +104,7 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
   })
     .then(async (response) => {
       if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
-        window.localStorage.setItem(
-          ACCESS_TOKEN_KEY,
-          response.headers.get(ACCESS_TOKEN_KEY)
-        );
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         //매니저 권한 임시 구현
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       } else if (response.headers.get('tokenExpired') !== null) {
@@ -142,9 +126,7 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
         returnVal = JSON.parse(data);
         if (returnVal.existMsg) {
           if (document.getElementById('resDetailedTimeDesc') !== null) {
-            document
-              .getElementById('resDetailedTimeDesc')
-              .classList.add('hide');
+            document.getElementById('resDetailedTimeDesc').classList.add('hide');
           }
           nb_fadeInOutC(returnVal.serverMsg, 3000);
         }
@@ -231,10 +213,7 @@ export const nb_request = async (url, httpOption, transitEffect) => {
     .then(async (response) => {
       // 헤더에 Authorization 추가(서버에서 내려준 경우에만)
       if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
-        window.localStorage.setItem(
-          ACCESS_TOKEN_KEY,
-          response.headers.get(ACCESS_TOKEN_KEY)
-        );
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         // 권한 추가
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       }
@@ -353,6 +332,22 @@ export const nb_putRequest = async (url, jsonData, transitEffect) => {
   return await nb_request(url, httpOption, transitEffect);
 };
 
+export const nb_deleteRequest = async (url, jsonData, transitEffect) => {
+  // 요청 전문 생성
+  const httpOption = {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    },
+  };
+  httpOption.body = JSON.stringify(jsonData);
+
+  // 요청
+  return await nb_request(url, httpOption, transitEffect);
+};
+
 /*
  * 로그인 요청
  */
@@ -381,10 +376,7 @@ export const nb_formJsonFetch = async (url, formData, transitEffect) => {
   })
     .then(async (response) => {
       if (response.headers.get(ACCESS_TOKEN_KEY) !== null) {
-        window.localStorage.setItem(
-          ACCESS_TOKEN_KEY,
-          response.headers.get(ACCESS_TOKEN_KEY)
-        );
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         //매니저 권한 임시 구현
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
       }
@@ -529,9 +521,7 @@ export const nb_loadFile = async (event, outputId, contentsNo) => {
     reader.readAsDataURL(event.target.files[0]);
     output.classList.remove('hide');
     if (returnObj.updateCond !== 1) {
-      alert(
-        '정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.'
-      );
+      alert('정상적으로 처리가 완료되지 않았습니다.\n새로고침 후 다시한번 처리해주세요.');
       return false;
     } else {
       return 'Y';
@@ -637,11 +627,7 @@ export const nb_base64ImgRegisterToS3 = async (event) => {
       formData.append('actionId', 10);
       formData.append('imgPath', 'editorImgUpld');
       formData.append('multipartFile', imgFile);
-      let returnObj = await nb_formDataFetch(
-        '/common/imgUpload',
-        formData,
-        false
-      );
+      let returnObj = await nb_formDataFetch('/common/imgUpload', formData, false);
       allImgDom[i].src = returnObj.s3ImgUrl;
     }
   }
@@ -663,11 +649,7 @@ export const nb_base64ImgRegisterToS3ByTargetId = async (targetId) => {
     formData.append('actionId', 10);
     formData.append('imgPath', 'editorImgUpld');
     formData.append('multipartFile', imgFile);
-    let returnObj = await nb_formDataFetch(
-      '/common/imgUpload',
-      formData,
-      false
-    );
+    let returnObj = await nb_formDataFetch('/common/imgUpload', formData, false);
     allImgDom[i].src = returnObj.s3ImgUrl;
   }
 };
@@ -715,13 +697,7 @@ export const nb_extensionCheck = async (event, outputTarget, updtMode) => {
   let filepoint = obj.value.substring(pathpoint + 1, event.length);
   let filetype = filepoint.toLowerCase();
   // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
-  if (
-    filetype == 'jpg' ||
-    filetype == 'gif' ||
-    filetype == 'png' ||
-    filetype == 'jpeg' ||
-    filetype == 'bmp'
-  ) {
+  if (filetype == 'jpg' || filetype == 'gif' || filetype == 'png' || filetype == 'jpeg' || filetype == 'bmp') {
   } else {
     alert('이미지 파일만 등록해주십시오.(img/gif/png/jpeg/bmp)');
     await nb_imgFileDel(outputTarget, targetId);
@@ -763,13 +739,7 @@ export const nb_extensionCheck2 = async (event, exetension) => {
   let filetype = fileNames[fileNames.length - 1].toLowerCase();
   if (exetension === 'hwp') {
     // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
-    if (
-      filetype === 'hwp' ||
-      filetype === 'hml' ||
-      filetype === 'hwpx' ||
-      filetype === 'hwt' ||
-      filetype === 'hwtx'
-    ) {
+    if (filetype === 'hwp' || filetype === 'hml' || filetype === 'hwpx' || filetype === 'hwt' || filetype === 'hwtx') {
     } else {
       alert('한글 파일만 등록해주세요.(hwp/hml/hwpx/hwt/hwtx)');
       document.getElementById(targetId).value = '';
@@ -777,13 +747,7 @@ export const nb_extensionCheck2 = async (event, exetension) => {
     }
   } else {
     // 확장자가 이미지 파일이면 체크를 위해 임시로 로딩합니다.
-    if (
-      filetype == 'jpg' ||
-      filetype == 'gif' ||
-      filetype == 'png' ||
-      filetype == 'jpeg' ||
-      filetype == 'bmp'
-    ) {
+    if (filetype == 'jpg' || filetype == 'gif' || filetype == 'png' || filetype == 'jpeg' || filetype == 'bmp') {
     } else {
       alert('이미지 파일만 등록해주세요.(img/gif/png/jpeg/bmp)');
       document.getElementById(targetId).value = '';
@@ -812,8 +776,7 @@ export const nb_module_handleImageUpload = async (event) => {
     document.getElementById('page-transit').classList.remove('hide');
     document.getElementById('page-transit-img').classList.remove('hide');
     document.getElementById('page-transit-desc').classList.remove('hide');
-    document.getElementById('page-transit-desc').innerText =
-      '이미지를 압축하여 불러오고 있습니다...';
+    document.getElementById('page-transit-desc').innerText = '이미지를 압축하여 불러오고 있습니다...';
     let compressedFile = await imageCompression(imageFile, options);
     document.getElementById('page-transit').classList.add('hide');
     document.getElementById('page-transit-img').classList.add('hide');
@@ -833,8 +796,7 @@ export const nb_getCheckedVal = async function (event) {
       if (checkedValue.length == 0) {
         checkedValue = document.getElementsByName(event.target.name)[i].value;
       } else {
-        checkedValue +=
-          ',' + document.getElementsByName(event.target.name)[i].value;
+        checkedValue += ',' + document.getElementsByName(event.target.name)[i].value;
       }
     }
   }
@@ -855,12 +817,7 @@ export const nb_closeBtn = async function (targetId) {
 /*
  * nbCustomSel 박스 option 클릭 함수
  */
-export const nb_fCustomOptClk = function (
-  event,
-  parentId,
-  customTitle,
-  originSel
-) {
+export const nb_fCustomOptClk = function (event, parentId, customTitle, originSel) {
   let targetDom = document.getElementById(event.currentTarget.id);
   let parentDom = document.getElementById(parentId);
   let selVal = document.getElementById(customTitle);
@@ -877,8 +834,7 @@ export const nb_fCustomOptClk = function (
     let optionList = orginSelOpt.children;
     let selectedIdx = 0;
     for (let i = 0; i < optionList.length; i++) {
-      if (optionList[i].dataset.uniqNo == targetDom.dataset.uniqNo)
-        selectedIdx = i;
+      if (optionList[i].dataset.uniqNo == targetDom.dataset.uniqNo) selectedIdx = i;
     }
     orginSelOpt.children[selectedIdx].selected = true;
     orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
@@ -886,11 +842,7 @@ export const nb_fCustomOptClk = function (
     let optionList = orginSelOpt.children;
     let selectedIdx = 0;
     for (let i = 0; i < optionList.length; i++) {
-      if (
-        optionList[i].dataset.parentValue == targetDom.dataset.uniqNo &&
-        optionList[i].dataset.typeNo == targetDom.dataset.typeNo
-      )
-        selectedIdx = i;
+      if (optionList[i].dataset.parentValue == targetDom.dataset.uniqNo && optionList[i].dataset.typeNo == targetDom.dataset.typeNo) selectedIdx = i;
     }
     orginSelOpt.children[selectedIdx].selected = true;
     orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
@@ -909,8 +861,7 @@ export const nb_fCustomSelDivClk = async function (event) {
   let curTargetDom = document.getElementById(event.currentTarget.id);
   let customSelList = document.getElementsByClassName('nbCustomSel');
   for (let i = 0; i < customSelList.length; i++) {
-    if (customSelList[i].id != event.currentTarget.id)
-      customSelList[i].classList.remove('active');
+    if (customSelList[i].id != event.currentTarget.id) customSelList[i].classList.remove('active');
   }
   if (curTargetDom.classList.contains('active')) {
     curTargetDom.classList.remove('active');
@@ -930,11 +881,7 @@ export const nb_fCustomSelClose = async function (event) {
   let customSelList = document.getElementsByClassName('nbCustomSel');
   let targetDom = document.getElementById(event.target.id);
   //클릭한 요소가 id가 없거나 클래스이름에 nbCustomSel 또는 nbCustomSelVal 포함되지 않는경우
-  if (
-    targetDom == null ||
-    (!targetDom.classList.contains('nbCustomSel') &&
-      !targetDom.classList.contains('nbCustomSelVal'))
-  ) {
+  if (targetDom == null || (!targetDom.classList.contains('nbCustomSel') && !targetDom.classList.contains('nbCustomSelVal'))) {
     for (let i = 0; i < customSelList.length; i++) {
       if (customSelList[i].classList.contains('nbCustomSel')) {
         //nbCustomSel클래스의 active 제거
@@ -950,13 +897,9 @@ export const nb_fCustomSelClose = async function (event) {
 export const nb_completeBlueBox = async function (event, charLength) {
   let targetDom = document.getElementById(event.target.id);
   if (targetDom.value.length < charLength) {
-    document
-      .getElementById(event.target.id)
-      .classList.remove('customBlueBoxComplete');
+    document.getElementById(event.target.id).classList.remove('customBlueBoxComplete');
   } else {
-    document
-      .getElementById(event.target.id)
-      .classList.add('customBlueBoxComplete');
+    document.getElementById(event.target.id).classList.add('customBlueBoxComplete');
   }
 };
 
@@ -971,13 +914,7 @@ export const nb_completeBlueBoxMulti = async function (event, charLength) {
 /*
  * 상단 메뉴 고정 fixed 함수
  */
-export const nb_topMenuFixed = async function (
-  targetId,
-  targetDomWidth,
-  parentDomId,
-  parentFixedDomClassName,
-  isLeft
-) {
+export const nb_topMenuFixed = async function (targetId, targetDomWidth, parentDomId, parentFixedDomClassName, isLeft) {
   let targetDom = document.getElementById(targetId);
   if (targetDomWidth === 0) return;
 
@@ -996,29 +933,20 @@ export const nb_topMenuFixed = async function (
       if (parentFixedDomClassName !== undefined) {
         if (isLeft) {
           targetDom.style.marginLeft = 'unset';
-          targetDom.style.left =
-            document
-              .getElementsByClassName(parentFixedDomClassName)[0]
-              .getBoundingClientRect().left + 'px';
+          targetDom.style.left = document.getElementsByClassName(parentFixedDomClassName)[0].getBoundingClientRect().left + 'px';
         } else {
           targetDom.style.left = 'unset';
           targetDom.style.marginLeft = 'auto';
         }
       } else {
-        targetDom.style.left =
-          document.getElementsByClassName('right')[0].getBoundingClientRect()
-            .left + 'px';
+        targetDom.style.left = document.getElementsByClassName('right')[0].getBoundingClientRect().left + 'px';
       }
     }
 
     if (document.getElementsByClassName('fakeDiv')[0] !== undefined) {
-      if (
-        document.getElementsByClassName('fakeDiv')[0].getBoundingClientRect()
-          .bottom > 250
-      ) {
+      if (document.getElementsByClassName('fakeDiv')[0].getBoundingClientRect().bottom > 250) {
         targetDom.classList.remove('fixedTopMenu');
-        if (document.getElementsByClassName('fakeDiv')[0] !== undefined)
-          document.getElementsByClassName('fakeDiv')[0].remove();
+        if (document.getElementsByClassName('fakeDiv')[0] !== undefined) document.getElementsByClassName('fakeDiv')[0].remove();
       }
     }
   } else {
@@ -1030,9 +958,7 @@ export const nb_topMenuFixed = async function (
     } else {
       targetDom.classList.remove('fixedTopMenu');
     }
-    targetDom.style.left =
-      document.getElementsByClassName('right')[0].getBoundingClientRect().left +
-      'px';
+    targetDom.style.left = document.getElementsByClassName('right')[0].getBoundingClientRect().left + 'px';
   }
 };
 
@@ -1049,13 +975,9 @@ export const nb_topMenuFixed2 = async function (targetId) {
   }
 
   if (document.getElementsByClassName('fakeDiv2')[0] !== undefined) {
-    if (
-      document.getElementsByClassName('fakeDiv2')[0].getBoundingClientRect()
-        .bottom > 110
-    ) {
+    if (document.getElementsByClassName('fakeDiv2')[0].getBoundingClientRect().bottom > 110) {
       targetDom.classList.remove('fixedTopMenu');
-      if (document.getElementsByClassName('fakeDiv2')[0] !== undefined)
-        document.getElementsByClassName('fakeDiv2')[0].remove();
+      if (document.getElementsByClassName('fakeDiv2')[0] !== undefined) document.getElementsByClassName('fakeDiv2')[0].remove();
     }
   }
 };
@@ -1102,19 +1024,12 @@ export const nb_contentsSrcVal = async function (event, isUpdtMode) {
   if (event === null) srcRef = document.getElementById('orgSrcRef').value;
   else srcRef = event.target.dataset.value;
 
-  if (
-    srcRef === '수학의 힘(베타)' ||
-    srcRef === '쎈수학' ||
-    srcRef === 'RPM' ||
-    srcRef === '해결의법칙'
-  ) {
+  if (srcRef === '수학의 힘(베타)' || srcRef === '쎈수학' || srcRef === 'RPM' || srcRef === '해결의법칙') {
     //참고서인 경우 문제번호, 출판연도, 문제 유형
     document.getElementById('orgSrcNo').classList.remove('hide');
     document.getElementById('copyrightYear').classList.remove('hide');
     document.getElementById('orgSrcPage').value = '';
-    document
-      .getElementById('orgSrcPage')
-      .classList.remove('customBlueBoxComplete');
+    document.getElementById('orgSrcPage').classList.remove('customBlueBoxComplete');
     document.getElementById('orgSrcPage').classList.add('hide');
   } else if (srcRef === '교과서') {
     // 교과서인 경우 문제번호, 페이지수, 출판연도, 문제 유형
@@ -1124,19 +1039,13 @@ export const nb_contentsSrcVal = async function (event, isUpdtMode) {
   } else if (srcRef === '창작') {
     // 창작인 경우 문제 구분 유형만 노출, 나머지는 초기화
     document.getElementById('orgSrcNo').value = null;
-    document
-      .getElementById('orgSrcNo')
-      .classList.remove('customBlueBoxComplete');
+    document.getElementById('orgSrcNo').classList.remove('customBlueBoxComplete');
     document.getElementById('orgSrcNo').classList.add('hide');
     document.getElementById('orgSrcPage').value = '';
-    document
-      .getElementById('orgSrcPage')
-      .classList.remove('customBlueBoxComplete');
+    document.getElementById('orgSrcPage').classList.remove('customBlueBoxComplete');
     document.getElementById('orgSrcPage').classList.add('hide');
     document.getElementById('copyrightYear').value = '';
-    document
-      .getElementById('copyrightYear')
-      .classList.remove('customBlueBoxComplete');
+    document.getElementById('copyrightYear').classList.remove('customBlueBoxComplete');
     document.getElementById('copyrightYear').classList.add('hide');
   }
 };
@@ -1149,17 +1058,12 @@ export const nb_multiChoiceGridSet = async (className) => {
     multiShowDiv[i].classList.remove('twoDivGrid');
     multiShowDiv[i].classList.remove('threeDivGrid');
     maxWidth = multiShowDiv[i].querySelector('.firDiv').offsetWidth;
-    if (maxWidth < multiShowDiv[i].querySelector('.secDiv').offsetWidth)
-      maxWidth = multiShowDiv[i].querySelector('.secDiv').offsetWidth;
-    if (maxWidth < multiShowDiv[i].querySelector('.thrDiv').offsetWidth)
-      maxWidth = multiShowDiv[i].querySelector('.thrDiv').offsetWidth;
-    if (maxWidth < multiShowDiv[i].querySelector('.fourDiv').offsetWidth)
-      maxWidth = multiShowDiv[i].querySelector('.fourDiv').offsetWidth;
-    if (maxWidth < multiShowDiv[i].querySelector('.fifDiv').offsetWidth)
-      maxWidth = multiShowDiv[i].querySelector('.fifDiv').offsetWidth;
+    if (maxWidth < multiShowDiv[i].querySelector('.secDiv').offsetWidth) maxWidth = multiShowDiv[i].querySelector('.secDiv').offsetWidth;
+    if (maxWidth < multiShowDiv[i].querySelector('.thrDiv').offsetWidth) maxWidth = multiShowDiv[i].querySelector('.thrDiv').offsetWidth;
+    if (maxWidth < multiShowDiv[i].querySelector('.fourDiv').offsetWidth) maxWidth = multiShowDiv[i].querySelector('.fourDiv').offsetWidth;
+    if (maxWidth < multiShowDiv[i].querySelector('.fifDiv').offsetWidth) maxWidth = multiShowDiv[i].querySelector('.fifDiv').offsetWidth;
 
-    if (maxWidth < 190 && maxWidth > 120)
-      multiShowDiv[i].classList.add('twoDivGrid');
+    if (maxWidth < 190 && maxWidth > 120) multiShowDiv[i].classList.add('twoDivGrid');
     else if (maxWidth <= 120) multiShowDiv[i].classList.add('threeDivGrid');
     else multiShowDiv[i].classList.add('oneDivGrid');
   }
@@ -1169,65 +1073,37 @@ export const nb_licenseUiCheck = async (licenseObj) => {
   if (licenseObj !== null && licenseObj !== undefined) {
     if (licenseObj.shareStts === 1) {
       //공개문제
-      document
-        .getElementById('platformShareSttsUi')
-        .classList.remove('inactiveCircle');
-      document
-        .getElementById('platformShareSttsUi')
-        .classList.add('activeCircle');
+      document.getElementById('platformShareSttsUi').classList.remove('inactiveCircle');
+      document.getElementById('platformShareSttsUi').classList.add('activeCircle');
       if (licenseObj.onlineLicStts === 1) {
-        document
-          .getElementById('onlineLicSttsUi')
-          .classList.remove('inactiveCircle');
-        document
-          .getElementById('onlineLicSttsUi')
-          .classList.add('activeCircle');
+        document.getElementById('onlineLicSttsUi').classList.remove('inactiveCircle');
+        document.getElementById('onlineLicSttsUi').classList.add('activeCircle');
       } else {
-        document
-          .getElementById('onlineLicSttsUi')
-          .classList.remove('activeCircle');
-        document
-          .getElementById('onlineLicSttsUi')
-          .classList.add('inactiveCircle');
+        document.getElementById('onlineLicSttsUi').classList.remove('activeCircle');
+        document.getElementById('onlineLicSttsUi').classList.add('inactiveCircle');
       }
 
       if (licenseObj.perLicStts === 1) {
-        document
-          .getElementById('perLicSttsUi')
-          .classList.remove('inactiveCircle');
+        document.getElementById('perLicSttsUi').classList.remove('inactiveCircle');
         document.getElementById('perLicSttsUi').classList.add('activeCircle');
       } else {
-        document
-          .getElementById('perLicSttsUi')
-          .classList.remove('activeCircle');
+        document.getElementById('perLicSttsUi').classList.remove('activeCircle');
         document.getElementById('perLicSttsUi').classList.add('inactiveCircle');
       }
 
       if (licenseObj.entLicStts === 1) {
-        document
-          .getElementById('entLicSttsUi')
-          .classList.remove('inactiveCircle');
+        document.getElementById('entLicSttsUi').classList.remove('inactiveCircle');
         document.getElementById('entLicSttsUi').classList.add('activeCircle');
       } else {
-        document
-          .getElementById('entLicSttsUi')
-          .classList.remove('activeCircle');
+        document.getElementById('entLicSttsUi').classList.remove('activeCircle');
         document.getElementById('entLicSttsUi').classList.add('inactiveCircle');
       }
     } else {
       // 비공개 문제
-      document
-        .getElementById('platformShareSttsUi')
-        .classList.remove('activeCircle');
-      document
-        .getElementById('platformShareSttsUi')
-        .classList.add('inactiveCircle');
-      document
-        .getElementById('onlineLicSttsUi')
-        .classList.remove('activeCircle');
-      document
-        .getElementById('onlineLicSttsUi')
-        .classList.add('inactiveCircle');
+      document.getElementById('platformShareSttsUi').classList.remove('activeCircle');
+      document.getElementById('platformShareSttsUi').classList.add('inactiveCircle');
+      document.getElementById('onlineLicSttsUi').classList.remove('activeCircle');
+      document.getElementById('onlineLicSttsUi').classList.add('inactiveCircle');
       document.getElementById('perLicSttsUi').classList.remove('activeCircle');
       document.getElementById('perLicSttsUi').classList.add('inactiveCircle');
       document.getElementById('entLicSttsUi').classList.remove('activeCircle');
@@ -1235,16 +1111,10 @@ export const nb_licenseUiCheck = async (licenseObj) => {
     }
   } else {
     //N명의수학 문제의 경우
-    document
-      .getElementById('platformShareSttsUi')
-      .classList.remove('inactiveCircle');
-    document
-      .getElementById('platformShareSttsUi')
-      .classList.add('activeCircle');
+    document.getElementById('platformShareSttsUi').classList.remove('inactiveCircle');
+    document.getElementById('platformShareSttsUi').classList.add('activeCircle');
 
-    document
-      .getElementById('onlineLicSttsUi')
-      .classList.remove('inactiveCircle');
+    document.getElementById('onlineLicSttsUi').classList.remove('inactiveCircle');
     document.getElementById('onlineLicSttsUi').classList.add('activeCircle');
 
     document.getElementById('perLicSttsUi').classList.remove('activeCircle');
@@ -1258,9 +1128,7 @@ export const nb_licenseUiCheck = async (licenseObj) => {
 export const nb_getParameterByName = function (name) {
   var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
     results = regex.exec(window.location.search);
-  return results === null
-    ? ''
-    : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
 export const nb_detectScrollPosition = async function () {
@@ -1284,12 +1152,7 @@ export const nb_moveToScroll = async function (isToTop) {
   } else {
     document.getElementById('bottom-div').classList.add('hide');
     let interval = setInterval(function () {
-      if (
-        Math.abs(
-          window.scrollY -
-            (document.documentElement.scrollHeight - document.body.offsetHeight)
-        ) < 10
-      ) {
+      if (Math.abs(window.scrollY - (document.documentElement.scrollHeight - document.body.offsetHeight)) < 10) {
         document.getElementById('bottom-div').classList.remove('hide');
         clearInterval(interval);
         //window.scrollTo(window.scrollX, window.scrollY-300);
@@ -1309,17 +1172,10 @@ export const nb_moveToScrollAllRange = async function (isToTop) {
       window.scrollTo(window.scrollX, window.scrollY - window.scrollY / 20);
     }, 1);
   } else {
-    if (document.getElementById('bottom-div') !== null)
-      document.getElementById('bottom-div').classList.add('hide');
+    if (document.getElementById('bottom-div') !== null) document.getElementById('bottom-div').classList.add('hide');
     let interval = setInterval(function () {
-      if (
-        Math.abs(
-          window.scrollY -
-            (document.documentElement.scrollHeight - document.body.offsetHeight)
-        ) < 10
-      ) {
-        if (document.getElementById('bottom-div') !== null)
-          document.getElementById('bottom-div').classList.remove('hide');
+      if (Math.abs(window.scrollY - (document.documentElement.scrollHeight - document.body.offsetHeight)) < 10) {
+        if (document.getElementById('bottom-div') !== null) document.getElementById('bottom-div').classList.remove('hide');
         clearInterval(interval);
         //window.scrollTo(window.scrollX, window.scrollY-300);
       } else {
@@ -1343,17 +1199,5 @@ export const nb_dateFormat = async (separator) => {
   if (minute.toString().length === 1) minute = '0' + minute.toString();
   let milliSec = today.getMilliseconds();
   if (milliSec.toString().length === 1) milliSec = '0' + milliSec.toString();
-  return (
-    year +
-    separator +
-    month +
-    separator +
-    date +
-    separator +
-    hour +
-    separator +
-    minute +
-    separator +
-    milliSec
-  );
+  return year + separator + month + separator + date + separator + hour + separator + minute + separator + milliSec;
 };
