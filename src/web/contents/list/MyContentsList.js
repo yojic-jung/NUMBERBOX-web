@@ -401,7 +401,7 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     let contents = returnObj.myContents;
 
-    if (contents.contentsClassify === 1) {
+    if (contents.contentsClassify === 'UserCustom') {
       let profileImgPath = defaultProfile;
       if (contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null) {
         profileImgPath = contents.membersProfile.profileImgPath + contents.membersProfile.profileImgName;
@@ -420,7 +420,7 @@ const MyContentsList = ({ isMine, userNo }) => {
       await nb_licenseUiCheck();
     }
 
-    if (contents.contentsClassify === 3) {
+    if (contents.contentsClassify === 'Deleted') {
       document.getElementById('workContentsDetailedDiv').classList.add('hide');
       document.getElementById('workContentsDetailedDiv2').classList.remove('hide');
       document.getElementById('detailedLicenseTable2').classList.add('hide');
@@ -522,7 +522,7 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     let hasLicense = false;
     let shareDesc = '공개';
-    if (contentsMap.contentsClassify === 1 && contentsMap.mathContentsLicense[0] !== undefined) {
+    if (contentsMap.contentsClassify === 'UserCustom' && contentsMap.mathContentsLicense[0] !== undefined) {
       hasLicense = true;
       if (contentsMap.mathContentsLicense[0].shareStts === 0) {
         shareDesc = '비공개';
@@ -530,7 +530,7 @@ const MyContentsList = ({ isMine, userNo }) => {
     }
 
     let isNoSelect = '';
-    if (contentsMap.contentsClassify === 2) {
+    if (contentsMap.contentsClassify === 'Modified') {
       isNoSelect = ' transContents notPointer';
     }
 
@@ -541,7 +541,7 @@ const MyContentsList = ({ isMine, userNo }) => {
     }
 
     let transContents = '';
-    if (contentsMap.contentsClassify === 2) {
+    if (contentsMap.contentsClassify === 'Modified') {
       transContents = 'transConDiv';
     }
     return (
@@ -594,7 +594,7 @@ const MyContentsList = ({ isMine, userNo }) => {
 
                   {isMine && <>{hasLicense && <span className='miniCircle'>{shareDesc}</span>}</>}
 
-                  {contentsMap.contentsClassify === 2 && (
+                  {contentsMap.contentsClassify === 'Modified' && (
                     <>
                       <span className='miniCircle'>변형문제</span>
                       <span className='miniBtn' onClick={() => showOrgContents(Number(contentsMap.orgContentsNo))}>

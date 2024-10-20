@@ -1129,7 +1129,7 @@ const IpsiWorkContentsListy = () => {
           }}>
           &#88;
         </div>
-        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={4} />}
+        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={'Ipsi'} />}
       </div>
       <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
       <div id='compPopUpScreen' className='compPopUpScreen hide'>

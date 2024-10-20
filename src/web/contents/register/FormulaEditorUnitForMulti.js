@@ -58,7 +58,6 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      console.log(mathUnitInfo);
       setSubjectBox(mathUnitInfo['subjectList']);
       setSecUnitSelBox(mathUnitInfo['secUnitList']);
       setThrUnitSelBox(mathUnitInfo['thrUnitList']);
@@ -489,7 +488,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
           </select>
           <input id='typeNo' type='number' name={'mathContents[' + idx + '].typeNo'} className='hide' />
 
-          {contentsClassify === 1 && (
+          {contentsClassify === 'UserCustom' && (
             <>
               <select
                 id='quesLevel'
@@ -522,7 +521,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
                       <div id='shareSttsSuccess' className='allCheckBtnSuccess'>
                         일괄적용 완료
                       </div>
-                      <div className={contentsClassify === 4 ? 'allCheckBtnDesc' : 'allCheckBtnDesc custom'}>모든 문항에 라이선스 범위 일괄적용</div>
+                      <div className={contentsClassify === 'Ipsi' ? 'allCheckBtnDesc' : 'allCheckBtnDesc custom'}>모든 문항에 라이선스 범위 일괄적용</div>
                     </span>
                   )}
                 </div>
@@ -609,7 +608,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
               </div>
             </>
           )}
-          {contentsClassify === 4 && (
+          {contentsClassify === 'Ipsi' && (
             <>
               <div className='mini-title10'>
                 출제기관

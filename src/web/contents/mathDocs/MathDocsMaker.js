@@ -141,7 +141,7 @@ const MathDocsMaker = () => {
     let multiConCnt = 0;
     let essayConCnt = 0;
     for (let i = 0; i < mathContentsList.length; i++) {
-      if (mathContentsList[i].contentsClassify === 4) {
+      if (mathContentsList[i].contentsClassify === 'Ipsi') {
         ipsiConCnt++;
       }
       if (mathContentsList[i].multiChoiceType === 'M') {
@@ -157,7 +157,7 @@ const MathDocsMaker = () => {
       setIsIpsiContents(true);
       showWrongRatioChart = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (mathContentsList[i].contentsClassify === 4) {
+        if (mathContentsList[i].contentsClassify === 'Ipsi') {
           if (mathContentsList[i].wrongRatio < 60) {
             lv1Len += 1;
           } else if (mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70) {
@@ -1349,7 +1349,7 @@ const MathDocsMaker = () => {
       //setIsIpsiContents(true);
       document.getElementById('barChartTitle').innerText = '오답률별 문항 수';
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (mathContentsList[i].contentsClassify === 4) {
+        if (mathContentsList[i].contentsClassify === 'Ipsi') {
           if (mathContentsList[i].wrongRatio < 60) {
             lv1Len += 1;
           } else if (mathContentsList[i].wrongRatio >= 60 && mathContentsList[i].wrongRatio < 70) {
@@ -1499,7 +1499,7 @@ const MathDocsMaker = () => {
   const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo, contentsClassify) => {
     document.getElementById('mathDocsSimConAdd').classList.remove('hide');
     document.getElementById('mathDocsSimConAdd').dataset.contentsNo = contentsNo;
-    if (contentsClassify === 1) contentsClassify = 0; //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
+    if (contentsClassify === 'UserCustom') contentsClassify = 'InHouse'; //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
     let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo=' + unitUniqNo + '&typeNo=' + typeNo + '&contentsClassify=' + contentsClassify, true);
     let newContentsList = jsonObj['mathSimilarConList'].filter((contentsMap, idx) => {
       let isSame = true;
@@ -2369,7 +2369,7 @@ const MathDocsMaker = () => {
     else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.solutionImgPath + contentsMap.solutionImg;
 
     let lvScore = '';
-    if (contentsMap.contentsClassify === 4) {
+    if (contentsMap.contentsClassify === 'Ipsi') {
       if (contentsMap.quesLevel === 3) {
         lvScore = '2점';
       } else if (contentsMap.quesLevel === 4) {
@@ -2406,7 +2406,7 @@ const MathDocsMaker = () => {
                       </div>
                     </div>
                     <div id='workSolShow' className='solShow'>
-                      {contentsMap.contentsClassify === 4 && (
+                      {contentsMap.contentsClassify === 'Ipsi' && (
                         <div>
                           <div>
                             <span className='mini-title6'>출처</span>
@@ -2946,7 +2946,7 @@ const MathDocsMaker = () => {
                       }
 
                       let lvScore = '';
-                      if (contentsMap.contentsClassify === 4) {
+                      if (contentsMap.contentsClassify === 'Ipsi') {
                         if (contentsMap.quesLevel === 3) {
                           lvScore = '2점';
                         } else if (contentsMap.quesLevel === 4) {
@@ -3079,7 +3079,7 @@ const MathDocsMaker = () => {
 
                                         <div id='workSolShow' className='solShow'>
                                           <div className='solContents'>
-                                            {contentsMap.contentsClassify === 4 && (
+                                            {contentsMap.contentsClassify === 'Ipsi' && (
                                               <div>
                                                 <div>
                                                   {contentsMap.impYear + 1}

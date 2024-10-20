@@ -258,7 +258,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
       }
       //reg_enableImageResizeInDiv('contentsFormulaEditor');
       //reg_enableImageResizeInDiv('solutionFormulaEditor');
-      if (contentsClassify !== 1) {
+      if (contentsClassify !== 'UserCustom') {
         document.getElementById('makeContentsLinkDiv').classList.add('hide');
       }
 
@@ -393,7 +393,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           document.getElementById('solutionImgOutput').classList.remove('hide');
         }
         // 주관식 객관식 마지막 validation에서 처리 필요(X)
-        if (contentsClassify === 0) {
+        if (contentsClassify === 'InHouse') {
           //N명의수학만 셋팅
           //유사 교재
           document.getElementById('orgSrcRef').value = myContents.data.contents.mathContentsComp[0].orgSrcRef;
@@ -419,7 +419,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           document.getElementById('cusMathClassifySelTitle').innerHTML =
             document.getElementById('mathTypeClassify')[document.getElementById('mathTypeClassify').selectedIndex].innerText;
           document.getElementById('cusMathClassifySelDiv').classList.add('nbCustomSelected');
-        } else if (contentsClassify === 1) {
+        } else if (contentsClassify === 'UserCustom') {
           //공개, 비공개 여부 설정
           if (myContents.data.contents.mathContentsLicense !== null) {
             if (myContents.data.contents.mathContentsLicense[0].shareStts === 1) {
@@ -441,7 +441,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
               document.getElementById('entLicStts').checked = true;
             }
           }
-        } else if (contentsClassify === 2) {
+        } else if (contentsClassify === 'Modified') {
           //사용자 제작 문제
           if (myContents.data.contents.mathContentsLicense !== null && myContents.data.contents.mathContentsLicense !== undefined) {
             await nb_licenseUiCheck(myContents.data.contents.mathContentsLicense[0]);
@@ -449,7 +449,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           } else {
             await nb_licenseUiCheck();
           }
-        } else if (contentsClassify === 4) {
+        } else if (contentsClassify === 'Ipsi') {
           //N명의수학만 셋팅
           //가/나형 구분
           document.getElementById('paperType').value = myContents.data.contents.mathContentsIpsi[0].paperType;
@@ -514,7 +514,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents.data.contents.unitUniqNo);
 
         //유형
-        if (contentsClassify === 0)
+        if (contentsClassify === 'InHouse')
           setUpdateModeUniqNo(
             myContents.data.contents.unitId +
               ',' +
@@ -524,7 +524,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
               ',' +
               myContents.data.contents.mathContentsComp[0].seqNo
           );
-        else if (contentsClassify === 4)
+        else if (contentsClassify === 'Ipsi')
           setUpdateModeUniqNo(
             myContents.data.contents.unitId +
               ',' +

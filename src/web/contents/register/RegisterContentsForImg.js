@@ -481,7 +481,7 @@ const RegisterContentsForImg = ({ contentsNo }) => {
             </div>
           </div>
           <div className='scrollFixBugMargin'></div>
-          <RegisterContentsInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} contentsClassify={1} isOnlyImgReg={true} />
+          <RegisterContentsInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} contentsClassify={'UserCustom'} isOnlyImgReg={true} />
         </form>
 
         <div id='regForImgExampleBox' className='blindBox hide'>

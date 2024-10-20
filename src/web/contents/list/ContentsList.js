@@ -537,7 +537,7 @@ const ContentsList = () => {
       document.getElementById('answerDetailedSheet').innerHTML = contents.choiceAnswer;
     }
 
-    if (contents.contentsClassify === 1) {
+    if (contents.contentsClassify === 'UserCustom') {
       let profileImgPath = defaultProfile;
       if (contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null) {
         profileImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contents.membersProfile.profileImgPath + contents.membersProfile.profileImgName;
@@ -615,7 +615,7 @@ const ContentsList = () => {
                           likeContents(event, contentsMap.contentsId);
                         }}></span>
                     </span>
-                    {contentsMap.contentsClassify === 0 ? (
+                    {contentsMap.contentsClassify === 'InHouse' ? (
                       <span className='userSearchBtn manager'>N명의수학</span>
                     ) : (
                       <Link className='linkNoneCss' to={'/userProfile?userNo=' + contentsMap.profileId}>
@@ -830,7 +830,7 @@ const ContentsList = () => {
             }}>
             &#88;
           </div>
-          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2} />}
+          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={'Modified'} />}
         </div>
         <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
 
@@ -922,7 +922,7 @@ const ContentsList = () => {
             }}>
             &#88;
           </div>
-          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={2} />}
+          {modalState && <FormulaEditor contentsNo={contentsNo} isUser={true} contentsClassify={'Modified'} />}
         </div>
         <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
 

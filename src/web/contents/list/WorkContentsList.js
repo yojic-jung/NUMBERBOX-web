@@ -1299,7 +1299,7 @@ const WorkContentsList = () => {
           }}>
           &#88;
         </div>
-        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={0} />}
+        {modalState && <FormulaEditor contentsNo={contentsNo} contentsClassify={'InHouse'} />}
       </div>
       <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
       <div id='compPopUpScreen' className='compPopUpScreen hide'>

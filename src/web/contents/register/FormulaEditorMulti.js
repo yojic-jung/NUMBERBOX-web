@@ -192,7 +192,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
     const asyncUseEffect = async function () {
       //reg_enableImageResizeInDiv('contentsFormulaEditor');
       //reg_enableImageResizeInDiv('solutionFormulaEditor');
-      if (contentsClassify !== 1) {
+      if (contentsClassify !== 'UserCustom') {
         document.getElementById('makeContentsLinkDiv').classList.add('hide');
       }
       let jsonObj = await nb_dataFetch('/math/menu/shortCutKey', true);
@@ -453,7 +453,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       }
 
       //수능 입시 문제 출처 validation
-      if (contentsClassify === 4) {
+      if (contentsClassify === 'Ipsi') {
         if (Number(currentContentsDiv.querySelector('#manageIns').value) === 0) {
           alert('출제기관을 선택 해주세요.');
           currentContentsDiv.querySelector('#manageIns').scrollIntoView({ block: 'center' });
@@ -523,7 +523,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
           currentContentsDiv.querySelector('#wrongRatio').classList.add('redBoxValid2');
           return false;
         }
-      } else if (contentsClassify === 1) {
+      } else if (contentsClassify === 'UserCustom') {
         if (Number(currentContentsDiv.querySelector('#quesLevel').value) === 0) {
           alert('문제난이도를 선택 해주세요.');
           currentContentsDiv.querySelector('#quesLevel').scrollIntoView({ block: 'center' });
@@ -778,9 +778,9 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
 		   }
 			*/
       let conRegSucMsg = '정상적으로 등록되었습니다.';
-      if (contentsClassify === 1) {
+      if (contentsClassify === 'UserCustom') {
         conRegSucMsg += '\n나의 제작문제 페이지에서 확인할 수 있습니다.';
-      } else if (contentsClassify === 4) {
+      } else if (contentsClassify === 'Ipsi') {
         conRegSucMsg += '\n수능/모의고사 작업내역에서 확인할 수 있습니다.';
       }
       await nb_fadeInOutA(conRegSucMsg, 3000);
