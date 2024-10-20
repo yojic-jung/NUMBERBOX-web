@@ -64,7 +64,6 @@ const ContentsList = () => {
   };
 
   const modalPopupOpen = async (event) => {
-    console.log(document.getElementById(event.target.id));
     subjectVal = document.getElementById('subject').value;
     //firUnitVal = document.getElementById("firUnit").value;
     secUnitVal = document.getElementById('secUnit').value;
@@ -72,7 +71,6 @@ const ContentsList = () => {
     scrollY = nb_modalScrollStrt();
 
     document.getElementById('outerFormulaEditor').classList.remove('hide');
-    console.log(document.getElementById(event.target.id));
     let contentsNo = document.getElementById(event.target.id).dataset.contentsNo;
     await setContentsNo(contentsNo);
     setModalState(true);

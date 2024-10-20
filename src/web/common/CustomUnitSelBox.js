@@ -22,8 +22,8 @@ const CustomUnitSelBox = ({ value, cusSelId, originSel, cusChildId, childId, par
         id={liIdTmp}
         key={idx}
         className='nbOptItem'
-        data-value={opt.mainVal}
-        data-uniq-no={opt.unitUniqNo}
+        data-unit-name={opt.unitName}
+        data-unit-id={opt.unitId}
         onClick={(event) => {
           nb_fCustomOptClk(event, cusSelDiv, cusSelUlTitle, originSel);
           let trigEv = new Object();
@@ -33,7 +33,7 @@ const CustomUnitSelBox = ({ value, cusSelId, originSel, cusChildId, childId, par
           reg_unitTypeChange(trigEv, cusChildId, childId, true);
           parentMethod(event);
         }}
-        dangerouslySetInnerHTML={{ __html: opt.mainVal }}></li>
+        dangerouslySetInnerHTML={{ __html: opt.unitName }}></li>
     );
   });
 

@@ -19,10 +19,8 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   async function fetchUnitInfo() {
     let jsonObj = await nb_dataFetch('/math/menu/unit', true);
     setSubjectBox(jsonObj.data['subjectList']);
-    //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
     setSecUnitSelBox(jsonObj.data['secUnitList']);
     setThrUnitSelBox(jsonObj.data['thrUnitList']);
-    //setQuesTypeBox(jsonObj["mathTypeInfo"]);
 
     //초기 단원 및 유형정보 셋팅
     let trigEv = new Object();
@@ -40,8 +38,8 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
       return;
     }
     let target = document.getElementById('thrUnit');
-    let unitUniqNo = target.options[target.selectedIndex].dataset.uniqNo;
-    const jsonObj = await nb_dataFetch('//math/menu/type?unitId=' + unitUniqNo, true);
+    let unitId = target.options[target.selectedIndex].dataset.unitId;
+    const jsonObj = await nb_dataFetch('//math/menu/type?unitId=' + unitId, true);
     setQuesTypeBox(jsonObj.data['mathTypeList']);
     i++;
     setQuesTypeKey(i);
@@ -50,11 +48,11 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   useEffect(
     (event) => {
       const asyncUseEffect = async () => {
-        let unitTypeNo = updateModeUniqNo['updateModeUniqNo'].split(',');
-        const jsonObj = await nb_dataFetch('//math/menu/type?unitId=' + unitTypeNo[0], true);
+        let unitTypeId = updateModeUniqNo['updateModeUniqNo'].split(',');
+        const jsonObj = await nb_dataFetch('//math/menu/type?unitId=' + unitTypeId[0], true);
         setQuesTypeBox(jsonObj.data['mathTypeList']);
         setQuesTypeKey(i);
-        await reg_selectTypeData('quesType', 'cusSelQuesTypeTitle', 'cusSelQuesTypeDiv', unitTypeNo[1]);
+        await reg_selectTypeData('quesType', 'cusSelQuesTypeTitle', 'cusSelQuesTypeDiv', unitTypeId[1]);
       };
       if (updateModeUniqNo['updateModeUniqNo'] === '') {
         fetchUnitInfo(event);

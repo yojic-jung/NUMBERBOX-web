@@ -169,10 +169,10 @@ const RegisterContentsForImg = ({ contentsNo }) => {
         trigEv.target.id = 'secUnit';
         await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
-        await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents['myContents'].unitUniqNo);
+        await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents['myContents'].unitId);
 
         //유형
-        setUpdateModeUniqNo(myContents['myUnitInfo'].unitUniqNo + ',' + myContents['myContents'].typeNo + ',' + myContents['myContents'].contentsNo);
+        setUpdateModeUniqNo(myContents['myUnitInfo'].unitId + ',' + myContents['myContents'].typeId + ',' + myContents['myContents'].contentsNo);
         //수정시간 서버에서 수정 필요
       } else {
         conImgName = 'N';

@@ -23,8 +23,8 @@ const CustomTypeSelBox = ({ value, cusSelId, originSel }) => {
         key={idx}
         className='nbOptItem'
         data-value={opt.quesType}
-        data-type-no={opt.typeNo}
-        data-uniq-no={opt.unitId}
+        data-type-id={opt.typeId}
+        data-unit-id={opt.unitId}
         onClick={(event) => {
           nb_fCustomOptClk(event, cusSelDiv, cusSelUlTitle, originSel);
         }}

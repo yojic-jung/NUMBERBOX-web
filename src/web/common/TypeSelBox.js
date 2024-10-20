@@ -13,7 +13,7 @@ const config = {
 const TypeSelBox = ({ value, myId }) => {
   const typeList = value;
   const quesTypeItem = typeList.map((quesType, idx) => (
-    <option key={idx} data-parent-value={quesType.unitId} data-type-no={quesType.typeNo}>
+    <option key={idx} data-parent-unit-id={quesType.unitId} data-type-id={quesType.typeId}>
       {quesType.quesType}
     </option>
   ));

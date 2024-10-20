@@ -15,6 +15,7 @@ import {
   nb_base64ImgRegisterToS3ByTargetId,
   nb_getByteLengthOfString,
   nb_postRequest,
+  nb_postFormToJson,
 } from 'js/common/common_nb.js';
 import {
   reg_quesAnsTabClkEv,
@@ -283,8 +284,9 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     }
 
     let formData = new FormData(document.getElementById('contentsForm'));
-    formData.append('unitUniqNo', thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
-    formData.append('typeNo', quesType[quesType.selectedIndex].dataset.typeNo);
+    console.log(thrUnit[thrUnit.selectedIndex]);
+    formData.append('unitId', thrUnit[thrUnit.selectedIndex].dataset.unitId);
+    formData.append('typeId', quesType[quesType.selectedIndex].dataset.typeId);
     for (let i = 0; i < targetId.length; i++) {
       let allImgDom = document.getElementById(targetId[i]).querySelectorAll('img');
       for (let j = 0; j < allImgDom.length; j++) {
@@ -321,7 +323,10 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
         formData.append('fifNo', '');
       }
       formData.append('contentsClassify', contentsClassify);
-      returnObj = await nb_postRequest('/math/content', formData, true);
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+      returnObj = await nb_postFormToJson('/math/content', formData, true);
     }
     if (updateModeUniqNo !== '') window.mathContents = returnObj.mathContents; //수정 모드일때만, 윈도우 전역변수로 객체 전달
     if (returnObj.error != undefined) {
@@ -408,7 +413,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
       //textarea,input 초기화
       await parentMethod();
 
-      //객관식정답 초기화
+      //객관식 정답 초기화
       let choiceAnswerChkBox = document.getElementsByName('choiceAnswer');
       for (let i = 0; i < choiceAnswerChkBox.length; i++) {
         choiceAnswerChkBox[i].checked = false;
@@ -526,7 +531,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
       if (prevSubject === returnObj.unitList[i].subject) {
       } else {
         let obj = new Object();
-        obj.unitUniqNo = returnObj.unitList[i].unitUniqNo;
+        obj.unitId = returnObj.unitList[i].unitId;
         obj.subject = returnObj.unitList[i].subject;
         subArr.push(obj);
       }
@@ -546,7 +551,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     document.getElementById('ai-unit-screen-box').classList.remove('hide');
   };
 
-  const unitAutoMapping = async (unitUniqNo, subject, secUnit) => {
+  const unitAutoMapping = async (unitId, subject, secUnit) => {
     //과목
     document.getElementById('subject').value = subject;
     document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
@@ -562,11 +567,11 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
     trigEv.target.id = 'secUnit';
     await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
-    await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', unitUniqNo);
+    await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', unitId);
     //유형 선택
     const liBox = document.getElementById('cusSelThrUnit').querySelectorAll('li');
     for (let i = 0; i < liBox.length; i++) {
-      if (Number(liBox[i].dataset.uniqNo) === unitUniqNo) {
+      if (Number(liBox[i].dataset.unitId) === unitId) {
         liBox[i].click();
       }
     }
@@ -592,7 +597,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     return (
       <span
         className='blueSquareBox opacity'
-        data-unit-uniq-no={unitMap.unitUniqNo}
+        data-unit-id={unitMap.unitId}
         key={idx}
         onClick={(event) => {
           openUnitList(event, unitMap.subject);
@@ -605,10 +610,10 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     return (
       <tr
         className='unitContentsList'
-        data-unit-uniq-no={unitMap.unitUniqNo}
+        data-unit-id={unitMap.unitId}
         key={idx}
         onClick={() => {
-          unitAutoMapping(unitMap.unitUniqNo, unitMap.subject, unitMap.secUnit);
+          unitAutoMapping(unitMap.unitId, unitMap.subject, unitMap.secUnit);
         }}>
         <td className='unitContentsFirst' dangerouslySetInnerHTML={{ __html: unitMap.subject }}></td>
         <td dangerouslySetInnerHTML={{ __html: unitMap.secUnit }}></td>
@@ -764,7 +769,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
                         <input
                           id='shareSttsPublic'
                           type='radio'
-                          value='1'
+                          value='true'
                           name='shareStts'
                           className='licensePublicBtn'
                           onChange={() => {
@@ -793,7 +798,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
                         <input
                           id='shareSttsPrivate'
                           type='radio'
-                          value='0'
+                          value='false'
                           name='shareStts'
                           className='licensePrivateBtn'
                           onChange={() => {
@@ -814,19 +819,19 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
               <div id='licOptDiv' className='lowerOpacity'>
                 <div className='licDivFir'>
                   <label>
-                    <input id='onlineLicStts' type='checkbox' name='onlineLicStts' value='1' disabled /> 인터넷 강의 허용
+                    <input id='onlineLicStts' type='checkbox' name='onlineLicStts' value='true' disabled /> 인터넷 강의 허용
                   </label>
                   <span className='licDesc'>&nbsp;(외부 동영상 플랫폼에서 출처 표시 하에 문제 사용 및 노출 허용)</span>
                 </div>
                 <div className='licDiv'>
                   <label>
-                    <input id='perLicStts' type='checkbox' name='perLicStts' value='1' disabled /> 개인 강사 교재 허용
+                    <input id='perLicStts' type='checkbox' name='perLicStts' value='true' disabled /> 개인 강사 교재 허용
                   </label>
                   <span className='licDesc'>&nbsp;(기업용 출판이 아닌 개인 강사 교재에 문제 수록 허용)</span>
                 </div>
                 <div className='licDiv'>
                   <label>
-                    <input id='entLicStts' type='checkbox' name='entLicStts' value='1' disabled /> 출판사 교재 허용
+                    <input id='entLicStts' type='checkbox' name='entLicStts' value='true' disabled /> 출판사 교재 허용
                   </label>
                   <span className='licDesc'>&nbsp;(기업용 출판 교재에 문제 수록 허용)</span>
                 </div>

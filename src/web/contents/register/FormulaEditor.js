@@ -511,14 +511,14 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         trigEv.target.id = 'secUnit';
         await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
 
-        await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents.data.contents.unitUniqNo);
+        await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents.data.contents.unitId);
 
         //유형
         if (contentsClassify === 'InHouse')
           setUpdateModeUniqNo(
             myContents.data.contents.unitId +
               ',' +
-              myContents.data.contents.typeNo +
+              myContents.data.contents.typeId +
               ',' +
               myContents.data.contents.contentsNo +
               ',' +
@@ -528,13 +528,13 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           setUpdateModeUniqNo(
             myContents.data.contents.unitId +
               ',' +
-              myContents.data.contents.typeNo +
+              myContents.data.contents.typeId +
               ',' +
               myContents.data.contents.contentsNo +
               ',' +
               myContents.data.contents.mathContentsIpsi[0].seqNo
           );
-        else setUpdateModeUniqNo(myContents.data.contents.unitId + ',' + myContents.data.contents.typeNo + ',' + myContents.data.contents.contentsNo);
+        else setUpdateModeUniqNo(myContents.data.contents.unitId + ',' + myContents.data.contents.typeId + ',' + myContents.data.contents.contentsNo);
         //수정시간 서버에서 수정 필요
       }
       await reg_undoRedoSetting();
@@ -824,7 +824,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         </div>
       </div>
 
-      <form method='post' id='contentsForm' encType='multipart/form-data'>
+      <form method='post' id='contentsForm'>
         <div className='twoFlexLayout'>
           <div className='left'>
             <div id='makeContentsLinkDiv' className='makeContentsLinkDiv'>

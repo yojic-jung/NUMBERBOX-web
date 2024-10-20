@@ -274,11 +274,19 @@ export const nb_postForm = async (url, formData, transitEffect) => {
   return await nb_request(url, httpOption, transitEffect);
 };
 
-export const nb_postFormRequest = async (url, formData, transitEffect) => {
+export const nb_postFormToJson = async (url, formData, transitEffect) => {
   // form to json
   const jsonData = {};
   formData.forEach((value, key) => {
-    jsonData[key] = value;
+    if (jsonData[key]) {
+      // 기존 값이 배열이 아닐 경우 배열로 변환
+      if (!Array.isArray(jsonData[key])) {
+        jsonData[key] = [jsonData[key]];
+      }
+      jsonData[key].push(value);
+    } else {
+      jsonData[key] = value;
+    }
   });
 
   // 요청
@@ -823,32 +831,37 @@ export const nb_fCustomOptClk = function (event, parentId, customTitle, originSe
   let selVal = document.getElementById(customTitle);
   selVal.innerHTML = targetDom.innerHTML;
   let orginSelOpt = document.getElementById(originSel);
-  if (targetDom.dataset.value != '0') {
+  if (targetDom.dataset.unitName != '0') {
     parentDom.classList.add('nbCustomSelected');
   } else {
     parentDom.classList.remove('nbCustomSelected');
   }
   parentDom.classList.remove('active');
-
+  console.log(parentId);
   if (parentId == 'cusSelThrUnitDiv') {
     let optionList = orginSelOpt.children;
     let selectedIdx = 0;
     for (let i = 0; i < optionList.length; i++) {
-      if (optionList[i].dataset.uniqNo == targetDom.dataset.uniqNo) selectedIdx = i;
+      if (optionList[i].dataset.unitId == targetDom.dataset.unitId) selectedIdx = i;
     }
     orginSelOpt.children[selectedIdx].selected = true;
-    orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
+    orginSelOpt.children[selectedIdx].dataset.unitId = targetDom.dataset.unitId;
   } else if (parentId == 'cusSelQuesTypeDiv') {
     let optionList = orginSelOpt.children;
     let selectedIdx = 0;
     for (let i = 0; i < optionList.length; i++) {
-      if (optionList[i].dataset.parentValue == targetDom.dataset.uniqNo && optionList[i].dataset.typeNo == targetDom.dataset.typeNo) selectedIdx = i;
+      if (optionList[i].dataset.parentUnitId == targetDom.dataset.unitId && optionList[i].dataset.typeId == targetDom.dataset.typeId) {
+        selectedIdx = i;
+      }
     }
     orginSelOpt.children[selectedIdx].selected = true;
-    orginSelOpt.children[selectedIdx].dataset.uniqNo = targetDom.dataset.uniqNo;
-  } else {
+    orginSelOpt.children[selectedIdx].dataset.unitId = targetDom.dataset.unitId;
+  } else if (parentId == 'cusQuesSelDiv') {
     orginSelOpt.value = targetDom.dataset.value;
-    orginSelOpt.dataset.uniqNo = targetDom.dataset.uniqNo;
+    orginSelOpt.dataset.value = targetDom.dataset.value;
+  } else {
+    orginSelOpt.value = targetDom.dataset.unitName;
+    orginSelOpt.dataset.unitId = targetDom.dataset.unitId;
   }
 
   event.stopPropagation(); //이벤트 버블링 제거(제거 안하면 nb_fCustomSelDivClk 실행되어 customSel 박스가 안닫힘)

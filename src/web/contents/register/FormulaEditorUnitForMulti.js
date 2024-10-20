@@ -143,11 +143,11 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
   };
 
   const subjectOptionBox = subjectBox.map((contentsMap, idx) => {
-    return <option key={idx} value={contentsMap.unitUniqNo} data-main-val={contentsMap.mainVal} dangerouslySetInnerHTML={{ __html: contentsMap.mainVal }}></option>;
+    return <option key={idx} value={contentsMap.unitId} data-main-val={contentsMap.unitName} dangerouslySetInnerHTML={{ __html: contentsMap.unitName }}></option>;
   });
 
   const secUnitSelShowBox = secUnitSelOptBox.map((contentsMap, idx) => {
-    return <option key={idx} value={contentsMap.unitUniqNo} data-main-val={contentsMap.mainVal} dangerouslySetInnerHTML={{ __html: contentsMap.mainVal }}></option>;
+    return <option key={idx} value={contentsMap.unitId} data-main-val={contentsMap.unitName} dangerouslySetInnerHTML={{ __html: contentsMap.unitName }}></option>;
   });
 
   const initSecUnitOptBox = async (event) => {
@@ -161,13 +161,13 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
     event.target.closest('.contentsInfo-multi').querySelector('#quesType').classList.remove('nbCustomSelected2');
 
     let secOptBox = secUnitSelBox.filter((contentsMap, idx) => {
-      return contentsMap.parentVal === event.target.options[event.target.selectedIndex].dataset.mainVal;
+      return contentsMap.parentVal === event.target.options[event.target.selectedIndex].dataset.unitName;
     });
     setSecUnitSelOptBox(secOptBox);
   };
 
   const thrUnitOptionBox = thrUnitSelOptBox.map((contentsMap, idx) => {
-    return <option key={idx} value={contentsMap.unitUniqNo} data-main-val={contentsMap.mainVal} dangerouslySetInnerHTML={{ __html: contentsMap.mainVal }}></option>;
+    return <option key={idx} value={contentsMap.unitId} data-main-val={contentsMap.unitName} dangerouslySetInnerHTML={{ __html: contentsMap.unitName }}></option>;
   });
 
   const initThrUnitOptBox = async (event) => {
@@ -178,7 +178,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
     event.target.closest('.contentsInfo-multi').querySelector('#quesType').classList.remove('nbCustomSelected2');
 
     let thrOptBox = thrUnitSelBox.filter((contentsMap, idx) => {
-      return contentsMap.parentVal === event.target.options[event.target.selectedIndex].dataset.mainVal;
+      return contentsMap.parentVal === event.target.options[event.target.selectedIndex].dataset.unitName;
     });
     setThrUnitSelOptBox(thrOptBox);
   };
@@ -187,13 +187,13 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
     event.target.closest('.contentsInfo-multi').querySelector('#quesType').value = '0';
     event.target.closest('.contentsInfo-multi').querySelector('#quesType').classList.remove('nbCustomSelected2');
 
-    let unitUniqNo = event.target.options[event.target.selectedIndex].value;
-    const jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitUniqNo, true);
+    let unitId = event.target.options[event.target.selectedIndex].value;
+    const jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitId, true);
     setQuesTypeBox(jsonObj.data['mathTypeList']);
   };
 
   const quesTypeOptBox = quesTypeBox.map((contentsMap, idx) => {
-    return <option key={idx} data-type-no={contentsMap.typeNo} value={contentsMap.typeNo} dangerouslySetInnerHTML={{ __html: contentsMap.quesType }}></option>;
+    return <option key={idx} data-type-id={contentsMap.typeId} value={contentsMap.typeId} dangerouslySetInnerHTML={{ __html: contentsMap.quesType }}></option>;
   });
   let a_array = new Array();
   const GetText = async (tag) => {
@@ -359,9 +359,9 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
     if (Number(event.target.value) !== 0) {
       event.target.classList.add('nbCustomSelected2');
       if (evType === 'thrUnit') {
-        event.target.closest('div').querySelector('#unitUniqNo').value = event.target.value;
+        event.target.closest('div').querySelector('#unitId').value = event.target.value;
       } else if (evType === 'quesType') {
-        event.target.closest('div').querySelector('#typeNo').value = event.target.value;
+        event.target.closest('div').querySelector('#typeId').value = event.target.value;
       }
     } else {
       event.target.classList.remove('nbCustomSelected2');
@@ -473,7 +473,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
             <option value='0'>중단원</option>
             {thrUnitOptionBox}
           </select>
-          <input id='unitUniqNo' type='number' name={'mathContents[' + idx + '].unitUniqNo'} className='hide' />
+          <input id='unitId' type='number' name={'mathContents[' + idx + '].unitId'} className='hide' />
           <br />
           <select
             id='quesType'
@@ -486,7 +486,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
             <option value='0'>유형정보</option>
             {quesTypeOptBox}
           </select>
-          <input id='typeNo' type='number' name={'mathContents[' + idx + '].typeNo'} className='hide' />
+          <input id='typeId' type='number' name={'mathContents[' + idx + '].typeId'} className='hide' />
 
           {contentsClassify === 'UserCustom' && (
             <>

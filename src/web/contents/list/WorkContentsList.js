@@ -235,7 +235,7 @@ const WorkContentsList = () => {
   const historyBackSearchCondSetting = async (param) => {
     curPageNum = 0;
     let formData = new FormData(document.getElementById('workSearchForm'));
-    formData.append('unitUniqNo', param);
+    formData.append('unitId', param);
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);
 
@@ -648,7 +648,7 @@ const WorkContentsList = () => {
 
     curPageNum = 0;
     let formData = new FormData(document.getElementById('workSearchForm'));
-    formData.append('unitUniqNo', thrUnit[thrUnit.selectedIndex].dataset.uniqNo);
+    formData.append('unitId', thrUnit[thrUnit.selectedIndex].dataset.unitId);
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);
 
@@ -720,7 +720,7 @@ const WorkContentsList = () => {
   const showMoreContents = async function () {
     let formData = new FormData(document.getElementById('workSearchForm'));
     let curSearchCond = await nb_getParameterByName('unitId');
-    formData.append('unitUniqNo', curSearchCond);
+    formData.append('unitId', curSearchCond);
     curPageNum++;
     formData.append('curPageNum', curPageNum);
     formData.append('pageVolume', pageVolume);

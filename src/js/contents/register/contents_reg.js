@@ -84,15 +84,15 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
   for (let i = 0; i < childElement.length; i++) {
     let isCmbEvCond = false; //자식 컴포넌트 최초 한번만 연쇄이벤트 발생위한 변수
     if (isUnitBubbleEv) {
-      if (document.getElementById(targetId).dataset.uniqNo !== undefined) {
+      if (document.getElementById(targetId).dataset.unitId !== undefined) {
         isCmbEvCond =
-          childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId).value &&
-          childElement.childNodes[i].dataset.uniqNo.substring(0, 2) === document.getElementById(targetId).dataset.uniqNo.substring(0, 2);
+          childElement.childNodes[i].dataset.parentUnitName == document.getElementById(targetId).value &&
+          childElement.childNodes[i].dataset.unitId.substring(0, 2) === document.getElementById(targetId).dataset.unitId.substring(0, 2);
       } else {
-        isCmbEvCond = childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId).value;
+        isCmbEvCond = childElement.childNodes[i].dataset.parentUnitName == document.getElementById(targetId).value;
       }
     } else {
-      isCmbEvCond = childElement.childNodes[i].dataset.parentValue == document.getElementById(targetId)[targetIndex].dataset.uniqNo;
+      isCmbEvCond = childElement.childNodes[i].dataset.parentUnitName == document.getElementById(targetId)[targetIndex].dataset.unitId;
     }
     if (isCmbEvCond) {
       childElement.childNodes[i].style.display = '';
@@ -107,14 +107,14 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
   let titleText = customTitleDom.dataset.title; //option,li 태그의 첫번째 인덱스 제목
   customTitleDom.classList.remove('nbCustomSelected');
   //option, li태그 한개씩만 추가 위한 설정
-  if (childElement.childNodes[0].dataset.uniqNo != 0) {
+  if (childElement.childNodes[0].dataset.unitId != 0) {
     let firOpt = document.createElement('option');
     firOpt.innerText = titleText;
-    firOpt.dataset.uniqNo = 0;
+    firOpt.dataset.unitId = 0;
     childElement.prepend(firOpt);
     let firLi = cusChildElement.childNodes[0].cloneNode(true);
     firLi.innerText = titleText + '을 선택해주세요...';
-    firLi.dataset.value = 0;
+    firLi.dataset.unitName = 0;
     firLi.className = 'nbOptItem';
     firLi.id = cusChildElement.childNodes[0].id + '00';
     cusChildElement.prepend(firLi);
@@ -125,18 +125,18 @@ export const reg_unitTypeChange = async (e, cusChildDomId, childDomId, isUnitBub
   childElement.dispatchEvent(new Event('change', { bubbles: true }));
 
   //첫번째 과목 콤보박스 하드코딩으로 opt, li 태그 추가
-  if (targetId == 'subject' && targetDom.childNodes[0].dataset.uniqNo != 0) {
+  if (targetId == 'subject' && targetDom.childNodes[0].dataset.unitId != 0) {
     //sel콤보 과목 option 태그 추가
     let firOpt = document.createElement('option');
     firOpt.innerText = '과목';
-    firOpt.dataset.uniqNo = 0;
+    firOpt.dataset.unitId = 0;
     targetDom.prepend(firOpt);
     targetDom.childNodes[0].selected = true;
 
     //customSel 과목 li 태그 추가
     let firLi = document.createElement('li');
     firLi.innerText = '과목을 선택해주세요...';
-    firLi.dataset.value = 0;
+    firLi.dataset.unitName = 0;
     firLi.className = 'nbOptItem';
     firLi.id = 'cusSelSubLi000';
     document.getElementById('cusSelSub').prepend(firLi);
@@ -3197,7 +3197,7 @@ export const reg_selectUnitOrTypeData = async (targetId, titleTag, divTag, compa
 export const reg_selectTypeData = async (targetId, titleTag, divTag, compareStr) => {
   let subjects = document.getElementById(targetId);
   for (let i = 0; i < subjects.length; i++) {
-    if (subjects[i].dataset.typeNo == compareStr) {
+    if (subjects[i].dataset.typeId == compareStr) {
       //삼항식 쓰면 오류남
       subjects[i].selected = true;
       document.getElementById(titleTag).innerHTML = document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerText;

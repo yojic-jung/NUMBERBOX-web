@@ -382,13 +382,13 @@ const MathDocsMaker = () => {
     }
 
     let typeBtn = document.getElementsByClassName('typeBtn');
-    let unitUniqNoAndTypeNo = '';
+    let unitIdAndTypeId = '';
     for (let i = 0; i < typeBtn.length; i++) {
       if (!typeBtn[i].classList.contains('active')) continue;
-      if (unitUniqNoAndTypeNo === '') {
-        unitUniqNoAndTypeNo += typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+      if (unitIdAndTypeId === '') {
+        unitIdAndTypeId += typeBtn[i].dataset.unitId + ',' + typeBtn[i].dataset.typeId;
       } else {
-        unitUniqNoAndTypeNo += '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitIdAndTypeId += '-' + typeBtn[i].dataset.unitId + ',' + typeBtn[i].dataset.typeId;
       }
     }
 
@@ -410,8 +410,8 @@ const MathDocsMaker = () => {
     let wrongRatioMin = document.getElementsByName('wrongRatioMin')[0].value;
     let wrongRatioMax = document.getElementsByName('wrongRatioMax')[0].value;
     let jsonObj = await nb_dataFetch(
-      '/mathDocs/mathDocsIpsi?unitUniqNoAndTypeNoList=' +
-        unitUniqNoAndTypeNo +
+      '/mathDocs/mathDocsIpsi?unitIdAndTypeIdList=' +
+        unitIdAndTypeId +
         '&quesLevel=' +
         quesLevel +
         '&conCnt=' +
@@ -551,13 +551,13 @@ const MathDocsMaker = () => {
     }
 
     let typeBtn = document.getElementsByClassName('typeBtn');
-    let unitUniqNoAndTypeNo = '';
+    let unitIdAndTypeId = '';
     for (let i = 0; i < typeBtn.length; i++) {
       if (!typeBtn[i].classList.contains('active')) continue;
-      if (unitUniqNoAndTypeNo === '') {
-        unitUniqNoAndTypeNo += typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+      if (unitIdAndTypeId === '') {
+        unitIdAndTypeId += typeBtn[i].dataset.unitId + ',' + typeBtn[i].dataset.typeId;
       } else {
-        unitUniqNoAndTypeNo += '-' + typeBtn[i].dataset.unitUniqNo + ',' + typeBtn[i].dataset.typeNo;
+        unitIdAndTypeId += '-' + typeBtn[i].dataset.unitId + ',' + typeBtn[i].dataset.typeId;
       }
     }
 
@@ -598,7 +598,7 @@ const MathDocsMaker = () => {
       return;
     }
 
-    let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitUniqNoAndTypeNoList=' + unitUniqNoAndTypeNo + '&quesLevel=' + quesLevel + '&conCnt=' + conCntInput, true);
+    let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitIdAndTypeIdList=' + unitIdAndTypeId + '&quesLevel=' + quesLevel + '&conCnt=' + conCntInput, true);
     let mathContentsList = jsonObj['mathContentsList'];
     let lv1Len = 0;
     let lv2Len = 0;
@@ -761,28 +761,28 @@ const MathDocsMaker = () => {
         subjectBtnWrap[i].classList.remove('hide');
 
         if (event.target.dataset.typeExist === 'false') {
-          let unitUniqNoList = '';
+          let unitIdList = '';
           let thrUnitBtn = subjectBtnWrap[i].querySelectorAll('.thrUnitBtn');
           for (let j = 0; j < thrUnitBtn.length; j++) {
             if (j === 0) {
-              unitUniqNoList += thrUnitBtn[j].dataset.unitUniqNo;
+              unitIdList += thrUnitBtn[j].dataset.unitId;
             } else {
-              unitUniqNoList += ',' + thrUnitBtn[j].dataset.unitUniqNo;
+              unitIdList += ',' + thrUnitBtn[j].dataset.unitId;
             }
           }
-          let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitUniqNoList, true);
+          let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitIdList, true);
           let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
           let mathTypeInfoList = jsonObj.data['mathTypeList'];
           for (let j = 0; j < thrUnitBtnWrap.length; j++) {
             for (let k = 0; k < mathTypeInfoList.length; k++) {
-              if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitUniqNo === mathTypeInfoList[k].unitId) {
+              if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitId === mathTypeInfoList[k].unitId) {
                 let tmpDiv = document.createElement('div');
                 tmpDiv.className = 'typeBtnWrap hide';
                 let tmpSpan = document.createElement('span');
                 tmpSpan.innerHTML = mathTypeInfoList[k].quesType;
                 tmpSpan.className = 'typeBtn';
-                tmpSpan.dataset.unitUniqNo = mathTypeInfoList[k].unitId;
-                tmpSpan.dataset.typeNo = mathTypeInfoList[k].typeNo;
+                tmpSpan.dataset.unitId = mathTypeInfoList[k].unitId;
+                tmpSpan.dataset.typeId = mathTypeInfoList[k].typeId;
                 tmpSpan.addEventListener('click', typeClickFunction);
                 tmpDiv.append(tmpSpan);
                 thrUnitBtnWrap[j].append(tmpDiv);
@@ -834,28 +834,28 @@ const MathDocsMaker = () => {
         if (event.target.dataset.subjectInfo === subjectBtnWrap[i].dataset.subjectInfo) {
           subjectBtnWrap[i].classList.remove('hide');
           if (event.target.dataset.typeExist === 'false') {
-            let unitUniqNoList = '';
+            let unitIdList = '';
             let thrUnitBtn = subjectBtnWrap[i].querySelectorAll('.thrUnitBtn');
             for (let j = 0; j < thrUnitBtn.length; j++) {
               if (j === 0) {
-                unitUniqNoList += thrUnitBtn[j].dataset.unitUniqNo;
+                unitIdList += thrUnitBtn[j].dataset.unitId;
               } else {
-                unitUniqNoList += ',' + thrUnitBtn[j].dataset.unitUniqNo;
+                unitIdList += ',' + thrUnitBtn[j].dataset.unitId;
               }
             }
-            let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitUniqNoList, true);
+            let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitIdList, true);
             let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
             let mathTypeInfoList = jsonObj.data['mathTypeList'];
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {
               for (let k = 0; k < mathTypeInfoList.length; k++) {
-                if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitUniqNo === mathTypeInfoList[k].unitId) {
+                if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitId === mathTypeInfoList[k].unitId) {
                   let tmpDiv = document.createElement('div');
                   tmpDiv.className = 'typeBtnWrap hide';
                   let tmpSpan = document.createElement('span');
                   tmpSpan.innerHTML = mathTypeInfoList[k].quesType;
                   tmpSpan.className = 'typeBtn';
-                  tmpSpan.dataset.unitUniqNo = mathTypeInfoList[k].unitId;
-                  tmpSpan.dataset.typeNo = mathTypeInfoList[k].typeNo;
+                  tmpSpan.dataset.unitId = mathTypeInfoList[k].unitId;
+                  tmpSpan.dataset.typeId = mathTypeInfoList[k].typeId;
                   tmpSpan.addEventListener('click', typeClickFunction);
                   tmpDiv.append(tmpSpan);
                   thrUnitBtnWrap[j].append(tmpDiv);
@@ -1072,14 +1072,14 @@ const MathDocsMaker = () => {
     for (let i = 0; i < subjectList.length; i++) {
       let tmpDiv = document.createElement('div');
       tmpDiv.className = 'subjectBtnWrap hide';
-      tmpDiv.dataset.subjectInfo = subjectList[i].mainVal;
+      tmpDiv.dataset.subjectInfo = subjectList[i].unitName;
       let tmpSpanFoldBtn = document.createElement('span');
       tmpSpanFoldBtn.innerHTML = '&#10095;';
       tmpSpanFoldBtn.className = 'subjectFoldBtn active';
       tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.secUnitBtnWrap'));
       tmpDiv.append(tmpSpanFoldBtn);
       let tmpSpan = document.createElement('span');
-      tmpSpan.innerHTML = subjectList[i].mainVal;
+      tmpSpan.innerHTML = subjectList[i].unitName;
       tmpSpan.className = 'subjectBtn';
       tmpSpan.addEventListener('click', subjectClickFunction);
       tmpDiv.append(tmpSpan);
@@ -1091,7 +1091,7 @@ const MathDocsMaker = () => {
       for (let j = 0; j < secUnitList.length; j++) {
         if (subjectBtnList[i].dataset.subjectInfo === secUnitList[j].parentVal) {
           let tmpDiv = document.createElement('div');
-          tmpDiv.dataset.secUnitInfo = secUnitList[j].mainVal;
+          tmpDiv.dataset.secUnitInfo = secUnitList[j].unitName;
           tmpDiv.className = 'secUnitBtnWrap';
           let tmpSpanFoldBtn = document.createElement('span');
           tmpSpanFoldBtn.innerHTML = '&#10095;';
@@ -1099,7 +1099,7 @@ const MathDocsMaker = () => {
           tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.thrUnitBtnWrap'));
           tmpDiv.append(tmpSpanFoldBtn);
           let tmpSpan = document.createElement('span');
-          tmpSpan.innerHTML = secUnitList[j].mainVal;
+          tmpSpan.innerHTML = secUnitList[j].unitName;
           tmpSpan.className = 'secUnitBtn';
           tmpSpan.addEventListener('click', secUnitClickFunction);
           tmpDiv.append(tmpSpan);
@@ -1113,7 +1113,7 @@ const MathDocsMaker = () => {
       for (let j = 0; j < thrUnitList.length; j++) {
         if (secUnitBtnList[i].dataset.secUnitInfo === thrUnitList[j].parentVal) {
           let tmpDiv = document.createElement('div');
-          tmpDiv.dataset.thrUnitInfo = thrUnitList[j].mainVal;
+          tmpDiv.dataset.thrUnitInfo = thrUnitList[j].unitName;
           tmpDiv.className = 'thrUnitBtnWrap hide';
           let tmpSpanFoldBtn = document.createElement('span');
           tmpSpanFoldBtn.innerHTML = '&#10095;';
@@ -1121,9 +1121,9 @@ const MathDocsMaker = () => {
           tmpSpanFoldBtn.addEventListener('click', (event) => foldClickFunction(event, '.typeBtnWrap'));
           tmpDiv.append(tmpSpanFoldBtn);
           let tmpSpan = document.createElement('span');
-          tmpSpan.innerHTML = thrUnitList[j].mainVal;
+          tmpSpan.innerHTML = thrUnitList[j].unitName;
           tmpSpan.className = 'thrUnitBtn';
-          tmpSpan.dataset.unitUniqNo = thrUnitList[j].unitUniqNo;
+          tmpSpan.dataset.unitId = thrUnitList[j].unitId;
           tmpSpan.addEventListener('click', thrUnitClickFunction);
           tmpDiv.append(tmpSpan);
           secUnitBtnList[i].append(tmpDiv);
@@ -1284,7 +1284,7 @@ const MathDocsMaker = () => {
     });
 
     if (addType === 'myRepo') {
-      let jsonObj = await nb_dataFetch('/mathInfo/mathTypeInfo?unitUniqNo=' + addContents[0].unitUniqNo + '+&typeNo=' + addContents[0].typeNo, true);
+      let jsonObj = await nb_dataFetch('/mathInfo/mathTypeInfo?unitId=' + addContents[0].unitId + '+&typeId=' + addContents[0].typeId, true);
       addContents[0].mathTypeInfo = jsonObj['mathTypeInfo'];
     }
 
@@ -1496,11 +1496,11 @@ const MathDocsMaker = () => {
     nb_multiChoiceGridSet('quesConMultiShow');
   };
 
-  const takeSimilarContents = async (unitUniqNo, typeNo, contentsNo, contentsClassify) => {
+  const takeSimilarContents = async (unitId, typeId, contentsNo, contentsClassify) => {
     document.getElementById('mathDocsSimConAdd').classList.remove('hide');
     document.getElementById('mathDocsSimConAdd').dataset.contentsNo = contentsNo;
     if (contentsClassify === 'UserCustom') contentsClassify = 'InHouse'; //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
-    let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitUniqNo=' + unitUniqNo + '&typeNo=' + typeNo + '&contentsClassify=' + contentsClassify, true);
+    let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitId=' + unitId + '&typeId=' + typeId + '&contentsClassify=' + contentsClassify, true);
     let newContentsList = jsonObj['mathSimilarConList'].filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
@@ -1924,37 +1924,37 @@ const MathDocsMaker = () => {
 
   const subjectInfoList = subjectList.map((subjectInfo) => {
     //중등인 경우
-    if (subjectInfo.mainVal.includes('중등')) {
-      if (subjectInfo.mainVal.includes('1-1')) {
+    if (subjectInfo.unitName.includes('중등')) {
+      if (subjectInfo.unitName.includes('1-1')) {
         return (
-          <span key={subjectInfo.unitUniqNo}>
+          <span key={subjectInfo.unitId}>
             <span className='mathDocsGrade'>중등</span>
             <span
               className='mathDocsUnitBtn'
-              data-subject-info={subjectInfo.mainVal}
+              data-subject-info={subjectInfo.unitName}
               data-type-exist='false'
               onClick={(event) => {
                 unitSelect(event);
               }}>
-              {subjectInfo.mainVal.replace('중등 ', '')}
+              {subjectInfo.unitName.replace('중등 ', '')}
             </span>
           </span>
         );
       }
-      if (subjectInfo.mainVal.includes('1-2') || subjectInfo.mainVal.includes('2-2') || subjectInfo.mainVal.includes('3-2')) {
-        return <span key={subjectInfo.unitUniqNo}></span>;
+      if (subjectInfo.unitName.includes('1-2') || subjectInfo.unitName.includes('2-2') || subjectInfo.unitName.includes('3-2')) {
+        return <span key={subjectInfo.unitId}></span>;
       }
-      if (subjectInfo.mainVal.includes('3-2')) {
+      if (subjectInfo.unitName.includes('3-2')) {
         return (
-          <span key={subjectInfo.unitUniqNo}>
+          <span key={subjectInfo.unitId}>
             <span
               className='mathDocsUnitBtn'
-              data-subject-info={subjectInfo.mainVal}
+              data-subject-info={subjectInfo.unitName}
               data-type-exist='false'
               onClick={(event) => {
                 unitSelect(event);
               }}>
-              {subjectInfo.mainVal.replace('중등 ', '')}
+              {subjectInfo.unitName.replace('중등 ', '')}
             </span>
             <br />
           </span>
@@ -1963,17 +1963,17 @@ const MathDocsMaker = () => {
       return (
         <span
           className='mathDocsUnitBtn'
-          key={subjectInfo.unitUniqNo}
-          data-subject-info={subjectInfo.mainVal}
+          key={subjectInfo.unitId}
+          data-subject-info={subjectInfo.unitName}
           data-type-exist='false'
           onClick={(event) => {
             unitSelect(event);
           }}>
-          {subjectInfo.mainVal.replace('중등 ', '')}
+          {subjectInfo.unitName.replace('중등 ', '')}
         </span>
       );
     } else {
-      return <span key={subjectInfo.unitUniqNo}></span>;
+      return <span key={subjectInfo.unitId}></span>;
     }
   });
 
@@ -2975,7 +2975,7 @@ const MathDocsMaker = () => {
                                       <div
                                         className='mathDocsConChngBtn'
                                         onClick={() => {
-                                          takeSimilarContents(contentsMap.unitId, contentsMap.mathTypeInfo.typeNo, contentsMap.contentsNo, contentsMap.contentsClassify);
+                                          takeSimilarContents(contentsMap.unitId, contentsMap.mathTypeInfo.typeId, contentsMap.contentsNo, contentsMap.contentsClassify);
                                         }}>
                                         문항 교체
                                       </div>

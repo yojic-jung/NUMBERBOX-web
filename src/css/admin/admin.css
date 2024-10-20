@@ -208,7 +208,7 @@
     width: 500px;
 }
 
-.conCntByTypeNo{
+.conCntByTypeId{
     margin-right: 5px;
     font-size: 12px;
     font-weight: bold;
@@ -224,7 +224,7 @@
     display: inline-block;
 }
 
-.conCntByTypeNo::after {
+.conCntByTypeId::after {
     font-family: 'jejuGothic';
     content: '+';
     font-size: 10px;

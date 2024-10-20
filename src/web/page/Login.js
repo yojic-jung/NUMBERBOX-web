@@ -2,18 +2,14 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
 import { Link } from 'react-router-dom';
-import {
-  nb_postFormRequest,
-  nb_getParameterByName,
-} from 'js/common/common_nb.js';
+import { nb_postFormToJson, nb_getParameterByName } from 'js/common/common_nb.js';
 import 'css/main/main.css';
 import 'css/page/etcPage.css';
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const emailRegex =
-    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
   const { naver } = window;
 
   var currentUrlNaver = window.location.href;
@@ -64,10 +60,7 @@ const Login = () => {
       document.getElementById('login-btn').classList.add('disabled');
     }
 
-    if (
-      userKeycode === 13 &&
-      !document.getElementById('login-btn').classList.contains('disabled')
-    ) {
+    if (userKeycode === 13 && !document.getElementById('login-btn').classList.contains('disabled')) {
       document.getElementById('login-btn').click();
     }
   };
@@ -77,9 +70,7 @@ const Login = () => {
    */
   const fLoginBtnUiVal = async (event) => {
     // 이메일 및 비밀번호 형식 제대로 입력 안한 경우 버튼 비활성화로 요청 불가
-    if (
-      document.getElementById(event.target.id).classList.contains('disabled')
-    ) {
+    if (document.getElementById(event.target.id).classList.contains('disabled')) {
       event.preventDefault();
       return;
     }
@@ -92,11 +83,7 @@ const Login = () => {
 
     // 요청
     let formData = new FormData(document.getElementById('login-form'));
-    let returnObj = await nb_postFormRequest(
-      '/login/general' + param,
-      formData,
-      true
-    );
+    let returnObj = await nb_postFormToJson('/login/general' + param, formData, true);
 
     // 성공시 메인 페이지로 이동
     if (returnObj.status == 200) {
@@ -131,16 +118,10 @@ const Login = () => {
     <>
       <Helmet>
         <title>로그인</title>
-        <meta
-          name='description'
-          content='로그인 후 N명의수학을 이용해보세요!'
-        />
+        <meta name='description' content='로그인 후 N명의수학을 이용해보세요!' />
         <link rel='canonical' href='https://nsoohak.com/login' />
         <meta property='og:title' content='로그인' />
-        <meta
-          property='og:description'
-          content='로그인 후 N명의수학을 이용해보세요!'
-        />
+        <meta property='og:description' content='로그인 후 N명의수학을 이용해보세요!' />
       </Helmet>
       <div className='bage-ground'>
         <div className='login-menu-title'>
@@ -154,8 +135,7 @@ const Login = () => {
             className='pointer none-btn'
             onClick={() => {
               goBack();
-            }}
-          >
+            }}>
             &lt;뒤로가기
           </button>
         </div>
@@ -164,25 +144,11 @@ const Login = () => {
           <form id='login-form' method='post'>
             <div id='passChkValDesc' className='loginValDesc'></div>
             <div className='login-input-div'>
-              <input
-                id='email'
-                name='username'
-                className='login-input'
-                type='text'
-                placeholder='이메일을 입력해주세요.'
-                onKeyUp={(event) => fLoginUiVal(event)}
-              />
+              <input id='email' name='username' className='login-input' type='text' placeholder='이메일을 입력해주세요.' onKeyUp={(event) => fLoginUiVal(event)} />
             </div>
             <div id='passChkValDesc' className='loginValDesc'></div>
             <div className='login-input-div'>
-              <input
-                id='password'
-                name='password'
-                className='login-input'
-                type='password'
-                placeholder='비밀번호를 입력해주세요.'
-                onKeyUp={(event) => fLoginUiVal(event)}
-              />
+              <input id='password' name='password' className='login-input' type='password' placeholder='비밀번호를 입력해주세요.' onKeyUp={(event) => fLoginUiVal(event)} />
             </div>
             <div id='passChkValDesc' className='loginValDesc'></div>
             <div id='loginErrMsg' className='loginErrMsg hide'></div>
@@ -192,8 +158,7 @@ const Login = () => {
               className='none-btn login-btn disabled'
               onClick={(event) => {
                 fLoginBtnUiVal(event);
-              }}
-            >
+              }}>
               로그인
             </button>
             <div className='grid-naver hide' id='naverIdLogin'></div>
@@ -208,8 +173,7 @@ const Login = () => {
                 }
                 naverLogin.init();
                 window.location.href = naverLogin.generateAuthorizeUrl();
-              }}
-            >
+              }}>
               네이버 아이디로 로그인
             </button>
             <div className='login-etc-info'>

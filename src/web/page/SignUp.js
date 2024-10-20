@@ -4,11 +4,7 @@ import ServicePolicy from 'web/page/ServicePolicy';
 import PrivacyPolicy from 'web/page/PrivacyPolicy';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
-import {
-  nb_postFormRequest,
-  nb_dataFetch,
-  nb_postRequest,
-} from 'js/common/common_nb.js';
+import { nb_postFormToJson, nb_dataFetch, nb_postRequest } from 'js/common/common_nb.js';
 import 'css/main/main.css';
 import 'css/page/etcPage.css';
 
@@ -74,22 +70,12 @@ const SignUp = () => {
 
   /* 3. 콜백 함수 정의하기 */
   async function callback(response) {
-    console.log(response);
     const { success, merchant_uid, error_msg } = response;
 
     if (success) {
       alert('본인인증 성공');
-      let returnData = await nb_dataFetch(
-        '/certifications/' + response.imp_uid,
-        true
-      );
-      console.log(returnData);
-      console.log(returnData.name);
-      console.log(returnData.phone);
-      console.log(returnData.birth);
-      document
-        .getElementById('phoneCertifyBtn')
-        .classList.remove('loginValDescUI');
+      let returnData = await nb_dataFetch('/certifications/' + response.imp_uid, true);
+      document.getElementById('phoneCertifyBtn').classList.remove('loginValDescUI');
       document.getElementById('phoneCertiValDesc').innerText = '';
       setIsPhoneIdentified(true);
       setName(returnData.name);
@@ -100,10 +86,8 @@ const SignUp = () => {
     }
   }
 
-  const emailRegex =
-    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-  const passRegex =
-    /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; //패스워드 문자 숫자 특수문자 8-15자
+  const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  const passRegex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; //패스워드 문자 숫자 특수문자 8-15자
   const emailIdentifyRegex = /^.{36}$/;
 
   const fagreeStateBtn = () => {
@@ -132,13 +116,11 @@ const SignUp = () => {
         document.getElementById('emailValDesc').classList.remove('blueText');
         document.getElementById('emailValDesc').classList.remove('redText');
       } else if (!emailRegex.test(targetValue)) {
-        document.getElementById('emailValDesc').innerText =
-          '올바른 이메일 주소를 입력해주세요.';
+        document.getElementById('emailValDesc').innerText = '올바른 이메일 주소를 입력해주세요.';
         document.getElementById('emailValDesc').classList.remove('blueText');
         document.getElementById('emailValDesc').classList.add('redText');
       } else {
-        document.getElementById('emailValDesc').innerText =
-          '유효한 이메일입니다.';
+        document.getElementById('emailValDesc').innerText = '유효한 이메일입니다.';
         document.getElementById('emailValDesc').classList.remove('redText');
         document.getElementById('emailValDesc').classList.add('blueText');
       }
@@ -161,9 +143,7 @@ const SignUp = () => {
           document.getElementById('passChkValDesc').classList.add('blueText');
         } else if (document.getElementById('passwordChk').value.length !== 0) {
           document.getElementById('passChkValDesc').innerText = '불일치';
-          document
-            .getElementById('passChkValDesc')
-            .classList.remove('blueText');
+          document.getElementById('passChkValDesc').classList.remove('blueText');
           document.getElementById('passChkValDesc').classList.add('redText');
         }
       }
@@ -196,23 +176,18 @@ const SignUp = () => {
     */
   const emailKeyUpVal = (event) => {
     let targetId = event.target.id;
-    if (
-      document.getElementById('emailValDesc').classList.contains('redText') ||
-      document.getElementById('emailValDesc').classList.contains('blueText')
-    ) {
+    if (document.getElementById('emailValDesc').classList.contains('redText') || document.getElementById('emailValDesc').classList.contains('blueText')) {
       let targetValue = document.getElementById(targetId).value;
       if (targetValue.length === 0) {
         document.getElementById('emailValDesc').innerText = '';
         document.getElementById('emailValDesc').classList.remove('blueText');
         document.getElementById('emailValDesc').classList.remove('redText');
       } else if (!emailRegex.test(targetValue)) {
-        document.getElementById('emailValDesc').innerText =
-          '올바른 이메일 주소를 입력해주세요.';
+        document.getElementById('emailValDesc').innerText = '올바른 이메일 주소를 입력해주세요.';
         document.getElementById('emailValDesc').classList.remove('blueText');
         document.getElementById('emailValDesc').classList.add('redText');
       } else {
-        document.getElementById('emailValDesc').innerText =
-          '유효한 이메일입니다.';
+        document.getElementById('emailValDesc').innerText = '유효한 이메일입니다.';
         document.getElementById('emailValDesc').classList.remove('redText');
         document.getElementById('emailValDesc').classList.add('blueText');
       }
@@ -239,8 +214,7 @@ const SignUp = () => {
 
     if (!agreeChk) {
       document.getElementById('agreeValDesc').classList.add('redText');
-      document.getElementById('agreeValDesc').innerText =
-        '이용약관 개인정보보호 방침에 동의해주세요.';
+      document.getElementById('agreeValDesc').innerText = '이용약관 개인정보보호 방침에 동의해주세요.';
       isValid = false;
     }
 
@@ -256,8 +230,7 @@ const SignUp = () => {
         */
 
     if (password !== passwordChk) {
-      document.getElementById('passChkValDesc').innerText =
-        '비밀번호가 일치하지 않습니다.';
+      document.getElementById('passChkValDesc').innerText = '비밀번호가 일치하지 않습니다.';
       document.getElementById('passChkValDesc').classList.remove('blueText');
       document.getElementById('passChkValDesc').classList.add('redText');
       document.getElementById('passwordChk').classList.add('loginValDescUI');
@@ -265,8 +238,7 @@ const SignUp = () => {
       isValid = false;
     }
     if (passwordChk.length === 0) {
-      document.getElementById('passChkValDesc').innerText =
-        '비밀번호를 한번 더 입력해주세요.';
+      document.getElementById('passChkValDesc').innerText = '비밀번호를 한번 더 입력해주세요.';
       document.getElementById('passChkValDesc').classList.remove('blueText');
       document.getElementById('passChkValDesc').classList.add('redText');
       document.getElementById('passwordChk').classList.add('loginValDescUI');
@@ -274,8 +246,7 @@ const SignUp = () => {
       isValid = false;
     }
     if (!passRegex.test(password)) {
-      document.getElementById('passValDesc').innerText =
-        '영문, 숫자, 특수문자 포함 8-15자리 비밀번호를 입력해주세요.';
+      document.getElementById('passValDesc').innerText = '영문, 숫자, 특수문자 포함 8-15자리 비밀번호를 입력해주세요.';
       document.getElementById('passValDesc').classList.remove('blueText');
       document.getElementById('passValDesc').classList.add('redText');
       document.getElementById('password').classList.add('loginValDescUI');
@@ -283,8 +254,7 @@ const SignUp = () => {
       isValid = false;
     }
     if (!emailRegex.test(email)) {
-      document.getElementById('emailValDesc').innerText =
-        '올바른 이메일 주소를 입력해주세요.';
+      document.getElementById('emailValDesc').innerText = '올바른 이메일 주소를 입력해주세요.';
       document.getElementById('emailValDesc').classList.remove('blueText');
       document.getElementById('emailValDesc').classList.add('redText');
       document.getElementById('email').classList.add('loginValDescUI');
@@ -307,11 +277,7 @@ const SignUp = () => {
     let jsonData = new Object();
     jsonData.email = email;
     jsonData.codeType = 'SignUp';
-    let returnVal = await nb_postRequest(
-      '/public/member/signup/verifyCode',
-      jsonData,
-      true
-    );
+    let returnVal = await nb_postRequest('/public/member/signup/verifyCode', jsonData, true);
     if (returnVal.status == 200) {
       document.getElementById('userInpEmail').innerText = email;
       document.getElementById('emailCertify').classList.remove('hide');
@@ -324,16 +290,9 @@ const SignUp = () => {
     if (event.target.classList.contains('disable')) return;
 
     let formData = new FormData(document.getElementById('signup-form'));
-    formData.append(
-      'emailVerifyCode',
-      document.getElementById('emailIdCode').value
-    );
+    formData.append('emailVerifyCode', document.getElementById('emailIdCode').value);
 
-    let returnObj = await nb_postFormRequest(
-      '/public/member/signup',
-      formData,
-      true
-    );
+    let returnObj = await nb_postFormToJson('/public/member/signup', formData, true);
     if (returnObj.status == 200) {
       window.location.href = '/?succeedSignUp=1';
     }
@@ -343,16 +302,10 @@ const SignUp = () => {
     <>
       <Helmet>
         <title>회원가입</title>
-        <meta
-          name='description'
-          content='회원가입 후 N명의수학을 이용해보세요!'
-        />
+        <meta name='description' content='회원가입 후 N명의수학을 이용해보세요!' />
         <link rel='canonical' href='https://nsoohak.com/signup' />
         <meta property='og:title' content='회원가입' />
-        <meta
-          property='og:description'
-          content='회원가입 후 N명의수학을 이용해보세요!'
-        />
+        <meta property='og:description' content='회원가입 후 N명의수학을 이용해보세요!' />
       </Helmet>
       <div className='bage-ground'>
         <div className='login-menu-title'>
@@ -365,22 +318,18 @@ const SignUp = () => {
             className='pointer'
             onClick={() => {
               navigate(-1);
-            }}
-          >
+            }}>
             &lt;뒤로가기
           </span>
         </div>
-        <div className='login-signup-desc'>
-          N명의수학에 오신 것을 환영합니다!
-        </div>
+        <div className='login-signup-desc'>N명의수학에 오신 것을 환영합니다!</div>
         <div id='emailCertify' className='blindBox hide'>
           <div className='emailCertifyDiv'>
             <div
               className='closeBtn2'
               onClick={() => {
                 document.getElementById('emailCertify').classList.add('hide');
-              }}
-            >
+              }}>
               X
             </div>
             <div className='emailCertifyTitle'>이메일 인증</div>
@@ -413,8 +362,7 @@ const SignUp = () => {
                 className='emailCertifyBtn disable'
                 onClick={(event) => {
                   signupFinalReq(event);
-                }}
-              >
+                }}>
                 확인
               </span>
             </div>
@@ -514,22 +462,16 @@ const SignUp = () => {
                 <span
                   className='agreeState'
                   onClick={() => {
-                    document
-                      .getElementById('servicePolicyState')
-                      .classList.remove('hide');
-                  }}
-                >
+                    document.getElementById('servicePolicyState').classList.remove('hide');
+                  }}>
                   이용약관
                 </span>
                 과{' '}
                 <span
                   onClick={() => {
-                    document
-                      .getElementById('privacyPolicyState')
-                      .classList.remove('hide');
+                    document.getElementById('privacyPolicyState').classList.remove('hide');
                   }}
-                  className='agreeState'
-                >
+                  className='agreeState'>
                   개인정보보호 방침
                 </span>
                 에 동의합니다.
@@ -540,8 +482,7 @@ const SignUp = () => {
               className='login-btn'
               onClick={() => {
                 sigupRequest();
-              }}
-            >
+              }}>
               가입완료
             </div>
             <div className='grid-naver hide' id='naverIdLogin'></div>
@@ -550,8 +491,7 @@ const SignUp = () => {
               onClick={() => {
                 naverLogin.init();
                 window.location.href = naverLogin.generateAuthorizeUrl();
-              }}
-            >
+              }}>
               네이버 아이디로 회원가입
             </div>
           </form>

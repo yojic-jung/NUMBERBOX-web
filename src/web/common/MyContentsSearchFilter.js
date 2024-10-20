@@ -78,7 +78,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
 
   const myContentsSubFilter = async (event) => {
     let target = event.target;
-    let targetSubject = target.dataset.mainVal;
+    let targetSubject = target.dataset.unitName;
     if (targetSubject === '전체') {
       document.getElementById('mySubFilterTitle').innerText = '학년 및 과목';
       let subjectFilterList = document.getElementById('subjectFilterUnitList').querySelectorAll('li');
@@ -133,7 +133,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
 
   const myContentsSubFilterByUnit = async (event) => {
     let target = event.target;
-    let targetSecUnit = target.dataset.mainVal;
+    let targetSecUnit = target.dataset.unitName;
     if (targetSecUnit === '전체') {
       document.getElementById('mySubFilterUnit').innerText = '대단원';
     } else {
@@ -183,27 +183,27 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
   const subjectFilterList = subjectList.map((contentsMap, idx) => {
     return (
       <li
-        key={contentsMap.unitUniqNo}
-        data-unit-uniq-no={contentsMap.unitUniqNo}
-        data-main-val={contentsMap.mainVal}
+        key={contentsMap.unitId}
+        data-unit-id={contentsMap.unitId}
+        data-unit-name={contentsMap.unitName}
         onClick={(event) => {
           myContentsSubFilter(event);
         }}
-        dangerouslySetInnerHTML={{ __html: contentsMap.mainVal }}></li>
+        dangerouslySetInnerHTML={{ __html: contentsMap.unitName }}></li>
     );
   });
   const secUnitFilterList = secUnitList.map((contentsMap, idx) => {
     return (
       <li
         className='hide'
-        key={contentsMap.unitUniqNo}
-        data-unit-uniq-no={contentsMap.unitUniqNo}
-        data-parent-val={contentsMap.parentVal}
-        data-main-val={contentsMap.mainVal}
+        key={contentsMap.unitId}
+        data-unit-id={contentsMap.unitId}
+        data-parent-unit-name={contentsMap.parentUnitName}
+        data-unit-name={contentsMap.unitName}
         onClick={(event) => {
           myContentsSubFilterByUnit(event);
         }}
-        dangerouslySetInnerHTML={{ __html: contentsMap.mainVal }}></li>
+        dangerouslySetInnerHTML={{ __html: contentsMap.unitName }}></li>
     );
   });
 
@@ -223,7 +223,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
             <ul id='subjectFilterList' className='mySearchFilter-list hide'>
               <li
                 id='mySubFilterOff'
-                data-unit-uniq-no='00'
+                data-unit-id='00'
                 data-main-val='전체'
                 onClick={(event) => {
                   myContentsSubFilter(event);
@@ -244,7 +244,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
             </span>
             <ul id='subjectFilterUnitList' className='mySearchFilter-list custom hide'>
               <li
-                data-unit-uniq-no='00'
+                data-unit-id='00'
                 data-main-val='전체'
                 onClick={(event) => {
                   myContentsSubFilterByUnit(event);
