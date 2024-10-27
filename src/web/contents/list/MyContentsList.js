@@ -19,6 +19,7 @@ import {
   nb_dateFormat,
   nb_formDataFetch,
   nb_getRequest,
+  nb_deleteRequest,
 } from 'js/common/common_nb.js';
 import { reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
 import {
@@ -192,8 +193,8 @@ const MyContentsList = ({ isMine, userNo }) => {
       return;
     }
     document.getElementById('promptBoxClose').click();
-    let returnObj = await nb_dataFetch('/mathInfo/myContentsDel?contentsno=' + Number(delTargetConNo), true);
-    if (!returnObj.existMsg) {
+    let returnObj = await nb_deleteRequest('/math/content/' + Number(delTargetConNo), true);
+    if (returnObj.status == 200) {
       let contentsListTmp = contentsList.filter(function (element, idx) {
         if (element.contentsId !== Number(delTargetConNo)) {
           return element;
@@ -375,21 +376,22 @@ const MyContentsList = ({ isMine, userNo }) => {
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
   };
 
-  const showOrgContents = async function (contents) {
-    if (contents.contentsId != null) {
-      const likeRepoInfo = await nb_getRequest('/math/like-repo/content/' + contents.contentsId, true);
-      let isMyRepoContents = likeRepoInfo.data.isMyRepoContents;
-      let isMyLikeContents = likeRepoInfo.data.isMyLikeContents;
-      if (isMyLikeContents) {
-        document.getElementById('detailedContentsLike').classList.add('active');
-      } else {
-        document.getElementById('detailedContentsLike').classList.remove('active');
-      }
-      if (isMyRepoContents) {
-        document.getElementById('detailedContentsRepo').classList.add('active');
-      } else {
-        document.getElementById('detailedContentsRepo').classList.remove('active');
-      }
+  const showOrgContents = async function (contentsId, contentsClassify) {
+    const resData = await nb_getRequest('/math/content/' + contentsId + '?contentsClassify=' + contentsClassify + '&contentsOnly=' + true, true);
+
+    const contents = resData.data.contents;
+
+    let isMyRepoContents = contents.isMyRepoContents;
+    let isMyLikeContents = contents.isLikeContents;
+    if (isMyLikeContents) {
+      document.getElementById('detailedContentsLike').classList.add('active');
+    } else {
+      document.getElementById('detailedContentsLike').classList.remove('active');
+    }
+    if (isMyRepoContents) {
+      document.getElementById('detailedContentsRepo').classList.add('active');
+    } else {
+      document.getElementById('detailedContentsRepo').classList.remove('active');
     }
 
     document.getElementById('detailedConDiv').classList.remove('hide');
@@ -575,7 +577,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                   {contentsMap.contentsClassify === 'Modified' && (
                     <>
                       <span className='miniCircle'>변형문제</span>
-                      <span className='miniBtn' onClick={() => showOrgContents(contentsMap)}>
+                      <span className='miniBtn' onClick={() => showOrgContents(contentsMap.orgContentsId, contentsMap.contentsClassify)}>
                         원본문제 보기
                       </span>
                     </>

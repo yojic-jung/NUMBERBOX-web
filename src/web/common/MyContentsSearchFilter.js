@@ -91,7 +91,6 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
       document.getElementById('mySubFilterTitle').innerText = target.innerText;
       let subjectFilterList = document.getElementById('subjectFilterUnitList').querySelectorAll('li');
       for (let i = 0; i < subjectFilterList.length; i++) {
-        console.log(targetSubject);
         if (targetSubject === subjectFilterList[i].dataset.parentUnitName) {
           subjectFilterList[i].classList.remove('hide');
         } else {

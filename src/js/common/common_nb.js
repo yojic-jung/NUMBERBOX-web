@@ -229,11 +229,7 @@ export const nb_request = async (url, httpOption, transitEffect) => {
       jsonData = JSON.parse(data);
 
       // 성공 응답 아닌 경우
-      if (jsonData.status >= 400 && jsonData.status < 500) {
-        if (jsonData.showMsg) {
-          alert(jsonData.message);
-        }
-      } else if (jsonData.status >= 500) {
+      if (jsonData.status >= 500) {
         alert('서버가 정상적이지 않습니다.\n잠시 후 다시 시도해주세요.');
       }
     });

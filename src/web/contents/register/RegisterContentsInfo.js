@@ -298,6 +298,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
 
     let returnObj;
     const contentsReq = await nb_formToJson(formData);
+    let contentsId;
 
     if (contentsClassify == 'UserCustom') {
       const licenseReq = new Object();
@@ -313,19 +314,22 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
       //수정모드로 들어온 경우
       if (updateModeUniqNo !== '') {
         let updateModeUniqNoArr = updateModeUniqNo.split(',');
-        req.contentsId = updateModeUniqNoArr[2];
+        contentsId = updateModeUniqNoArr[2];
+        req.contentsId = contentsId;
         returnObj = await nb_putRequest('/math/content/user-custom', req, true);
       } else {
         returnObj = await nb_postRequest('/math/content/user-custom', req, true);
+        contentsId = returnObj.data.contents.id;
       }
     } else if (contentsClassify == 'Modified') {
       let updateModeUniqNoArr = updateModeUniqNo.split(',');
 
       // 변형 문제 수정하기
       if (isTransModify) {
+        contentsId = updateModeUniqNoArr[2];
         let req = {
           contents: contentsReq,
-          contentsId: updateModeUniqNoArr[2],
+          contentsId: contentsId,
         };
         returnObj = await nb_putRequest('/math/content/trans', req, true);
       } else {
@@ -334,6 +338,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
           orgContentsId: updateModeUniqNoArr[2],
         };
         returnObj = await nb_postRequest('/math/content/trans', req, true);
+        contentsId = returnObj.data.contents.id;
       }
     } else if (contentsClassify == 'InHouse') {
       // if (contentsClassify === 'InHouse') formData.append('similarContentsId', updateModeUniqNoArr[3]);
@@ -439,7 +444,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
         await reg_undoRedoSetting();
       }
 
-      makeContentsGrammer(formData);
+      makeContentsGrammer(contentsId, formData);
     } else {
       //문제입력 탭 클릭상태
       let trigEv = new Object();
@@ -450,9 +455,8 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     }
   };
 
-  //컨텐츠 문법 등록[
-  const makeContentsGrammer = async (formData) => {
-    return;
+  //컨텐츠 문법 등록
+  const makeContentsGrammer = async (contentsId, formData) => {
     let contentGrammer = document.createElement('div');
     let contentsTitle = ['contents', 'firNo', 'secNo', 'thrNo', 'fourNo', 'fifNo', 'solution', 'answer'];
     for (let i = 0; i < contentsTitle.length; i++) {
@@ -484,10 +488,11 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
       allDom[0].outerHTML = allDom[0].innerText;
       allDom = contentsDiv.querySelectorAll('*');
     }
-    let newFormData = new FormData();
-    newFormData.append('contentsNo', returnObj['contentsNo']);
-    newFormData.append('contentsGram', contentsDiv.innerText);
-    // nb_formDataFetch('/mathInfo/registerContentsGrammer', newFormData, false);
+
+    let jsonReq = new Object();
+    jsonReq.contentsId = contentsId;
+    jsonReq.grammar = contentsDiv.innerText;
+    nb_putRequest('/math/content/grammar', jsonReq, false);
   };
 
   const test = async () => {
