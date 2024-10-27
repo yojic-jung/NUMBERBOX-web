@@ -519,42 +519,27 @@ const HwpToHtml = () => {
                 let date2 = new Date();
                 let elapsedMSec = date2.getTime() - date11.getTime();
                 let elapsedSec = elapsedMSec / 1000;
-                console.log("2차변환 시간 차 : "+elapsedSec);
-                console.log("2차변환 10% 작업");
                 isShowTenPer = true;
-                console.log(forTexCheckNbBorderBox.length);
             }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.3 && !isShowThirtyPer){
                 let date2 = new Date();
                 let elapsedMSec = date2.getTime() - date11.getTime();
                 let elapsedSec = elapsedMSec / 1000;
-                console.log("2차변환 시간 차 : "+elapsedSec);
-                console.log("2차변환 30% 작업");
                 isShowThirtyPer = true;
-                console.log(forTexCheckNbBorderBox.length);
             }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.5 && !isShowHalfPer){
                 let date2 = new Date();
                 let elapsedMSec = date2.getTime() - date11.getTime();
                 let elapsedSec = elapsedMSec / 1000;
-                console.log("2차변환 시간 차 : "+elapsedSec);
-                console.log("2차변환 50% 작업");
                 isShowHalfPer = true;
-                console.log(forTexCheckNbBorderBox.length);
             }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.7 && !isShowSeventyPer){
                 let date2 = new Date();
                 let elapsedMSec = date2.getTime() - date11.getTime();
                 let elapsedSec = elapsedMSec / 1000;
-                console.log("2차변환 시간 차 : "+elapsedSec);
-                console.log("2차변환 70% 작업");
                 isShowSeventyPer = true;
-                console.log(forTexCheckNbBorderBox.length);
             }else if((secondConvertDomLen-forTexCheckNbBorderBox.length)/secondConvertDomLen > 0.95 && !isShowAlmostPer){
                 let date2 = new Date();
                 let elapsedMSec = date2.getTime() - date11.getTime();
                 let elapsedSec = elapsedMSec / 1000;
-                console.log("2차변환 시간 차 : "+elapsedSec);
-                console.log("2차변환 95% 작업");
                 isShowAlmostPer = true;
-                console.log(forTexCheckNbBorderBox.length);
             }
             */
       let texGrammer = forTexCheckNbBorderBox[0].innerText;

@@ -3185,7 +3185,7 @@ export const reg_selStartTdWidthChange = async () => {
 export const reg_selectUnitOrTypeData = async (targetId, titleTag, divTag, compareStr) => {
   let subjects = document.getElementById(targetId);
   for (let i = 0; i < subjects.length; i++) {
-    if (subjects[i].dataset.uniqNo == compareStr) {
+    if (subjects[i].dataset.unitId == compareStr) {
       //삼항식 쓰면 오류남
       subjects[i].selected = true;
       document.getElementById(titleTag).innerHTML = document.getElementById(targetId)[document.getElementById(targetId).selectedIndex].innerText;

@@ -48,14 +48,13 @@ let pageVolume = 100;
 const MyContentsList = ({ isMine, userNo }) => {
   const [contentsList, setContentsList] = useState(new Array());
   const [contentsNo, setContentsNo] = useState('');
+  const [isTransModify, setIsTransModify] = useState(false);
   const [modalState, setModalState] = useState(false); //모달시에 부모창 단원,유형정보 hide, 모달창은 쇼
   const [imgRegMode, setImgRegMode] = useState(false); //이미지로 등록한 파일 여부
   const [workListChanged, setWorkListChanged] = useState(false);
   const [emptyListMsg, setEmptyListMsg] = useState('나의 제작문제가 존재하지 않습니다. \n문제를 만들어 공유해 보세요.');
   const [contentsClassify, setContentsClassify] = useState(null);
   const [delTargetConNo, setDelTargetConNo] = useState(null);
-  const [conLikeInfoList, setConLikeInfoList] = useState(new Array());
-  const [conRepoInfoList, setConRepoInfoList] = useState(new Array());
 
   const removeAddedEvent = () => {
     window.removeEventListener('scroll', nb_detectScrollPosition);
@@ -64,8 +63,9 @@ const MyContentsList = ({ isMine, userNo }) => {
     scrollY = nb_modalScrollStrt();
     document.getElementById('outerFormulaEditor').classList.remove('hide');
     setContentsNo(document.getElementById(event.target.id).dataset.contentsNo);
-    setContentsClassify(Number(document.getElementById(event.target.id).dataset.contentsClassify));
+    setContentsClassify(document.getElementById(event.target.id).dataset.contentsClassify);
     setImgRegMode(isImgRegContents);
+    setIsTransModify(document.getElementById(event.target.id).dataset.isTrans);
     setModalState(true);
   };
 
@@ -81,7 +81,7 @@ const MyContentsList = ({ isMine, userNo }) => {
       let mathContents = window.mathContents;
       let objIdx = null;
       contentsList.forEach(function (element, idx) {
-        if (element.contentsNo === mathContents.contentsId) {
+        if (element.contentsId === mathContents.contentsId) {
           objIdx = idx;
           return false;
         }
@@ -96,7 +96,7 @@ const MyContentsList = ({ isMine, userNo }) => {
       let mathContents = window.mathContents;
       let objIdx = null;
       contentsList.forEach(function (element, idx) {
-        if (element.contentsNo === mathContents.contentsId) {
+        if (element.contentsId === mathContents.contentsId) {
           objIdx = idx;
           return false;
         }
@@ -126,7 +126,7 @@ const MyContentsList = ({ isMine, userNo }) => {
       let returnObj;
       curPageNum = 0;
       if (isMine) {
-        returnObj = await nb_getRequest('/math/content/user?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
+        returnObj = await nb_getRequest('/math/content/my?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
       } else {
         returnObj = await nb_getRequest('/math/content/user/' + userNo + '?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
       }
@@ -152,8 +152,6 @@ const MyContentsList = ({ isMine, userNo }) => {
     } else {
       if (contentsList.length !== 0) {
         nb_multiChoiceGridSet('quesConMultiShow');
-        setMyLikeInfo();
-        setMyRepoInfo();
       }
       fExecuteWidth = false;
     }
@@ -162,43 +160,26 @@ const MyContentsList = ({ isMine, userNo }) => {
   }, [contentsList]);
 
   const putInMyRepo = async (event, contentsId) => {
-    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
+    if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
-      event.target.classList.remove('active2');
     } else {
       event.target.classList.add('active');
 
       //(사용자 프로필 페이지) 2초 뒤에 active를 active2로 변환, 변환하지 않으면 정렬기능 사용시에 계속 저장소에 저장됬다는 문구 계속 나타남
       setTimeout(() => {
-        event.target.classList.remove('active');
-        event.target.classList.add('active2');
+        event.target.classList.add('active');
       }, 2000);
     }
     nb_dataFetch('/mathInfo/putInMyRepo?contentsno=' + contentsId, false);
   };
 
-  //검색 후 저장목록 셋팅
-  const setMyRepoInfo = async () => {
-    conRepoInfoList.forEach(function (element) {
-      document.getElementById('contentsRepo' + element.mathConRepoDomain.contentsId).classList.add('active2');
-    });
-  };
-
   const likeContents = async (event, contentsId) => {
-    if (event.target.classList.contains('active') || event.target.classList.contains('active2')) {
+    if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
-      event.target.classList.remove('active2');
     } else {
       event.target.classList.add('active');
     }
     nb_dataFetch('/mathInfo/likeContents?contentsno=' + contentsId, false);
-  };
-
-  //검색 후 좋아요 목록 셋팅
-  const setMyLikeInfo = async () => {
-    conLikeInfoList.forEach(function (element) {
-      document.getElementById('contentsLike' + element.mathConLikeDomain.contentsId).classList.add('active2');
-    });
   };
 
   const myContentsDel = async function () {
@@ -394,23 +375,35 @@ const MyContentsList = ({ isMine, userNo }) => {
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
   };
 
-  const showOrgContents = async function (orgContentsNo) {
-    let returnObj = await nb_dataFetch('/mathInfo/takeContentsByContentsNo?contentsno=' + orgContentsNo, true);
+  const showOrgContents = async function (contents) {
+    if (contents.contentsId != null) {
+      const likeRepoInfo = await nb_getRequest('/math/like-repo/content/' + contents.contentsId, true);
+      let isMyRepoContents = likeRepoInfo.data.isMyRepoContents;
+      let isMyLikeContents = likeRepoInfo.data.isMyLikeContents;
+      if (isMyLikeContents) {
+        document.getElementById('detailedContentsLike').classList.add('active');
+      } else {
+        document.getElementById('detailedContentsLike').classList.remove('active');
+      }
+      if (isMyRepoContents) {
+        document.getElementById('detailedContentsRepo').classList.add('active');
+      } else {
+        document.getElementById('detailedContentsRepo').classList.remove('active');
+      }
+    }
 
     document.getElementById('detailedConDiv').classList.remove('hide');
 
-    let contents = returnObj.myContents;
-
     if (contents.contentsClassify === 'UserCustom') {
       let profileImgPath = defaultProfile;
-      if (contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null) {
-        profileImgPath = contents.membersProfile.profileImgPath + contents.membersProfile.profileImgName;
+      if (contents.profileImgPath !== null && contents.profileImgName !== null) {
+        profileImgPath = contents.profileImgPath + contents.profileImgName;
       }
       document.getElementById('detailedConImg').classList.remove('hide');
       document.getElementById('detailedConImg').src = profileImgPath;
-      document.getElementById('userNickname').innerHTML = contents.membersProfile.nickname;
+      document.getElementById('userNickname').innerHTML = contents.nickname;
       document.getElementById('nicknamewrap').classList.remove('manager');
-      document.getElementById('nicknamewrap').dataset.userNo = contents.membersProfile.userNo;
+      document.getElementById('nicknamewrap').dataset.userNo = contents.userId;
       await nb_licenseUiCheck(contents.mathContentsLicense[0]);
     } else {
       document.getElementById('detailedConImg').classList.add('hide');
@@ -434,23 +427,6 @@ const MyContentsList = ({ isMine, userNo }) => {
     document.getElementById('detailedContentsLike').dataset.contentsNo = contents.contentsId;
     document.getElementById('detailedContentsRepo').dataset.contentsNo = contents.contentsId;
 
-    let mathConLikeInfo = returnObj.mathConLikeInfo;
-    let mathconRepoInfo = returnObj.mathconRepoInfo;
-    if (mathConLikeInfo.length !== 0) {
-      document.getElementById('detailedContentsLike').classList.remove('active');
-      document.getElementById('detailedContentsLike').classList.add('active2');
-    } else {
-      document.getElementById('detailedContentsLike').classList.remove('active');
-      document.getElementById('detailedContentsLike').classList.remove('active2');
-    }
-    if (mathconRepoInfo.length !== 0) {
-      document.getElementById('detailedContentsRepo').classList.remove('active');
-      document.getElementById('detailedContentsRepo').classList.add('active2');
-    } else {
-      document.getElementById('detailedContentsRepo').classList.remove('active');
-      document.getElementById('detailedContentsRepo').classList.remove('active2');
-    }
-
     document.getElementById('quesDetailedContents').innerHTML = contents.contents;
 
     if (contents.firNo !== '') {
@@ -467,13 +443,13 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     if (contents.contentsImg !== null && contents.contentsImg !== undefined) {
       document.getElementById('quesDetailedImg-show').classList.remove('hide');
-      document.getElementById('contentsDetailedImgOutput').src = process.env.REACT_APP_SERVER_STATIC_HOST + contents.imgPath + contents.contentsImg;
+      document.getElementById('contentsDetailedImgOutput').src = process.env.REACT_APP_S3_PATH + contents.imgPath + contents.contentsImg;
     } else {
       document.getElementById('quesDetailedImg-show').classList.add('hide');
     }
     if (contents.solutionImg !== null && contents.solutionImg !== undefined) {
       document.getElementById('solDetailedImg-show').classList.remove('hide');
-      document.getElementById('solutionDetailedImgOutput').src = process.env.REACT_APP_SERVER_STATIC_HOST + contents.solutionImgPath + contents.solutionImg;
+      document.getElementById('solutionDetailedImgOutput').src = process.env.REACT_APP_S3_PATH + contents.solutionImgPath + contents.solutionImg;
     } else {
       document.getElementById('solDetailedImg-show').classList.add('hide');
     }
@@ -509,10 +485,10 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     let conImgPath;
     if (contentsMap.contentsImg === null) conImgPath = '';
-    else conImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.contentsImg;
+    else conImgPath = process.env.REACT_APP_S3_PATH + contentsMap.imgPath + contentsMap.contentsImg;
     let solImgPath;
     if (contentsMap.solutionImg === null) solImgPath = '';
-    else solImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.solutionImgPath + contentsMap.solutionImg;
+    else solImgPath = process.env.REACT_APP_S3_PATH + contentsMap.solutionImgPath + contentsMap.solutionImg;
 
     let sysCreateDate = contentsMap.sysCreateDate;
     let sysDateStr = '';
@@ -522,9 +498,9 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     let hasLicense = false;
     let shareDesc = '공개';
-    if (contentsMap.contentsClassify === 'UserCustom' && contentsMap.mathContentsLicense[0] !== undefined) {
+    if (contentsMap.contentsClassify === 'UserCustom' && contentsMap.shareStts !== undefined) {
       hasLicense = true;
-      if (contentsMap.mathContentsLicense[0].shareStts === 0) {
+      if (contentsMap.shareStts === 'false') {
         shareDesc = '비공개';
       }
     }
@@ -541,8 +517,10 @@ const MyContentsList = ({ isMine, userNo }) => {
     }
 
     let transContents = '';
+    let isTrans = false;
     if (contentsMap.contentsClassify === 'Modified') {
       transContents = 'transConDiv';
+      isTrans = true;
     }
     return (
       <div
@@ -597,7 +575,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                   {contentsMap.contentsClassify === 'Modified' && (
                     <>
                       <span className='miniCircle'>변형문제</span>
-                      <span className='miniBtn' onClick={() => showOrgContents(Number(contentsMap.orgContentsNo))}>
+                      <span className='miniBtn' onClick={() => showOrgContents(contentsMap)}>
                         원본문제 보기
                       </span>
                     </>
@@ -615,6 +593,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                           type='button'
                           data-contents-no={contentsMap.contentsId}
                           data-contents-classify={contentsMap.contentsClassify}
+                          data-is-trans={isTrans}
                           className='updateBtn'
                           onClick={(event) => {
                             modalPopupOpen(event, false);
@@ -631,6 +610,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                           type='button'
                           data-contents-no={contentsMap.contentsId}
                           data-contents-classify={contentsMap.contentsClassify}
+                          data-is-trans={isTrans}
                           className='updateBtn'
                           onClick={(event) => {
                             modalPopupOpen(event, true);
@@ -765,7 +745,7 @@ const MyContentsList = ({ isMine, userNo }) => {
     curPageNum++;
     let returnObj;
     if (isMine) {
-      returnObj = await nb_getRequest('/math/content/user?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
+      returnObj = await nb_getRequest('/math/content/my?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
     } else {
       returnObj = await nb_getRequest('/math/content/user/' + userNo + '?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
     }
@@ -876,7 +856,12 @@ const MyContentsList = ({ isMine, userNo }) => {
           }}>
           &#88;
         </div>
-        {modalState && (imgRegMode ? <RegisterContentsForImg contentsNo={contentsNo} /> : <FormulaEditor contentsNo={contentsNo} contentsClassify={contentsClassify} />)}
+        {modalState &&
+          (imgRegMode ? (
+            <RegisterContentsForImg contentsNo={contentsNo} />
+          ) : (
+            <FormulaEditor contentsNo={contentsNo} contentsClassify={contentsClassify} isTransModify={isTransModify} />
+          ))}
       </div>
       <input id='imgUpdt' className='hide' type='text' defaultValue='N' />
 

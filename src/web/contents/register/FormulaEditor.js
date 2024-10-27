@@ -78,7 +78,7 @@ let shortCutKeyList;
 
 let multiImgTargetId;
 
-const FormulaEditor = ({ contentsNo, contentsClassify }) => {
+const FormulaEditor = ({ contentsNo, contentsClassify, isTransModify }) => {
   let urlPath = useLocation().pathname;
 
   const [isMyContents, setIsMyContents] = useState(true);
@@ -256,8 +256,6 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           reg_enableImageResizeInDiv(contentEditClass[i].id);
         }
       }
-      //reg_enableImageResizeInDiv('contentsFormulaEditor');
-      //reg_enableImageResizeInDiv('solutionFormulaEditor');
       if (contentsClassify !== 'UserCustom') {
         document.getElementById('makeContentsLinkDiv').classList.add('hide');
       }
@@ -322,13 +320,13 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
 
         if (urlPath === '/contentsList' || urlPath === '/myRepository') {
           //문제검색 페이지에서는 다른 사용자의 제작문제 접근 가능
-          myContents = await nb_getRequest('/math/content/' + contentsNo, true);
+          myContents = await nb_getRequest('/math/content/' + contentsNo + '?contentsClassify=' + contentsClassify, true);
         } else {
-          myContents = await nb_getRequest('/math/content/' + contentsNo, true);
+          myContents = await nb_getRequest('/math/content/' + contentsNo + '?contentsClassify=' + contentsClassify, true);
         }
-        setIsMyContents(myContents.isMyContents);
+        setIsMyContents(myContents.data.isMine);
 
-        if (myContents.existMsg) {
+        if (myContents.data.existMsg) {
           document.getElementById('saveBtn').remove();
           return;
         }
@@ -396,48 +394,48 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         if (contentsClassify === 'InHouse') {
           //N명의수학만 셋팅
           //유사 교재
-          document.getElementById('orgSrcRef').value = myContents.data.contents.mathContentsComp[0].orgSrcRef;
+          document.getElementById('orgSrcRef').value = myContents.data.contents.orgSrcRef;
           document.getElementById('cusOrgRefSelTitle').innerHTML = document.getElementById('orgSrcRef')[document.getElementById('orgSrcRef').selectedIndex].innerText;
           document.getElementById('cusOrgRefSelDiv').classList.add('nbCustomSelected');
 
           //유사 문제 번호
-          document.getElementById('orgSrcNo').value = myContents.data.contents.mathContentsComp[0].orgSrcNo;
+          document.getElementById('orgSrcNo').value = myContents.data.contents.orgSrcNo;
           document.getElementById('orgSrcNo').classList.add('customBlueBoxComplete');
 
           //유사 문제 페이지
-          document.getElementById('orgSrcPage').value = myContents.data.contents.mathContentsComp[0].orgSrcPage;
+          document.getElementById('orgSrcPage').value = myContents.data.contents.orgSrcPage;
           document.getElementById('orgSrcPage').classList.add('customBlueBoxComplete');
 
           //유사 문제 출판연월
-          document.getElementById('copyrightYear').value = myContents.data.contents.mathContentsComp[0].copyrightYear;
+          document.getElementById('copyrightYear').value = myContents.data.contents.copyrightYear;
           document.getElementById('copyrightYear').classList.add('customBlueBoxComplete');
 
           nb_contentsSrcVal(null, true);
 
           //문제 구분
-          document.getElementById('mathTypeClassify').value = myContents.data.contents.mathContentsComp[0].mathTypeClassify;
+          document.getElementById('mathTypeClassify').value = myContents.data.contents.mathTypeClassifyVal;
           document.getElementById('cusMathClassifySelTitle').innerHTML =
             document.getElementById('mathTypeClassify')[document.getElementById('mathTypeClassify').selectedIndex].innerText;
           document.getElementById('cusMathClassifySelDiv').classList.add('nbCustomSelected');
         } else if (contentsClassify === 'UserCustom') {
           //공개, 비공개 여부 설정
-          if (myContents.data.contents.mathContentsLicense !== null) {
-            if (myContents.data.contents.mathContentsLicense[0].shareStts === 1) {
+          if (myContents.data.contents.contentsClassify == 'UserCustom') {
+            if (myContents.data.contents.shareStts === true) {
               document.getElementById('shareSttsPublic').click();
-            } else if (myContents.data.contents.mathContentsLicense[0].shareStts === 0) {
+            } else if (myContents.data.contents.shareStts === false) {
               document.getElementById('shareSttsPublic').checked = false;
               document.getElementById('shareSttsPrivate').click();
             }
 
-            if (myContents.data.contents.mathContentsLicense[0].onlineLicStts === 1) {
+            if (myContents.data.contents.onlineLicStts === true) {
               document.getElementById('onlineLicStts').checked = true;
             }
 
-            if (myContents.data.contents.mathContentsLicense[0].perLicStts === 1) {
+            if (myContents.data.contents.perLicStts === true) {
               document.getElementById('perLicStts').checked = true;
             }
 
-            if (myContents.data.contents.mathContentsLicense[0].entLicStts === 1) {
+            if (myContents.data.contents.entLicStts === true) {
               document.getElementById('entLicStts').checked = true;
             }
           }
@@ -487,7 +485,7 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         document.getElementById('cusQuesSelTitle').innerHTML = document.getElementById('quesLevel')[document.getElementById('quesLevel').selectedIndex].innerText;
         document.getElementById('cusQuesSelDiv').classList.add('nbCustomSelected');
 
-        //과목
+        // 과목
         document.getElementById('subject').value = myContents.data.contents.subject;
         document.getElementById('cusSelSubTitle').innerHTML = document.getElementById('subject')[document.getElementById('subject').selectedIndex].innerText;
         document.getElementById('cusSelSubDiv').classList.add('nbCustomSelected');
@@ -497,45 +495,24 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
         trigEv.target.id = 'subject';
         await reg_unitTypeChange(trigEv, 'cusSelSecUnit', 'secUnit', true);
 
-        /*
-				document.getElementById("firUnit").value = myContents["myUnitInfo"].firUnit;
-				document.getElementById("cusSelFirUnitTitle").innerHTML =document.getElementById("firUnit")[document.getElementById("firUnit").selectedIndex].innerText;
-				document.getElementById("cusSelFirUnitDiv").classList.add("nbCustomSelected");
-				trigEv.target.id= "firUnit";
-				await reg_unitTypeChange(trigEv, "cusSelSecUnit","secUnit", true);
-				*/
-
         document.getElementById('secUnit').value = myContents.data.contents.secUnit;
         document.getElementById('cusSelSecUnitTitle').innerHTML = document.getElementById('secUnit')[document.getElementById('secUnit').selectedIndex].innerText;
         document.getElementById('cusSelSecUnitDiv').classList.add('nbCustomSelected');
         trigEv.target.id = 'secUnit';
         await reg_unitTypeChange(trigEv, 'cusSelThrUnit', 'thrUnit', true);
-
         await reg_selectUnitOrTypeData('thrUnit', 'cusSelThrUnitTitle', 'cusSelThrUnitDiv', myContents.data.contents.unitId);
 
-        //유형
+        // 유형
         if (contentsClassify === 'InHouse')
           setUpdateModeUniqNo(
-            myContents.data.contents.unitId +
-              ',' +
-              myContents.data.contents.typeId +
-              ',' +
-              myContents.data.contents.contentsNo +
-              ',' +
-              myContents.data.contents.mathContentsComp[0].seqNo
+            myContents.data.contents.unitId + ',' + myContents.data.contents.typeId + ',' + myContents.data.contents.contentsId + ',' + myContents.data.contents.similarSrcId
           );
         else if (contentsClassify === 'Ipsi')
           setUpdateModeUniqNo(
-            myContents.data.contents.unitId +
-              ',' +
-              myContents.data.contents.typeId +
-              ',' +
-              myContents.data.contents.contentsNo +
-              ',' +
-              myContents.data.contents.mathContentsIpsi[0].seqNo
+            myContents.data.contents.unitId + ',' + myContents.data.contents.typeId + ',' + myContents.data.contents.contentsId + ',' + myContents.data.contents.ipsiSrcId
           );
-        else setUpdateModeUniqNo(myContents.data.contents.unitId + ',' + myContents.data.contents.typeId + ',' + myContents.data.contents.contentsNo);
-        //수정시간 서버에서 수정 필요
+        else setUpdateModeUniqNo(myContents.data.contents.unitId + ',' + myContents.data.contents.typeId + ',' + myContents.data.contents.contentsId);
+        // 수정시간 서버에서 수정 필요
       }
       await reg_undoRedoSetting();
     };
@@ -1295,7 +1272,13 @@ const FormulaEditor = ({ contentsNo, contentsClassify }) => {
           </div>
         </div>
         <div className='scrollFixBugMargin'></div>
-        <RegisterContentsInfo parentMethod={initFormElement} updateModeUniqNo={updateModeUniqNo} contentsClassify={contentsClassify} isOnlyImgReg={false} />
+        <RegisterContentsInfo
+          parentMethod={initFormElement}
+          updateModeUniqNo={updateModeUniqNo}
+          contentsClassify={contentsClassify}
+          isOnlyImgReg={false}
+          isTransModify={isTransModify}
+        />
       </form>
     </>
   );

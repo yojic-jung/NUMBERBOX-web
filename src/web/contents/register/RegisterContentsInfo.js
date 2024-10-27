@@ -15,7 +15,8 @@ import {
   nb_base64ImgRegisterToS3ByTargetId,
   nb_getByteLengthOfString,
   nb_postRequest,
-  nb_postFormToJson,
+  nb_putRequest,
+  nb_formToJson,
 } from 'js/common/common_nb.js';
 import {
   reg_quesAnsTabClkEv,
@@ -28,7 +29,7 @@ import {
   reg_selectUnitOrTypeData,
 } from 'js/contents/register/contents_reg';
 import { cvt_convertHtmlToTex } from 'js/convertGrammer/nbToTexConvert_cvt.js';
-const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg }) => {
+const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify, isOnlyImgReg, isTransModify }) => {
   const [unitList, setUnitList] = useState(new Array());
   const [subjectList, setSubjectList] = useState(new Array());
   const [isManyRec, setIsManyRec] = useState(false);
@@ -284,7 +285,6 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     }
 
     let formData = new FormData(document.getElementById('contentsForm'));
-    console.log(thrUnit[thrUnit.selectedIndex]);
     formData.append('unitId', thrUnit[thrUnit.selectedIndex].dataset.unitId);
     formData.append('typeId', quesType[quesType.selectedIndex].dataset.typeId);
     for (let i = 0; i < targetId.length; i++) {
@@ -295,82 +295,56 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     }
     //undo 초기화
     await reg_undoRedoInitialize();
-    //수정모드로 들어온 경우
-    if (updateModeUniqNo !== '') {
-      let contentsNo = updateModeUniqNo.split(',');
-      formData.append('contentsNo', contentsNo[2]);
-      if (contentsClassify === 'InHouse') formData.append('mathContentsCompSeqNo', contentsNo[3]);
-      else if (contentsClassify === 'Ipsi') formData.append('mathContentsIpsiSeqNo', contentsNo[3]);
-    }
 
     let returnObj;
-    if (contentsClassify === 'InHouse' || contentsClassify === 'Ipsi') {
-      formData.append('contentsClassify', contentsClassify);
-      returnObj = await nb_formDataFetch('/mathInfo/registerContents', formData, true);
-    } else {
-      if (urlPath === '/contentsList' || urlPath === '/myRepository') {
-        //변형으로 셋팅
-        let contentsNo = updateModeUniqNo.split(',');
-        formData.delete('contentsNo');
-        formData.append('orgContentsNo', contentsNo[2]);
+    const contentsReq = await nb_formToJson(formData);
+
+    if (contentsClassify == 'UserCustom') {
+      const licenseReq = new Object();
+      licenseReq.shareStts = formData.get('shareStts');
+      licenseReq.onlineLicStts = formData.get('onlineLicStts');
+      licenseReq.perLicStts = formData.get('perLicStts');
+      licenseReq.entLicStts = formData.get('entLicStts');
+      let req = {
+        contents: contentsReq,
+        license: licenseReq,
+      };
+
+      //수정모드로 들어온 경우
+      if (updateModeUniqNo !== '') {
+        let updateModeUniqNoArr = updateModeUniqNo.split(',');
+        req.contentsId = updateModeUniqNoArr[2];
+        returnObj = await nb_putRequest('/math/content/user-custom', req, true);
+      } else {
+        returnObj = await nb_postRequest('/math/content/user-custom', req, true);
       }
-      if (isOnlyImgReg) {
-        formData.append('contents', '');
-        formData.append('firNo', '');
-        formData.append('secNo', '');
-        formData.append('thrNo', '');
-        formData.append('fourNo', '');
-        formData.append('fifNo', '');
+    } else if (contentsClassify == 'Modified') {
+      let updateModeUniqNoArr = updateModeUniqNo.split(',');
+
+      // 변형 문제 수정하기
+      if (isTransModify) {
+        let req = {
+          contents: contentsReq,
+          contentsId: updateModeUniqNoArr[2],
+        };
+        returnObj = await nb_putRequest('/math/content/trans', req, true);
+      } else {
+        let req = {
+          contents: contentsReq,
+          orgContentsId: updateModeUniqNoArr[2],
+        };
+        returnObj = await nb_postRequest('/math/content/trans', req, true);
       }
-      formData.append('contentsClassify', contentsClassify);
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-      returnObj = await nb_postFormToJson('/math/content', formData, true);
+    } else if (contentsClassify == 'InHouse') {
+      // if (contentsClassify === 'InHouse') formData.append('similarContentsId', updateModeUniqNoArr[3]);
+    } else if (contentsClassify == 'Ipsi') {
+      // else if (contentsClassify === 'Ipsi') formData.append('ipsiContentsId', updateModeUniqNoArr[3]);
     }
-    if (updateModeUniqNo !== '') window.mathContents = returnObj.mathContents; //수정 모드일때만, 윈도우 전역변수로 객체 전달
-    if (returnObj.error != undefined) {
-      alert('[' + returnObj.status + ' ' + returnObj.error + ']\n메시지 : ' + returnObj.message);
-    }
-    if (returnObj['saveSuccess']) {
-      //컨텐츠 문법 등록[strt]
-      let contentGrammer = document.createElement('div');
-      let contentsTitle = ['contents', 'firNo', 'secNo', 'thrNo', 'fourNo', 'fifNo', 'solution', 'answer'];
-      for (let i = 0; i < contentsTitle.length; i++) {
-        let tmpData = formData.get(contentsTitle[i]);
-        let tmpDocument = document.createElement('div');
-        tmpDocument.innerHTML = tmpData;
-        contentGrammer.append(tmpDocument);
-      }
-      let innerTbTd = contentGrammer.querySelectorAll('.innerTbTd');
-      for (let i = 0; i < innerTbTd.length; i++) {
-        innerTbTd[i].append(document.createTextNode('\n'));
-      }
-      let contentsDiv = await cvt_convertHtmlToTex(contentGrammer);
 
-      let breakPara = contentsDiv.querySelectorAll('.breakParaSpan');
-      while (breakPara.length !== 0) {
-        breakPara[0].outerHTML = '\n';
-        breakPara = contentsDiv.querySelectorAll('.breakParaSpan');
-      }
+    //수정 모드일때만, 윈도우 전역변수로 객체 전달
+    if (updateModeUniqNo !== '') window.mathContents = returnObj.data.contents;
 
-      let imgDom = contentsDiv.querySelectorAll('img');
-      while (imgDom.length !== 0) {
-        imgDom[0].remove();
-        imgDom = contentsDiv.querySelectorAll('img');
-      }
-
-      let allDom = contentsDiv.querySelectorAll('*');
-      while (allDom.length !== 0) {
-        allDom[0].outerHTML = allDom[0].innerText;
-        allDom = contentsDiv.querySelectorAll('*');
-      }
-      let newFormData = new FormData();
-      newFormData.append('contentsNo', returnObj['contentsNo']);
-      newFormData.append('contentsGram', contentsDiv.innerText);
-      nb_formDataFetch('/mathInfo/registerContentsGrammer', newFormData, false);
-      //컨텐츠 문법 등록[end]
-
+    if (returnObj.status == 200) {
       //유형, 난이도, 유사 문제, 유사 문제 페이지 초기화
       customQuesType.innerText = '유형정보';
       quesType.selectedIndex = 0;
@@ -464,6 +438,8 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
         document.getElementById('contentsFormulaEditor').focus();
         await reg_undoRedoSetting();
       }
+
+      makeContentsGrammer(formData);
     } else {
       //문제입력 탭 클릭상태
       let trigEv = new Object();
@@ -472,6 +448,46 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
       trigEv.target.id = 'quesTab';
       await reg_quesAnsTabClkEv(trigEv);
     }
+  };
+
+  //컨텐츠 문법 등록[
+  const makeContentsGrammer = async (formData) => {
+    return;
+    let contentGrammer = document.createElement('div');
+    let contentsTitle = ['contents', 'firNo', 'secNo', 'thrNo', 'fourNo', 'fifNo', 'solution', 'answer'];
+    for (let i = 0; i < contentsTitle.length; i++) {
+      let tmpData = formData.get(contentsTitle[i]);
+      let tmpDocument = document.createElement('div');
+      tmpDocument.innerHTML = tmpData;
+      contentGrammer.append(tmpDocument);
+    }
+    let innerTbTd = contentGrammer.querySelectorAll('.innerTbTd');
+    for (let i = 0; i < innerTbTd.length; i++) {
+      innerTbTd[i].append(document.createTextNode('\n'));
+    }
+    let contentsDiv = await cvt_convertHtmlToTex(contentGrammer);
+
+    let breakPara = contentsDiv.querySelectorAll('.breakParaSpan');
+    while (breakPara.length !== 0) {
+      breakPara[0].outerHTML = '\n';
+      breakPara = contentsDiv.querySelectorAll('.breakParaSpan');
+    }
+
+    let imgDom = contentsDiv.querySelectorAll('img');
+    while (imgDom.length !== 0) {
+      imgDom[0].remove();
+      imgDom = contentsDiv.querySelectorAll('img');
+    }
+
+    let allDom = contentsDiv.querySelectorAll('*');
+    while (allDom.length !== 0) {
+      allDom[0].outerHTML = allDom[0].innerText;
+      allDom = contentsDiv.querySelectorAll('*');
+    }
+    let newFormData = new FormData();
+    newFormData.append('contentsNo', returnObj['contentsNo']);
+    newFormData.append('contentsGram', contentsDiv.innerText);
+    // nb_formDataFetch('/mathInfo/registerContentsGrammer', newFormData, false);
   };
 
   const test = async () => {

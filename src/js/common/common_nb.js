@@ -400,6 +400,22 @@ export const nb_formJsonFetch = async (url, formData, transitEffect) => {
   return returnVal;
 };
 
+export const nb_formToJson = async (formData) => {
+  const jsonData = {};
+  formData.forEach((value, key) => {
+    if (jsonData[key]) {
+      // 기존 값이 배열이 아닐 경우 배열로 변환
+      if (!Array.isArray(jsonData[key])) {
+        jsonData[key] = [jsonData[key]];
+      }
+      jsonData[key].push(value);
+    } else {
+      jsonData[key] = value;
+    }
+  });
+  return jsonData;
+};
+
 export const fadeIn = async (targetId) => {
   let dom = document.getElementById(targetId);
   let op = 0.1; // initial opacity
@@ -837,7 +853,6 @@ export const nb_fCustomOptClk = function (event, parentId, customTitle, originSe
     parentDom.classList.remove('nbCustomSelected');
   }
   parentDom.classList.remove('active');
-  console.log(parentId);
   if (parentId == 'cusSelThrUnitDiv') {
     let optionList = orginSelOpt.children;
     let selectedIdx = 0;

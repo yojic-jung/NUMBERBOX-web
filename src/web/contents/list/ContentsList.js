@@ -367,17 +367,17 @@ const ContentsList = () => {
     let unitId = '';
     // 학년으로 검색한 경우
     if (subject.selectedIndex !== 0) {
-      unitId = '?searchType=Subject&unitId=' + subject[subject.selectedIndex].dataset.uniqNo;
+      unitId = '?searchType=Subject&unitId=' + subject[subject.selectedIndex].dataset.unitId;
     }
 
     // 중단원으로 검색한 경우
     if (secUnit.selectedIndex !== 0) {
-      unitId = '?searchType=SecUnit&unitId=' + secUnit[secUnit.selectedIndex].dataset.uniqNo;
+      unitId = '?searchType=SecUnit&unitId=' + secUnit[secUnit.selectedIndex].dataset.unitId;
     }
 
     // 소단원으로 검색한 경우
     if (thrUnit.selectedIndex !== 0) {
-      unitId = '?searchType=ThrUnit&unitId=' + thrUnit[thrUnit.selectedIndex].dataset.uniqNo;
+      unitId = '?searchType=ThrUnit&unitId=' + thrUnit[thrUnit.selectedIndex].dataset.unitId;
     }
     unitId += '&pageNum=' + curPageNum + '&pageVolume=' + pageVolume;
 
