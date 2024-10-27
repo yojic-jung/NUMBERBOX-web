@@ -38,6 +38,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
       target.classList.add('hide');
     }
 
+    // 메뉴바 펼치기
     let mySearchFilter = document.getElementsByClassName('mySearchFilter-list');
     for (let i = 0; i < mySearchFilter.length; i++) {
       if (target !== mySearchFilter[i]) {
@@ -90,7 +91,8 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
       document.getElementById('mySubFilterTitle').innerText = target.innerText;
       let subjectFilterList = document.getElementById('subjectFilterUnitList').querySelectorAll('li');
       for (let i = 0; i < subjectFilterList.length; i++) {
-        if (targetSubject === subjectFilterList[i].dataset.parentVal) {
+        console.log(targetSubject);
+        if (targetSubject === subjectFilterList[i].dataset.parentUnitName) {
           subjectFilterList[i].classList.remove('hide');
         } else {
           subjectFilterList[i].classList.add('hide');
@@ -224,7 +226,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
               <li
                 id='mySubFilterOff'
                 data-unit-id='00'
-                data-main-val='전체'
+                data-unit-name='전체'
                 onClick={(event) => {
                   myContentsSubFilter(event);
                 }}>
