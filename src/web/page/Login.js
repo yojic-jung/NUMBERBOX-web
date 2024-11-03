@@ -91,8 +91,16 @@ const Login = () => {
     }
     // 실패시 에러 메시지 출력
     else {
-      document.getElementById('loginErrMsg').classList.remove('hide');
-      document.getElementById('loginErrMsg').innerText = returnObj.message;
+      if (returnObj.message.includes('NB-APP-ERR-100') || returnObj.message.includes('KC-AUTH-ERR-101')) {
+        document.getElementById('loginErrMsg').classList.remove('hide');
+        document.getElementById('loginErrMsg').innerText = '해당 계정이 잠금 되었습니다. 15분 후 다시 시도해주세요.';
+      } else if (returnObj.message.includes('NB-APP-ERR-101')) {
+        document.getElementById('loginErrMsg').classList.remove('hide');
+        document.getElementById('loginErrMsg').innerText = '해당 계정의 15분 잠금이 풀렸습니다.\n다시 로그인 시도해주세요.';
+      } else if (returnObj.message.includes('NB-APP-ERR-102') || returnObj.message.includes('KC-AUTH-ERR-102') || returnObj.message.includes('KC-AUTH-ERR-103')) {
+        document.getElementById('loginErrMsg').classList.remove('hide');
+        document.getElementById('loginErrMsg').innerText = '이메일과 비밀번호를 다시 한번 입력해주시기 바랍니다.\n5회 이상 실패시 15분간 계정이 비활성화 됩니다.';
+      }
     }
   };
 

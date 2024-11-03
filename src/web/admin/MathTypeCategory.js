@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ReactSortable } from 'react-sortablejs';
-import { nb_dataFetch, nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin, nb_isTopTester } from 'js/common/common_nb.js';
+import { nb_dataFetch, nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_isAdmin, nb_isTopTester, nb_getRequest } from 'js/common/common_nb.js';
 import { reg_convertSpanToNoTag, reg_removeStyleAttribute } from 'js/contents/register/contents_reg';
 
 const MathTypeCategory = () => {
@@ -146,9 +146,11 @@ const MathTypeCategory = () => {
       if (!event.target.classList.contains('active')) {
         if (event.target.dataset.subjectInfo === subjectBtnWrap[i].dataset.subjectInfo) {
           subjectBtnWrap[i].classList.remove('hide');
+          console.log(event.target.dataset.typeExist);
           if (event.target.dataset.typeExist === 'false') {
             let unitIdList = '';
             let thrUnitBtn = subjectBtnWrap[i].querySelectorAll('.thrUnitBtn');
+            console.log(thrUnitBtn);
             for (let j = 0; j < thrUnitBtn.length; j++) {
               if (j === 0) {
                 unitIdList += thrUnitBtn[j].dataset.unitId;
@@ -156,9 +158,10 @@ const MathTypeCategory = () => {
                 unitIdList += ',' + thrUnitBtn[j].dataset.unitId;
               }
             }
-            let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitIdList, true);
+            console.log(unitIdList);
+            let jsonObj = await nb_getRequest('/math/menu/type?unitIdList=' + unitIdList, true);
             let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
-            let mathTypeInfoList = jsonObj.data['mathTypeList'];
+            let mathTypeInfoList = jsonObj.data.mathTypeList;
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {
               let typeBtnWrap = thrUnitBtnWrap[j].querySelectorAll('.typeBtnWrap');
               for (let k = 0; k < typeBtnWrap.length; k++) {

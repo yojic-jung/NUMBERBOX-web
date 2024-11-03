@@ -15,6 +15,7 @@ import {
   nb_fadeInOutB,
   nb_confirmBox,
   nb_getParameterByName,
+  nb_getRequest,
 } from 'js/common/common_nb.js';
 import CustomPieChart from 'web/common/CustomPieChart';
 import CustomBarChart from 'web/common/CustomBarChart';
@@ -83,22 +84,22 @@ const MathDocsMaker = () => {
     const asyncUseEffect = async function () {
       window.addEventListener('popstate', gotoPreviousStep);
       let jsonObj = await nb_dataFetch('/math/menu/unit', true);
-      setSubjectList(jsonObj.data['subjectList']);
-      unitListSetFunction(jsonObj.data['subjectList'], jsonObj.data['firUnitList'], jsonObj.data['secUnitList']);
+      setSubjectList(jsonObj.data.subjectList);
+      unitListSetFunction(jsonObj.data.subjectList, jsonObj.data.secUnitList, jsonObj.data.thrUnitList);
 
-      let returnObj = await nb_dataFetch('/mathInfo/takeIpsiYear', true);
+      let returnObj = await nb_getRequest('/math/menu/ipsi-year', true);
       let impYearMin = 0;
       let impYearMax = 0;
-      for (let i = 0; i < returnObj.impYearList.length; i++) {
+      for (let i = 0; i < returnObj.data.ipsiYear.length; i++) {
         if (i === 0) {
-          impYearMin = returnObj.impYearList[i];
-          impYearMax = returnObj.impYearList[i];
+          impYearMin = returnObj.data.ipsiYear[i];
+          impYearMax = returnObj.data.ipsiYear[i];
         }
-        if (returnObj.impYearList[i] < impYearMin) {
-          impYearMin = returnObj.impYearList[i];
+        if (returnObj.data.ipsiYear[i] < impYearMin) {
+          impYearMin = returnObj.data.ipsiYear[i];
         }
-        if (returnObj.impYearList[i] > impYearMax) {
-          impYearMax = returnObj.impYearList[i];
+        if (returnObj.data.ipsiYear[i] > impYearMax) {
+          impYearMax = returnObj.data.ipsiYear[i];
         }
       }
       setImpMaxYear(impYearMax);
@@ -122,7 +123,7 @@ const MathDocsMaker = () => {
   const showMathDocsByMyMathDocsPage = async (mathDocsNo) => {
     document.getElementById('mathDocsFirstStep').classList.add('hide');
     let jsonObj = await nb_dataFetch('/mathDocs/mathDocsByMyMathDocsPage?docsNo=' + mathDocsNo, true);
-    let mathContentsList = jsonObj['mathContentsList'];
+    let mathContentsList = jsonObj.data.docs;
     let mathDocsPaper = jsonObj['mathDocsPaper'];
 
     if (jsonObj.mathDocsPaper.docsErrStts === 3) {
@@ -598,8 +599,8 @@ const MathDocsMaker = () => {
       return;
     }
 
-    let jsonObj = await nb_dataFetch('/mathDocs/mathDocs?unitIdAndTypeIdList=' + unitIdAndTypeId + '&quesLevel=' + quesLevel + '&conCnt=' + conCntInput, true);
-    let mathContentsList = jsonObj['mathContentsList'];
+    let jsonObj = await nb_getRequest('/math/docs?unitIdAndTypeId=' + unitIdAndTypeId + '&quesLevel=' + quesLevel + '&count=' + conCntInput, true);
+    let mathContentsList = jsonObj.data.docs;
     let lv1Len = 0;
     let lv2Len = 0;
     let lv3Len = 0;
@@ -763,6 +764,7 @@ const MathDocsMaker = () => {
         if (event.target.dataset.typeExist === 'false') {
           let unitIdList = '';
           let thrUnitBtn = subjectBtnWrap[i].querySelectorAll('.thrUnitBtn');
+
           for (let j = 0; j < thrUnitBtn.length; j++) {
             if (j === 0) {
               unitIdList += thrUnitBtn[j].dataset.unitId;
@@ -845,10 +847,10 @@ const MathDocsMaker = () => {
             }
             let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitIdList, true);
             let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
-            let mathTypeInfoList = jsonObj.data['mathTypeList'];
+            let mathTypeInfoList = jsonObj.data.mathTypeList;
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {
               for (let k = 0; k < mathTypeInfoList.length; k++) {
-                if (thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitId === mathTypeInfoList[k].unitId) {
+                if (Number(thrUnitBtnWrap[j].querySelector('.thrUnitBtn ').dataset.unitId) === mathTypeInfoList[k].unitId) {
                   let tmpDiv = document.createElement('div');
                   tmpDiv.className = 'typeBtnWrap hide';
                   let tmpSpan = document.createElement('span');
@@ -1089,7 +1091,7 @@ const MathDocsMaker = () => {
     let subjectBtnList = document.getElementsByClassName('subjectBtnWrap');
     for (let i = 0; i < subjectBtnList.length; i++) {
       for (let j = 0; j < secUnitList.length; j++) {
-        if (subjectBtnList[i].dataset.subjectInfo === secUnitList[j].parentVal) {
+        if (subjectBtnList[i].dataset.subjectInfo === secUnitList[j].parentUnitName) {
           let tmpDiv = document.createElement('div');
           tmpDiv.dataset.secUnitInfo = secUnitList[j].unitName;
           tmpDiv.className = 'secUnitBtnWrap';
@@ -1111,7 +1113,7 @@ const MathDocsMaker = () => {
     let secUnitBtnList = document.getElementsByClassName('secUnitBtnWrap');
     for (let i = 0; i < secUnitBtnList.length; i++) {
       for (let j = 0; j < thrUnitList.length; j++) {
-        if (secUnitBtnList[i].dataset.secUnitInfo === thrUnitList[j].parentVal) {
+        if (secUnitBtnList[i].dataset.secUnitInfo === thrUnitList[j].parentUnitName) {
           let tmpDiv = document.createElement('div');
           tmpDiv.dataset.thrUnitInfo = thrUnitList[j].unitName;
           tmpDiv.className = 'thrUnitBtnWrap hide';
@@ -1171,7 +1173,7 @@ const MathDocsMaker = () => {
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
+        if (contentsMap.contentsNo === mathContentsList[i].contentsId) isSame = false;
       }
       return isSame;
     });
@@ -1219,7 +1221,7 @@ const MathDocsMaker = () => {
     let contentsNodeList = returnObj.myContentsList.filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
+        if (contentsMap.contentsNo === mathContentsList[i].contentsId) isSame = false;
       }
       return isSame;
     });
@@ -1289,10 +1291,10 @@ const MathDocsMaker = () => {
     }
 
     if (addType === 'conChng') {
-      let conNo = Number(document.getElementById('mathDocsSimConAdd').dataset.contentsNo);
+      let contentsId = Number(document.getElementById('mathDocsSimConAdd').dataset.contentsId);
       let conIdx;
       mathContentsList.forEach((contents, idx) => {
-        if (contents.contentsNo === conNo) {
+        if (contents.contentsId === contentsId) {
           conIdx = idx;
           return;
         }
@@ -1336,7 +1338,7 @@ const MathDocsMaker = () => {
       if (mathContentsList[i].contentsClassify === 4) {
         ipsiConCnt++;
       }
-      if (mathContentsList[i].multiChoiceType === 'M') {
+      if (mathContentsList[i].multiChoiceType === 'Multiple') {
         multiConCnt += 1;
       } else {
         essayConCnt += 1;
@@ -1496,15 +1498,15 @@ const MathDocsMaker = () => {
     nb_multiChoiceGridSet('quesConMultiShow');
   };
 
-  const takeSimilarContents = async (unitId, typeId, contentsNo, contentsClassify) => {
+  const takeSimilarContents = async (unitId, typeId, contentsId, contentsClassify) => {
     document.getElementById('mathDocsSimConAdd').classList.remove('hide');
-    document.getElementById('mathDocsSimConAdd').dataset.contentsNo = contentsNo;
+    document.getElementById('mathDocsSimConAdd').dataset.contentsId = contentsId;
     if (contentsClassify === 'UserCustom') contentsClassify = 'InHouse'; //사용자 제작문제인 경우 N명의수학 같은 유형문제로 추천
     let jsonObj = await nb_dataFetch('/mathDocs/similarContents?unitId=' + unitId + '&typeId=' + typeId + '&contentsClassify=' + contentsClassify, true);
     let newContentsList = jsonObj['mathSimilarConList'].filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
+        if (contentsMap.contentsId === mathContentsList[i].contentsId) isSame = false;
       }
       return isSame;
     });
@@ -1518,9 +1520,9 @@ const MathDocsMaker = () => {
     document.getElementById('mathDocsSimCon').scrollTo(0, 0);
   };
 
-  const contentsDel = async (contentsNo) => {
+  const contentsDel = async (contentsId) => {
     let newContentsList = mathContentsList.filter((contentsMap, idx) => {
-      if (contentsMap.contentsNo === contentsNo) return false;
+      if (contentsMap.contentsId === contentsId) return false;
       else return true;
     });
     let lv1Len = 0;
@@ -1610,9 +1612,9 @@ const MathDocsMaker = () => {
     let contentsNoList;
     for (let i = 0; i < mathContentsList.length; i++) {
       if (i === 0) {
-        contentsNoList = mathContentsList[i].contentsNo;
+        contentsNoList = mathContentsList[i].contentsId;
       } else {
-        contentsNoList += ',' + mathContentsList[i].contentsNo;
+        contentsNoList += ',' + mathContentsList[i].contentsId;
       }
     }
     formData.append('docsGrade', document.getElementById('docsGrade').value);
@@ -1772,9 +1774,9 @@ const MathDocsMaker = () => {
     let contentsNoList;
     for (let i = 0; i < mathContentsList.length; i++) {
       if (i === 0) {
-        contentsNoList = mathContentsList[i].contentsNo;
+        contentsNoList = mathContentsList[i].contentsId;
       } else {
-        contentsNoList += ',' + mathContentsList[i].contentsNo;
+        contentsNoList += ',' + mathContentsList[i].contentsId;
       }
     }
 
@@ -1806,12 +1808,12 @@ const MathDocsMaker = () => {
   const registerMathDocsUsage = async () => {
     let formData = new FormData();
 
-    let contentsNoList;
+    let contentsIdList;
     for (let i = 0; i < mathContentsList.length; i++) {
       if (i === 0) {
-        contentsNoList = mathContentsList[i].contentsNo;
+        contentsIdList = mathContentsList[i].contentsId;
       } else {
-        contentsNoList += ',' + mathContentsList[i].contentsNo;
+        contentsIdList += ',' + mathContentsList[i].contentsId;
       }
     }
 
@@ -1893,7 +1895,7 @@ const MathDocsMaker = () => {
     let contentsNodeList = returnObj.mathContents.filter((contentsMap, idx) => {
       let isSame = true;
       for (let i = 0; i < mathContentsList.length; i++) {
-        if (contentsMap.contentsNo === mathContentsList[i].contentsNo) isSame = false;
+        if (contentsMap.contentsId === mathContentsList[i].contentsId) isSame = false;
       }
       return isSame;
     });
@@ -2426,22 +2428,22 @@ const MathDocsMaker = () => {
                             &nbsp;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
-                                __html: contentsMap.mathUnitInfo.subject,
+                                __html: contentsMap.subject,
                               }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
-                                __html: contentsMap.mathUnitInfo.secUnit,
+                                __html: contentsMap.secUnit,
                               }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
-                                __html: contentsMap.mathUnitInfo.thrUnit,
+                                __html: contentsMap.thrUnit,
                               }}></span>{' '}
                             &gt;&nbsp;
                             <span
                               dangerouslySetInnerHTML={{
-                                __html: contentsMap.mathTypeInfo.quesType,
+                                __html: contentsMap.quesType,
                               }}></span>
                           </div>
                         </div>
@@ -2839,7 +2841,7 @@ const MathDocsMaker = () => {
                               <span
                                 className='mathDocsInfoQuesType'
                                 dangerouslySetInnerHTML={{
-                                  __html: contents.mathTypeInfo.quesType,
+                                  __html: contents.quesType,
                                 }}></span>
                               <span className='mathDocsInfoMultiType'>{multiChoiceType}</span>
                               <span className='mathDocsInfoLv'>{quesLevel}</span>
