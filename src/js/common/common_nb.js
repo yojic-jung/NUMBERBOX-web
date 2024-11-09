@@ -257,6 +257,22 @@ export const nb_getRequest = async (url, transitEffect) => {
 /**
  * post 요청
  */
+export const nb_putForm = async (url, formData, transitEffect) => {
+  const httpOption = {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    },
+  };
+  httpOption.body = formData;
+  // 요청
+  return await nb_request(url, httpOption, transitEffect);
+};
+
+/**
+ * post 요청
+ */
 export const nb_postForm = async (url, formData, transitEffect) => {
   const httpOption = {
     method: 'POST',
@@ -346,7 +362,9 @@ export const nb_deleteRequest = async (url, jsonData, transitEffect) => {
       Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   };
-  httpOption.body = JSON.stringify(jsonData);
+  if (jsonData != null) {
+    httpOption.body = JSON.stringify(jsonData);
+  }
 
   // 요청
   return await nb_request(url, httpOption, transitEffect);
@@ -1224,4 +1242,34 @@ export const nb_dateFormat = async (separator) => {
   let milliSec = today.getMilliseconds();
   if (milliSec.toString().length === 1) milliSec = '0' + milliSec.toString();
   return year + separator + month + separator + date + separator + hour + separator + minute + separator + milliSec;
+};
+
+export const nb_getClientOS = async () => {
+  let userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.indexOf('windows') > -1) {
+    return 'Windows';
+  } else if (userAgent.indexOf('mac') > -1) {
+    return 'Mac';
+  } else {
+    return 'Etc';
+  }
+};
+
+export const nb_getClientBrowser = async () => {
+  let userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.indexOf('opr') > -1) {
+    return 'Opr';
+  } else if (userAgent.indexOf('edg') > -1) {
+    return 'Edg';
+  } else if (userAgent.indexOf('whale') > -1) {
+    return 'Whale';
+  } else if (userAgent.indexOf('firefox') > -1) {
+    return 'Firefox';
+  } else if (!(userAgent.indexOf('chrome') > -1) && userAgent.indexOf('safari') > -1) {
+    return 'Safari';
+  } else if (userAgent.indexOf('chrome') > -1 && userAgent.indexOf('safari') > -1) {
+    return 'Chrome';
+  } else {
+    return 'Etc';
+  }
 };

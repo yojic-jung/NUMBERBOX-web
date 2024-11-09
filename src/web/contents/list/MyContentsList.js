@@ -20,6 +20,7 @@ import {
   nb_formDataFetch,
   nb_getRequest,
   nb_deleteRequest,
+  nb_postRequest,
 } from 'js/common/common_nb.js';
 import { reg_eraseEditTbUI } from 'js/contents/register/contents_reg.js';
 import {
@@ -163,24 +164,25 @@ const MyContentsList = ({ isMine, userNo }) => {
   const putInMyRepo = async (event, contentsId) => {
     if (event.target.classList.contains('active')) {
       event.target.classList.remove('active');
+      nb_deleteRequest('/math/repo/content/' + contentsId, null, false);
     } else {
+      let reqBody = new Object();
+      reqBody.contentsId = contentsId;
+      nb_postRequest('/math/repo/content', reqBody, false);
       event.target.classList.add('active');
-
-      //(사용자 프로필 페이지) 2초 뒤에 active를 active2로 변환, 변환하지 않으면 정렬기능 사용시에 계속 저장소에 저장됬다는 문구 계속 나타남
-      setTimeout(() => {
-        event.target.classList.add('active');
-      }, 2000);
     }
-    nb_dataFetch('/mathInfo/putInMyRepo?contentsno=' + contentsId, false);
   };
 
   const likeContents = async (event, contentsId) => {
+    let reqBody = new Object();
+    reqBody.contentsId = contentsId;
     if (event.target.classList.contains('active')) {
+      nb_deleteRequest('/math/like/content/' + contentsId, reqBody, false);
       event.target.classList.remove('active');
     } else {
+      nb_postRequest('/math/like/content', reqBody, false);
       event.target.classList.add('active');
     }
-    nb_dataFetch('/mathInfo/likeContents?contentsno=' + contentsId, false);
   };
 
   const myContentsDel = async function () {
@@ -524,6 +526,13 @@ const MyContentsList = ({ isMine, userNo }) => {
       transContents = 'transConDiv';
       isTrans = true;
     }
+
+    let isMyLikeContents = '';
+    if (contentsMap.isLikeContents) isMyLikeContents = 'active';
+
+    let isMyRepoContents = '';
+    if (contentsMap.isMyRepoContents) isMyRepoContents = 'active';
+
     return (
       <div
         id='workContentsDiv'
@@ -543,7 +552,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                       <span className='userSearchBtn'>
                         <span
                           id={'contentsRepo' + contentsMap.contentsId}
-                          className='putRepoBtn'
+                          className={isMyRepoContents + ' putRepoBtn'}
                           onClick={(event) => {
                             putInMyRepo(event, contentsMap.contentsId);
                           }}></span>
@@ -552,7 +561,7 @@ const MyContentsList = ({ isMine, userNo }) => {
                       <span className='userSearchBtn'>
                         <span
                           id={'contentsLike' + contentsMap.contentsId}
-                          className='likeBtn'
+                          className={isMyLikeContents + ' likeBtn'}
                           onClick={(event) => {
                             likeContents(event, contentsMap.contentsId);
                           }}></span>

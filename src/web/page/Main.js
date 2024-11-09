@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { Helmet } from 'react-helmet-async';
-import {
-  nb_getParameterByName,
-  nb_fadeInOutA,
-  nb_postRequest,
-} from 'js/common/common_nb.js';
+import { nb_getParameterByName, nb_fadeInOutA, nb_postRequest } from 'js/common/common_nb.js';
 import 'css/main/main.css';
 import 'css/common/common.css';
 import nPeople from 'img/nPeople.png';
@@ -32,13 +28,7 @@ const Main = () => {
       this.containerEl = null;
 
       this.confettiFrequency = 1;
-      this.confettiColors = [
-        '#EF2964',
-        '#00C09D',
-        '#2D87B0',
-        '#48485E',
-        '#EFFF1D',
-      ];
+      this.confettiColors = ['#EF2964', '#00C09D', '#2D87B0', '#48485E', '#EFFF1D'];
       this.confettiAnimations = ['slow', 'medium', 'slow'];
 
       this._setupElements();
@@ -64,21 +54,11 @@ const Main = () => {
       this.confettiInterval = setInterval(() => {
         const confettiEl = document.createElement('div');
         const confettiSize = Math.floor(Math.random() * 3) + 7 + 'px';
-        const confettiBackground =
-          this.confettiColors[
-            Math.floor(Math.random() * this.confettiColors.length)
-          ];
-        const confettiLeft =
-          Math.floor(Math.random() * this.el.offsetWidth) + 'px';
-        const confettiAnimation =
-          this.confettiAnimations[
-            Math.floor(Math.random() * this.confettiAnimations.length)
-          ];
+        const confettiBackground = this.confettiColors[Math.floor(Math.random() * this.confettiColors.length)];
+        const confettiLeft = Math.floor(Math.random() * this.el.offsetWidth) + 'px';
+        const confettiAnimation = this.confettiAnimations[Math.floor(Math.random() * this.confettiAnimations.length)];
 
-        confettiEl.classList.add(
-          'confetti',
-          'confetti--animation-' + confettiAnimation
-        );
+        confettiEl.classList.add('confetti', 'confetti--animation-' + confettiAnimation);
         confettiEl.style.left = confettiLeft;
         confettiEl.style.width = confettiSize;
         confettiEl.style.height = confettiSize;
@@ -91,15 +71,13 @@ const Main = () => {
         this.containerEl.appendChild(confettiEl);
       }, 25);
     };
-    window.confettiful = new Confettiful(
-      document.querySelector('.js-container')
-    );
+    window.confettiful = new Confettiful(document.querySelector('.js-container'));
   });
 
   const selectProfile = async (profileType) => {
     let jsonData = new Object();
     jsonData.profileType = profileType;
-    await nb_postRequest('/member/profile', profileType, true);
+    await nb_putRequest('/member/profile', profileType, true);
     document.getElementById('signUpSuccedRootBox').classList.add('hide');
     nb_fadeInOutA('감사합니다. N명의수학 서비스를 누려보세요.', 2000);
   };
@@ -107,16 +85,10 @@ const Main = () => {
     <>
       <Helmet>
         <title>N명의수학</title>
-        <meta
-          name='description'
-          content='N명의 사용자와 함께 만들어가는 수학 플랫폼'
-        />
+        <meta name='description' content='N명의 사용자와 함께 만들어가는 수학 플랫폼' />
         <link rel='canonical' href='https://nsoohak.com/' />
         <meta property='og:title' content='N명의수학' />
-        <meta
-          property='og:description'
-          content='N명의 사용자와 함께 만들어가는 수학플랫폼'
-        />
+        <meta property='og:description' content='N명의 사용자와 함께 만들어가는 수학플랫폼' />
       </Helmet>
       <BrowserView>
         <div className='mainDiv'>
@@ -133,13 +105,9 @@ const Main = () => {
             <img className='mainImgUI people' src={nPeople} alt='' />
           </div>
           <div className='mainImgDesc first'>편리한 문제제작 툴</div>
-          <div className='mainImgDesc second'>
-            문제 공유와 손쉬운 학습지 제작
-          </div>
+          <div className='mainImgDesc second'>문제 공유와 손쉬운 학습지 제작</div>
           <div className='mainTitle'>
-            <span className='fontFourteen'>
-              수학문제, 아직도 문서파일로 관리하시나요?
-            </span>
+            <span className='fontFourteen'>수학문제, 아직도 문서파일로 관리하시나요?</span>
             <br />
             이제 N명의수학에서 관리해보세요!
           </div>
@@ -164,12 +132,9 @@ const Main = () => {
               <div className='mainSubBox2 first'>
                 <img className='mainImgUI' src={main1} alt='' />
               </div>
-              <div className='mainSubTitle'>
-                손쉬운 학습지 제작(한글파일 제공)
-              </div>
+              <div className='mainSubTitle'>손쉬운 학습지 제작(한글파일 제공)</div>
               <div className='mainSubDesc'>
-                학년, 단원, 유형을 선택하여 난이도 및 문항 수에 맞게 사용자가
-                원하는
+                학년, 단원, 유형을 선택하여 난이도 및 문항 수에 맞게 사용자가 원하는
                 <br />
                 형식과 문제로 학습지를 만들어 사용할 수 있습니다.
               </div>
@@ -180,9 +145,7 @@ const Main = () => {
           </div>
         </div>
         <div className='mainSubRootDiv2'>
-          <div className='mainSubDiv2Title'>
-            나의 제작 문제 및 변형 문제 만들기
-          </div>
+          <div className='mainSubDiv2Title'>나의 제작 문제 및 변형 문제 만들기</div>
           <div className='mainSubDiv2'>
             <div className='mainSubBox first'>
               <img className='mainImgUI' src={mainSubConMake} alt='' />
@@ -193,9 +156,7 @@ const Main = () => {
           </div>
           <div className='mainSubDiv2Desc'>
             <div>
-              <div className='mainSubDescTitle first'>
-                쉽고 빠른 수식입력 문제 제작 툴!
-              </div>
+              <div className='mainSubDescTitle first'>쉽고 빠른 수식입력 문제 제작 툴!</div>
               <div className='mainSubDescContents'>
                 교육과정 및 교과서, 참고서에 나오는 기호들을 <br />
                 모두 단축키화하여 빠르고 편리하게 수학문제를 <br />
@@ -203,9 +164,7 @@ const Main = () => {
               </div>
             </div>
             <div>
-              <div className='mainSubDescTitle second'>
-                편집본 제공으로 변형문제 제작 가능
-              </div>
+              <div className='mainSubDescTitle second'>편집본 제공으로 변형문제 제작 가능</div>
               <div className='mainSubDescContents'>
                 원본 뿐만 아니라 편집본까지 함께 제공하여
                 <br />
@@ -219,11 +178,9 @@ const Main = () => {
         <div className='mainSubRootDiv3'>
           <div className='mainSubDiv2Title'>한글파일(hwp)과 호환</div>
           <div className='mainSubDesc1'>
-            N명의수학에서 제작한 문제를 한글파일(hwp)로 변환하여 다운 받을 수
-            있고
+            N명의수학에서 제작한 문제를 한글파일(hwp)로 변환하여 다운 받을 수 있고
             <br />
-            한글파일로 제작된 문제를 업로드하여 N명의수학에서 DB화하여 사용할 수
-            있습니다.
+            한글파일로 제작된 문제를 업로드하여 N명의수학에서 DB화하여 사용할 수 있습니다.
           </div>
           <div className='mainSubBox first hwp'>
             <img className='mainImgUI hwp1' src={hwpConverImg1} alt='' />
@@ -233,15 +190,11 @@ const Main = () => {
         <div className='mainSubRootDiv4'>
           <div className='mainSubDiv3'>
             <div>
-              <div className='mainSubTitle'>
-                도형 및 그래프 공유(그래프 제작 툴)
-              </div>
+              <div className='mainSubTitle'>도형 및 그래프 공유(그래프 제작 툴)</div>
               <div className='mainSubDesc'>
-                수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을
-                사용자들과 공유하여 사용할 수 있습니다.
+                수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.
                 <br />
-                또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수
-                있습니다.
+                또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
               </div>
             </div>
             <div className='relative alignRight'>
@@ -256,12 +209,8 @@ const Main = () => {
         </div>
         <div id='signUpSuccedRootBox' className='blindBox hide'>
           <div className='signUpSuccedBox'>
-            <div className='signUpSuccedTitle'>
-              회원가입이 정상적으로 완료되었습니다.
-            </div>
-            <div className='signUpSuccedTitle'>
-              회원님의 프로필을 선택해주세요.
-            </div>
+            <div className='signUpSuccedTitle'>회원가입이 정상적으로 완료되었습니다.</div>
+            <div className='signUpSuccedTitle'>회원님의 프로필을 선택해주세요.</div>
             <table className='signUpSuccedTb'>
               <tbody>
                 <tr>
@@ -270,8 +219,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('HeadOfAcademy');
-                      }}
-                    >
+                      }}>
                       원장
                     </div>
                   </td>
@@ -280,8 +228,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('Instructor');
-                      }}
-                    >
+                      }}>
                       강사
                     </div>
                   </td>
@@ -290,8 +237,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('Teacher');
-                      }}
-                    >
+                      }}>
                       교사
                     </div>
                   </td>
@@ -300,8 +246,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('SchoolParent');
-                      }}
-                    >
+                      }}>
                       학부모
                     </div>
                   </td>
@@ -310,8 +255,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('Student');
-                      }}
-                    >
+                      }}>
                       학생
                     </div>
                   </td>
@@ -320,8 +264,7 @@ const Main = () => {
                       className='signUpSuccedBtn'
                       onClick={() => {
                         selectProfile('Etc');
-                      }}
-                    >
+                      }}>
                       기타
                     </div>
                   </td>
@@ -353,10 +296,7 @@ const Main = () => {
           <div className='mainSubDiv1 mobile'>
             <div>
               <div className='mainSubTitle mobile'>손쉬운 학습지 제작</div>
-              <div className='mainSubDesc mobile'>
-                학년, 단원, 유형을 선택하여 난이도 및 문항 수에 맞게 사용자가
-                원하는 형식과 문제로 학습지를 만들어 사용할 수 있습니다.
-              </div>
+              <div className='mainSubDesc mobile'>학년, 단원, 유형을 선택하여 난이도 및 문항 수에 맞게 사용자가 원하는 형식과 문제로 학습지를 만들어 사용할 수 있습니다.</div>
               <div className='mainSubBox2 first'>
                 <img className='mainImgUI' src={main1} alt='' />
               </div>
@@ -367,9 +307,7 @@ const Main = () => {
           </div>
         </div>
         <div className='mainSubRootDiv2 mobile'>
-          <div className='mainSubDiv2Title mobile'>
-            수학문제 제작 툴과 문제공유 서비스
-          </div>
+          <div className='mainSubDiv2Title mobile'>수학문제 제작 툴과 문제공유 서비스</div>
           <div className='mainSubDiv2 mobile'>
             <div className='mainSubBox first'>
               <img className='mainImgUI' src={mainSubConMake} alt='' />
@@ -380,9 +318,7 @@ const Main = () => {
           </div>
           <div className='mainSubDiv2Desc mobile'>
             <div>
-              <div className='mainSubDescTitle first mobile'>
-                쉽고 빠른 수식입력 문제 제작 툴!
-              </div>
+              <div className='mainSubDescTitle first mobile'>쉽고 빠른 수식입력 문제 제작 툴!</div>
               <div className='mainSubDescContents mobile'>
                 교육과정 및 교과서, 참고서에 나오는 기호들을 <br />
                 모두 단축키화하여 빠르고 편리하게 수학문제를 <br />
@@ -390,9 +326,7 @@ const Main = () => {
               </div>
             </div>
             <div>
-              <div className='mainSubDescTitle second mobile'>
-                편집본 제공으로 변형문제 제작 가능
-              </div>
+              <div className='mainSubDescTitle second mobile'>편집본 제공으로 변형문제 제작 가능</div>
               <div className='mainSubDescContents mobile'>
                 원본 뿐만 아니라 편집본까지 함께 제공하여
                 <br />
@@ -417,11 +351,7 @@ const Main = () => {
               </div>
             </div>
             <div className='relative alignRight'>
-              <img
-                className='mainImgUI hwp1 mobile'
-                src={hwpConverImg1}
-                alt=''
-              />
+              <img className='mainImgUI hwp1 mobile' src={hwpConverImg1} alt='' />
               <img className='mainImgUI hwp2' src={hwpConverImg2} alt='' />
             </div>
           </div>
@@ -429,15 +359,11 @@ const Main = () => {
         <div className='mainSubDiv3 mobile grayBack'>
           <div className='mainSubDivWrap3'>
             <div>
-              <div className='mainSubTitle mobile'>
-                도형 및 그래프 공유(그래프 제작 툴)
-              </div>
+              <div className='mainSubTitle mobile'>도형 및 그래프 공유(그래프 제작 툴)</div>
               <div className='mainSubDesc'>
-                수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을
-                사용자들과 공유하여 사용할 수 있습니다.
+                수학문제 제작시 많은 시간이 소요되는 이미지나 그래프 등을 사용자들과 공유하여 사용할 수 있습니다.
                 <br />
-                또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수
-                있습니다.
+                또한, 그래프 제작 툴을 제공하여 사용자들이 쉽게 그래프를 만들 수 있습니다.
               </div>
             </div>
             <div className='relative alignRight'>
@@ -457,24 +383,15 @@ const Main = () => {
           <div className='mainSubRootRadiusInnerWrap'>
             <div className='mainSubRootRadiusDiv first'>
               <div className='mainSubRootRadiusTitle'>수식 편집기</div>
-              <div>
-                편리한 제작툴로 문제를 빠르게 만들 수 있고 한글파일(hwp)로 다운
-                받을 수 있어요!
-              </div>
+              <div>편리한 제작툴로 문제를 빠르게 만들 수 있고 한글파일(hwp)로 다운 받을 수 있어요!</div>
             </div>
             <div className='mainSubRootRadiusDiv sixth'>
               <div className='mainSubRootRadiusTitle'>파일 변환</div>
-              <div>
-                사용자 제작 문제를 한글파일(hwp)로 다운 받을 수 있으며, 한글
-                파일을 업로드하여 문제를 등록할 수도 있어요!
-              </div>
+              <div>사용자 제작 문제를 한글파일(hwp)로 다운 받을 수 있으며, 한글 파일을 업로드하여 문제를 등록할 수도 있어요!</div>
             </div>
             <div className='mainSubRootRadiusDiv second'>
               <div className='mainSubRootRadiusTitle'>학습지 제작</div>
-              <div>
-                N명의 수학에서 제공하는 문제들로 학습지를 만들어 사용할 수
-                있어요!
-              </div>
+              <div>N명의 수학에서 제공하는 문제들로 학습지를 만들어 사용할 수 있어요!</div>
             </div>
 
             <div className='mainSubRootRadiusDiv third'>

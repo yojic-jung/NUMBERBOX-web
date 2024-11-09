@@ -70,7 +70,7 @@ const ProfileComponent = ({ isMine, userNo }) => {
       form.setAttribute('method', 'POST'); //Post 방식
       let formData = new FormData(form);
       formData.append('imgFile', event.target.files[0]);
-      let returnObj = await nb_postForm('/member/profile/img', formData, true);
+      let returnObj = await nb_putForm('/member/profile/img', formData, true);
       if (returnObj.status == 200) {
         setImgPath(process.env.REACT_APP_S3_PATH + '/' + returnObj.data.fileNameVo.path + '/' + encodeURIComponent(returnObj.data.fileNameVo.name));
         document.getElementById('topMenuProfileImg').src =

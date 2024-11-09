@@ -24,7 +24,7 @@ const DetailedContentsWrap = ({ isBasedParent, modalRepoChange, modalLikeChange 
     let jsonReq = new Object();
     jsonReq.contentsId = contentsNo;
     if (event.target.classList.contains('active')) {
-      let rsBody = await nb_deleteRequest('/math/like/content', jsonReq, false);
+      let rsBody = await nb_deleteRequest('/math/like/content/' + contentsNo, null, false);
       if (rsBody.status == 200) event.target.classList.remove('active');
       if (isModalBase) {
         document.getElementById('contentsLike' + contentsNo).classList.remove('active');
@@ -45,7 +45,7 @@ const DetailedContentsWrap = ({ isBasedParent, modalRepoChange, modalLikeChange 
     let jsonReq = new Object();
     jsonReq.contentsId = contentsNo;
     if (event.target.classList.contains('active')) {
-      let rsBody = await nb_deleteRequest('/math/repo/content', jsonReq, false);
+      let rsBody = await nb_deleteRequest('/math/repo/content/' + contentsNo, null, false);
       if (rsBody.status == 200) event.target.classList.remove('active');
       if (isModalBase) {
         document.getElementById('contentsRepo' + contentsNo).classList.remove('active');

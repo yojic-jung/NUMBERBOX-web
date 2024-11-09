@@ -323,11 +323,11 @@ const ContentsList = () => {
     }
   };
 
-  const putInMyRepo = async (event, contentsno) => {
+  const putInMyRepo = async (event, contentsId) => {
     let jsonReq = new Object();
-    jsonReq.contentsId = contentsno;
+    jsonReq.contentsId = contentsId;
     if (event.target.classList.contains('active')) {
-      let rsBody = await nb_deleteRequest('/math/repo/content', jsonReq, false);
+      let rsBody = await nb_deleteRequest('/math/repo/content/' + contentsId, null, false);
       if (rsBody.status == 200) event.target.classList.remove('active');
     } else {
       let rsBody = await nb_postRequest('/math/repo/content', jsonReq, false);
@@ -335,11 +335,11 @@ const ContentsList = () => {
     }
   };
 
-  const likeContents = async (event, contentsno) => {
+  const likeContents = async (event, contentsId) => {
     let jsonReq = new Object();
-    jsonReq.contentsId = contentsno;
+    jsonReq.contentsId = contentsId;
     if (event.target.classList.contains('active')) {
-      let rsBody = await nb_deleteRequest('/math/like/content', jsonReq, false);
+      let rsBody = await nb_deleteRequest('/math/like/content/' + contentsId, null, false);
       if (rsBody.status == 200) event.target.classList.remove('active');
     } else {
       let rsBody = await nb_postRequest('/math/like/content', jsonReq, false);
@@ -537,8 +537,8 @@ const ContentsList = () => {
 
     if (contents.contentsClassify === 'UserCustom') {
       let profileImgPath = defaultProfile;
-      if (contents.membersProfile.profileImgPath !== null && contents.membersProfile.profileImgName !== null) {
-        profileImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contents.membersProfile.profileImgPath + contents.membersProfile.profileImgName;
+      if (contents.profileImgName !== null && contents.profileImgPath !== null) {
+        profileImgPath = process.env.REACT_APP_SERVER_STATIC_HOST + contents.profileImgPath + contents.profileImgName;
       }
       document.getElementById('detailedConImg').classList.remove('hide');
       document.getElementById('detailedConImg').src = profileImgPath;

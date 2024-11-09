@@ -21,6 +21,9 @@ import {
   nb_getParameterByName,
   nb_base64ImgRegisterToS3ByTargetId,
   nb_getByteLengthOfString,
+  nb_getClientOS,
+  nb_getClientBrowser,
+  nb_postForm,
 } from 'js/common/common_nb.js';
 import {
   reg_preventKeyEvent,
@@ -1005,47 +1008,13 @@ const HwpToHtml = () => {
 
   const registerError = async (convertNo) => {
     let formData = new FormData();
-    formData.append('errType', 5);
-    formData.append('contentsNo', convertNo);
+    formData.append('errType', 'HwpConvert');
+    formData.append('contentsId', convertNo);
     formData.append('reportContents', '한글 파일 변환이 정상적이지 않음.');
-    let userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.indexOf('windows') > -1) {
-      formData.append('osInfo', 'windows');
-      if (userAgent.indexOf('opr') > -1) {
-        formData.append('browser', 'opr');
-      } else if (userAgent.indexOf('edg') > -1) {
-        formData.append('browser', 'edg');
-      } else if (userAgent.indexOf('whale') > -1) {
-        formData.append('browser', 'whale');
-      } else if (userAgent.indexOf('firefox') > -1) {
-        formData.append('browser', 'firefox');
-      } else if (userAgent.indexOf('chrome') > -1) {
-        formData.append('browser', 'chrome');
-      } else {
-        formData.append('browser', 'etc');
-      }
-    } else if (userAgent.indexOf('mac') > -1) {
-      formData.append('osInfo', 'mac');
-      if (userAgent.indexOf('opr') > -1) {
-        formData.append('browser', 'opr');
-      } else if (userAgent.indexOf('edg') > -1) {
-        formData.append('browser', 'edg');
-      } else if (userAgent.indexOf('whale') > -1) {
-        formData.append('browser', 'whale');
-      } else if (userAgent.indexOf('firefox') > -1) {
-        formData.append('browser', 'firefox');
-      } else if (!(userAgent.indexOf('chrome') > -1) && userAgent.indexOf('safari') > -1) {
-        formData.append('browser', 'safari');
-      } else if (userAgent.indexOf('chrome') > -1 && userAgent.indexOf('safari') > -1) {
-        formData.append('browser', 'chrome');
-      } else {
-        formData.append('browser', 'etc');
-      }
-    } else {
-      formData.append('osInfo', 'etc');
-      formData.append('browser', 'etc');
-    }
-    await nb_formDataFetch('/serviceCenter/registerError', formData, true);
+    reqBody.clientOs = await nb_getClientOS();
+    reqBody.clientBrowser = await nb_getClientBrowser();
+
+    await nb_postForm('/cs/error', formData, true);
   };
 
   //특수문자 인코딩 에러 테스트

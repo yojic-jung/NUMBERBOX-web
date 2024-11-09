@@ -492,7 +492,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
     let jsonReq = new Object();
     jsonReq.contentsId = contentsId;
     jsonReq.grammar = contentsDiv.innerText;
-    nb_putRequest('/math/content/grammar', jsonReq, false);
+    nb_postRequest('/math/content/grammar', jsonReq, false);
   };
 
   const test = async () => {

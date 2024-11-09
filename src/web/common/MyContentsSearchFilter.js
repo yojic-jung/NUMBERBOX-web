@@ -31,6 +31,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
     }
   };
   const seachFilterClick = async (targetId) => {
+    console.log(targetId);
     let target = document.getElementById(targetId);
     if (target.classList.contains('hide')) {
       target.classList.remove('hide');
@@ -135,6 +136,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
   const myContentsSubFilterByUnit = async (event) => {
     let target = event.target;
     let targetSecUnit = target.dataset.unitName;
+    console.log(targetSecUnit);
     if (targetSecUnit === '전체') {
       document.getElementById('mySubFilterUnit').innerText = '대단원';
     } else {
@@ -246,7 +248,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
             <ul id='subjectFilterUnitList' className='mySearchFilter-list custom hide'>
               <li
                 data-unit-id='00'
-                data-main-val='전체'
+                data-unit-name='전체'
                 onClick={(event) => {
                   myContentsSubFilterByUnit(event);
                 }}>
