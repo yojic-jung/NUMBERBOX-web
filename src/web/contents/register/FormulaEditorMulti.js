@@ -195,7 +195,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       if (contentsClassify !== 'UserCustom') {
         document.getElementById('makeContentsLinkDiv').classList.add('hide');
       }
-      let jsonObj = await nb_dataFetch('/math/menu/shortCutKey', true);
+      let jsonObj = await nb_dataFetch('/public/math/menu/shortCutKey', true);
       setShortCutKey(jsonObj.data);
       setIsFetchShotCutKey(true);
       shortCutKeyList = jsonObj['shortCutKey'];
@@ -226,7 +226,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       window.addEventListener('mouseup', await reg_newSelectFormulaElement);
 
       await reg_undoRedoInitialize();
-      let returnObj = await nb_dataFetch('/math/menu/unit', true);
+      let returnObj = await nb_dataFetch('/public/math/menu/unit', true);
       setMathUnitInfo(returnObj.data);
       setFormulaEditorArr(formulaEditor);
 

@@ -188,7 +188,7 @@ const FormulaEditorUnitForMulti = ({ contentsClassify, customId, ordinalNum, cla
     event.target.closest('.contentsInfo-multi').querySelector('#quesType').classList.remove('nbCustomSelected2');
 
     let unitId = event.target.options[event.target.selectedIndex].value;
-    const jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitId, true);
+    const jsonObj = await nb_dataFetch('/public/math/menu/type?unitId=' + unitId, true);
     setQuesTypeBox(jsonObj.data['mathTypeList']);
   };
 

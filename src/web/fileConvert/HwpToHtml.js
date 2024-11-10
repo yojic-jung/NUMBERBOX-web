@@ -88,7 +88,7 @@ const HwpToHtml = () => {
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch('/math/menu/shortCutKey', true);
+      let jsonObj = await nb_dataFetch('/public/math/menu/shortCutKey', true);
       setShortCutKey(jsonObj.data);
       setShortCutKeyAll([...jsonObj['shortCutKey'], ...jsonObj['shortCutKeyHigh1'], ...jsonObj['shortCutKeyEtc'], ...jsonObj['shortCutKeyEtc2']]);
       setIsFetchShotCutKey(true);

@@ -193,7 +193,7 @@ const WorkContentsList = () => {
     currentPath = location.pathname;
 
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch('/math/menu/unit', true);
+      let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
       setSubjectBox(jsonObj.data['subjectList']);
       //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
       setSecUnitSelBox(jsonObj.data['firUnitList']);

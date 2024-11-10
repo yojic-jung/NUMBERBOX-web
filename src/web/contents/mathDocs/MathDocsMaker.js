@@ -88,11 +88,11 @@ const MathDocsMaker = () => {
 
     const asyncUseEffect = async function () {
       window.addEventListener('popstate', gotoPreviousStep);
-      let jsonObj = await nb_getRequest('/math/menu/unit', true);
+      let jsonObj = await nb_getRequest('/public/math/menu/unit', true);
       setSubjectList(jsonObj.data.subjectList);
       unitListSetFunction(jsonObj.data.subjectList, jsonObj.data.secUnitList, jsonObj.data.thrUnitList);
 
-      let returnObj = await nb_getRequest('/math/menu/ipsi-year', true);
+      let returnObj = await nb_getRequest('/public/math/menu/ipsi-year', true);
       let impYearMin = 0;
       let impYearMax = 0;
       for (let i = 0; i < returnObj.data.ipsiYear.length; i++) {
@@ -777,7 +777,7 @@ const MathDocsMaker = () => {
               unitIdList += ',' + thrUnitBtn[j].dataset.unitId;
             }
           }
-          let jsonObj = await nb_getRequest('/math/menu/type?unitId=' + unitIdList, true);
+          let jsonObj = await nb_getRequest('/public/math/menu/type?unitId=' + unitIdList, true);
           let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
           let mathTypeInfoList = jsonObj.data.mathTypeList;
           for (let j = 0; j < thrUnitBtnWrap.length; j++) {
@@ -850,7 +850,7 @@ const MathDocsMaker = () => {
                 unitIdList += ',' + thrUnitBtn[j].dataset.unitId;
               }
             }
-            let jsonObj = await nb_dataFetch('/math/menu/type?unitId=' + unitIdList, true);
+            let jsonObj = await nb_dataFetch('/public/math/menu/type?unitId=' + unitIdList, true);
             let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
             let mathTypeInfoList = jsonObj.data.mathTypeList;
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {

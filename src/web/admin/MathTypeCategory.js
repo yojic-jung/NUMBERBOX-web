@@ -13,7 +13,7 @@ const MathTypeCategory = () => {
   useEffect(() => {
     const asyncUseEffect = async function () {
       if (!(isAdmin || isTopTester)) window.location.href = '/';
-      let jsonObj = await nb_dataFetch('/math/menu/unit', true);
+      let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
       setSubjectList(jsonObj.data['subjectList']);
       unitListSetFunction(jsonObj.data['subjectList'], jsonObj.data['firUnitList'], jsojsonObj.datanObj['secUnitList']);
     };
@@ -159,7 +159,7 @@ const MathTypeCategory = () => {
               }
             }
             console.log(unitIdList);
-            let jsonObj = await nb_getRequest('/math/menu/type?unitIdList=' + unitIdList, true);
+            let jsonObj = await nb_getRequest('/public/math/menu/type?unitIdList=' + unitIdList, true);
             let thrUnitBtnWrap = subjectBtnWrap[i].querySelectorAll('.thrUnitBtnWrap');
             let mathTypeInfoList = jsonObj.data.mathTypeList;
             for (let j = 0; j < thrUnitBtnWrap.length; j++) {

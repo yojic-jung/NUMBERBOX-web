@@ -73,7 +73,7 @@ const RegisterContentsForImg = ({ contentsNo }) => {
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch('/math/menu/shortCutKey', true);
+      let jsonObj = await nb_dataFetch('/public/math/menu/shortCutKey', true);
       setShortCutKey(jsonObj.data);
       setIsFetchShotCutKey(true);
       shortCutKeyList = jsonObj['shortCutKey'];
