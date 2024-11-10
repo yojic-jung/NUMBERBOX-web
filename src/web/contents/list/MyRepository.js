@@ -423,7 +423,7 @@ const MyRepository = () => {
     formData.append('docsTitle', '나의 제작문제');
     formData.append('docsSubTitle', '');
     formData.append('docsOwner', '');
-    formData.append('docsErrStts', 3);
+    formData.append('docsStts', 3);
     formData.append('contentsNoList', contentsNoList);
     let jsonObj = await nb_formDataFetch('/mathDocs/registerMathDocsPaper', formData, true);
     window.open('/makeMathDocs?docsNo=' + jsonObj.docsNo);

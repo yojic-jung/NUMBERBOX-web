@@ -17,6 +17,7 @@ import {
   nb_getParameterByName,
   nb_getRequest,
   nb_postRequest,
+  nb_putRequest,
   nb_postForm,
   nb_getClientOS,
   nb_getClientBrowser,
@@ -39,7 +40,7 @@ const MathDocsMaker = () => {
   let location = useLocation();
 
   const [showFinalPopup, setShowFinalPopup] = useState(true);
-  const [mathDocsNo, setMathDocsNo] = useState(0);
+  const [mathDocsId, setMathDocsId] = useState(0);
   const [isInnerPage, setIsInnerPage] = useState(false);
   const [mathDocsPerPageCnt, setMathDocsPerPageCnt] = useState(4);
   const [mathDocsSubTitle, setMathDocsSubTitle] = useState('');
@@ -77,7 +78,7 @@ const MathDocsMaker = () => {
   };
 
   useEffect(() => {
-    let param = nb_getParameterByName('docsNo');
+    let param = nb_getParameterByName('docsId');
     if (currentPath === location.pathname && subjectList.length !== 0) {
       //url 같은 경우
       window.location.reload();
@@ -116,7 +117,7 @@ const MathDocsMaker = () => {
         document.getElementById('page-transit').classList.remove('hide');
         document.getElementById('page-transit-img').classList.remove('hide');
         setIsInnerPage(true);
-        setMathDocsNo(Number(param));
+        setMathDocsId(Number(param));
         showMathDocsByMyMathDocsPage(param);
       }
     };
@@ -124,13 +125,13 @@ const MathDocsMaker = () => {
     return () => removeAddedEvent();
   }, [location]);
 
-  const showMathDocsByMyMathDocsPage = async (mathDocsNo) => {
+  const showMathDocsByMyMathDocsPage = async (mathDocsId) => {
     document.getElementById('mathDocsFirstStep').classList.add('hide');
-    let jsonObj = await nb_dataFetch('/mathDocs/mathDocsByMyMathDocsPage?docsNo=' + mathDocsNo, true);
+    let jsonObj = await nb_dataFetch('/math/docs/' + mathDocsId, true);
     let mathContentsList = jsonObj.data.docs;
-    let mathDocsPaper = jsonObj['mathDocsPaper'];
+    let mathDocsPaper = jsonObj.data.docsPaper;
 
-    if (jsonObj.mathDocsPaper.docsErrStts === 3) {
+    if (mathDocsPaper.docsStts === 'MyContents') {
       setShowFinalPopup(false);
       document.getElementById('topMenuBar').classList.add('hide');
       if (document.getElementsByClassName('manager-menu')[0] != null) document.getElementsByClassName('manager-menu')[0].classList.add('hide');
@@ -1613,21 +1614,13 @@ const MathDocsMaker = () => {
   };
 
   const mathDocsErrorReport = async () => {
-    let contentsIdList;
-    for (let i = 0; i < mathContentsList.length; i++) {
-      if (i === 0) {
-        contentsIdList = mathContentsList[i].contentsId;
-      } else {
-        contentsIdList += ',' + mathContentsList[i].contentsId;
-      }
-    }
-
+    const contentsIdList = mathContentsList.map((item) => item.contentsId);
     let reqBody = new Object();
     reqBody.docsGrade = document.getElementById('docsGrade').value;
     reqBody.docsTitle = document.getElementById('docsTitle').value;
     reqBody.docsSubTitle = document.getElementById('docsSubTitle').value;
     reqBody.docsOwner = document.getElementById('mathDocsOwner').value;
-    reqBody.docsErrStts = 'Error';
+    reqBody.docsStts = 'Error';
     reqBody.contentsIdList = contentsIdList;
     let jsonObj = await nb_postRequest('/math/docs', reqBody, false);
     if (jsonObj.status == 200) {
@@ -1740,28 +1733,22 @@ const MathDocsMaker = () => {
   const registerMathDocsPaper = async () => {
     document.title = 'N명의수학';
 
-    let contentsIdList;
-    for (let i = 0; i < mathContentsList.length; i++) {
-      if (i === 0) {
-        contentsIdList = mathContentsList[i].contentsId;
-      } else {
-        contentsIdList += ',' + mathContentsList[i].contentsId;
-      }
-    }
+    const contentsIdList = mathContentsList.map((item) => item.contentsId);
     let reqBody = new Object();
     reqBody.docsGrade = document.getElementById('docsGrade').value;
     reqBody.docsTitle = document.getElementById('docsTitle').value;
     reqBody.docsSubTitle = document.getElementById('docsSubTitle').value;
     reqBody.docsOwner = document.getElementById('mathDocsOwner').value;
-    reqBody.docsErrStts = 'None';
+    reqBody.docsStts = 'None';
     reqBody.contentsIdList = contentsIdList;
     let jsonObj;
     if (isInnerPage) {
-      reqBody.id = Number(mathDocsNo);
+      reqBody.id = Number(mathDocsId);
+      jsonObj = await nb_putRequest('/math/docs', reqBody, false);
     } else {
       jsonObj = await nb_postRequest('/math/docs', reqBody, false);
     }
-    if (jsonObj.status) {
+    if (jsonObj.status == 200) {
       if (!isInnerPage) {
         await mathDocsInit();
         nb_fadeInOutA('[나의 학습지] 페이지에 정상적으로 저장 되었습니다.', 2000);
@@ -1776,27 +1763,14 @@ const MathDocsMaker = () => {
   };
 
   const registerMathDocsUsage = async () => {
-    let formData = new FormData();
-
-    let contentsIdList;
-    for (let i = 0; i < mathContentsList.length; i++) {
-      if (i === 0) {
-        contentsIdList = mathContentsList[i].contentsId;
-      } else {
-        contentsIdList += ',' + mathContentsList[i].contentsId;
-      }
-    }
-
-    if (isInnerPage) {
-      formData.append('docsNo', Number(mathDocsNo));
-    }
-
-    formData.append('docsGrade', document.getElementById('docsGrade').value);
-    formData.append('docsTitle', document.getElementById('docsTitle').value);
-    formData.append('docsSubTitle', document.getElementById('docsSubTitle').value);
-    formData.append('docsOwner', document.getElementById('mathDocsOwner').value);
-    formData.append('contentsNoList', contentsNoList);
-    nb_formDataFetch('/mathDocs/registerMathDocsUsage', formData, true);
+    let jsonReq = new Object();
+    const contentsIdList = mathContentsList.map((item) => item.contentsId);
+    jsonReq.contentsIdList = contentsIdList;
+    jsonReq.docsGrade = document.getElementById('docsGrade').value;
+    jsonReq.docsTitle = document.getElementById('docsTitle').value;
+    jsonReq.docsSubTitle = document.getElementById('docsSubTitle').value;
+    jsonReq.docsOwner = document.getElementById('mathDocsOwner').value;
+    nb_postRequest('/math/docs/usage', jsonReq, true);
   };
 
   const registerMathDocsPaperPopClose = async () => {
