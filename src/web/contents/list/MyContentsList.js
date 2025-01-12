@@ -368,13 +368,12 @@ const MyContentsList = ({ isMine, userNo }) => {
 
     hwpDownPopUpClose();
 
-    let form = new FormData();
-    form.append('jsonString', JSON.stringify(hwpJsonArrForPython));
+    let jsonData = new Object();
+    jsonData.jsonMsg = JSON.stringify(hwpJsonArrForPython);
     document.getElementById('resDetailedTimeDesc').classList.remove('hide');
     document.getElementById('hourGlassDesc').innerText = '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
-    let nowDate = await nb_dateFormat('_');
-    let fileName = '[N명의수학]나의제작문제_' + nowDate + '.hwp';
-    await nb_formDataFileFetch('/takeHwpFile', form, fileName);
+    await nb_postRequest('/hwp/math/docs', jsonData, true);
+
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
   };
 
