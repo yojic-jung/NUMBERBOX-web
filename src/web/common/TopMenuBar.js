@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { Link } from 'react-router-dom';
-import {
-  nb_isLogin,
-  nb_isManger,
-  nb_isAdmin,
-  nb_getRequest,
-  nb_dataFetch,
-} from 'js/common/common_nb.js';
+import { nb_isLogin, nb_isManger, nb_isAdmin, nb_getRequest, nb_deleteRequest } from 'js/common/common_nb.js';
 import { ACCESS_TOKEN_KEY, ROLE_KEY } from 'constant/com_const.js';
 import defaultProfileImg from 'img/defaultProfile.png';
 import warningImg from 'img/warning.png';
@@ -25,12 +19,7 @@ const TopMenuBar = (isMain) => {
   let isAdmin = nb_isAdmin();
 
   useEffect(() => {
-    if (
-      !(
-        window.navigator.userAgent.toLocaleLowerCase().indexOf('chrome') > -1 ||
-        window.navigator.userAgent.toLocaleLowerCase().indexOf('edge') > -1
-      )
-    ) {
+    if (!(window.navigator.userAgent.toLocaleLowerCase().indexOf('chrome') > -1 || window.navigator.userAgent.toLocaleLowerCase().indexOf('edge') > -1)) {
       setNotApplyBrowser(true);
     }
     window.addEventListener('click', closeMyServiceTap);
@@ -40,17 +29,8 @@ const TopMenuBar = (isMain) => {
         if (jsonObj.status == 200) {
           let data = jsonObj.data;
           setMyNickName(data.myProfile.nickname);
-          if (
-            data.myProfile.profileImgPath !== null &&
-            data.myProfile.profileImgName !== null
-          ) {
-            setImgPath(
-              process.env.REACT_APP_S3_PATH +
-                '/' +
-                data.myProfile.profileImgPath +
-                '/' +
-                data.myProfile.profileImgName
-            );
+          if (data.myProfile.profileImgPath !== null && data.myProfile.profileImgName !== null) {
+            setImgPath(process.env.REACT_APP_S3_PATH + '/' + data.myProfile.profileImgPath + '/' + data.myProfile.profileImgName);
           }
         }
       };
@@ -70,18 +50,14 @@ const TopMenuBar = (isMain) => {
   ``;
 
   const logoutFunction = async () => {
-    await nb_dataFetch('/delRefreshToken', false); //서버에서 refresh쿠키 및 db정보 삭제
+    await nb_deleteRequest('/logout', null, false); //서버에서 refresh쿠키 및 db정보 삭제
     window.localStorage.removeItem(ACCESS_TOKEN_KEY);
     window.localStorage.removeItem(ROLE_KEY);
     window.location.href = '/';
   };
 
   const closeMyServiceTap = async (event) => {
-    if (
-      event.target.id === 'myService-wrap' ||
-      event.target.id === 'topMenuProfileImg'
-    )
-      return;
+    if (event.target.id === 'myService-wrap' || event.target.id === 'topMenuProfileImg') return;
     let myServiceTap = document.getElementsByClassName('myService-list')[0];
     if (myServiceTap !== undefined) {
       myServiceTap.classList.add('hide');
@@ -103,14 +79,9 @@ const TopMenuBar = (isMain) => {
       <BrowserView>
         {notApplyBrowser && (
           <div className='browserWarningDiv'>
-            <img
-              src={warningImg}
-              className='browserWarningImg'
-              alt='warningImg'
-            />
+            <img src={warningImg} className='browserWarningImg' alt='warningImg' />
             <div className='browserWarningDesc'>
-              n명의 수학은 <b>크롬, 엣지, 오페라, 네이버 웨일 브라우저</b>에서
-              최적화 되어있습니다. <br />
+              n명의 수학은 <b>크롬, 엣지, 오페라, 네이버 웨일 브라우저</b>에서 최적화 되어있습니다. <br />
               <b>위 브라우저를 통해 접속하여 주시기 바랍니다.</b>
             </div>
           </div>
@@ -143,10 +114,7 @@ const TopMenuBar = (isMain) => {
                         </Link>
                       </td>
                       <td>
-                        <Link
-                          className='linkNoneCss'
-                          to='/shareResource?mainCateNo=1&pageNum=1'
-                        >
+                        <Link className='linkNoneCss' to='/shareResource?mainCateNo=1&pageNum=1'>
                           컨텐츠
                         </Link>
                       </td>
@@ -155,8 +123,7 @@ const TopMenuBar = (isMain) => {
                           className='pointer'
                           onClick={() => {
                             window.open('/fileConvert');
-                          }}
-                        >
+                          }}>
                           파일변환
                         </span>
                       </td>
@@ -185,10 +152,7 @@ const TopMenuBar = (isMain) => {
                         </Link>
                       </td>
                       <td>
-                        <Link
-                          className='linkNoneCss'
-                          to='/shareResource?mainCateNo=1&pageNum=1'
-                        >
+                        <Link className='linkNoneCss' to='/shareResource?mainCateNo=1&pageNum=1'>
                           컨텐츠
                         </Link>
                       </td>
@@ -197,8 +161,7 @@ const TopMenuBar = (isMain) => {
                           className='pointer'
                           onClick={() => {
                             window.open('/fileConvert');
-                          }}
-                        >
+                          }}>
                           파일변환
                         </span>
                       </td>
@@ -207,22 +170,11 @@ const TopMenuBar = (isMain) => {
                         className='myService-wrap'
                         onClick={() => {
                           activeMyServiceTap();
-                        }}
-                      >
+                        }}>
                         {imgPath === null ? (
-                          <img
-                            id='topMenuProfileImg'
-                            alt='.'
-                            src={defaultProfileImg}
-                            className='topMenuProfileImg'
-                          />
+                          <img id='topMenuProfileImg' alt='.' src={defaultProfileImg} className='topMenuProfileImg' />
                         ) : (
-                          <img
-                            id='topMenuProfileImg'
-                            alt='.'
-                            src={imgPath}
-                            className='topMenuProfileImg'
-                          />
+                          <img id='topMenuProfileImg' alt='.' src={imgPath} className='topMenuProfileImg' />
                         )}
 
                         <ul className='myService-list hide'>
@@ -235,25 +187,16 @@ const TopMenuBar = (isMain) => {
                           <Link className='linkNoneCss' to='/myRepository'>
                             <li>나의 저장소</li>
                           </Link>
-                          <Link
-                            className='linkNoneCss'
-                            to='/myMathDocs?pageNum=1'
-                          >
+                          <Link className='linkNoneCss' to='/myMathDocs?pageNum=1'>
                             <li>나의 학습지</li>
                           </Link>
-                          <Link
-                            className='linkNoneCss'
-                            to='/myResource?pageNum=1'
-                          >
+                          <Link className='linkNoneCss' to='/myResource?pageNum=1'>
                             <li>나의 컨텐츠</li>
                           </Link>
                           <li
                             onClick={() => {
-                              document
-                                .getElementById('serviceCenter')
-                                .classList.remove('hide');
-                            }}
-                          >
+                              document.getElementById('serviceCenter').classList.remove('hide');
+                            }}>
                             고객센터
                           </li>
                           <li>
@@ -313,27 +256,18 @@ const TopMenuBar = (isMain) => {
                   <tbody>
                     <tr>
                       <td>
-                        <Link
-                          className='manager-link'
-                          to='/admin/workContentsList'
-                        >
+                        <Link className='manager-link' to='/admin/workContentsList'>
                           작업내역
                         </Link>
                       </td>
                       <td>
-                        <Link
-                          className='manager-link'
-                          to='/admin/registerContents'
-                        >
+                        <Link className='manager-link' to='/admin/registerContents'>
                           문제만들기
                         </Link>
                       </td>
                       {isAdmin && (
                         <td>
-                          <Link
-                            className='manager-link'
-                            to='/admin/adminSvcCenter'
-                          >
+                          <Link className='manager-link' to='/admin/adminSvcCenter'>
                             관리자센터
                           </Link>
                         </td>

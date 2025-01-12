@@ -319,7 +319,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
         returnObj = await nb_putRequest('/math/content/user-custom', req, true);
       } else {
         returnObj = await nb_postRequest('/math/content/user-custom', req, true);
-        contentsId = returnObj.data.contents.id;
+        contentsId = returnObj.data.contents.contentsId;
       }
     } else if (contentsClassify == 'Modified') {
       let updateModeUniqNoArr = updateModeUniqNo.split(',');
@@ -685,7 +685,7 @@ const RegisterContentsInfo = ({ parentMethod, updateModeUniqNo, contentsClassify
         </div>
         <div className='mini-title3 alignCenter'>문제 단원 및 유형 정보를 입력해 주세요.</div>
         {updateModeUniqNo === '' && (
-          <div className='toggle-root-div custom' onClick={() => takeMathProblemAnalysis()}>
+          <div className='toggle-root-div custom hide' onClick={() => takeMathProblemAnalysis()}>
             <span className='doble-circle'></span>
             <span>AI 단원 매핑 추천 받기</span>
           </div>

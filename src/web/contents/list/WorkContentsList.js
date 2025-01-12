@@ -12,6 +12,7 @@ import {
   nb_formDataFileFetch,
   nb_dateFormat,
   nb_confirmBox,
+  nb_getRequest,
   nb_fadeInOut,
   nb_fadeInOutA,
   nb_promptBox,
@@ -193,7 +194,7 @@ const WorkContentsList = () => {
     currentPath = location.pathname;
 
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
+      let jsonObj = await nb_getRequest('/public/math/menu/unit', true);
       setSubjectBox(jsonObj.data['subjectList']);
       //setfirUnitSelBox(jsonObj["mathFirUnitInfo"]);
       setSecUnitSelBox(jsonObj.data['firUnitList']);

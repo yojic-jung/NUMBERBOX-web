@@ -5,7 +5,7 @@ import EmptyList from 'web/common/EmptyList';
 import RegisterResourceInp from 'web/mathResource/RegisterResourceInp';
 import { Link } from 'react-router-dom';
 import PageNumBtn from 'web/common/PageNumBtn';
-import { nb_dataFetch, nb_fadeInOut, nb_dataFileFetch, nb_promptBox, nb_getParameterByName } from 'js/common/common_nb.js';
+import { nb_getRequest, nb_fadeInOut, nb_downloadFile, nb_promptBox, nb_getParameterByName, nb_deleteRequest } from 'js/common/common_nb.js';
 import 'css/common/common.css';
 import 'css/common/nbFormula.css';
 import 'css/staff/staff.css';
@@ -34,14 +34,14 @@ const MyResource = () => {
       if (param !== '') {
         movePage = Number(param) - 1;
         setCurPageNum(movePage);
-        returnObj = await nb_dataFetch('/mathInfo/takeMyResource?curPageNum=' + movePage + '&pageVolume=' + pageVolume, true);
+        returnObj = await nb_getRequest('/math/resource/my?pageNum=' + movePage + '&pageVolume=' + pageVolume, true);
       } else {
         movePage = curPageNum;
-        returnObj = await nb_dataFetch('/mathInfo/takeMyResource?curPageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
+        returnObj = await nb_getRequest('/math/resource/my?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
       }
-      setTotalPageCnt(returnObj.totalPageCnt);
-      let myResourceList = returnObj.myResourceList;
-      let resourceMenuList = returnObj.resourceMenuList;
+      setTotalPageCnt(returnObj.data.total);
+      let myResourceList = returnObj.data.resource.contents;
+      let resourceMenuList = returnObj.data.menu;
       setResourceList(myResourceList);
       setResourceMenu(resourceMenuList);
     };
@@ -49,13 +49,13 @@ const MyResource = () => {
     return () => {};
   }, [location]);
 
-  const showDetailedRes = async (event, title, pptFileName, resourceNo, resourceCate) => {
+  const showDetailedRes = async (event, title, pptFileName, pptFilePath, imgList, resourceCate) => {
     if (event.target.classList.contains('reviseBtn') || event.target.classList.contains('delBtn')) return;
     document.getElementById('resDetailedTitle').innerHTML = title;
     document.getElementById('resDetailedCate').innerHTML = '';
     for (let i = 0; i < resourceCate.length; i++) {
       for (let j = 0; j < resourceMenu.length; j++) {
-        if (resourceMenu[j].mainCateNo === resourceCate[i].mainCateNo && resourceMenu[j].midCateNo === resourceCate[i].midCateNo) {
+        if (resourceMenu[j].mainCateId === resourceCate[i].mainCateId && resourceMenu[j].midCateId === resourceCate[i].midCateId) {
           let cateMenu = resourceMenu[j].mainCateName + '-' + resourceMenu[j].midCateName;
           let resourceCateDesc = document.createElement('span');
           resourceCateDesc.innerHTML = cateMenu;
@@ -65,18 +65,18 @@ const MyResource = () => {
       }
     }
 
+    document.getElementById('resDetailedPPtDownBtn').dataset.pptPath = pptFilePath;
     document.getElementById('resDetailedPPtDownBtn').dataset.pptName = pptFileName;
-    let returnObj = await nb_dataFetch('/mathInfo/takePPtSlideImge?resourceNo=' + resourceNo, true);
     document.getElementById('resDetailedWrap').classList.remove('hide');
 
     document.getElementById('customImgSliderBtnDiv').innerHTML = '';
     document.getElementById('customImgSliderContainerDiv').innerHTML = '';
     let slideBox = document.querySelector('.customImgSliderContainerDiv');
-    for (let i = 0; i < returnObj.imgList.length; i++) {
+    for (let i = 0; i < imgList.length; i++) {
       let sliderDiv = document.createElement('div');
       sliderDiv.className = 'customSliderBox';
       let sliderImg = document.createElement('img');
-      sliderImg.src = process.env.REACT_APP_SERVER_STATIC_HOST + returnObj.imgList[i].imgPath + returnObj.imgList[i].imgName;
+      sliderImg.src = process.env.REACT_APP_S3_PATH + '/' + imgList[i].imgPath + '/' + imgList[i].imgName;
       sliderDiv.append(sliderImg);
       sliderImg.classList.add('customSliderImg');
       if (i !== 0) sliderImg.classList.add('hide');
@@ -104,8 +104,7 @@ const MyResource = () => {
     }
   };
   const downPptFile = async (filePath, fileName) => {
-    let name = fileName.split('.')[0].split('_')[2];
-    nb_dataFileFetch('/common/download?filePath=' + filePath + '&fileName=' + encodeURI(fileName), name);
+    nb_downloadFile(process.env.REACT_APP_S3_PATH + '/' + filePath + '/' + fileName, fileName);
   };
 
   const myResourceDel = async function () {
@@ -118,17 +117,18 @@ const MyResource = () => {
       return;
     }
     document.getElementById('promptBoxClose').click();
-    let returnObj = await nb_dataFetch('/mathInfo/myResourceDel?resourceNo=' + Number(delResourceNo), true);
-    if (!returnObj.existMsg) {
+    let returnObj = await nb_deleteRequest('/math/resource/' + Number(delResourceNo), true);
+    if (returnObj.status === 200) {
       if (resourceList.length === 1 && curPageNum > 0) {
-        returnObj = await nb_dataFetch('/mathInfo/takeMyResource?curPageNum=' + (curPageNum - 1) + '&pageVolume=' + pageVolume, true);
+        returnObj = await nb_getRequest('/math/resource/my?pageNum=' + (curPageNum - 1) + '&pageVolume=' + pageVolume, true);
         window.history.pushState('', '나의 컨텐츠', '/myResource?pageNum=' + curPageNum);
         setCurPageNum(curPageNum - 1);
       } else {
-        returnObj = await nb_dataFetch('/mathInfo/takeMyResource?curPageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
+        returnObj = await nb_getRequest('/math/resource/my?pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
       }
-      setResourceList(returnObj.myResourceList);
-      setTotalPageCnt(returnObj.totalPageCnt);
+      //
+      setResourceList(returnObj.data.resource.contents);
+      setTotalPageCnt(Math.ceil(returnObj.data.total / pageVolume));
 
       nb_fadeInOut('정상적으로 삭제되었습니다.', 2000);
     }
@@ -138,7 +138,7 @@ const MyResource = () => {
     let oldResourceIdx;
     let newResourceList = resourceList;
     resourceList.map((resourceMap, idx) => {
-      if (resourceMap.resourceNo === newResource.resourceNo) {
+      if (resourceMap.id === newResource.id) {
         oldResourceIdx = idx;
       }
     });
@@ -152,11 +152,12 @@ const MyResource = () => {
     for (let i = redBoxValid.length - 1; i >= 0; i--) {
       redBoxValid[i].classList.remove('redBoxValid');
     }
+
     document.getElementById('titleValDesc').innerHTML = '';
     document.getElementById('updateResResourceNo').value = Number(resourceNo);
     document.getElementById('title').value = title;
-    document.getElementById('representImg').src = process.env.REACT_APP_SERVER_STATIC_HOST + imgPath + imgName;
-    document.getElementById('pptFileCustomDesc').innerHTML = pptName.split('_')[2];
+    document.getElementById('representImg').src = process.env.REACT_APP_S3_PATH + '/' + imgPath + '/' + imgName;
+    document.getElementById('pptFileCustomDesc').innerHTML = pptName;
     document.getElementById('userCateDiv').innerHTML = '';
     document.getElementById('pptFile').value = '';
     document.getElementById('imgFile').value = '';
@@ -168,7 +169,7 @@ const MyResource = () => {
       userCateWrap.className = 'userCateWrap';
       let userCate = document.createElement('span');
       userCate.className = 'userCateBtn';
-      userCate.dataset.cateNo = mathResourceCate[i].mainCateNo + '-' + mathResourceCate[i].midCateNo;
+      userCate.dataset.cateNo = mathResourceCate[i].mainCateId + '-' + mathResourceCate[i].midCateId;
       let userCateDel = document.createElement('span');
       userCateDel.className = 'cate-del';
       userCateDel.innerText = 'x';
@@ -177,7 +178,7 @@ const MyResource = () => {
       });
 
       for (let j = 0; j < resourceMenu.length; j++) {
-        if (resourceMenu[j].mainCateNo === mathResourceCate[i].mainCateNo && resourceMenu[j].midCateNo === mathResourceCate[i].midCateNo) {
+        if (resourceMenu[j].mainCateId === mathResourceCate[i].mainCateId && resourceMenu[j].midCateId === mathResourceCate[i].midCateId) {
           userCate.innerHTML = resourceMenu[j].mainCateName + '-' + resourceMenu[j].midCateName;
         }
       }
@@ -192,32 +193,27 @@ const MyResource = () => {
 
   const initResoureList = resourceList.map((contentsMap, idx) => {
     return (
-      <div id={'res-div-' + contentsMap.resourceNo} className='res-div' data-unit-id={contentsMap.seqNo} key={idx}>
+      <div id={'res-div-' + contentsMap.id} className='res-div' data-unit-id={contentsMap.id} key={idx}>
         <div
           className='res-over-lay'
           onClick={(event) => {
-            showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.resourceNo, contentsMap.mathResourceCate);
+            showDetailedRes(event, contentsMap.title, contentsMap.pptName, contentsMap.pptPath, contentsMap.imgList, contentsMap.cateList);
           }}>
           <span className='pptPageCnt'>{contentsMap.pptPageCnt}</span>
           <span
             className='reviseBtn'
             onClick={() => {
-              updtValSet(contentsMap.resourceNo, contentsMap.title, contentsMap.imgPath, contentsMap.imgName, contentsMap.pptName, contentsMap.mathResourceCate);
+              updtValSet(contentsMap.id, contentsMap.title, contentsMap.imgPath, contentsMap.imgName, contentsMap.pptName, contentsMap.cateList);
             }}></span>
           <span
             className='delBtn'
             onClick={() => {
               nb_promptBox("삭제를 진행하시려면 '삭제' 라고 입력해주세요. \n(따옴표 없이 입력해주시기 바랍니다.)", '삭제 라고 입력해주세요.');
-              setDelResourceNo(contentsMap.resourceNo);
+              setDelResourceNo(contentsMap.id);
             }}></span>
         </div>
         <div className='img-title'>{contentsMap.title}</div>
-        <img
-          id={'res-img-' + contentsMap.resourceNo}
-          className='res-img'
-          src={process.env.REACT_APP_SERVER_STATIC_HOST + contentsMap.imgPath + contentsMap.imgName}
-          alt='컨텐츠 이미지'
-        />
+        <img id={'res-img-' + contentsMap.id} className='res-img' src={process.env.REACT_APP_S3_PATH + '/' + contentsMap.imgPath + '/' + contentsMap.imgName} alt='컨텐츠 이미지' />
       </div>
     );
   });
@@ -269,7 +265,7 @@ const MyResource = () => {
                 id='resDetailedPPtDownBtn'
                 className='resDetailedPPtDownBtn'
                 onClick={(event) => {
-                  downPptFile('resourcePpt', event.target.dataset.pptName);
+                  downPptFile(event.target.dataset.pptPath, event.target.dataset.pptName);
                 }}>
                 ppt파일 다운
               </div>
@@ -318,7 +314,7 @@ const MyResource = () => {
           <div className='updateResouceDiv'>
             <form method='post' id='resourceForm' encType='multipart/form-data'>
               <RegisterResourceInp isUpdtMode={true} parentMethod={updateResourceObj} />
-              <input id='updateResResourceNo' type='number' name='resourceNo' className='hide' />
+              <input id='updateResResourceNo' type='number' name='resourceId' className='hide' />
             </form>
           </div>
         </div>

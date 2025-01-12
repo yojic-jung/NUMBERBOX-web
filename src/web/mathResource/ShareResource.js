@@ -7,7 +7,7 @@ import RoundButtonList from 'web/common/RoundButtonList';
 import ErrorReportForMathCon from 'web/common/ErrorReportForMathCon';
 import PageNumBtn from 'web/common/PageNumBtn';
 import EmptyList from 'web/common/EmptyList';
-import { nb_isLogin, nb_dataFetch, nb_dataFileFetch, nb_getParameterByName } from 'js/common/common_nb.js';
+import { nb_isLogin, nb_dataFetch, nb_getRequest, nb_dataFileFetch, nb_getParameterByName } from 'js/common/common_nb.js';
 import 'css/resourceFile/shareResource.css';
 
 let resourceMenuArr;
@@ -26,8 +26,8 @@ const ShareResource = () => {
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      let returnVal = await nb_dataFetch('/mathInfo/takeResourceMenu', true);
-      let resourceMenulist = returnVal['resourceMenuList'];
+      let returnVal = await nb_getRequest('/public/math/resource/menu', true);
+      let resourceMenulist = returnVal.data.resourceMenu;
       setResourceMenu(resourceMenulist);
       resourceMenuArr = resourceMenulist;
       let uniqueArr = [];
@@ -42,7 +42,7 @@ const ShareResource = () => {
       });
       setMainCate(uniqueArr);
       document.getElementById('shareResource').classList.add('active');
-      let param = nb_getParameterByName('mainCateNo');
+      let mainCateId = nb_getParameterByName('mainCateNo');
       let param2 = nb_getParameterByName('resourceNo');
       let param3 = nb_getParameterByName('pageNum');
       let movePage = 0;
@@ -53,21 +53,21 @@ const ShareResource = () => {
       } else {
         if (param3 !== '') {
           movePage = Number(param3) - 1;
-          returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo=' + param + '&curPageNum=' + movePage + '&pageVolume=' + pageVolume, true);
+          returnObj = await nb_getRequest('/math/resource/' + mainCateId + '?' + 'pageNum=' + movePage + '&pageVolume=' + pageVolume, true);
         } else {
-          returnObj = await nb_dataFetch('/mathInfo/takeResource?mainCateNo=' + param + '&curPageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
+          returnObj = await nb_getRequest('/math/resource/' + mainCateId + '?' + 'pageNum=' + curPageNum + '&pageVolume=' + pageVolume, true);
         }
-        setMainCateNo(param);
+        setMainCateNo(mainCateId);
         setCurPageNum(movePage);
-        setTotalPageCnt(returnObj.totalPageCnt);
+        setTotalPageCnt(Math.ceil(returnObj.data.total / returnObj.data.page.pageVolume));
       }
 
       let cateMenu = document.querySelectorAll('.cateMenu');
       for (let i = 0; i < cateMenu.length; i++) {
         cateMenu[i].classList.remove('active');
       }
-      document.getElementById('category-' + param).classList.add('active');
-      setResourceList(returnObj['resourceList']);
+      document.getElementById('category-' + mainCateId).classList.add('active');
+      setResourceList(returnObj.data.contents);
     };
     asyncUseEffect();
     return () => {};
@@ -193,7 +193,7 @@ const ShareResource = () => {
       <BrowserView>
         <ResourceMenuBar></ResourceMenuBar>
         <div className='cateDiv'>
-          <RoundButtonList id='category' className='cateMenu' tabList={mainCate} dataId='mainCateNo' mainKey='mainCateName'></RoundButtonList>
+          <RoundButtonList id='category' className='cateMenu' tabList={mainCate} dataId='mainCateId' mainKey='mainCateName'></RoundButtonList>
         </div>
         <div className='resWrap'>{initResoureList}</div>
         {initResoureList.length === 0 && <EmptyList msg={emptyListMsg} imgName='myRepoEmpty' addImgClass='miniSize' />}

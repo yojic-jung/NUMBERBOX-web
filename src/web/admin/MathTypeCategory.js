@@ -13,7 +13,7 @@ const MathTypeCategory = () => {
   useEffect(() => {
     const asyncUseEffect = async function () {
       if (!(isAdmin || isTopTester)) window.location.href = '/';
-      let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
+      let jsonObj = await nb_getRequest('/public/math/menu/unit', true);
       setSubjectList(jsonObj.data['subjectList']);
       unitListSetFunction(jsonObj.data['subjectList'], jsonObj.data['firUnitList'], jsojsonObj.datanObj['secUnitList']);
     };

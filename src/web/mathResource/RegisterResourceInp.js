@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import image from 'img/image.png';
 import addImg from 'img/add.png';
 import CustomSelectBox from 'web/common/CustomSelectBox';
-import { nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox } from 'js/common/common_nb.js';
+import { nb_postForm, nb_putForm, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_confirmBox, nb_getRequest, nb_postRequest } from 'js/common/common_nb.js';
 import 'css/resourceFile/registerResource.css';
 import hourglass from 'img/hourglass.gif';
 
@@ -11,8 +11,8 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      let resourceMenu = await nb_dataFetch('/mathInfo/takeResourceMenu', true);
-      setMainCate(resourceMenu['resourceMenuList']);
+      let returnObj = await nb_getRequest('/public/math/resource/menu', true);
+      setMainCate(returnObj.data.resourceMenu);
       if (!isUpdtMode) document.getElementById('registerResource').classList.add('active');
     };
     asyncUseEffect();
@@ -147,6 +147,7 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
         return false;
       }
 
+      console.log(event.target);
       document.getElementById('pptFileCustomDesc').innerText = event.target.files[0].name;
       document.getElementById('pptDiv').classList.remove('redBoxValid');
     }
@@ -198,9 +199,9 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
 
     document.getElementById('resDetailedTimeDesc').classList.remove('hide');
     document.getElementById('hourGlassDesc').innerText = 'ppt를 등록하는데 시간이 걸릴 수 있습니다.\n잠시만 기다려 주세요...';
-    let returnVal = await nb_formDataFetch('/mathInfo/registerResource', formData, false);
+    let returnVal = await nb_postForm('/math/resource', formData, false);
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
-    if (returnVal.isSuccess === true) {
+    if (returnVal.status === 200) {
       await nb_fadeInOutA('컨텐츠가 정상적으로 등록 되었습니다.\n나의 컨텐츠 페이지에서 확인 가능합니다.', 2000);
       document.getElementById('resourceForm').reset();
       document.getElementById('representImg').src = image;
@@ -211,9 +212,7 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
         cateList = alreadyCateBtn[i].parentElement.remove();
       }
     } else {
-      if (!returnVal.existMsg) {
-        await nb_fadeInOutB('컨텐츠 등록에 실패하였습니다. 다시 시도해주세요.', 2000);
-      }
+      await nb_fadeInOutB('컨텐츠 등록에 실패하였습니다. 다시 시도해주세요.', 2000);
     }
   };
 
@@ -233,18 +232,16 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
     document.getElementById('confirmBoxClose').click();
     document.getElementById('resDetailedTimeDesc').classList.remove('hide');
     document.getElementById('hourGlassDesc').innerText = 'ppt를 등록하는데 시간이 걸릴 수 있습니다.\n잠시만 기다려 주세요...';
-    let returnVal = await nb_formDataFetch('/mathInfo/updateResource', formData, false);
+    let returnVal = await nb_putForm('/math/resource', formData, false);
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
 
-    if (returnVal.isSuccess === true) {
+    if (returnVal.status === 200) {
       await nb_fadeInOutA('컨텐츠가 정상적으로 수정 되었습니다.', 2000);
       document.getElementById('updateResouceClose').click();
-      parentMethod(returnVal.newMathResource);
+      parentMethod(returnVal.data);
       //수정된 컨텐츠로 초기화
     } else {
-      if (!returnVal.existMsg) {
-        await nb_fadeInOutB('컨텐츠 수정에 실패하였습니다. 다시 시도해주세요.', 2000);
-      }
+      await nb_fadeInOutB('컨텐츠 수정에 실패하였습니다. 다시 시도해주세요.', 2000);
     }
   };
 
@@ -287,10 +284,10 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
                 <CustomSelectBox
                   id='mainCate'
                   className='bageText'
-                  name='mainCateNo'
+                  name='mainCateId'
                   firstVal='카테고리'
                   optList={mainCate}
-                  val='mainCateNo'
+                  val='mainCateId'
                   unitName='mainCateName'
                   changeHandler={changeHandler}></CustomSelectBox>
               </td>
@@ -303,11 +300,11 @@ const RegisterResourceInp = ({ isUpdtMode, parentMethod }) => {
                 <CustomSelectBox
                   id='midCate'
                   className='bageText'
-                  name='midCateNo'
+                  name='midCateId'
                   firstVal='세부 카테고리'
                   optList={mainCate}
-                  val='midCateNo'
-                  parentKey='mainCateNo'
+                  val='midCateId'
+                  parentKey='mainCateId'
                   unitName='midCateName'
                   displayMode='hide'
                   changeHandler={validUiHandler}></CustomSelectBox>

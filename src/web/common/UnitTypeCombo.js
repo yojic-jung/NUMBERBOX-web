@@ -3,7 +3,7 @@ import UnitSelBox from './UnitSelBox';
 import TypeSelBox from './TypeSelBox';
 import CustomUnitSelBox from './CustomUnitSelBox';
 import CustomTypeSelBox from './CustomTypeSelBox';
-import { nb_dataFetch } from 'js/common/common_nb.js';
+import { nb_dataFetch, nb_getRequest } from 'js/common/common_nb.js';
 import { reg_unitTypeChange, reg_selectTypeData } from 'js/contents/register/contents_reg.js';
 
 let i = 0; //useState 리렌더링 문제 해결
@@ -17,7 +17,7 @@ export const UnitTypeCombo = (updateModeUniqNo) => {
   const [quesTypeKey, setQuesTypeKey] = useState();
 
   async function fetchUnitInfo() {
-    let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
+    let jsonObj = await nb_getRequest('/public/math/menu/unit', true);
     setSubjectBox(jsonObj.data['subjectList']);
     setSecUnitSelBox(jsonObj.data['secUnitList']);
     setThrUnitSelBox(jsonObj.data['thrUnitList']);

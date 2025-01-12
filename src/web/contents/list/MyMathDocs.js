@@ -102,7 +102,7 @@ const MyMathDocs = () => {
         </td>
         <td className='docsListDate'>
           <Link className='linkNoneCss' to={'/makeMathDocs?docsId=' + docs.id}>
-            <div className='allSpace docs'>{docs.sysCreateDate.replaceAll('T', ' ')}</div>
+            <div className='allSpace docs'>{docs.sysCreateDate.split('T')[0]}</div>
           </Link>
         </td>
         <td className='docsListErr alignCenter'>

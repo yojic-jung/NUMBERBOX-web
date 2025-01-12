@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import image from 'img/plus.png';
 import { cs_toCsErrType } from 'js/cs/common_cs.js';
-import { nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_getClientBrowser, nb_getClientOS, nb_postForm } from 'js/common/common_nb.js';
+import { nb_dataFetch, nb_formDataFetch, nb_loadFile, nb_fadeInOutA, nb_fadeInOutB, nb_getClientBrowser, nb_getClientOS, nb_postForm, nb_getRequest } from 'js/common/common_nb.js';
 
 const ServiceCenter = ({ myNickName }) => {
   const [myErrReport, setMyErrReport] = useState(new Array());
@@ -21,14 +21,14 @@ const ServiceCenter = ({ myNickName }) => {
     document.getElementById(targetId).classList.remove('hide');
 
     if (targetId === 'myQnA') {
-      let returnVal = await nb_dataFetch('/serviceCenter/takeMyErrReport', true);
-      setMyErrReport(returnVal.myErrReport);
+      let returnVal = await nb_getRequest('/cs/error/my', true);
+      setMyErrReport(returnVal.data.csErrorReport);
     }
   };
 
   const serviceCenterRefresh = async (event, targetId) => {
-    let returnVal = await nb_dataFetch('/serviceCenter/takeMyErrReport', true);
-    setMyErrReport(returnVal.myErrReport);
+    let returnVal = await nb_getRequest('/cs/error/my', true);
+    setMyErrReport(returnVal.data.csErrorReport);
   };
 
   const imgFileChange = async (event, outputId) => {
@@ -87,21 +87,21 @@ const ServiceCenter = ({ myNickName }) => {
     document.getElementById('detailedReportContents').innerHTML = errReport.reportContents;
     if (errReport.firstImgName !== null) {
       document.getElementById('detailedFirstImgShow').classList.remove('hide');
-      document.getElementById('detailedFirstImgShow').src = process.env.REACT_APP_SERVER_STATIC_HOST + errReport.firstImgPath + errReport.firstImgName;
+      document.getElementById('detailedFirstImgShow').src = process.env.REACT_APP_S3_PATH + '/' + errReport.firstImgPath + '/' + errReport.firstImgName;
     } else {
       document.getElementById('detailedFirstImgShow').classList.add('hide');
     }
 
     if (errReport.secondImgName !== null) {
       document.getElementById('detailedSecondImgShow').classList.remove('hide');
-      document.getElementById('detailedSecondImgShow').src = process.env.REACT_APP_SERVER_STATIC_HOST + errReport.secondImgPath + errReport.secondImgName;
+      document.getElementById('detailedSecondImgShow').src = process.env.REACT_APP_S3_PATH + '/' + errReport.secondImgPath + '/' + errReport.secondImgName;
     } else {
       document.getElementById('detailedSecondImgShow').classList.add('hide');
     }
 
     if (errReport.thirdImgName !== null) {
       document.getElementById('detailedThirdImgShow').classList.remove('hide');
-      document.getElementById('detailedThirdImgShow').src = process.env.REACT_APP_SERVER_STATIC_HOST + errReport.thirdImgPath + errReport.thirdImgName;
+      document.getElementById('detailedThirdImgShow').src = process.env.REACT_APP_S3_PATH + '/' + errReport.thirdImgPath + '/' + errReport.thirdImgName;
     } else {
       document.getElementById('detailedThirdImgShow').classList.add('hide');
     }
@@ -147,12 +147,12 @@ const ServiceCenter = ({ myNickName }) => {
 
     let reportStts = '접수';
     let reportSttsClassName = 'orgText';
-    if (errMap.reportStts === 1) {
+    if (errMap.reportStts === 'Reply') {
       reportStts = '답변완료';
       reportSttsClassName = 'greenText';
     }
     return (
-      <tr key={errMap.reportId}>
+      <tr key={errMap.id}>
         <td>{errType}</td>
         <td
           className='myQnATbContents'
@@ -161,7 +161,7 @@ const ServiceCenter = ({ myNickName }) => {
           }}>
           {errMap.reportContents}
         </td>
-        <td className='alignCenter'>{errMap.sysCreateDate}</td>
+        <td className='alignCenter'>{errMap.sysCreateDate.split('T')[0]}</td>
         <td className={reportSttsClassName + ' reportStts'}>{reportStts}</td>
       </tr>
     );

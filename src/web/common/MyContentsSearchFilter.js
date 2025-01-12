@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { nb_dataFetch } from 'js/common/common_nb.js';
+import { nb_getRequest } from 'js/common/common_nb.js';
 import { Link } from 'react-router-dom';
 
 const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
@@ -9,7 +9,7 @@ const MyContentsSearchFilter = ({ makeContentsShow, descMsg }) => {
   useEffect(() => {
     window.addEventListener('click', hideSearchFilter);
     const asyncUseEffect = async () => {
-      let jsonObj = await nb_dataFetch('/public/math/menu/unit', true);
+      let jsonObj = await nb_getRequest('/public/math/menu/unit', true);
       setSubjectList(jsonObj.data['subjectList']);
       setSecUnitList(jsonObj.data['secUnitList']);
     };

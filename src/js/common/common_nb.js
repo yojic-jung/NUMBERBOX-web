@@ -255,13 +255,14 @@ export const nb_getRequest = async (url, transitEffect) => {
 };
 
 /**
- * post 요청
+ * put 요청
  */
 export const nb_putForm = async (url, formData, transitEffect) => {
   const httpOption = {
     method: 'PUT',
     credentials: 'include',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   };
@@ -428,6 +429,30 @@ export const nb_formToJson = async (formData) => {
     }
   });
   return jsonData;
+};
+
+export const nb_downloadFile = async (url, fileName) => {
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob(); // 파일 데이터를 Blob으로 변환
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob); // Blob 객체로 다운로드 링크 생성
+      const a = document.createElement('a'); // 가상 `<a>` 태그 생성
+      a.style.display = 'none';
+      a.href = url;
+      a.download = fileName; // 저장될 파일 이름 설정
+      document.body.appendChild(a);
+      a.click(); // 다운로드 시작
+      a.remove(); // `<a>` 태그 제거
+      window.URL.revokeObjectURL(url); // Object URL 해제
+    })
+    .catch((error) => {
+      console.error('Error downloading file:', error);
+    });
 };
 
 export const fadeIn = async (targetId) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FollowListBox from 'web/common/FollowListBox';
-import { nb_extensionCheck2, nb_fadeInOutB, nb_getRequest, nb_putRequest, nb_postForm, nb_postRequest, nb_deleteRequest } from 'js/common/common_nb.js';
+import { nb_extensionCheck2, nb_fadeInOutB, nb_getRequest, nb_putRequest, nb_putForm, nb_postRequest, nb_deleteRequest } from 'js/common/common_nb.js';
 import defaultProfileImg from 'img/defaultProfile.png';
 import profileAddImg from 'img/add.png';
 

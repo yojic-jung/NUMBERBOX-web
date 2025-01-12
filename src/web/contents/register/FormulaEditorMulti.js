@@ -7,6 +7,7 @@ import {
   nb_isLogin,
   nb_topMenuFixed,
   nb_dataFetch,
+  nb_getRequest,
   nb_formDataFetch,
   nb_base64ImgRegisterToS3ByTargetId,
   nb_moveToScroll,
@@ -226,7 +227,7 @@ const FormulaEditorMulti = ({ contentsClassify }) => {
       window.addEventListener('mouseup', await reg_newSelectFormulaElement);
 
       await reg_undoRedoInitialize();
-      let returnObj = await nb_dataFetch('/public/math/menu/unit', true);
+      let returnObj = await nb_getRequest('/public/math/menu/unit', true);
       setMathUnitInfo(returnObj.data);
       setFormulaEditorArr(formulaEditor);
 

@@ -504,7 +504,7 @@ const MyContentsList = ({ isMine, userNo }) => {
     let shareDesc = '공개';
     if (contentsMap.contentsClassify === 'UserCustom' && contentsMap.shareStts !== undefined) {
       hasLicense = true;
-      if (contentsMap.shareStts === 'false') {
+      if (contentsMap.shareStts === false) {
         shareDesc = '비공개';
       }
     }
