@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'; // useHistory 추가
-import {
-  nb_formDataFetch,
-  nb_dataFetch,
-  nb_getRequest,
-} from 'js/common/common_nb.js';
+import { nb_formDataFetch, nb_dataFetch, nb_putRequest } from 'js/common/common_nb.js';
 import 'css/main/main.css';
 import 'css/page/etcPage.css';
 
@@ -40,10 +36,7 @@ const EmailPassFind = () => {
 
     if (success) {
       alert('본인인증 성공');
-      let returnData = await nb_dataFetch(
-        '/certifications/' + response.imp_uid,
-        true
-      );
+      let returnData = await nb_dataFetch('/certifications/' + response.imp_uid, true);
       setIsPhoneIdentified(true);
       // todo 여기서 인증 코드 설정 필요
       setName(returnData.name);
@@ -73,26 +66,18 @@ const EmailPassFind = () => {
     formData.append('phoneNumber', phoneNumber);
     let returnObj = await nb_formDataFetch('/findEmail', formData, true);
     if (returnObj.isExist) {
-      alert(
-        '고객님의 이메일은 ' +
-          returnObj.email +
-          '입니다. 로그인을 시도해보세요.'
-      );
+      alert('고객님의 이메일은 ' + returnObj.email + '입니다. 로그인을 시도해보세요.');
     } else {
       alert('고객님의 가입정보가 존재하지 않습니다.');
     }
   };
 
   const findPassword = async () => {
-    let email = document.getElementById('emailForPassFind').value;
-    let returnObj = await nb_getRequest(
-      '/public/member/findPassword?email=' + email,
-      true
-    );
+    let jsonData = new Object();
+    jsonData.email = document.getElementById('emailForPassFind').value;
+    let returnObj = await nb_putRequest('/public/member/findPassword', jsonData, true);
     if (returnObj.status == 200) {
-      alert(
-        '해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 로그인 후 비밀번호를 변경하여 주시기 바랍니다.'
-      );
+      alert('해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 로그인 후 비밀번호를 변경하여 주시기 바랍니다.');
       document.getElementById('emailForPassFind').value = '';
     }
   };
@@ -117,8 +102,7 @@ const EmailPassFind = () => {
             className='pointer'
             onClick={() => {
               navigate(-1);
-            }}
-          >
+            }}>
             &lt;뒤로가기
           </span>
         </div>
@@ -126,9 +110,7 @@ const EmailPassFind = () => {
         <div className='login-div minHeight'>
           {false && (
             <div className='emailPassFindDiv'>
-              <div className='emailPassFindDesc'>
-                가입시 등록하신 휴대폰 번호로 진행 해주세요.
-              </div>
+              <div className='emailPassFindDesc'>가입시 등록하신 휴대폰 번호로 진행 해주세요.</div>
               <div className='borderBox emailPassFind'>
                 <div
                   id='phoneCertifyBtn'
@@ -144,30 +126,21 @@ const EmailPassFind = () => {
                 className='login-btn emailPassFind'
                 onClick={() => {
                   findEmail();
-                }}
-              >
+                }}>
                 이메일 찾기
               </div>
             </div>
           )}
           <div className='emailPassFindDiv'>
-            <div className='emailPassFindDesc'>
-              이메일 주소로 임시 비밀번호를 보내 드립니다.
-            </div>
+            <div className='emailPassFindDesc'>이메일 주소로 임시 비밀번호를 보내 드립니다.</div>
             <div>
-              <input
-                id='emailForPassFind'
-                className='login-input emailPassFind'
-                type='text'
-                placeholder='이메일 주소를 입력해주세요.'
-              />
+              <input id='emailForPassFind' className='login-input emailPassFind' type='text' placeholder='이메일 주소를 입력해주세요.' />
             </div>
             <div
               className='login-btn emailPassFind'
               onClick={() => {
                 findPassword();
-              }}
-            >
+              }}>
               비밀번호 찾기
             </div>
           </div>

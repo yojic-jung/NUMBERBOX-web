@@ -52,11 +52,9 @@
 }
 
 .myHwpContentsMenuDiv{
-    padding: 10px;
 }
 
 .myHwpContentsMenu{
-    padding: 10px 0;
     border: 1px solid lightgray;
     width: 100%;
 }
@@ -73,7 +71,7 @@
 
 .convertFileNameRoot{
     cursor: pointer;
-    padding: 5px;
+    padding: 5px 0;
     line-height: 120%;
     color:dimgray;
     font-family: 'Apple SD Gothic Neo','Malgun Gothic';

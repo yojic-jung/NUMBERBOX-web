@@ -65,9 +65,6 @@ const ProfileComponent = ({ isMine, userNo }) => {
   const registerProfileImg = async (event) => {
     if (event.target.files[0] !== undefined) {
       let form = document.createElement('form');
-      form.setAttribute('charset', 'UTF-8');
-      form.setAttribute('encoding', 'multipart/form-data'); //Post 방식
-      form.setAttribute('method', 'POST'); //Post 방식
       let formData = new FormData(form);
       formData.append('imgFile', event.target.files[0]);
       let returnObj = await nb_putForm('/member/profile/img', formData, true);

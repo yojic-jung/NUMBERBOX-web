@@ -24,6 +24,9 @@ import {
   nb_getClientOS,
   nb_getClientBrowser,
   nb_postForm,
+  nb_putRequest,
+  nb_getRequest,
+  nb_deleteRequest,
 } from 'js/common/common_nb.js';
 import {
   reg_preventKeyEvent,
@@ -88,31 +91,32 @@ const HwpToHtml = () => {
 
   useEffect(() => {
     const asyncUseEffect = async function () {
-      let jsonObj = await nb_dataFetch('/public/math/menu/shortCutKey', true);
+      let jsonObj = await nb_getRequest('/public/math/menu/shortCutKey', true);
+      const shortCutKey = jsonObj.data.shortCutKey;
       setShortCutKey(jsonObj.data);
-      setShortCutKeyAll([...jsonObj['shortCutKey'], ...jsonObj['shortCutKeyHigh1'], ...jsonObj['shortCutKeyEtc'], ...jsonObj['shortCutKeyEtc2']]);
+      setShortCutKeyAll(shortCutKey);
       setIsFetchShotCutKey(true);
-      window.shortCutKeyList = jsonObj['shortCutKey'];
-      window.shortCutKeyHigh1 = jsonObj['shortCutKeyHigh1'];
-      window.shortCutKeyEtc = jsonObj['shortCutKeyEtc'];
-      window.shortCutKeyEtc = jsonObj['shortCutKeyEtc2'];
+      window.shortCutKeyList = shortCutKey['Main'];
+      window.shortCutKeyHigh1 = shortCutKey['High1'];
+      window.shortCutKeyEtc = shortCutKey['Etc'];
+      window.shortCutKeyEtc = shortCutKey['Etc2'];
 
       //convertNo 파라미터 있고 관리자 및 매니저이면 convertNo 파일 내용 볼 수 있음(관리자 및 매니저 아닌 경우 파라미터 없는 로직 그대로 수행)
       let resourceMenu;
       let param = nb_getParameterByName('convertNo');
       if (param !== '' && nb_isManger()) {
-        resourceMenu = await nb_dataFetch('/convert/errHwpConvertContents?convertNo=' + param, true);
-        document.getElementsByClassName('hwpToWebUpldBtn')[0].classList.add('hide');
-        setMyUpldFile(resourceMenu.myList);
-        document.getElementsByClassName('myHwpContentsMenuThead')[0].innerText = '오류 파일';
-        setIsAdminMode(true);
+        // resourceMenu = await nb_getRequest('/convert/errHwpConvertContents?convertNo=' + param, true);
+        // document.getElementsByClassName('hwpToWebUpldBtn')[0].classList.add('hide');
+        // setMyUpldFile(resourceMenu.data.contentsList);
+        // document.getElementsByClassName('myHwpContentsMenuThead')[0].innerText = '오류 파일';
+        // setIsAdminMode(true);
       } else {
-        resourceMenu = await nb_dataFetch('/convert/myHwpConvertContents', true);
-        setMyUpldFile(resourceMenu.myList);
+        resourceMenu = await nb_getRequest('/hwp/contents/my', true);
+        setMyUpldFile(resourceMenu.data.contentsList);
       }
 
       reg_enableImageResizeInDiv('myHwpContents');
-      if (resourceMenu.myList.length !== 0) {
+      if (resourceMenu.data.contentsList.length !== 0) {
         document.getElementsByClassName('convertFileNameRoot')[0].click();
         if (!isAdminMode) {
           window.addEventListener('beforeunload', beforeUnloadSaveContent);
@@ -239,6 +243,7 @@ const HwpToHtml = () => {
     for (let i = 0; i < imgDom.length; i++) {
       let lastIdx = imgDom[i].src.lastIndexOf('/');
       let imgName = imgDom[i].src.substring(lastIdx + 1, imgDom[i].src.length);
+      console.log(s3FileUrl);
       if (s3FileUrl !== undefined) {
         imgName = s3FileUrl + imgName;
       }
@@ -472,9 +477,9 @@ const HwpToHtml = () => {
               alert('[죄송합니다.]\n업로드하신 파일의 수식 변환 중 오류가 발생하였습니다.\n고객센터에서 해당 오류를 파악하여 빠르게 해결하도록 하겠습니다.');
               if (convertNo !== undefined) {
                 registerError(convertNo);
-                let resourceMenu = await nb_dataFetch('/convert/changeErrStts?convertNo=' + convertNo, true);
-                setMyUpldFile(resourceMenu.myList);
-                document.getElementsByClassName('convertFileNameRoot')[0].click();
+                // let resourceMenu = await nb_dataFetch('/convert/changeErrStts?convertNo=' + convertNo, true);
+                // setMyUpldFile(resourceMenu.myList);
+                // document.getElementsByClassName('convertFileNameRoot')[0].click();
               }
               return;
             }
@@ -769,16 +774,16 @@ const HwpToHtml = () => {
 
   const convertHwpToWeb = async (event) => {
     if (event.target.files[0] !== undefined) {
+      const jsonObj = new Object();
       let formData = new FormData(document.getElementById('hwpForm'));
       document.getElementById('resDetailedTimeDesc').classList.remove('hide');
       document.getElementById('hourGlassDesc').innerHTML =
         "한글 파일을 변환 중 입니다.<br>수식이 많은 파일은 시간이 더 걸릴 수 있습니다.<br>잠시만 기다려 주세요...<br><span class='hourGlassSubDesc'>※ 수식이 많은 수능형 문제+해설 파일은 20 페이지 미만 파일을 사용 권장합니다.<br>(10페이지 40초 내외, 15페이지 1분 내외, 20페이지 2분 내외)</span>";
-      let returnObj = await nb_formDataFetch('/convert/convertHwpToWeb', formData, false);
-      document.getElementById('resDetailedTimeDesc').classList.add('hide');
-      if (returnObj.isSuccess) {
-        setMyUpldFile(returnObj.contentsList);
-        document.getElementById('myHwpContents').dataset.convertNo = returnObj.contentsList[0].convertNo;
-        document.getElementById('myHwpContents').innerHTML = returnObj.contentsList[0].convertContents;
+      let returnObj = await nb_postForm('/hwp/convert/hwp-to-html', formData, false);
+      if (returnObj.status == 200) {
+        setMyUpldFile(returnObj.data.contentsList);
+        document.getElementById('myHwpContents').dataset.convertNo = returnObj.data.contentsList[0].id;
+        document.getElementById('myHwpContents').innerHTML = returnObj.data.contentsList[0].contents;
 
         let convertFileNameRoot = document.getElementsByClassName('convertFileNameRoot');
         for (let i = 0; i < convertFileNameRoot.length; i++) {
@@ -786,20 +791,21 @@ const HwpToHtml = () => {
         }
 
         convertFileNameRoot[0].classList.add('active');
-        await hwpHtmlToNbHtml('myHwpContents', true, returnObj.s3FileUrl, returnObj.contentsList[0].convertNo);
+
+        await hwpHtmlToNbHtml('myHwpContents', true, process.env.REACT_APP_S3_PATH + '/' + returnObj.data.s3FileUrl + '/', returnObj.data.contentsList[0].id);
 
         //undo, redo 초기화 및 변환된 상태 저장
         let fakeEv = new Object();
         fakeEv.isTrusted = true;
+        fakeEv.id = returnObj.data.contentsList[0].id;
         await reg_undoRedoInitialize();
         await reg_undoRedoSetting();
 
         await saveMyHwpContents(fakeEv, true, true);
         reg_enableImageResizeInDiv('myHwpContents');
-      } else {
-        if (returnObj.upldCntOver) {
-        }
       }
+      document.getElementById('resDetailedTimeDesc').classList.add('hide');
+
       //input file 초기화
       event.target.value = '';
     }
@@ -807,14 +813,14 @@ const HwpToHtml = () => {
 
   const showConvertContents = async (event, convertNo) => {
     let myConvertFile = myUpldFile.filter((element) => {
-      return element.convertNo === convertNo;
+      return element.id === convertNo;
     });
 
     document.getElementById('myHwpContents').dataset.convertNo = convertNo;
-    document.getElementById('myHwpContents').innerHTML = myConvertFile[0].convertContents;
+    document.getElementById('myHwpContents').innerHTML = myConvertFile[0].contents;
 
     //변환이 안된채 저장되어있으면 다시 한번 변환
-    if (!myConvertFile[0].converted) {
+    if (!myConvertFile[0].isConverted) {
       //관리자 모드로 들어온 경우 변환 금지
       if (isAdminMode) {
         await reg_undoRedoInitialize();
@@ -844,7 +850,7 @@ const HwpToHtml = () => {
     let myConvertFile = myUpldFile.filter((element) => {
       return element.convertNo === Number(convertNo);
     });
-    await hwpHtmlToNbHtml('myHwpContents', false, myConvertFile[0].imgPath);
+    await hwpHtmlToNbHtml('myHwpContents', false, process.env.REACT_APP_S3_PATH + '/' + myConvertFile[0].imgPath + '/');
 
     //undo, redo 초기화 및 변환된 상태 저장
     let fakeEv = new Object();
@@ -867,10 +873,10 @@ const HwpToHtml = () => {
     }
 
     if (isRemove) {
-      let jsonObj = await nb_dataFetch('/convert/removeConvertContents?convertNo=' + convertNo, true);
-      if (jsonObj.isSuccess) {
-        setMyUpldFile(jsonObj.myList);
-        if (jsonObj.myList.length !== 0) {
+      let jsonObj = await nb_deleteRequest('/hwp/convert/hwp-to-html/' + convertNo, true);
+      if (jsonObj.status == 200) {
+        setMyUpldFile(jsonObj.data.contentsList);
+        if (jsonObj.data.contentsList.length !== 0) {
           document.getElementsByClassName('convertFileNameRoot')[0].click();
         }
       } else {
@@ -883,17 +889,17 @@ const HwpToHtml = () => {
     let isHide = '';
     if (isAdminMode) isHide = 'hide';
     return (
-      <tr key={conents.convertNo}>
+      <tr key={conents.id}>
         <td className='myHwpContentsTd'>
           <div
             className='convertFileNameRoot'
             onClick={async (event) => {
               await saveMyHwpContents(event, true, false);
-              await showConvertContents(event, conents.convertNo);
+              await showConvertContents(event, conents.id);
               reg_undoRedoInitialize();
               reg_undoRedoSetting();
             }}>
-            <div className='convertFileName'>{conents.convertFileName}</div>
+            <div className='convertFileName'>{conents.fileName}</div>
             <div className='convertUpdateDate'>등록일 : {conents.sysCreateDate}</div>
           </div>
         </td>
@@ -901,7 +907,7 @@ const HwpToHtml = () => {
           <span
             className={'circleDel ' + isHide}
             onClick={() => {
-              removeConvertContents(conents.convertNo, true);
+              removeConvertContents(conents.id, true);
             }}>
             -
           </span>
@@ -931,28 +937,20 @@ const HwpToHtml = () => {
       return false;
     }
 
-    let formData = new FormData();
-    formData.append('convertNo', document.getElementById('myHwpContents').dataset.convertNo);
-
-    if (convertChanged) {
-      //수식이 변환 된 후에만 converted 칼럼 true로 변경
-      formData.append('converted', true);
-    } else {
+    let jsonObj = new Object();
+    jsonObj.id = document.getElementById('myHwpContents').dataset.convertNo;
+    if (!convertChanged) {
       //(한글파일 업로드 버튼 클릭, 직접 save 버튼 클릭시, 다른 파일 목록 클릭시)
       //변환 안된 파일은 save되면 안됨(사용자가 &strt/ $end/ 사이값 조작하면 에러 날 수 있음)
       let myConvertFile = myUpldFile.filter((element) => {
-        return element.convertNo === Number(document.getElementById('myHwpContents').dataset.convertNo);
+        return element.id === Number(document.getElementById('myHwpContents').dataset.convertNo);
       });
-      if (!myConvertFile[0].converted) return;
+      if (!myConvertFile[0].isConverted) return;
     }
-    formData.append('convertContents', document.getElementById('myHwpContents').innerHTML);
+    jsonObj.contents = document.getElementById('myHwpContents').innerHTML;
 
-    let imgTagList = document.getElementById('myHwpContents').querySelectorAll('img');
-    for (let i = 0; i < imgTagList.length; i++) {
-      formData.append('imgFileTagList', imgTagList[i].src);
-    }
-    let returnObj = await nb_formDataFetch('/convert/saveMyHwpContents', formData, transitEffect);
-    setMyUpldFile(returnObj.contentsList);
+    let returnObj = await nb_putRequest('/hwp/convert/hwp-to-html', jsonObj, transitEffect);
+    setMyUpldFile(returnObj.data.contentsList);
   };
 
   const formularTabSelect = async function (event) {
@@ -1017,12 +1015,6 @@ const HwpToHtml = () => {
     await nb_postForm('/cs/error', formData, true);
   };
 
-  //특수문자 인코딩 에러 테스트
-  const test = async () => {
-    let formData = new FormData();
-    formData.append('convertContents', "~!@#$%^*()-😛😁{}[];'/.,");
-    await nb_formDataFetch('/convert/test', formData, true);
-  };
   return (
     <div className='selectNone'>
       <div className='hwpToWebDiv'>

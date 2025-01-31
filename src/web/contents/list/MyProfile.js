@@ -6,15 +6,7 @@ import 'css/common/common.css';
 import 'css/common/nbFormula.css';
 import 'css/staff/staff.css';
 import ProfileComponent from 'web/common/ProfileComponent';
-import {
-  nb_dataFetch,
-  nb_formDataFetch,
-  nb_fadeInOutA,
-  nb_fadeInOutB,
-  nb_getRequest,
-  nb_postRequest,
-  nb_putRequest,
-} from 'js/common/common_nb.js';
+import { nb_dataFetch, nb_formDataFetch, nb_fadeInOutA, nb_fadeInOutB, nb_getRequest, nb_postRequest, nb_putRequest } from 'js/common/common_nb.js';
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -48,27 +40,17 @@ const MyProfile = () => {
     const { success, merchant_uid, error_msg } = response;
 
     if (success) {
-      let returnData = await nb_dataFetch(
-        '/certifications/' + response.imp_uid,
-        true
-      );
+      let returnData = await nb_dataFetch('/certifications/' + response.imp_uid, true);
       let formData = new FormData();
       formData.append('userName', returnData.name);
       formData.append('birth', returnData.birth);
       formData.append('phoneNumber', returnData.phone);
-      let returnObj = await nb_formDataFetch(
-        '/changePhoneNumber',
-        formData,
-        true
-      );
+      let returnObj = await nb_formDataFetch('/changePhoneNumber', formData, true);
       if (returnObj.isChanged) {
         nb_fadeInOutA('휴대폰 번호가 변경 되었습니다.', 2000);
         document.getElementById('memberInfoConfirmBtn').click();
       } else {
-        nb_fadeInOutB(
-          '사용자 정보가 이미 등록되어 있는 정보와 달라 휴대폰 번호가 변경 되지 않았습니다.',
-          2000
-        );
+        nb_fadeInOutB('사용자 정보가 이미 등록되어 있는 정보와 달라 휴대폰 번호가 변경 되지 않았습니다.', 2000);
       }
     } else {
       alert(`본인인증 실패: ${error_msg}`);
@@ -84,14 +66,11 @@ const MyProfile = () => {
   }, []);
 
   const sendPassword = async () => {
-    let returnObj = await nb_getRequest(
-      '/public/member/findPassword?email=' + email,
-      true
-    );
+    let jsonData = new Object();
+    jsonData.email = email;
+    let returnObj = await nb_putRequest('/public/member/findPassword', jsonData, true);
     if (returnObj.status == 200) {
-      alert(
-        '해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 새로운 비밀번호로 변경하여 주시기 바랍니다.'
-      );
+      alert('해당 이메일로 임시 비밀번호를 보내드렸습니다.\n임시 비밀번호는 오전 06시까지 유효하니 새로운 비밀번호로 변경하여 주시기 바랍니다.');
       document.getElementById('emailForPassFind').value = '';
     }
   };
@@ -99,11 +78,7 @@ const MyProfile = () => {
   const confirmPassword = async () => {
     let jsonReq = new Object();
     jsonReq.password = document.getElementById('confirmPassword').value;
-    let jsonRes = await nb_postRequest(
-      '/member/password-confirm',
-      jsonReq,
-      true
-    );
+    let jsonRes = await nb_postRequest('/member/password-confirm', jsonReq, true);
 
     if (jsonRes.data.isSuccess) {
       setCertified(true);
@@ -115,22 +90,15 @@ const MyProfile = () => {
       nb_fadeInOutB('비밀번호가 일치하지 않습니다.', 2000);
     }
   };
-  const passRegex =
-    /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; //패스워드 문자 숫자 특수문자 8-15자
+  const passRegex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/; //패스워드 문자 숫자 특수문자 8-15자
 
   const passChange = async () => {
     if (!passRegex.test(document.getElementById('newPassword').value)) {
-      nb_fadeInOutB(
-        '영문, 숫자, 특수문자 포함 8-15자리 비밀번호를 입력해주세요.',
-        2000
-      );
+      nb_fadeInOutB('영문, 숫자, 특수문자 포함 8-15자리 비밀번호를 입력해주세요.', 2000);
       return;
     }
 
-    if (
-      document.getElementById('newPassword').value !==
-      document.getElementById('newPasswordConfirm').value
-    ) {
+    if (document.getElementById('newPassword').value !== document.getElementById('newPasswordConfirm').value) {
       nb_fadeInOutB('입력하신 새 비밀번호가 일치하지 않습니다.', 2000);
       return;
     }
@@ -138,8 +106,7 @@ const MyProfile = () => {
     let jsonReq = new Object();
     jsonReq.previousPassword = document.getElementById('currentPassword').value;
     jsonReq.password = document.getElementById('newPassword').value;
-    jsonReq.passwordConfirm =
-      document.getElementById('newPasswordConfirm').value;
+    jsonReq.passwordConfirm = document.getElementById('newPasswordConfirm').value;
 
     let returnObj = await nb_putRequest('/member/password', jsonReq, true);
     if (returnObj.status != 200) return;
@@ -189,21 +156,13 @@ const MyProfile = () => {
                           <tr>
                             <td>현재 비밀번호</td>
                             <td>
-                              <input
-                                id='currentPassword'
-                                className='confirmPassword detail'
-                                type='password'
-                              />
+                              <input id='currentPassword' className='confirmPassword detail' type='password' />
                             </td>
                           </tr>
                           <tr>
                             <td>새 비밀번호</td>
                             <td>
-                              <input
-                                id='newPassword'
-                                className='confirmPassword detail'
-                                type='password'
-                              />
+                              <input id='newPassword' className='confirmPassword detail' type='password' />
                             </td>
                           </tr>
                           <tr>
@@ -214,10 +173,7 @@ const MyProfile = () => {
                                 className='confirmPassword detail'
                                 type='password'
                                 onKeyDown={(event) => {
-                                  if (event.keyCode === 13)
-                                    document
-                                      .getElementById('passChangeBtn')
-                                      .click();
+                                  if (event.keyCode === 13) document.getElementById('passChangeBtn').click();
                                 }}
                               />
                             </td>
@@ -229,8 +185,7 @@ const MyProfile = () => {
                                 className='customBtn'
                                 onClick={() => {
                                   passChange();
-                                }}
-                              >
+                                }}>
                                 비밀번호 변경
                               </span>
                             </td>
@@ -255,8 +210,7 @@ const MyProfile = () => {
                   onClick={() => {
                     navigate(-1);
                     setCertified(false);
-                  }}
-                >
+                  }}>
                   뒤로가기
                 </span>
               </div>
@@ -265,14 +219,12 @@ const MyProfile = () => {
             <>
               <div className='myProfileTitle'>회원정보 확인</div>
               <div className='myProfileDesc'>
-                회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번 입력
-                해주시기 바랍니다.
+                회원님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 한번 입력 해주시기 바랍니다.
                 <span
                   className='sendPassForProfileBtn'
                   onClick={() => {
                     sendPassword();
-                  }}
-                >
+                  }}>
                   이메일로 임시비밀번호 받기
                   <div className='sendPasswordForProfileDesc'>
                     sns 로그인 이용자는 이메일로 임시 비밀번호를
@@ -297,10 +249,7 @@ const MyProfile = () => {
                         className='confirmPassword'
                         type='password'
                         onKeyDown={(event) => {
-                          if (event.keyCode === 13)
-                            document
-                              .getElementById('memberInfoDetailBtn')
-                              .click();
+                          if (event.keyCode === 13) document.getElementById('memberInfoDetailBtn').click();
                         }}
                       />
                     </td>
@@ -313,8 +262,7 @@ const MyProfile = () => {
                   className='customBtn'
                   onClick={() => {
                     confirmPassword();
-                  }}
-                >
+                  }}>
                   확인
                 </span>
               </div>

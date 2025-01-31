@@ -895,7 +895,7 @@ const WorkContentsList = () => {
     jsonData.jsonMsg = JSON.stringify(hwpJsonArrForPython);
     document.getElementById('resDetailedTimeDesc').classList.remove('hide');
     document.getElementById('hourGlassDesc').innerText = '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
-    await nb_postRequest('/hwp/math/docs', jsonData, true);
+    await nb_postRequest('/hwp/convert/json-to-hwp', jsonData, true);
     document.getElementById('resDetailedTimeDesc').classList.add('hide');
   };
 

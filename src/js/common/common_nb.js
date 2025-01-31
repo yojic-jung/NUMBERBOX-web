@@ -58,12 +58,6 @@ export const nb_dataFetch = async (url, transitEffect) => {
         window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         //매니저 권한 임시 구현
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
-      } else if (response.headers.get('tokenExpired') !== null) {
-        alert('로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.');
-        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-        //매니저 권한 임시 구현
-        window.localStorage.removeItem(ROLE_KEY);
-        window.location.href = '/';
       }
       return response.text();
     })
@@ -107,12 +101,6 @@ export const nb_formDataFetch = async (url, formData, transitEffect) => {
         window.localStorage.setItem(ACCESS_TOKEN_KEY, response.headers.get(ACCESS_TOKEN_KEY));
         //매니저 권한 임시 구현
         window.localStorage.setItem(ROLE_KEY, response.headers.get(ROLE_KEY));
-      } else if (response.headers.get('tokenExpired') !== null) {
-        alert('로그인 유효기간이 만료되었습니다.\n다시 로그인 해주세요.');
-        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-        //매니저 권한 임시 구현
-        window.localStorage.removeItem(ROLE_KEY);
-        window.location.href = '/';
       }
       return response.text();
     })
@@ -262,7 +250,6 @@ export const nb_putForm = async (url, formData, transitEffect) => {
     method: 'PUT',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: window.localStorage.getItem(ACCESS_TOKEN_KEY),
     },
   };

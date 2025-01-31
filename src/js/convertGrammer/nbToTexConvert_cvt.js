@@ -2330,31 +2330,32 @@ export const cvt_htmlToTexAll = async (rootId, subClassName, title, owner, isSol
   jsonData.jsonMsg = JSON.stringify(tmpNewTex);
   document.getElementById('resDetailedTimeDesc').classList.remove('hide');
   document.getElementById('hourGlassDesc').innerText = '한글 파일을 생성중 입니다.\n잠시만 기다려 주세요...';
-  let returnVal = await nb_postRequest('/hwp/math/docs', jsonData, false);
+  let returnVal = await nb_postRequest('/hwp/convert/json-to-hwp', jsonData, false);
   if (returnVal.status == 200) {
-    createFileFromByteArray(decodeBase64(returnVal.data.hwpFile));
+    await cvt_createFileFromByteArray(returnVal.data.hwpFile, 'hwp');
   }
   document.getElementById('resDetailedTimeDesc').classList.add('hide');
 };
 
 // Base64 문자열을 byteArray로 디코딩하는 함수
-function decodeBase64(base64String) {
+export const cvt_decodeBase64 = async (base64String) => {
   const decodedData = new Uint8Array(
     atob(base64String)
       .split('')
       .map((c) => c.charCodeAt(0))
   );
   return decodedData;
-}
+};
 
 // 서버로부터 받은 데이터를 사용하여 파일을 생성하는 함수
-function createFileFromByteArray(byteArray) {
+export const cvt_createFileFromByteArray = async (base64String, extension) => {
+  const decodedData = await cvt_decodeBase64(base64String);
   let today = new Date();
   let month = today.getMonth() + 1; // 월
   let timestamp = today.getFullYear() + '_' + month + '_' + today.getDate() + '_' + today.getHours() + today.getMinutes() + today.getSeconds();
-  const fileName = '[N명의수학] 나의 제작 문제_' + timestamp + '.hwp';
+  const fileName = '[N명의수학] 나의 제작 문제_' + timestamp + '.' + extension;
 
-  const blob = new Blob([byteArray], { type: 'application/hwp' }); // 파일의 MIME 타입은 적절히 설정
+  const blob = new Blob([decodedData], { type: 'application/' + extension }); // 파일의 MIME 타입은 적절히 설정
   const link = document.createElement('a');
 
   // Blob을 URL로 변환하여 다운로드 링크 생성
@@ -2363,4 +2364,4 @@ function createFileFromByteArray(byteArray) {
   link.download = fileName;
   link.click(); // 다운로드 실행
   URL.revokeObjectURL(url); // URL 해제
-}
+};
