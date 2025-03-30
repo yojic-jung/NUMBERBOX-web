@@ -47,7 +47,7 @@ const App = () => {
           </span>
         </div>
       </div>
-      <BrowserRouter>
+      <BrowserRouter baseName="NUMBERBOX-web">
         <Routes>
           <Route exact path='/login' element={nb_isLogin() ? <Navigate to='/' /> : <Login />} />
           <Route exact path='/emailPassFind' element={nb_isLogin() ? <Navigate to='/' /> : <EmailPassFind />} />
