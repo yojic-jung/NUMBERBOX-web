@@ -2,6 +2,7 @@
   "name": "moonsabu-web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://yojic-jung.github.io/NUMBERBOX-web/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -30,8 +31,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "homepage": "https://yojic-jung.github.io/NUMBERBOX-web/"
+    "deploy": "gh-pages -d build"
   },
   "proxy": "http://localhost:8080",
   "browserslist": {
