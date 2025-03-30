@@ -91,8 +91,8 @@ const Login = () => {
     }
     // 실패시 에러 메시지 출력
     else {
-      if ('errCode' in returnObj.message) {
-        const errCode = returnObj.message.errCode;
+      if (returnObj.errCode !== undefined) {
+        const errCode = returnObj.errCode;
         if (errCode == 'NB-REST-API-ERR-100') {
           document.getElementById('loginErrMsg').classList.remove('hide');
           document.getElementById('loginErrMsg').innerText = '해당 계정이 잠금 되었습니다. 15분 후 다시 시도해주세요.';

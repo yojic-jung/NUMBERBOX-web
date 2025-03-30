@@ -87,7 +87,7 @@ const ProfileComponent = ({ isMine, userNo }) => {
     } else {
       const jsonReq = { nickname: nickval };
       let jsonObj = await nb_putRequest('/member/profile/nickname', jsonReq, true);
-      if (jsonObj.data.isUpdated) {
+      if (jsonObj.status == 200) {
         document.getElementById('myNickName').innerText = nickval;
         document.getElementById('nickChngCancelBtn').click();
       } else {
