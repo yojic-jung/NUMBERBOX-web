@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.25.0",
     "browser-image-compression": "^2.0.0",
+    "gh-pages": "^6.3.0",
     "http-proxy-middleware": "^2.0.6",
     "jquery": "^3.6.0",
     "jspdf": "^2.5.1",
@@ -27,7 +28,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "homepage": "https://yojic-jung.github.io/NUMBERBOX-web/"
   },
   "proxy": "http://localhost:8080",
   "browserslist": {

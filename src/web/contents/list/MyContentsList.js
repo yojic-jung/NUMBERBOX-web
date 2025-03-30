@@ -718,28 +718,22 @@ const MyContentsList = ({ isMine, userNo }) => {
       alert('학습지는 최대 100문항까지 제작 가능합니다.\n100문항이 넘는 경우 사용자 검색필터링 조건으로 검색된\n상위 100문항만 학습지로 제작됩니다.');
     }
 
-    let contentsNoList = '';
-    for (let i = 0; i < contentsDivForFilter.length; i++) {
-      contentsNoList += contentsDivForFilter[i].dataset.contentsNo;
-
-      if (i >= 99) {
-        break;
-      }
-      if (i !== contentsDivForFilter.length - 1) {
-        contentsNoList += ',';
-      }
+    let contentsNoList = [];
+    for (let i = 0; i < contentsDivForFilter.length && i < 100; i++) {
+      contentsNoList.push(contentsDivForFilter[i].dataset.contentsNo);
     }
 
     document.title = '나의 제작문제';
-    let formData = new FormData();
-    formData.append('docsGrade', '');
-    formData.append('docsTitle', '나의 제작문제');
-    formData.append('docsSubTitle', '');
-    formData.append('docsOwner', '');
-    formData.append('docsStts', 3);
-    formData.append('contentsNoList', contentsNoList);
-    let jsonObj = await nb_formDataFetch('/mathDocs/registerMathDocsPaper', formData, true);
-    window.open('/makeMathDocs?docsId=' + jsonObj.docsId);
+    let jsonData = new Object();
+    jsonData.docsGrade = '';
+    jsonData.docsTitle = '나의 제작문제';
+    jsonData.docsSubTitle = '';
+    jsonData.docsOwner = '';
+    jsonData.docsStts = 'MyContents';
+    jsonData.contentsIdList = contentsNoList;
+
+    let jsonObj = await nb_postRequest('/math/docs', jsonData, true);
+    window.open('/makeMathDocs?docsId=' + jsonObj.data.docsId);
   };
 
   const hwpDownPopUpClose = async () => {

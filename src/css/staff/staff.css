@@ -20,6 +20,7 @@
 }
 
 .makeContentsLinkDiv{
+    display: none;
     background-color: rgb(238, 238, 238);
     height: calc(100% + 15vh);
 }
