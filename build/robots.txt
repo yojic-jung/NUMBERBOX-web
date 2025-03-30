@@ -1,0 +1,5 @@
+# https://www.robotstxt.org/robotstxt.html
+Sitemap: https://nsoohak.com/sitemap.xml
+User-agent: *
+Disallow:/admin/
+#DaumWebMasterTool:b149b55f3756a598d3df29e197bff37e939a35472c1727890bd0a7e657ed739c:ANz19QIIXFoUt2CZzwfSXw==
